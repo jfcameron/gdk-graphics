@@ -1,0 +1,3 @@
+[submodule "jfc-cmake"]
+	path = jfc-cmake
+	url = https://github.com/jfcameron/jfc-cmake.git
