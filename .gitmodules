@@ -1,3 +1,9 @@
 [submodule "jfc-cmake"]
 	path = jfc-cmake
 	url = https://github.com/jfcameron/jfc-cmake.git
+[submodule "thirdparty/stb"]
+	path = thirdparty/stb
+	url = https://github.com/nothings/stb.git
+[submodule "thirdparty/gdk-math"]
+	path = thirdparty/gdk-math
+	url = https://github.com/jfcameron/gdk-math.git
