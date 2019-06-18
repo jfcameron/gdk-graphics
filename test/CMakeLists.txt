@@ -9,5 +9,8 @@ jfc_add_tests(
 
     INCLUDE_DIRECTORIES
         "${${PROJECT_NAME}_INCLUDE_DIRECTORIES}"
+
+    LIBRARIES
+        "${${PROJECT_NAME}_LIBRARIES}"
 )
 

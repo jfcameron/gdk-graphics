@@ -24,7 +24,7 @@ jfc_project(library
     PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
         
-        ${gdkmath_INCLUDE_DIRECTORIES} # Either move this to a submodule OR declare math interfaces and use those. Interfaces is imo the CORRECT solution but it is harder for users to use
+        ${gdkmath_INCLUDE_DIRECTORIES} 
         ${gdkmemory_INCLUDE_DIRECTORIES} # Move this to a submodule, hide headers in private header directory.
         #${gdkglfwwrapper_INCLUDE_DIRECTORIES} # This is required for Windows because glew is hidden in glfw. These must be separated.
 
@@ -58,6 +58,8 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexdata.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexformat.cpp
 )
+
+jfc_log(STATUS "BLAR MATH" ${gdkmath_INCLUDE_DIRECTORIES})
 
 if (JFC_BUILD_TESTS)
     add_subdirectory(test)
