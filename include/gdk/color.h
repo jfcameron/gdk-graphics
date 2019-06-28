@@ -10,7 +10,9 @@ namespace gdk
     /// \brief Represents a 4 channel color: {Red, Green, Blue, Alpha}.
     struct Color final
     {
-        float r = {0.f}, g = {0.f}, b = {0.f}, a = {1.f};
+        using channel_type = float;
+
+        channel_type r = 0, g = 0, b = 0, a = 1;
                         
         bool operator==(const Color &aOther) const;
 
@@ -18,7 +20,7 @@ namespace gdk
         Color& operator=(Color &&aColor) = default;
 
         Color();
-        Color(const float aR, const float aG, const float aB, const float aA = 1.);
+        Color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA = 1);
         Color(const Color &) = default;
         Color(Color &&) = default;
         ~Color() = default;
@@ -33,7 +35,7 @@ namespace gdk
         static const Color CornflowerBlue;
     };
         
-    std::ostream &operator<< (std::ostream &stream, const Color &aColor);
+    std::ostream &operator<<(std::ostream &stream, const Color &aColor);
 }
 
 #endif

@@ -20,8 +20,8 @@ namespace gdk
 {
     struct VertexData;
     struct ShaderProgram;
-    struct Vector2;
-    struct Vector4;
+    /*struct Vector2;
+    struct Vector4;*/
     
     /// \brief Represents an observable 3D object. 
     ///

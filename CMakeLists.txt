@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/jfc-cmake/jfclib.cmake")
 
-option(JFC_BUILD_APP    "Build the app" ON)
-option(JFC_BUILD_DOCS   "Build documentation" ON)
-option(JFC_BUILD_TESTS  "Build unit tests" ON)
+option(JFC_BUILD_APP   "Build the app" ON)
+option(JFC_BUILD_DOCS  "Build documentation" ON)
+option(JFC_BUILD_TESTS "Build unit tests" ON)
 
 add_subdirectory(thirdparty)
 
@@ -29,7 +29,7 @@ jfc_project(library
         #${gdkglfwwrapper_INCLUDE_DIRECTORIES} # This is required for Windows because glew is hidden in glfw. These must be separated.
 
         ${stb_INCLUDE_DIR}
-        ${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two
+        ${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
         ${nlohmann_INCLUDE_DIR}
 
     LIBRARIES
@@ -42,24 +42,22 @@ jfc_project(library
         "gdkmath"
 
     SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/floatuniformcollection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4uniformcollection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/shaderprogram.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/textureuniformcollection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector2uniformcollection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector3uniformcollection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector4uniformcollection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexattribute.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexdata.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexformat.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/floatuniformcollection.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4uniformcollection.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/shaderprogram.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/textureuniformcollection.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector2uniformcollection.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector3uniformcollection.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector4uniformcollection.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexattribute.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexdata.cpp
+#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexformat.cpp
 )
-
-jfc_log(STATUS "BLAR MATH" ${gdkmath_INCLUDE_DIRECTORIES})
 
 if (JFC_BUILD_TESTS)
     add_subdirectory(test)

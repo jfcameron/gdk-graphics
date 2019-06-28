@@ -25,7 +25,7 @@ namespace gdk
 
     static constexpr char TAG[] = "Color";
 
-    std::ostream &operator<< (std::ostream &s, const Color &a)
+    std::ostream &operator<<(std::ostream &s, const Color &a)
     {
         return s << nlohmann::json
         {
@@ -52,13 +52,13 @@ namespace gdk
     }
 
     Color::Color()
-        : r(0.)
-        , g(0.)
-        , b(0.)
-        , a(1.)
+        : r(0)
+        , g(0)
+        , b(0)
+        , a(1)
     {}
 
-    Color::Color(const float aR, const float aG, const float aB, const float aA)
+    Color::Color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA)
         : r(aR)
         , g(aG)
         , b(aB)

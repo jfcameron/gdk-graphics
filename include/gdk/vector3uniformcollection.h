@@ -10,7 +10,7 @@
 
 namespace gdk
 {
-    struct Vector3;
+    /*struct Vector3;*/
     
     /// \brief Manages and supplies Vector3 data for shaderprogram consumption   
     class Vector3UniformCollection final : public UniformCollection<std::shared_ptr<Vector3>>

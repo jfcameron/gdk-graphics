@@ -12,9 +12,9 @@
 
 namespace gdk
 {
-    struct IntVector2;
+    /*struct IntVector2;
     struct Vector3;   
-    struct Quaternion;
+    struct Quaternion;*/
     
     class Model;
     
