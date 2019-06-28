@@ -2,12 +2,6 @@
 
 #include <gdk/color.h>
 #include <gdk/glh.h>
-#include <gdk/intvector2.h>
-#include <gdk/mat4x4.h>
-#include <gdk/opengl.h>
-#include <gdk/vector2.h>
-#include <gdk/vector3.h>
-#include <gdk/vector4.h>
 
 #include <nlohmann/json.hpp>
 
@@ -20,92 +14,83 @@ namespace glh
         glClearColor(aColor.r, aColor.g, aColor.b, aColor.a);
     }
 
-    bool EnableVertexAttribute(
-        const std::string &aAttributeName, const GLuint aProgramHandle, const int aAttributeSize,
-        const int aAttributeOffset, const int aTotalNumberOfVertexAttributeComponents)
+    bool EnableVertexAttribute(const std::string_view &aAttributeName, const GLuint aProgramHandle, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfVertexAttributeComponents)
     {
-        GLint attribute = glGetAttribLocation(aProgramHandle, aAttributeName.c_str());
+        GLint attribute = glGetAttribLocation(aProgramHandle, aAttributeName.data());
     
-        if (attribute ==-1) // The attribute either does not exist or is not used in the current shader program
-            return false;
-    
+        if (attribute ==-1) return false; // The attribute either does not exist or is not used in the current shader program
+         
         glEnableVertexAttribArray(attribute);
     
         //Create vertex attribute pointers..
-        glVertexAttribPointer
-            (
-                attribute, //Position attribute index
-                aAttributeSize, //Pos size
-                GL_FLOAT, //data type of each member of the format (must be uniform,
-                          //look at glbindbufferdata, it takes an array or ptr to an array, so no suprise)
-                GL_FALSE,
-                sizeof(GLfloat)*aTotalNumberOfVertexAttributeComponents,
-                (void*)(sizeof(GLfloat)*aAttributeOffset));
+        glVertexAttribPointer(
+            attribute,      //Position attribute index
+            aAttributeSize, //Pos size
+            GL_FLOAT,       //data type of each member of the format (must be uniform, look at glbindbufferdata, it takes an array or ptr to an array, so no suprise)
+            GL_FALSE,
+            sizeof(GLfloat)*aTotalNumberOfVertexAttributeComponents,
+            (void*)(sizeof(GLfloat)*aAttributeOffset));
     
         return true;
     }
 
-    void Viewport(const gdk::IntVector2& aPos, const gdk::IntVector2& aSize)
+    void Viewport(const gdk::graphics_intvector2_type& aPos, const gdk::graphics_intvector2_type& aSize)
     {
         glViewport(aPos.x, aPos.y, aSize.x, aSize.y);
     }
 
-    void Scissor(const gdk::IntVector2& aPos, const gdk::IntVector2& aSize)
+    void Scissor(const gdk::graphics_intvector2_type& aPos, const gdk::graphics_intvector2_type& aSize)
     {
         glScissor(aPos.x, aPos.y, aSize.x, aSize.y);
     }
 
-    bool Bind1FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const float aValue)
+    bool Bind1FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const float aValue)
 {
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
+    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
     
-    if (uniformHandle == -1)
-        return false;
+    if (uniformHandle == -1) return false;
     
     glUniform1f(uniformHandle, aValue);
     
     return true;
 }
 
-bool Bind2FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Vector2 &aVector2)
+bool Bind2FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector2_type &agraphics_vector2_type)
 {
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
+    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
     
-    if (uniformHandle == -1)
-        return false;
+    if (uniformHandle == -1) return false;
     
-    glUniform2f(uniformHandle, aVector2.x, aVector2.y);
+    glUniform2f(uniformHandle, agraphics_vector2_type.x, agraphics_vector2_type.y);
     
     return true;
 }
 
-bool Bind3FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Vector3 &aVector3)
+bool Bind3FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector3_type &agraphics_vector3_type)
 {
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
+    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
     
-    if (uniformHandle == -1)
-        return false;
+    if (uniformHandle == -1) return false;
     
-    glUniform3f(uniformHandle, aVector3.x, aVector3.y, aVector3.z);
+    glUniform3f(uniformHandle, agraphics_vector3_type.x, agraphics_vector3_type.y, agraphics_vector3_type.z);
     
     return true;
 }
 
-bool Bind4FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Vector4 &aVector4)
+bool Bind4FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector4_type &agraphics_vector4_type)
 {
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
+    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
     
-    if (uniformHandle == -1)
-        return false;
+    if (uniformHandle == -1) return false;
     
-    glUniform4f(uniformHandle, aVector4.x, aVector4.y, aVector4.z, aVector4.w);
+    glUniform4f(uniformHandle, agraphics_vector4_type.x, agraphics_vector4_type.y, agraphics_vector4_type.z, agraphics_vector4_type.w);
     
     return true;
 }
 
-bool BindMatrix4x4(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Mat4x4 &aMatrix4x4)
+bool BindMatrix4x4(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_mat4x4_type &aMatrix4x4)
 {
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
+    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
     
     if (uniformHandle == -1) return false;
     
@@ -114,13 +99,12 @@ bool BindMatrix4x4(const GLuint aShaderHandle, const std::string &aUniformName, 
     return true;
 }
 
-bool BindTextureUniform(const GLuint aShaderHandle, const std::string &aUniformName, const GLuint aTextureHandle, const int aTextureUnit)
+bool BindTextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint aTextureHandle, const int aTextureUnit)
 {
-    GLint uniformHandle  = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
+    GLint uniformHandle  = glGetUniformLocation(aShaderHandle, aUniformName.data());
     int theTextureType = GL_TEXTURE_2D;
     
-    if (uniformHandle == -1)
-        return false;
+    if (uniformHandle == -1) return false;
     
     switch (aTextureUnit)
     {
@@ -177,22 +161,22 @@ std::string GetProgramInfoLog(const GLuint aShaderProgramHandle)
 //gdk inc
 #include <Color.h>
 #include <Debug/Logger.h>]
-#include <Math/IntVector2.h>
-#include <Math/Mat4x4.h>
-#include <Math/Vector2.h>
-#include <Math/Vector3.h>
-#include <Math/Vector4.h>
+#include <Math/graphics_intvector2_type.h>
+#include <Math/graphics_mat4x4_type.h>
+#include <Math/graphics_vector2_type.h>
+#include <Math/graphics_vector3_type.h>
+#include <Math/graphics_vector4_type.h>
 //std inc
 #include <vector>
 using namespace gdk;
 
 
-void glh::Viewport(const gdk::IntVector2& aPos, const gdk::IntVector2& aSize)
+void glh::Viewport(const gdk::graphics_intvector2_type& aPos, const gdk::graphics_intvector2_type& aSize)
 {
 glViewport(aPos.x, aPos.y, aSize.x, aSize.y);
 }
 
-void glh::Scissor(const gdk::IntVector2& aPos, const gdk::IntVector2& aSize)
+void glh::Scissor(const gdk::graphics_intvector2_type& aPos, const gdk::graphics_intvector2_type& aSize)
 {
 glScissor(aPos.x, aPos.y, aSize.x, aSize.y);
 }
@@ -240,11 +224,11 @@ bool glh::GetError(std::string *aErrorCode)
     return true;
 }
 
-/*std::vector<std::string> glh::GetErrors()
+/*std::vector<std::string_view> glh::GetErrors()
 {
-    std::vector<std::string> errors;
+    std::vector<std::string_view> errors;
     
-    for(std::string error=GetError();;error=GetError())
+    for(std::string_view error=GetError();;error=GetError())
     {
         errors.push_back(error);
         
@@ -259,7 +243,7 @@ bool glh::GetError(std::string *aErrorCode)
 
 /*void glh::LogErrors(const bool &aDoNotLogIfNoErrors)
 {
-    std::vector<std::string> errors = GetErrors();
+    std::vector<std::string_view> errors = GetErrors();
     size_t s = errors.size();
     
     if (aDoNotLogIfNoErrors == true && s <= 1)
@@ -289,7 +273,7 @@ void glh::ClearErrors()
     while (glGetError() != GL_NO_ERROR);
 }
 
-bool glh::BindTextureUniform(const GLuint aShaderHandle, const std::string &aUniformName, const GLuint aTextureHandle, const int aTextureUnit*//*, final GLenum &aTextureType*//*)
+bool glh::BindTextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint aTextureHandle, const int aTextureUnit*//*, final GLenum &aTextureType*//*)
 {
     GLint uniformHandle  = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
     int theTextureType = GL_TEXTURE_2D;
@@ -316,7 +300,7 @@ bool glh::BindTextureUniform(const GLuint aShaderHandle, const std::string &aUni
     return true;
 }
 
-bool glh::Bind1FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const float aValue)
+bool glh::Bind1FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const float aValue)
 {
     GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
     
@@ -328,43 +312,43 @@ bool glh::Bind1FloatUniform(const GLuint aShaderHandle, const std::string &aUnif
     return true;
 }
 
-bool glh::Bind2FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Vector2 &aVector2)
+bool glh::Bind2FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector2_type &agraphics_vector2_type)
 {
     GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
     
     if (uniformHandle == -1)
         return false;
     
-    glUniform2f(uniformHandle, aVector2.x, aVector2.y);
+    glUniform2f(uniformHandle, agraphics_vector2_type.x, agraphics_vector2_type.y);
     
     return true;
 }
 
-bool glh::Bind3FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Vector3 &aVector3)
+bool glh::Bind3FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector3_type &agraphics_vector3_type)
 {
     GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
     
     if (uniformHandle == -1)
         return false;
     
-    glUniform3f(uniformHandle, aVector3.x, aVector3.y, aVector3.z);
+    glUniform3f(uniformHandle, agraphics_vector3_type.x, agraphics_vector3_type.y, agraphics_vector3_type.z);
     
     return true;
 }
 
-bool glh::Bind4FloatUniform(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Vector4 &aVector4)
+bool glh::Bind4FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector4_type &agraphics_vector4_type)
 {
     GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
     
     if (uniformHandle == -1)
         return false;
     
-    glUniform4f(uniformHandle, aVector4.x, aVector4.y, aVector4.z, aVector4.w);
+    glUniform4f(uniformHandle, agraphics_vector4_type.x, agraphics_vector4_type.y, agraphics_vector4_type.z, agraphics_vector4_type.w);
     
     return true;
 }
 
-bool glh::BindMatrix4x4(const GLuint aShaderHandle, const std::string &aUniformName, const gdk::Mat4x4 &aMatrix4x4)
+bool glh::BindMatrix4x4(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_mat4x4_type &aMatrix4x4)
 {
     GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
     

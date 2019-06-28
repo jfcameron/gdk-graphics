@@ -33,9 +33,9 @@ std::ostream& gdk::operator<<(std::ostream& s, const Model& a)
         {"m_ShaderProgram", jfc::insertion_operator_to_nlohmann_json_object(a.m_ShaderProgram.lock())},
         {"m_Textures", jfc::insertion_operator_to_nlohmann_json_object(a.m_Textures)},
         {"m_Floats", jfc::insertion_operator_to_nlohmann_json_object(a.m_Floats)},
-        {"m_Vector2s", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector2s)},
-        {"m_Vector3s", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector3s)},
-        {"m_Vector4s", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector4s)},
+        {"m_Vector2Uniforms", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector2Uniforms)},
+        {"m_Vector3Uniforms", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector3Uniforms)},
+        {"m_Vector4Uniforms", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector4Uniforms)},
     }
     .dump();
 }
@@ -52,7 +52,7 @@ Model::Model()
             gdk::default_ptr<gdk::ShaderProgram>(static_cast<std::shared_ptr<gdk::ShaderProgram>>(ShaderProgram::AlphaCutOff)))
 {}
 
-void Model::draw(const double &aTimeSinceStart, const double &aDeltaTime, const Mat4x4 &aViewMatrix, const Mat4x4 &aProjectionMatrix)
+void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const Mat4x4 &aViewMatrix, const Mat4x4 &aProjectionMatrix)
 {
     if (const auto pShader = m_ShaderProgram.lock())
     {
@@ -63,9 +63,9 @@ void Model::draw(const double &aTimeSinceStart, const double &aDeltaTime, const 
             //bind this model's uniforms
             m_Textures.bind(programHandle);
             m_Floats  .bind(programHandle);
-            m_Vector2s.bind(programHandle);
-            m_Vector3s.bind(programHandle);
-            m_Vector4s.bind(programHandle);
+            m_Vector2Uniforms.bind(programHandle);
+            m_Vector3Uniforms.bind(programHandle);
+            m_Vector4Uniforms.bind(programHandle);
             m_Mat4x4s .bind(programHandle);
     
             //bind standard uniforms
@@ -90,9 +90,9 @@ void Model::draw(const double &aTimeSinceStart, const double &aDeltaTime, const 
             //unbind this model's uniforms
             m_Textures.unbind(programHandle);
             m_Floats  .unbind(programHandle);
-            m_Vector2s.unbind(programHandle);
-            m_Vector3s.unbind(programHandle);
-            m_Vector4s.unbind(programHandle);
+            m_Vector2Uniforms.unbind(programHandle);
+            m_Vector3Uniforms.unbind(programHandle);
+            m_Vector4Uniforms.unbind(programHandle);
             m_Mat4x4s .unbind(programHandle);
         }
     }
@@ -109,22 +109,22 @@ void Model::setFloat(const std::string &aUniformName, const std::shared_ptr<floa
     m_Floats.put(aUniformName, aFloat);
 }
 
-void Model::setVector2(const std::string &aUniformName, const std::shared_ptr<Vector2> &aVector2)
+void Model::setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type)
 {
-    m_Vector2s.put(aUniformName, aVector2);
+    m_Vector2Uniforms.put(aUniformName, agraphics_vector2_type);
 }
 
-void Model::setVector3(const std::string &aUniformName, const std::shared_ptr<Vector3> &aVector3)
+void Model::setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type)
 {
-    m_Vector3s.put(aUniformName, aVector3);
+    m_Vector3Uniforms.put(aUniformName, agraphics_vector3_type);
 }
 
-void Model::setVector4(const std::string &aUniformName, const std::shared_ptr<Vector4> &aVector4)
+void Model::setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type)
 {
-    m_Vector4s.put(aUniformName, aVector4);
+    m_Vector4Uniforms.put(aUniformName, agraphics_vector4_type);
 }
 
-void Model::setMat4x4 (const std::string &aUniformName, const Mat4x4 &aMat4x4 )
+void Model::setMat4x4(const std::string &aUniformName, const Mat4x4 &aMat4x4 )
 {
     m_Mat4x4s.put(aUniformName, aMat4x4);
 }
@@ -134,7 +134,7 @@ const Mat4x4& Model::getModelMatrix() const
     return m_ModelMatrix;
 }
 
-void Model::setModelMatrix(const Vector3 &aWorldPos, const Quaternion &aRotation, const Vector3 &aScale)
+void Model::setModelMatrix(const graphics_vector3_type &aWorldPos, const Quaternion &aRotation, const graphics_vector3_type &aScale)
 {
     m_ModelMatrix.setToIdentity();
     m_ModelMatrix.translate(aWorldPos);

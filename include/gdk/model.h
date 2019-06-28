@@ -12,16 +12,16 @@
 #include <gdk/vector3uniformcollection.h>
 #include <gdk/vector4uniformcollection.h>
 #include <gdk/quaternion.h>
+#include <gdk/graphics_types.h>
 
 #include <iosfwd>
 #include <memory>
+#include <string_view>
 
 namespace gdk
 {
     struct VertexData;
     struct ShaderProgram;
-    /*struct Vector2;
-    struct Vector4;*/
     
     /// \brief Represents an observable 3D object. 
     ///
@@ -46,18 +46,18 @@ namespace gdk
     {
         friend std::ostream &operator<< (std::ostream &, const Model &);
             
-        std::string m_Name =   {}; //!< Resource Identifier
-        Mat4x4 m_ModelMatrix = {}; //!< Position in the world
+        std::string m_Name; //!< Resource Identifier
+        Mat4x4 m_ModelMatrix; //!< Position in the world
         
         default_ptr<VertexData> m_VertexData;
         default_ptr<ShaderProgram> m_ShaderProgram;
             
-        TextureUniformCollection m_Textures = {};
-        FloatUniformCollection   m_Floats   = {};
-        Vector2UniformCollection m_Vector2s = {};
-        Vector3UniformCollection m_Vector3s = {};
-        Vector4UniformCollection m_Vector4s = {};
-        Mat4x4UniformCollection  m_Mat4x4s  = {};
+        TextureUniformCollection m_Textures;
+        FloatUniformCollection m_Floats;
+        Vector2UniformCollection m_Vector2Uniforms;
+        Vector3UniformCollection m_Vector3Uniforms;
+        Vector4UniformCollection m_Vector4Uniforms;
+        Mat4x4UniformCollection m_Mat4x4s;
 
     public:
         /// \brief draws the model at its current world position, with respect to a view and projection matrix.
@@ -68,18 +68,18 @@ namespace gdk
         /// \param[in] aDeltaTime time since last time draw was called.
         /// \param[in] aViewMatrix the model's world transformation
         /// \param[in] aProjectionMatrix the camera's projection matrix, to be applied to the model to give the appearance of e.g perspective warp
-        void draw(const double &aTimeSinceStart, const double &aDeltaTime, const Mat4x4 &aViewMatrix, const Mat4x4 &aProjectionMatrix);
+        void draw(const double aTimeSinceStart, const double aDeltaTime, const Mat4x4 &aViewMatrix, const Mat4x4 &aProjectionMatrix);
 
         void setVertexData(const default_ptr<VertexData> &);
         
-        void setTexture(const std::string &aUniformName, const default_ptr<Texture>     &aTexture);
-        void setFloat  (const std::string &aUniformName, const std::shared_ptr<float>   &aFloat  );
-        void setVector2(const std::string &aUniformName, const std::shared_ptr<Vector2> &aVector2);
-        void setVector3(const std::string &aUniformName, const std::shared_ptr<Vector3> &aVector3);
-        void setVector4(const std::string &aUniformName, const std::shared_ptr<Vector4> &aVector4);
-        void setMat4x4 (const std::string &aUniformName, const Mat4x4                   &aMat4x4 );
+        void setTexture(const std::string &aUniformName, const default_ptr<Texture> &aTexture);
+        void setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat);
+        void setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type);
+        void setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type);
+        void setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type);
+        void setMat4x4(const std::string &aUniformName, const Mat4x4 &aMat4x4);
             
-        void setModelMatrix(const Vector3 &aWorldPos, const Quaternion &aRotation, const Vector3 &aScale = Vector3::One);
+        void setModelMatrix(const graphics_vector3_type &aWorldPos, const Quaternion &aRotation, const graphics_vector3_type &aScale = graphics_vector3_type::One);
         const Mat4x4 &getModelMatrix() const;
             
         Model &operator=(const Model &) = delete;
@@ -92,7 +92,7 @@ namespace gdk
         ~Model() = default;
     };
         
-    std::ostream &operator<< (std::ostream &, const Model &);
+    std::ostream &operator<<(std::ostream &, const Model &);
 }
 
 #endif

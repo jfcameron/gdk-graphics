@@ -3,18 +3,16 @@
 #ifndef GDK_GFX_CAMERA_H
 #define GDK_GFX_CAMERA_H
 
-#include <gdk/color.h>
-#include <gdk/vector2.h>
-#include <gdk/mat4x4.h>
+#include <gdk/graphics_types.h>
 
 #include <iosfwd>
 #include <memory>
 
 namespace gdk
 {
-    /*struct IntVector2;
-    struct Vector3;   
-    struct Quaternion;*/
+    /*struct graphics_intvector2;
+    struct graphics_vector3_type;   
+    struct graphics_quaternion_type;*/
     
     class Model;
     
@@ -62,13 +60,13 @@ namespace gdk
         void setToPerspectiveProjection(const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio);
         const gdk::Mat4x4 &getProjectionMatrix() const;
              
-        void setViewMatrix(const gdk::Vector3 &aWorldPos, const gdk::Quaternion &aRotation);
+        void setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation);
         const gdk::Mat4x4 &getViewMatrix() const;
 
         void setClearColor(const gdk::Color &aColor);
             
         //! Draws a list of models to the framebuffer
-        void draw(const double &aTimeSinceStart, const double &aDeltaTime, const gdk::IntVector2 &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels);
+        void draw(const double &aTimeSinceStart, const double &aDeltaTime, const gdk::graphics_intvector2 &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels);
             
         Camera& operator=(const Camera &) = delete;
         Camera& operator=(Camera &&) = delete;

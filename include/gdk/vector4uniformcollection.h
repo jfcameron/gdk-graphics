@@ -3,6 +3,7 @@
 #ifndef GDK_GFX_VECTOR4UNIFORMCOLLECTION_H
 #define GDK_GFX_VECTOR4UNIFORMCOLLECTION_H
 
+#include <gdk/graphics_types.h>
 #include <gdk/uniformcollection.h>
 
 #include <iosfwd>
@@ -10,10 +11,8 @@
 
 namespace gdk
 {
-    /*struct Vector4;*/
-    
     /// \brief Set of Vector4s to upload to the shaderprogram currently in use by the gl context
-    class Vector4UniformCollection final : public UniformCollection<std::shared_ptr<Vector4>>
+    class Vector4UniformCollection final : public UniformCollection<std::shared_ptr<graphics_vector4_type>>
     {
         friend std::ostream &operator<< (std::ostream &, const Vector4UniformCollection &);
         

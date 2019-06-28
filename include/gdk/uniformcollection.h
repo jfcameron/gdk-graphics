@@ -17,6 +17,7 @@ namespace gdk
     /// shaderprogram
     ///
     /// \todo Cache uniform locations. currently uniform locations are resolved at every bind
+    /// \todo replace string with string. no need for a deep copy
     template<typename T> class UniformCollection
     {
     protected:

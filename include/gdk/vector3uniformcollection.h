@@ -8,12 +8,12 @@
 #include <iosfwd>
 #include <memory>
 
+#include <gdk/graphics_types.h>
+
 namespace gdk
 {
-    /*struct Vector3;*/
-    
     /// \brief Manages and supplies Vector3 data for shaderprogram consumption   
-    class Vector3UniformCollection final : public UniformCollection<std::shared_ptr<Vector3>>
+    class Vector3UniformCollection final : public UniformCollection<std::shared_ptr<graphics_vector3_type>>
     {
         friend std::ostream &operator<< (std::ostream &, const Vector3UniformCollection &);
       

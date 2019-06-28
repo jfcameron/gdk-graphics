@@ -36,5 +36,5 @@ void Vector2UniformCollection::bind(const GLuint aProgramHandle) const
 
 void Vector2UniformCollection::unbind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind2FloatUniform(aProgramHandle, pair.first, Vector2::Zero);
+    for (auto &pair : m_Map) glh::Bind2FloatUniform(aProgramHandle, pair.first, graphics_vector2_type::Zero);
 }

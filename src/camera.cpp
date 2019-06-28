@@ -66,10 +66,10 @@ static inline void calculatePerspectiveProjection(gdk::Mat4x4& aProjectionMatrix
     aProjectionMatrix.setToPerspective(aFieldOfView, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
 }
 
-void Camera::draw(const double &aTimeSinceStart, const double &aDeltaTime, const gdk::IntVector2 &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels)
+void Camera::draw(const double &aTimeSinceStart, const double &aDeltaTime, const gdk::graphics_intvector2 &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels)
 {
-    gdk::IntVector2 viewportPixelPosition(aFrameBufferSize * m_ViewportPosition);
-    gdk::IntVector2 viewportPixelSize    (aFrameBufferSize * m_ViewportSize);
+    gdk::graphics_intvector2 viewportPixelPosition(aFrameBufferSize * m_ViewportPosition);
+    gdk::graphics_intvector2 viewportPixelSize    (aFrameBufferSize * m_ViewportSize);
     
     glh::Viewport(viewportPixelPosition, viewportPixelSize);
     glh::Scissor (viewportPixelPosition, viewportPixelSize);
@@ -107,7 +107,7 @@ void Camera::draw(const double &aTimeSinceStart, const double &aDeltaTime, const
     for (auto model : aModels) model->draw(aTimeSinceStart, aDeltaTime, m_ViewMatrix, getProjectionMatrix());
 }
 
-void Camera::setViewMatrix(const gdk::Vector3 &aWorldPos, const gdk::Quaternion &aRotation)
+void Camera::setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
 {
     m_ViewMatrix.setToIdentity();
     m_ViewMatrix.rotate({aRotation.toEuler() * -1.f});

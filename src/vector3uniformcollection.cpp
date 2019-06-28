@@ -3,7 +3,6 @@
 #include <gdk/glh.h>
 #include <gdk/nlohmann_json_util.h>
 #include <gdk/opengl.h>
-#include <gdk/vector3.h>
 #include <gdk/vector3uniformcollection.h>
 
 #include <nlohmann/json.hpp>
@@ -36,5 +35,5 @@ void Vector3UniformCollection::bind(const GLuint aProgramHandle) const
 
 void Vector3UniformCollection::unbind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind3FloatUniform(aProgramHandle, pair.first, Vector3::Zero);
+    for (auto &pair : m_Map) glh::Bind3FloatUniform(aProgramHandle, pair.first, graphics_vector3_type::Zero);
 }

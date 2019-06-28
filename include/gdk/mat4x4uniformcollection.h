@@ -3,6 +3,7 @@
 #ifndef GDK_GFX_MAT4X4UNIFORMCOLLECTION_H
 #define GDK_GFX_MAT4X4UNIFORMCOLLECTION_H
 
+#include <gdk/graphics_types.h>
 #include <gdk/mat4x4.h>
 #include <gdk/uniformcollection.h>
 
@@ -11,7 +12,7 @@
 namespace gdk
 {
     /// \brief Set of Mat4x4s to upload to the shaderprogram currently in use by the gl context
-    class Mat4x4UniformCollection final : public gdk::UniformCollection<gdk::Mat4x4>
+    class Mat4x4UniformCollection final : public gdk::UniformCollection<graphics_mat4x4_type>
     {
         friend std::ostream& operator<< (std::ostream&, const Mat4x4UniformCollection&);
       

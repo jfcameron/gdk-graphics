@@ -3,6 +3,7 @@
 #ifndef GDK_GFX_VECTOR2UNIFORMCOLLECTION_H
 #define GDK_GFX_VECTOR2UNIFORMCOLLECTION_H
 
+#include <gdk/graphics_types.h>
 #include <gdk/uniformcollection.h>
 
 #include <iosfwd>
@@ -10,12 +11,10 @@
 
 namespace gdk
 {
-    /*struct Vector2;*/
-    
     /// \brief Manages and supplies Vector2 data for shaderprogram consumption
-    class Vector2UniformCollection final : public UniformCollection<std::shared_ptr<Vector2>>
+    class Vector2UniformCollection final : public UniformCollection<std::shared_ptr<graphics_vector2_type>>
     {
-        friend std::ostream &operator<< (std::ostream &, const Vector2UniformCollection &);
+        friend std::ostream &operator<<(std::ostream &, const Vector2UniformCollection &);
       
     public:
         //! Uploads uniform data to currently used program

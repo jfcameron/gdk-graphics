@@ -23,7 +23,7 @@ namespace gdk
             },
         };
 
-        for (auto &pair : a.m_Map) root[pair.first] = jfc::insertion_operator_to_nlohmann_json_object(pair.second);
+        //for (auto &pair : a.m_Map) root[pair.first] = jfc::insertion_operator_to_nlohmann_json_object(pair.second);
 
         return s << root.dump();
     }
@@ -35,6 +35,6 @@ namespace gdk
 
     void Mat4x4UniformCollection::unbind(const GLuint aProgramHandle) const
     {
-        for (auto &pair : m_Map) glh::BindMatrix4x4(aProgramHandle, pair.first, Mat4x4::Identity);    
+        for (auto &pair : m_Map) glh::BindMatrix4x4(aProgramHandle, pair.first, graphics_mat4x4_type::Identity);    
     }
 }

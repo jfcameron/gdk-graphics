@@ -44,17 +44,17 @@ jfc_project(library
     SOURCE_LIST
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-#        ${CMAKE_CURRENT_SOURCE_DIR}/src/floatuniformcollection.cpp
-#        ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
-#        ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4uniformcollection.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/floatuniformcollection.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4uniformcollection.cpp
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/shaderprogram.cpp
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/textureuniformcollection.cpp
-#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector2uniformcollection.cpp
-#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector3uniformcollection.cpp
-#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector4uniformcollection.cpp
-#        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexattribute.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector2uniformcollection.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector3uniformcollection.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector4uniformcollection.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexattribute.cpp
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexdata.cpp
 #        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexformat.cpp
 )

@@ -7,3 +7,6 @@
 [submodule "thirdparty/gdk-math"]
 	path = thirdparty/gdk-math
 	url = https://github.com/jfcameron/gdk-math.git
+[submodule "thirdparty/jfc-memory"]
+	path = thirdparty/jfc-memory
+	url = https://github.com/jfcameron/jfc-memory.git
