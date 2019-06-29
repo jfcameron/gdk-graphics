@@ -2,7 +2,8 @@
 
 #include <string>
 
-#include <catch.hpp>
+#include <jfc/catch.hpp>
+#include <jfc/types.h>
 
 #include <gdk/color.h>
 
