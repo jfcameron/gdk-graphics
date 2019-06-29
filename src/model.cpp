@@ -62,14 +62,14 @@ void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const gr
     
             //bind this model's uniforms
             m_Textures.bind(programHandle);
-            m_Floats  .bind(programHandle);
+            m_Floats.bind(programHandle);
             m_Vector2Uniforms.bind(programHandle);
             m_Vector3Uniforms.bind(programHandle);
             m_Vector4Uniforms.bind(programHandle);
-            m_Mat4x4s .bind(programHandle);
+            m_Mat4x4Uniforms.bind(programHandle);
     
             //bind standard uniforms
-            const float time      = aTimeSinceStart;//time::sinceStart(); // This is incorrect. needless dependency for a floating value provide this via param or via module interface.
+            const float time = aTimeSinceStart;//time::sinceStart(); // This is incorrect. needless dependency for a floating value provide this via param or via module interface.
             const float deltaTime = aDeltaTime; //time::getDeltaTime();
         
             const graphics_mat4x4_type p = aProjectionMatrix;
@@ -89,11 +89,11 @@ void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const gr
                 
             //unbind this model's uniforms
             m_Textures.unbind(programHandle);
-            m_Floats  .unbind(programHandle);
+            m_Floats.unbind(programHandle);
             m_Vector2Uniforms.unbind(programHandle);
             m_Vector3Uniforms.unbind(programHandle);
             m_Vector4Uniforms.unbind(programHandle);
-            m_Mat4x4s .unbind(programHandle);
+            m_Mat4x4Uniforms.unbind(programHandle);
         }
     }
 }
@@ -126,7 +126,7 @@ void Model::setVector4(const std::string &aUniformName, const std::shared_ptr<gr
 
 void Model::setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type )
 {
-    m_Mat4x4s.put(aUniformName, agraphics_mat4x4_type);
+    m_Mat4x4Uniforms.put(aUniformName, agraphics_mat4x4_type);
 }
 
 const graphics_mat4x4_type& Model::getModelMatrix() const

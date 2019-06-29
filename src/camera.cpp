@@ -31,13 +31,13 @@ std::ostream &gdk::operator<<(std::ostream &s, const Camera &a)
             {}
         },
 
-        {"m_ViewMatrix",        jfc::insertion_operator_to_nlohmann_json_object(a.m_ViewMatrix)},
+        /*{"m_ViewMatrix",        jfc::insertion_operator_to_nlohmann_json_object(a.m_ViewMatrix)},
         {"m_ProjectionMatrix",  jfc::insertion_operator_to_nlohmann_json_object(a.m_ProjectionMatrix)},
         {"m_ViewportPosition",  jfc::insertion_operator_to_nlohmann_json_object(a.m_ViewportPosition)},
         {"m_ViewportSize",      jfc::insertion_operator_to_nlohmann_json_object(a.m_ViewportSize)},
         {"m_FieldOfView",       jfc::insertion_operator_to_nlohmann_json_object(a.m_FieldOfView)},
         {"m_NearClippingPlane", jfc::insertion_operator_to_nlohmann_json_object(a.m_NearClippingPlane)},
-        {"m_FarClippingPlane",  jfc::insertion_operator_to_nlohmann_json_object(a.m_FarClippingPlane)},
+        {"m_FarClippingPlane",  jfc::insertion_operator_to_nlohmann_json_object(a.m_FarClippingPlane)},*/
     }
     .dump();
 }
@@ -49,7 +49,7 @@ Camera::Camera()
 }
 
 //??????
-static inline void calculateOrthographicProjection(gdk::Mat4x4 &aProjectionMatrix, const gdk::Vector2 &aOrthoSize, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)
+static inline void calculateOrthographicProjection(gdk::graphics_mat4x4_type &aProjectionMatrix, const gdk::graphics_vector2_type &aOrthoSize, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)
 {
     (void)aProjectionMatrix;
     (void)aOrthoSize;
@@ -61,15 +61,15 @@ static inline void calculateOrthographicProjection(gdk::Mat4x4 &aProjectionMatri
 }
 
 //Why does this exist?
-static inline void calculatePerspectiveProjection(gdk::Mat4x4& aProjectionMatrix, const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)
+static inline void calculatePerspectiveProjection(gdk::graphics_mat4x4_type &aProjectionMatrix, const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)
 {    
     aProjectionMatrix.setToPerspective(aFieldOfView, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
 }
 
-void Camera::draw(const double &aTimeSinceStart, const double &aDeltaTime, const gdk::graphics_intvector2 &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels)
+void Camera::draw(const double &aTimeSinceStart, const double &aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels)
 {
-    gdk::graphics_intvector2 viewportPixelPosition(aFrameBufferSize * m_ViewportPosition);
-    gdk::graphics_intvector2 viewportPixelSize    (aFrameBufferSize * m_ViewportSize);
+    gdk::graphics_intvector2_type viewportPixelPosition(aFrameBufferSize * m_ViewportPosition); 
+    gdk::graphics_intvector2_type viewportPixelSize    (aFrameBufferSize * m_ViewportSize);
     
     glh::Viewport(viewportPixelPosition, viewportPixelSize);
     glh::Scissor (viewportPixelPosition, viewportPixelSize);
@@ -114,7 +114,7 @@ void Camera::setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gd
     m_ViewMatrix.translate(aWorldPos * -1.f);
 }
 
-void Camera::setViewportPosition(const gdk::Vector2 &a)
+void Camera::setViewportPosition(const gdk::graphics_vector2_type &a)
 {
     m_ViewportPosition = a;
 }
@@ -125,12 +125,12 @@ void Camera::setViewportPosition(const float x, const float y)
     m_ViewportPosition.y = y;
 }
 
-gdk::Vector2 Camera::getViewportPosition() const
+gdk::graphics_vector2_type Camera::getViewportPosition() const
 {
     return m_ViewportPosition;
 }
 
-void Camera::setViewportSize(const gdk::Vector2 &a)
+void Camera::setViewportSize(const gdk::graphics_vector2_type &a)
 {
     m_ViewportSize = a;
 }
@@ -141,17 +141,17 @@ void Camera::setViewportSize(const float x, const float y)
     m_ViewportSize.y = y;
 }
 
-gdk::Vector2 Camera::getViewportSize() const
+gdk::graphics_vector2_type Camera::getViewportSize() const
 {
     return m_ViewportSize;
 }
 
-const gdk::Mat4x4 &Camera::getProjectionMatrix() const
+const gdk::graphics_mat4x4_type &Camera::getProjectionMatrix() const
 {
     return m_ProjectionMatrix;
 }
 
-const gdk::Mat4x4 &Camera::getViewMatrix() const
+const gdk::graphics_mat4x4_type &Camera::getViewMatrix() const
 {
     return m_ViewMatrix;
 }

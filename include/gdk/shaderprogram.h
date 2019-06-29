@@ -18,7 +18,7 @@ namespace gdk
     {
         friend std::ostream &operator<< (std::ostream &, const ShaderProgram &);
         
-        std::string m_Name = {};      //!< Human friendly identifier        
+        std::string m_Name;      //!< Human friendly identifier        
         GLuint m_ProgramHandle = {0}; //!< handle to the program in the context.
         
     public:

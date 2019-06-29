@@ -50,11 +50,11 @@ namespace gdk
         jfc::default_ptr<ShaderProgram> m_ShaderProgram;
             
         TextureUniformCollection m_Textures;
-        FloatUniformCollection m_Floats;
+        FloatUniformCollection   m_Floats;
         Vector2UniformCollection m_Vector2Uniforms;
-        graphics_vector3_typeUniformCollection m_graphics_vector3_typeUniforms;
+        Vector3UniformCollection m_Vector3Uniforms;
         Vector4UniformCollection m_Vector4Uniforms;
-        graphics_mat4x4_typeUniformCollection m_graphics_mat4x4_types;
+        Mat4x4UniformCollection  m_Mat4x4Uniforms;
 
     public:
         /// \brief draws the model at its current world position, with respect to a view and projection matrix.
@@ -74,7 +74,7 @@ namespace gdk
         void setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type);
         void setgraphics_vector3_type(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type);
         void setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type);
-        void setgraphics_mat4x4_type(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type);
+        void setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type);
             
         void setModelMatrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale = graphics_vector3_type::One);
         const graphics_mat4x4_type &getModelMatrix() const;
