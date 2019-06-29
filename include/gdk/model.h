@@ -4,15 +4,12 @@
 #define GDK_GFX_MODEL_H
 
 #include <gdk/floatuniformcollection.h>
-#include <gdk/mat4x4.h>
+#include <gdk/graphics_types.h>
 #include <gdk/mat4x4uniformcollection.h>
 #include <gdk/textureuniformcollection.h>
 #include <gdk/vector2uniformcollection.h>
-#include <gdk/vector3.h>
 #include <gdk/vector3uniformcollection.h>
 #include <gdk/vector4uniformcollection.h>
-#include <gdk/quaternion.h>
-#include <gdk/graphics_types.h>
 
 #include <iosfwd>
 #include <memory>
@@ -47,17 +44,17 @@ namespace gdk
         friend std::ostream &operator<< (std::ostream &, const Model &);
             
         std::string m_Name; //!< Resource Identifier
-        Mat4x4 m_ModelMatrix; //!< Position in the world
+        graphics_mat4x4_type m_ModelMatrix; //!< Position in the world
         
-        default_ptr<VertexData> m_VertexData;
-        default_ptr<ShaderProgram> m_ShaderProgram;
+        jfc::default_ptr<VertexData> m_VertexData;
+        jfc::default_ptr<ShaderProgram> m_ShaderProgram;
             
         TextureUniformCollection m_Textures;
         FloatUniformCollection m_Floats;
         Vector2UniformCollection m_Vector2Uniforms;
-        Vector3UniformCollection m_Vector3Uniforms;
+        graphics_vector3_typeUniformCollection m_graphics_vector3_typeUniforms;
         Vector4UniformCollection m_Vector4Uniforms;
-        Mat4x4UniformCollection m_Mat4x4s;
+        graphics_mat4x4_typeUniformCollection m_graphics_mat4x4_types;
 
     public:
         /// \brief draws the model at its current world position, with respect to a view and projection matrix.
@@ -68,24 +65,24 @@ namespace gdk
         /// \param[in] aDeltaTime time since last time draw was called.
         /// \param[in] aViewMatrix the model's world transformation
         /// \param[in] aProjectionMatrix the camera's projection matrix, to be applied to the model to give the appearance of e.g perspective warp
-        void draw(const double aTimeSinceStart, const double aDeltaTime, const Mat4x4 &aViewMatrix, const Mat4x4 &aProjectionMatrix);
+        void draw(const double aTimeSinceStart, const double aDeltaTime, const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix);
 
-        void setVertexData(const default_ptr<VertexData> &);
+        void setVertexData(const jfc::default_ptr<VertexData> &);
         
-        void setTexture(const std::string &aUniformName, const default_ptr<Texture> &aTexture);
+        void setTexture(const std::string &aUniformName, const jfc::default_ptr<Texture> &aTexture);
         void setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat);
         void setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type);
-        void setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type);
+        void setgraphics_vector3_type(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type);
         void setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type);
-        void setMat4x4(const std::string &aUniformName, const Mat4x4 &aMat4x4);
+        void setgraphics_mat4x4_type(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type);
             
-        void setModelMatrix(const graphics_vector3_type &aWorldPos, const Quaternion &aRotation, const graphics_vector3_type &aScale = graphics_vector3_type::One);
-        const Mat4x4 &getModelMatrix() const;
+        void setModelMatrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale = graphics_vector3_type::One);
+        const graphics_mat4x4_type &getModelMatrix() const;
             
         Model &operator=(const Model &) = delete;
         Model &operator=(Model &&) = delete;
       
-        Model(const std::string &aName, const default_ptr<VertexData> &, const default_ptr<ShaderProgram> &);
+        Model(const std::string &aName, const jfc::default_ptr<VertexData> &, const jfc::default_ptr<ShaderProgram> &);
         Model();
         Model(const Model &) = default;
         Model(Model &&) = default;

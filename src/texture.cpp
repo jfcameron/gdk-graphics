@@ -16,7 +16,7 @@ using namespace gdk;
 
 static constexpr char TAG[] = "Texture";
 
-const gdk::lazy_ptr<gdk::Texture> Texture::CheckeredTextureOfDeath([]()
+const jfc::lazy_ptr<gdk::Texture> Texture::CheckeredTextureOfDeath([]()
 {
     std::vector<GLubyte> textureData(
     {

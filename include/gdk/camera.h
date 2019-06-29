@@ -27,19 +27,19 @@ namespace gdk
         enum class ProjectionMode {Perspective, Orthographic}; //!< The camera's projection mode
             
     private:
-        gdk::Mat4x4 m_ViewMatrix =       gdk::Mat4x4::Identity; //!< World position of camera
-        gdk::Mat4x4 m_ProjectionMatrix = gdk::Mat4x4::Identity; //!< Projection of the camera
+        graphics_mat4x4_type m_ViewMatrix =       graphics_mat4x4_type::Identity; //!< World position of camera
+        graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::Identity; //!< Projection of the camera
             
         ClearMode  m_ClearMode =  ClearMode::Color;      //!< Determines which buffers in the FBO to clear before drawing
         gdk::Color m_ClearColor = Color::CornflowerBlue; //!< The color to replace all data in the color buffer with (if color buffer is to be cleared)
             
-        gdk::Vector2 m_ViewportPosition = gdk::Vector2::Zero;   //!< position of the camera viewport within the device viewport
-        gdk::Vector2 m_ViewportSize =     gdk::Vector2(1., 1.); //!< size of camera viewport within the device viewport
+        graphics_vector2_type m_ViewportPosition = graphics_vector2_type::Zero;   //!< position of the camera viewport within the device viewport
+        graphics_vector2_type m_ViewportSize =     graphics_vector2_type(1., 1.); //!< size of camera viewport within the device viewport
 
         //This is a bit logically messy. I dont know if this approach for generating the projection matrix is as legible as possible. This is a modal class. Shouldnt this be two subclasses?
         ProjectionMode m_ProjectionMode =    ProjectionMode::Perspective; //this will be removed when subclassing
         
-        gdk::Vector2 m_OrthoSize = {10, 10}; // this belongs to ortho
+        graphics_vector2_type m_OrthoSize = {10, 10}; // this belongs to ortho
         float m_FieldOfView =      {90.}; // this belongs to perspective
 
         float m_NearClippingPlane = {0.001};
@@ -48,20 +48,20 @@ namespace gdk
         //RenderTexture m_RenderTexture;
             
     public:
-        void setViewportPosition(const gdk::Vector2 &);
+        void setViewportPosition(const graphics_vector2_type &);
         void setViewportPosition(const float x, const float y);
-        gdk::Vector2 getViewportPosition() const;
+        graphics_vector2_type getViewportPosition() const;
             
-        void setViewportSize(const gdk::Vector2 &);
+        void setViewportSize(const graphics_vector2_type &);
         void setViewportSize(const float x, const float y);
-        gdk::Vector2 getViewportSize() const;
+        graphics_vector2_type getViewportSize() const;
             
-        void setToOrthographicProjection(const gdk::Vector2 &aOrthoSize, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio);            
+        void setToOrthographicProjection(const graphics_vector2_type &aOrthoSize, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio);            
         void setToPerspectiveProjection(const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio);
-        const gdk::Mat4x4 &getProjectionMatrix() const;
+        const graphics_mat4x4_type &getProjectionMatrix() const;
              
         void setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation);
-        const gdk::Mat4x4 &getViewMatrix() const;
+        const graphics_mat4x4_type &getViewMatrix() const;
 
         void setClearColor(const gdk::Color &aColor);
             

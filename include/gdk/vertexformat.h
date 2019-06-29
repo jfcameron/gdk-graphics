@@ -26,7 +26,7 @@ namespace gdk
     /// representing a single full vertex.
     class VertexFormat final
     {
-        friend std::ostream &operator<< (std::ostream &, const VertexFormat &);
+        friend std::ostream &operator<<(std::ostream &, const VertexFormat &);
     
         std::vector<VertexAttribute> m_Format = {}; //!< name and # of floats of each attribute in the format
         int m_SumOfAttributeComponents = {0};       //!< total number of floats in the entire format

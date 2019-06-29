@@ -1,4 +1,4 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © 2019 Joseph Cameron - All Rights Reserved
 
 #include <gdk/camera.h>
 #include <gdk/color.h>

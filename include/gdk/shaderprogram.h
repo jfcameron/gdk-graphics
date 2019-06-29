@@ -4,7 +4,7 @@
 #define GDK_GFX_SHADERPROGRAM_H
 
 #include <gdk/opengl.h>
-#include <gdk/lazy_ptr.h>
+#include <jfc/lazy_ptr.h>
 
 #include <iosfwd>
 #include <string>
@@ -38,8 +38,8 @@ namespace gdk
         ShaderProgram(ShaderProgram &&);
         ~ShaderProgram();
         
-        static const gdk::lazy_ptr<gdk::ShaderProgram> PinkShaderOfDeath; //!< shader for indicating some kind of failure
-        static const gdk::lazy_ptr<gdk::ShaderProgram> AlphaCutOff;       //!< shader for drawing unlit surfaces with alpha channel based transparency
+        static const jfc::lazy_ptr<gdk::ShaderProgram> PinkShaderOfDeath; //!< shader for indicating some kind of failure
+        static const jfc::lazy_ptr<gdk::ShaderProgram> AlphaCutOff;       //!< shader for drawing unlit surfaces with alpha channel based transparency
     };
 
     std::ostream &operator<< (std::ostream &, const ShaderProgram &);

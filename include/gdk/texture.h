@@ -1,10 +1,10 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © 2019 Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_TEXTURE_H
 #define GDK_GFX_TEXTURE_H
 
-#include <gdk/lazy_ptr.h>
 #include <gdk/opengl.h>
+#include <jfc/lazy_ptr.h>
 
 #include <iosfwd>
 #include <string>
@@ -19,7 +19,7 @@ namespace gdk
     {
         friend std::ostream &operator <<(std::ostream &, const Texture &);
         
-        std::string m_Name = {}; //!< Human friendly identifier
+        std::string m_Name; //!< Human friendly identifier
         GLuint m_Handle = {0};   //!< handle to the texture in the context
     
     public:
@@ -42,7 +42,7 @@ namespace gdk
         Texture(Texture &&);
         ~Texture();
 
-        static const gdk::lazy_ptr<gdk::Texture> CheckeredTextureOfDeath; //!< texture for indicating texture related failure
+        static const jfc::lazy_ptr<gdk::Texture> CheckeredTextureOfDeath; //!< texture for indicating texture related failure
     };
 
     std::ostream &operator<< (std::ostream &, const Texture &);

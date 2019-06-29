@@ -14,7 +14,7 @@ using namespace gdk;
 
 static constexpr char TAG[] = "VertexData";
 
-const gdk::lazy_ptr<gdk::VertexData> VertexData::Quad([](){
+const jfc::lazy_ptr<gdk::VertexData> VertexData::Quad([](){
         float size  = 1.;
         float hsize = size/2.;
         std::vector<GLfloat> data({
@@ -29,7 +29,7 @@ const gdk::lazy_ptr<gdk::VertexData> VertexData::Quad([](){
         return new gdk::VertexData("Quad", gdk::VertexData::Type::Static, gdk::VertexFormat::Pos3uv2, data);
     });
 
-const gdk::lazy_ptr<gdk::VertexData> VertexData::Cube([](){
+const jfc::lazy_ptr<gdk::VertexData> VertexData::Cube([](){
         float size  = 1.;
         float hsize = size/2.;
         std::vector<GLfloat> data({

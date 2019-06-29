@@ -4,7 +4,7 @@
 #define GDK_GFX_MESH_H
 
 #include <gdk/vertexformat.h>
-#include <gdk/lazy_ptr.h>
+#include <jfc/lazy_ptr.h>
 
 #include <iosfwd>
 #include <string>
@@ -64,8 +64,8 @@ namespace gdk
         VertexData(VertexData &&);
         ~VertexData();
 
-        static const gdk::lazy_ptr<gdk::VertexData> Quad; //!< a quad with format pos3uv2
-        static const gdk::lazy_ptr<gdk::VertexData> Cube; //!< a cube with format ps3uv2norm3
+        static const jfc::lazy_ptr<gdk::VertexData> Quad; //!< a quad with format pos3uv2
+        static const jfc::lazy_ptr<gdk::VertexData> Cube; //!< a cube with format ps3uv2norm3
     };
 
     std::ostream &operator<< (std::ostream &, const VertexData &);

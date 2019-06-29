@@ -15,7 +15,7 @@ using namespace gdk;
 
 static constexpr char TAG[] = "ShaderProgram";
 
-const gdk::lazy_ptr<gdk::ShaderProgram> ShaderProgram::PinkShaderOfDeath([]()
+const jfc::lazy_ptr<gdk::ShaderProgram> ShaderProgram::PinkShaderOfDeath([]()
 {
     const std::string vertexShaderSource = R"V0G0N(    
     //Uniforms
@@ -52,7 +52,7 @@ const gdk::lazy_ptr<gdk::ShaderProgram> ShaderProgram::PinkShaderOfDeath([]()
     return new gdk::ShaderProgram("PinkShaderOfDeath", vertexShaderSource, fragmentShaderSource);
 });
 
-const gdk::lazy_ptr<gdk::ShaderProgram> ShaderProgram::AlphaCutOff([]()
+const jfc::lazy_ptr<gdk::ShaderProgram> ShaderProgram::AlphaCutOff([]()
 {
     const std::string vertexShaderSource = R"V0G0N(
     //Uniforms
