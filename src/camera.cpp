@@ -77,33 +77,34 @@ void Camera::draw(const double &aTimeSinceStart, const double &aDeltaTime, const
     switch(m_ProjectionMode)
     {
         case ProjectionMode::Perspective:
+        {
             calculatePerspectiveProjection(m_ProjectionMatrix, m_FieldOfView, m_NearClippingPlane, m_FarClippingPlane, m_ViewportSize.getAspectRatio());
-            break;
+        } break;
 
-        default:
-            case ProjectionMode::Orthographic:
+        case ProjectionMode::Orthographic:
+        {
             calculateOrthographicProjection(m_ProjectionMatrix, m_OrthoSize, m_NearClippingPlane, m_FarClippingPlane, m_ViewportSize.getAspectRatio());
-            break;
+        } break;
     }
     
     switch(m_ClearMode)
     {
         case ClearMode::Color:
+        {
             glh::ClearColor(m_ClearColor);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            break;
+        } break;
             
         case ClearMode::DepthOnly:
+        {
             glClear(GL_DEPTH_BUFFER_BIT);
-            break;
+        } break;
             
-        default:
-            case ClearMode::Nothing:
-            break;
+        case ClearMode::Nothing:
+        {
+        } break;
     }
 
-    //
-    //
     for (auto model : aModels) model->draw(aTimeSinceStart, aDeltaTime, m_ViewMatrix, getProjectionMatrix());
 }
 
@@ -160,3 +161,4 @@ void Camera::setClearColor(const gdk::Color &aColor)
 {
     m_ClearColor = aColor;
 }
+

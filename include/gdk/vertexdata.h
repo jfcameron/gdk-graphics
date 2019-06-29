@@ -29,7 +29,7 @@ namespace gdk
         enum class PrimitiveMode {Triangles, Lines, Points};
             
     private:
-        std::string m_Name = {}; //!< Human friendly identifier for the resource
+        std::string m_Name; //!< Human friendly identifier for the resource
             
         GLuint m_IndexBufferHandle = {0}; //!< Handle to the (optional) index buffer in the context
         GLsizei m_IndexCount =       {0}; //!< total number of indicies
