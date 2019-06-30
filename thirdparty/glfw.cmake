@@ -9,7 +9,7 @@ set(GLFW_INSTALL OFF CACHE BOOL "")
 
 # Workaround to copy glfw output (at build time) to expected location (at generate time). add_custom_command must be called "in same dir" (meaning same CMakeList.txt) so must be injected.
 # Note this is only necessary for multi-profile generators (Visual Studio, Xcode)
-#jfc_git(COMMAND checkout src/CMakeLists.txt WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/glfw")
+jfc_git(COMMAND reset --hard WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/glfw") #jfc_git(COMMAND checkout src/CMakeLists.txt WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/glfw")
 
 file(APPEND ${CMAKE_CURRENT_LIST_DIR}/glfw/src/CMakeLists.txt "
     # == Hack that copies output to expected location. If you see this, checkout this file
@@ -20,7 +20,7 @@ file(APPEND ${CMAKE_CURRENT_LIST_DIR}/glfw/src/CMakeLists.txt "
 
 add_subdirectory(${PROJECT_NAME})
 
-#jfc_git(COMMAND checkout src/CMakeLists.txt WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/glfw")
+jfc_git(COMMAND reset --hard WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/glfw")
 #end workaround
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Windows")
