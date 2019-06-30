@@ -24,6 +24,10 @@ jfc_git(COMMAND reset --hard WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/glfw")
 #end workaround
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "Windows")
+    if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+        set (OpenGL_GL_PREFERENCE "GLVND") # Is this appropriate here? Issue first appeard arch machine: both legacy and glvnd available, defaulted to legacy
+    endif()
+
     find_package(OpenGL REQUIRED) # find_package(vulkan REQUIRED)
 
     if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
@@ -51,8 +55,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "Linux" OR CM
         set(GLEW_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/glew-2.1.0/include)
 
         if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-            set (OpenGL_GL_PREFERENCE "GLVND") # Is this appropriate here? Issue first appeard arch machine: both legacy and glvnd available, defaulted to legacy
-
             find_package(X11 REQUIRED) # Mir? Wayland?
             find_package(Threads REQUIRED)
         endif()
