@@ -11,7 +11,7 @@ using namespace gdk;
 
 TEST_CASE("color constructors", "[color]" )
 {
-    SECTION("Default constructor produces an opaque black color")
+    SECTION("something")
     {
         Color color;
 
