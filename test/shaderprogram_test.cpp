@@ -18,23 +18,11 @@ const std::string TAG("TEST");
 
 void initGL()
 {        
-    /*glfwSetErrorCallback([](int, const char *msg)
-            {
-            throw std::runtime_error(std::string(TAG).append("/").append(msg));
-            });*/
-
     if (!glfwInit()) throw std::runtime_error(std::string(TAG).append("/glfwInit failed"));
 
-    //const gdk::IntVector2 aScreenSize(400,300);
-    //const SimpleGLFWWindow::window_size_type aScreenSize = std::make_pair(400,300);
-
-    //windowSize = aScreenSize;
-
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, true);
 
-    if (GLFWwindow *pWindow = glfwCreateWindow(400, 300, "aName.c_str()", nullptr, nullptr))
+    if (GLFWwindow *pWindow = glfwCreateWindow(400, 300, "gdk window", nullptr, nullptr))
     {
         glfwMakeContextCurrent(pWindow);
 
@@ -43,14 +31,11 @@ void initGL()
 
         glfwSwapBuffers(pWindow);
 
-        //glfwSetWindowUserPointer(pWindow, static_cast<void *>(this));
-
 #if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
-        if (GLenum err = glewInit() != GLEW_OK) throw std::runtime_error(std::string(TAG).append("/glewinit failed: "));//.append(glewGetErrorString(err)));
+        if (GLenum err = glewInit() != GLEW_OK) throw std::runtime_error(std::string(TAG).append("/glewinit failed"));
 #endif
-        //return pWindow;
     }
-    //else throw std::runtime_error(std::string(TAG).append("/glfwCreateWindow failed. Can the environment provide a GLES2.0/WebGL1.0 context?"));
+    else throw std::runtime_error(std::string(TAG).append("/glfw window init failed"));
 }
 
 
