@@ -1,4 +1,4 @@
-# © 2018 Joseph Cameron - All Rights Reserved
+# © 2019 Joseph Cameron - All Rights Reserved
 
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
@@ -23,6 +23,7 @@ jfc_project(library
         
         ${gdkmemory_INCLUDE_DIRECTORIES}
 
+        ${GLEW_INCLUDE_DIR} # not currently used. must fix glfw/glew entanglement
         ${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
 
     PRIVATE_INCLUDE_DIRECTORIES
@@ -37,7 +38,8 @@ jfc_project(library
     LIBRARIES
         ${gdkmath_LIBRARIES}
 
-        ${glfw_LIBRARIES} #Separate GLEW, you fool
+        ${GLEW_LIBRARIES} # not currently used. must fix glfw/glew entanglement
+        ${glfw_LIBRARIES} # Separate GLEW, you fool
         ${stb_LIBRARIES}
 
     DEPENDENCIES
@@ -52,6 +54,7 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4uniformcollection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/shaderprogram.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/window.cpp 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/textureuniformcollection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vector2uniformcollection.cpp
