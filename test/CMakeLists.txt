@@ -9,7 +9,6 @@ jfc_add_tests(
         "${CMAKE_CURRENT_LIST_DIR}/color_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/floatuniformcollection_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/glh_test.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/include"
         "${CMAKE_CURRENT_LIST_DIR}/mat4x4uniformcollection_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/model_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/shaderprogram_test.cpp"

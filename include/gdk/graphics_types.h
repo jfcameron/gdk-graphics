@@ -1,16 +1,16 @@
 // © 2019 Joseph Cameron - All Rights Reserved
-// TODO: this should be generated
+// TODO: this should be generated, to allow build-script-generation time parameterization of datatypes
 
 #ifndef GDK_GRAPHICS_TYPES_H
 #define GDK_GRAPHICS_TYPES_H
 
-#include <gdk/intvector2.h>
 #include <gdk/mat4x4.h>
 #include <gdk/opengl.h>
 #include <gdk/quaternion.h>
 #include <gdk/vector2.h>
 #include <gdk/vector3.h>
 #include <gdk/vector4.h>
+#include <gdk/intvector2.h>
 
 namespace gdk
 {

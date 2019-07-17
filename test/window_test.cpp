@@ -9,7 +9,7 @@
 
 using namespace gdk;
 
-TEST_CASE("window constructors", "[window]" )
+TEST_CASE("window constructors", "[window]")
 {
     SECTION("blar")
     {

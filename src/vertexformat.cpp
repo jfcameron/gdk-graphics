@@ -69,8 +69,13 @@ void VertexFormat::enableAttributes(const GLuint aShaderProgramHandle) const
         std::string attributeName = attribute.name;
         int attributeSize = attribute.size;
         
-        glh::EnableVertexAttribute(attributeName, aShaderProgramHandle, attributeSize, attributeOffset,
-                                   m_SumOfAttributeComponents);
+        glh::EnableVertexAttribute(
+            attributeName, 
+            aShaderProgramHandle, 
+            attributeSize, 
+            attributeOffset,
+            m_SumOfAttributeComponents
+        );
         
         attributeOffset += attributeSize;
     }
@@ -80,3 +85,4 @@ int VertexFormat::getSumOfAttributeComponents() const
 {
     return m_SumOfAttributeComponents;
 }
+

@@ -9,7 +9,7 @@
 
 using namespace gdk;
 
-TEST_CASE("color constructors", "[color]" )
+TEST_CASE("color constructors", "[color]")
 {
     SECTION("something")
     {

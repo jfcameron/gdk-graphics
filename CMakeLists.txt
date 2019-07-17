@@ -23,13 +23,15 @@ jfc_project(library
         
         ${gdkmemory_INCLUDE_DIRECTORIES}
 
+        ${gdkmath_INCLUDE_DIRECTORIES} 
+
         ${GLEW_INCLUDE_DIR} # not currently used. must fix glfw/glew entanglement
         ${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
 
     PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
         
-        ${gdkmath_INCLUDE_DIRECTORIES} 
+        #${gdkmath_INCLUDE_DIRECTORIES} #This had to be promoted in order to get the include path for THIS project. that is a bug. regardless of public or private, this project should have the path, then only publics are propegated downstream.
         #${gdkglfwwrapper_INCLUDE_DIRECTORIES} # This is required for Windows because glew is hidden in glfw. These must be separated.
 
         ${stb_INCLUDE_DIR}
