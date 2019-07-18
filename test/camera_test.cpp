@@ -25,7 +25,7 @@ TEST_CASE("camera constructors", "[camera]")
 
         camera.draw({}, {}, {}, {});
 
-        REQUIRE(!glGetError());
+        REQUIRE(!jfc::glGetError());
     }
 }
 

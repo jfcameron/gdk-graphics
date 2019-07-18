@@ -47,7 +47,9 @@ namespace gdk
                 // Vsync controller. if not called, the interval is platform dependent. 0 is off. negative values allow for swapping even if the backbuffer arrives late (vendor extension dependent).
                 glfwSwapInterval(-1); 
 
-                glfwSwapBuffers(pWindow);
+                glfwSwapBuffers(pWindow); //Must be called once to see the buffer we cleared
+
+                glfwPollEvents(); //Must be called once for window to render
 
                 glfwSetWindowUserPointer(pWindow, static_cast<void *>(this));
                     
@@ -113,8 +115,10 @@ namespace gdk
         return static_cast<bool>(glfwGetKey(m_pGLFWWindow.get(), aKeyCode));
     }
 
-    void SimpleGLFWWindow::PollEvents()
+    void SimpleGLFWWindow::pollEvents()
     {
+        //TODO: call makecontextcurrent or soemthing
+
         glfwPollEvents();
     }
 

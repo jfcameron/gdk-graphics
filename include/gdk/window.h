@@ -37,10 +37,14 @@ namespace gdk
         static double GetTime();
 
         //! Causes GLFW to update event states
-        static void PollEvents();
+        static void pollEvents();
+
+        //! Causes GLFW to poll events for the current window
+        //void PollEvents();
 
         //! get direct access to the GLFW pointer, primarily to allow GLFW dependant projects to work alongside this wrapper.
         GLFWwindow *const getPointerToGLFWWindow();
+    //window.SwapBuffer();
 
         //! Swap the front buffer (currently presented on display) with the backbuffer (currently being written to)
         void SwapBuffer();

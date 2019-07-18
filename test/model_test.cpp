@@ -17,14 +17,20 @@ TEST_CASE("model constructors", "[model]")
 {
     initGL();
 
+    {auto blar2 = std::shared_ptr<ShaderProgram>(ShaderProgram::AlphaCutOff);}
+    auto blar = std::shared_ptr<ShaderProgram>(ShaderProgram::AlphaCutOff);
+
+    std::cout << "model shader: " << blar->getHandle() << std::endl;
+
     SECTION("blarblarblarblar")
     {
         Model model("MySuperCoolModel",
             jfc::default_ptr<VertexData>(static_cast<std::shared_ptr<VertexData>>(VertexData::Cube)),
             jfc::default_ptr<ShaderProgram>(static_cast<std::shared_ptr<ShaderProgram>>(ShaderProgram::AlphaCutOff)));
 
-        REQUIRE(!glGetError());
+        model.draw({}, {}, {}, {});
+
+        REQUIRE(!jfc::glGetError());
     }
 }
-
 

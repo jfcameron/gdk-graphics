@@ -1,4 +1,4 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © 2019 Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_VERTEXATTRIBUTE_H
 #define GDK_GFX_VERTEXATTRIBUTE_H

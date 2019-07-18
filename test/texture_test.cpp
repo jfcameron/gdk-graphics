@@ -8,12 +8,15 @@
 #include "test_include.h"
 
 #include <gdk/texture.h>
+#include <gdk/shaderprogram.h>
 
 using namespace gdk;
 
 TEST_CASE("texture constructors", "[texture]")
 {
     initGL();
+
+    auto blar = std::shared_ptr<ShaderProgram>(ShaderProgram::AlphaCutOff);
 
     SECTION("Texture texture texture")
     {

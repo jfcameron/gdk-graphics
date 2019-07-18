@@ -178,7 +178,7 @@ ShaderProgram::ShaderProgram(const std::string &aName, std::string aVertexSource
     glAttachShader(programHandle, fs);
     glLinkProgram(programHandle);
     
-    GLint status = -1;
+    GLint status(-1);
     glGetProgramiv(programHandle, GL_LINK_STATUS, &status);
     
     if (status == GL_FALSE)
@@ -189,8 +189,6 @@ ShaderProgram::ShaderProgram(const std::string &aName, std::string aVertexSource
         << std::endl << "program compilation log: " <<         glh::GetProgramInfoLog(programHandle) << std::endl
         << std::endl << "vertex shader compilation log: " <<   glh::GetShaderInfoLog(vs) << std::endl
         << std::endl << "fragment shader compilation log: " << glh::GetShaderInfoLog(fs);
-        
-        //gdk::log(TAG, glh::GetShaderInfoLog(vs), ", ", glh::GetShaderInfoLog(fs)); // ??????????????
 
         throw std::runtime_error(std::string(TAG).append(message.str()));
     }

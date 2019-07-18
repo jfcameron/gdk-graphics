@@ -8,7 +8,6 @@ jfc_add_tests(
         "${CMAKE_CURRENT_LIST_DIR}/camera_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/color_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/floatuniformcollection_test.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/glh_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/mat4x4uniformcollection_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/model_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/shaderprogram_test.cpp"
@@ -21,6 +20,8 @@ jfc_add_tests(
         "${CMAKE_CURRENT_LIST_DIR}/vertexdata_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/vertexformat_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/window_test.cpp"
+
+        #"${CMAKE_CURRENT_LIST_DIR}/glh_test.cpp"
 
     INCLUDE_DIRECTORIES
         "${${PROJECT_NAME}_INCLUDE_DIRECTORIES}"

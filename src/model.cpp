@@ -54,7 +54,7 @@ Model::Model()
 
 void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix)
 {
-    if (const auto pShader = m_ShaderProgram.lock())
+    if (const auto pShader = m_ShaderProgram.lock()) //This function is not "try_draw" it is "draw". logical contract between user and implementor cannot be complete in the null case. except if null.
     {
         if (const auto pVertexData = m_VertexData.lock())
         {
@@ -101,32 +101,32 @@ void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const gr
 // Accessors
 void Model::setTexture(const std::string &aUniformName, const jfc::default_ptr<Texture> &aTexture)
 {
-    m_Textures.put(aUniformName, aTexture);
+    m_Textures.insert(aUniformName, aTexture);
 }
 
 void Model::setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat)
 {
-    m_Floats.put(aUniformName, aFloat);
+    m_Floats.insert(aUniformName, aFloat);
 }
 
 void Model::setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type)
 {
-    m_Vector2Uniforms.put(aUniformName, agraphics_vector2_type);
+    m_Vector2Uniforms.insert(aUniformName, agraphics_vector2_type);
 }
 
 void Model::setgraphics_vector3_type(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type)
 {
-    m_Vector3Uniforms.put(aUniformName, agraphics_vector3_type);
+    m_Vector3Uniforms.insert(aUniformName, agraphics_vector3_type);
 }
 
 void Model::setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type)
 {
-    m_Vector4Uniforms.put(aUniformName, agraphics_vector4_type);
+    m_Vector4Uniforms.insert(aUniformName, agraphics_vector4_type);
 }
 
 void Model::setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type )
 {
-    m_Mat4x4Uniforms.put(aUniformName, agraphics_mat4x4_type);
+    m_Mat4x4Uniforms.insert(aUniformName, agraphics_mat4x4_type);
 }
 
 const graphics_mat4x4_type& Model::getModelMatrix() const

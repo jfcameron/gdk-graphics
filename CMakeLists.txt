@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/jfc-cmake/jfclib.cmake")
 
-option(JFC_BUILD_APP   "Build the app" ON)
-option(JFC_BUILD_DOCS  "Build documentation" ON)
+option(JFC_BUILD_DEMO "Build the demo" ON)
+option(JFC_BUILD_DOCS "Build documentation" ON)
 option(JFC_BUILD_TESTS "Build unit tests" ON)
 
 add_subdirectory(thirdparty)
@@ -66,6 +66,10 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexdata.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexformat.cpp
 )
+
+if (JFC_BUILD_DEMO)
+    add_subdirectory(demo)
+endif()
 
 if (JFC_BUILD_TESTS)
     add_subdirectory(test)
