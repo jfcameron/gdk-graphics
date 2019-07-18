@@ -1,6 +1,10 @@
 #ifndef JFC_TEST_INCLUDE_H
 #define JFC_TEST_INCLUDE_H
 
+#include <gdkgraphics/buildinfo.h>
+
+#include <stdexcept>
+
 #if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
 #define GLEW_STATIC
 #include <GL/glew.h>
