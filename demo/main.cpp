@@ -19,49 +19,27 @@ int main(int argc, char **argv)
 
     std::vector<std::shared_ptr<gdk::Model>> models;
 
-//    VertexData vd("thisAtest", VertexData::Type::Static, VertexFormat::Pos3, {}, {}, VertexData::PrimitiveMode::Triangles);
+    models.push_back(std::make_shared<Model>([&]()
+    {
+        auto cube = default_ptr<VertexData>(static_cast<std::shared_ptr<VertexData>>(VertexData::Cube));
+        auto alpha = default_ptr<ShaderProgram>(static_cast<std::shared_ptr<ShaderProgram>>(ShaderProgram::AlphaCutOff));
 
-    //auto p = static_cast<std::shared_ptr<VertexData>>(VertexData::Cube);
-
-    //auto cube = default_ptr<VertexData>(static_cast<std::shared_ptr<VertexData>>(VertexData::Cube));
-
-
-//    Model model("MySuperCoolModel",
-//            cube,
-//            alpha);
-
-////////////////////////////////////////////////////////
-
-    //std::shared_ptr<gdk::Model> pModel = std::make_shared<Model>([&]()
-    //{
-        //auto cube = default_ptr<VertexData>(static_cast<std::shared_ptr<VertexData>>(VertexData::Cube));
-        //auto alpha = default_ptr<ShaderProgram>(static_cast<std::shared_ptr<ShaderProgram>>(ShaderProgram::AlphaCutOff));
-
-        /*Model model("MySuperCoolModel",
+        Model model("MySuperCoolModel",
             cube,
             alpha);
 
-        return model;*/   
+        model.setModelMatrix(Vector3<float>{0., 0., -10.}, Quaternion<float>{});
 
-        /*Model model("MySuperCoolModel",
-                default_ptr<VertexData>(static_cast<std::shared_ptr<VertexData>>(VertexData::Cube)),
-                default_ptr<ShaderProgram>(static_cast<std::shared_ptr<ShaderProgram>>(ShaderProgram::AlphaCutOff)));
+        return model;
+    }()));
 
-        //model.setModelMatrix((Vector3){0., 0., 0.}, (Quaternion){});
-
-        return model;*/
-    //}());
-
-
-    //models.push_back(pModel);
-
-    camera.setViewportSize(1.0, 1.0);
-
-    camera.draw(0, 0, window.GetWindowSize(), models);
+    //camera.setViewportSize(1.0, 1.0);
 
     while(true)
     {
         window.pollEvents();
+        
+        camera.draw(0, 0, window.GetWindowSize(), models);
 
         window.SwapBuffer(); 
     }
