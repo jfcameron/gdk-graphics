@@ -114,7 +114,7 @@ void Model::setVector2(const std::string &aUniformName, const std::shared_ptr<gr
     m_Vector2Uniforms.insert(aUniformName, agraphics_vector2_type);
 }
 
-void Model::setgraphics_vector3_type(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type)
+void Model::setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type)
 {
     m_Vector3Uniforms.insert(aUniformName, agraphics_vector3_type);
 }

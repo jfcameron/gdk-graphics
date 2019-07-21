@@ -17,8 +17,8 @@
 
 namespace gdk
 {
-    struct VertexData;
-    struct ShaderProgram;
+    class VertexData;
+    class ShaderProgram;
     
     /// \brief Represents an observable 3D object. 
     ///
@@ -72,7 +72,7 @@ namespace gdk
         void setTexture(const std::string &aUniformName, const jfc::default_ptr<Texture> &aTexture);
         void setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat);
         void setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type);
-        void setgraphics_vector3_type(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type);
+        void setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type);
         void setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type);
         void setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type);
             
