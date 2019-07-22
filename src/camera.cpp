@@ -111,8 +111,8 @@ void Camera::draw(const double &aTimeSinceStart, const double &aDeltaTime, const
 void Camera::setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
 {
     m_ViewMatrix.setToIdentity();
-    m_ViewMatrix.rotate({aRotation.toEuler() * -1.f});
-    m_ViewMatrix.translate(aWorldPos * -1.f);
+    m_ViewMatrix.rotate({aRotation.toEuler() * -1});
+    m_ViewMatrix.translate(aWorldPos * -1);
 }
 
 void Camera::setViewportPosition(const gdk::graphics_vector2_type &a)
