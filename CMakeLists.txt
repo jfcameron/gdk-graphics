@@ -22,31 +22,30 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         
         ${gdkmemory_INCLUDE_DIRECTORIES}
-
         ${gdkmath_INCLUDE_DIRECTORIES} 
+        ${simpleglfw_INCLUDE_DIRECTORIES}
 
-        ${GLEW_INCLUDE_DIR} # not currently used. must fix glfw/glew entanglement
-        ${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
 
+        #${GLEW_INCLUDE_DIR} # not currently used. must fix glfw/glew entanglement
+        #${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
     PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
-        
-        #${gdkglfwwrapper_INCLUDE_DIRECTORIES} # This is required for Windows because glew is hidden in glfw. These must be separated.
 
         ${stb_INCLUDE_DIR}
         ${nlohmann_INCLUDE_DIR}
 
     LIBRARIES
         ${gdkmath_LIBRARIES}
-
-        ${GLEW_LIBRARIES} # not currently used. must fix glfw/glew entanglement
-        ${glfw_LIBRARIES} # Separate GLEW, you fool
+        ${simpleglfw_LIBRARIES}
+        
+        #${GLEW_LIBRARIES} # not currently used. must fix glfw/glew entanglement
+        #${glfw_LIBRARIES} # Separate GLEW, you fool
         ${stb_LIBRARIES}
 
     DEPENDENCIES
         "stb"
         "gdkmath"
-        "glfw" #remove
+        "simpleglfw" #remove
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
@@ -56,7 +55,6 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4uniformcollection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/shaderprogram.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/window.cpp 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/textureuniformcollection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vector2uniformcollection.cpp
