@@ -62,3 +62,4 @@ jfc_set_dependency_symbols(
     LIBRARIES
         ${PROJECT_BINARY_DIR}/lib${JFC_DEPENDENCY_NAME}.a
 )
+

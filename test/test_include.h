@@ -20,7 +20,7 @@ inline void initGL()
 
     if (bFirst)
     {
-        std::cout << "THIS SHOULD APPEAR ONCE\n";
+        //std::cout << "THIS SHOULD APPEAR ONCE\n";
 
         if (!glfwInit()) throw std::runtime_error(std::string("InitGL").append("/glfwInit failed"));
 

@@ -1,12 +1,14 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
+#include <cmath>
 #include <cstdlib>
+
+#include <jfc/window.h>
 
 #include <gdk/camera.h>
 #include <gdk/model.h>
 #include <gdk/shaderprogram.h>
 #include <gdk/vertexdata.h>
-#include <gdk/window.h>
 
 using namespace gdk;
 using namespace jfc;
@@ -28,20 +30,26 @@ int main(int argc, char **argv)
             cube,
             alpha);
 
+        model.setTexture("_Texture", default_ptr<Texture>(static_cast<std::shared_ptr<Texture>>(Texture::CheckeredTextureOfDeath)));
+
         model.setModelMatrix(Vector3<float>{0., 0., -10.}, Quaternion<float>{});
 
         return model;
     }()));
 
-    //camera.setViewportSize(1.0, 1.0);
+    float blar = 0;
 
-    while(true)
+    while(!window.shouldClose())
     {
         window.pollEvents();
         
-        camera.draw(0, 0, window.GetWindowSize(), models);
+        camera.setViewMatrix({std::sin(blar), 0, -10}, {});
 
-        window.SwapBuffer(); 
+        camera.draw(0, 0, window.getWindowSize(), models);
+
+        window.swapBuffer(); 
+
+        blar += 0.001;
     }
 
     return EXIT_SUCCESS;

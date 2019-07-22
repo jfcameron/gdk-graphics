@@ -18,7 +18,7 @@ namespace glh
     {
         GLint attribute = glGetAttribLocation(aProgramHandle, aAttributeName.data());
     
-        if (attribute ==-1) return false; // The attribute either does not exist or is not used in the current shader program
+        if (attribute == -1) return false; // The attribute either does not exist or is not used in the current shader program
          
         glEnableVertexAttribArray(attribute);
     
@@ -29,7 +29,7 @@ namespace glh
             GL_FLOAT,       //data type of each member of the format (must be uniform, look at glbindbufferdata, it takes an array or ptr to an array, so no suprise)
             GL_FALSE,
             sizeof(GLfloat)*aTotalNumberOfVertexAttributeComponents,
-            (void*)(sizeof(GLfloat)*aAttributeOffset));
+            reinterpret_cast<void *>(sizeof(GLfloat) * aAttributeOffset));
     
         return true;
     }
@@ -45,112 +45,112 @@ namespace glh
     }
 
     bool Bind1FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const float aValue)
-{
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
-    
-    if (uniformHandle == -1) return false;
-    
-    glUniform1f(uniformHandle, aValue);
-    
-    return true;
-}
-
-bool Bind2FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector2_type &agraphics_vector2_type)
-{
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
-    
-    if (uniformHandle == -1) return false;
-    
-    glUniform2f(uniformHandle, agraphics_vector2_type.x, agraphics_vector2_type.y);
-    
-    return true;
-}
-
-bool Bind3FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector3_type &agraphics_vector3_type)
-{
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
-    
-    if (uniformHandle == -1) return false;
-    
-    glUniform3f(uniformHandle, agraphics_vector3_type.x, agraphics_vector3_type.y, agraphics_vector3_type.z);
-    
-    return true;
-}
-
-bool Bind4FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector4_type &agraphics_vector4_type)
-{
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
-    
-    if (uniformHandle == -1) return false;
-    
-    glUniform4f(uniformHandle, agraphics_vector4_type.x, agraphics_vector4_type.y, agraphics_vector4_type.z, agraphics_vector4_type.w);
-    
-    return true;
-}
-
-bool BindMatrix4x4(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_mat4x4_type &aMatrix4x4)
-{
-    GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
-    
-    if (uniformHandle == -1) return false;
-    
-    glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.m[0][0]);
-    
-    return true;
-}
-
-bool BindTextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint aTextureHandle, const int aTextureUnit)
-{
-    GLint uniformHandle  = glGetUniformLocation(aShaderHandle, aUniformName.data());
-    int theTextureType = GL_TEXTURE_2D;
-    
-    if (uniformHandle == -1) return false;
-    
-    switch (aTextureUnit)
     {
-        case 1: glActiveTexture(GL_TEXTURE1); break;
-        case 2: glActiveTexture(GL_TEXTURE2); break;
-        case 3: glActiveTexture(GL_TEXTURE3); break;
-        case 4: glActiveTexture(GL_TEXTURE4); break;
-        case 5: glActiveTexture(GL_TEXTURE5); break;
-        case 6: glActiveTexture(GL_TEXTURE6); break;
-        case 7: glActiveTexture(GL_TEXTURE7); break;
-            
-        default: glActiveTexture( GL_TEXTURE0); break;
+        GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
+        
+        if (uniformHandle == -1) return false;
+        
+        glUniform1f(uniformHandle, aValue);
+        
+        return true;
     }
-    
-    glBindTexture(theTextureType, aTextureHandle);
-    glUniform1i(uniformHandle, aTextureUnit);
-    
-    return true;
-}
 
-std::string GetShaderInfoLog(const GLuint aShaderStageHandle)
-{
-    GLint bufflen = 0;
-    glGetShaderiv(aShaderStageHandle, GL_INFO_LOG_LENGTH, &bufflen);
-    
-    if (bufflen > 1)
+    bool Bind2FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector2_type &agraphics_vector2_type)
     {
-        std::vector<GLchar> infoLog(bufflen);
-        glGetShaderInfoLog(aShaderStageHandle, bufflen, 0, &infoLog[0]);
+        GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
+        
+        if (uniformHandle == -1) return false;
+        
+        glUniform2f(uniformHandle, agraphics_vector2_type.x, agraphics_vector2_type.y);
+        
+        return true;
+    }
+
+    bool Bind3FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector3_type &agraphics_vector3_type)
+    {
+        GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
+        
+        if (uniformHandle == -1) return false;
+        
+        glUniform3f(uniformHandle, agraphics_vector3_type.x, agraphics_vector3_type.y, agraphics_vector3_type.z);
+        
+        return true;
+    }
+
+    bool Bind4FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_vector4_type &agraphics_vector4_type)
+    {
+        GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
+        
+        if (uniformHandle == -1) return false;
+        
+        glUniform4f(uniformHandle, agraphics_vector4_type.x, agraphics_vector4_type.y, agraphics_vector4_type.z, agraphics_vector4_type.w);
+        
+        return true;
+    }
+
+    bool BindMatrix4x4(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_mat4x4_type &aMatrix4x4)
+    {
+        GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());
+        
+        if (uniformHandle == -1) return false;
+        
+        glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.m[0][0]);
+        
+        return true;
+    }
+
+    bool BindTextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint aTextureHandle, const int aTextureUnit)
+    {
+        GLint uniformHandle  = glGetUniformLocation(aShaderHandle, aUniformName.data());
+        int theTextureType = GL_TEXTURE_2D;
+        
+        if (uniformHandle == -1) return false;
+        
+        switch (aTextureUnit)
+        {
+            case 1: glActiveTexture(GL_TEXTURE1); break;
+            case 2: glActiveTexture(GL_TEXTURE2); break;
+            case 3: glActiveTexture(GL_TEXTURE3); break;
+            case 4: glActiveTexture(GL_TEXTURE4); break;
+            case 5: glActiveTexture(GL_TEXTURE5); break;
+            case 6: glActiveTexture(GL_TEXTURE6); break;
+            case 7: glActiveTexture(GL_TEXTURE7); break;
+                
+            default: glActiveTexture( GL_TEXTURE0); break;
+        }
+        
+        glBindTexture(theTextureType, aTextureHandle);
+        glUniform1i(uniformHandle, aTextureUnit);
+        
+        return true;
+    }
+
+    std::string GetShaderInfoLog(const GLuint aShaderStageHandle)
+    {
+        GLint bufflen = 0;
+        glGetShaderiv(aShaderStageHandle, GL_INFO_LOG_LENGTH, &bufflen);
+        
+        if (bufflen > 1)
+        {
+            std::vector<GLchar> infoLog(bufflen);
+            glGetShaderInfoLog(aShaderStageHandle, bufflen, 0, &infoLog[0]);
+            
+            return std::string(infoLog.begin(),infoLog.end());
+        }
+        
+        return "clear";
+    }
+
+    std::string GetProgramInfoLog(const GLuint aShaderProgramHandle)
+    {
+        GLint maxLength = 0;
+        glGetProgramiv(aShaderProgramHandle, GL_INFO_LOG_LENGTH, &maxLength);
+        
+        std::vector<GLchar> infoLog(maxLength);
+        glGetProgramInfoLog(aShaderProgramHandle, maxLength, &maxLength, &infoLog[0]);
         
         return std::string(infoLog.begin(),infoLog.end());
     }
-    
-    return "clear";
-}
-
-std::string GetProgramInfoLog(const GLuint aShaderProgramHandle)
-{
-    GLint maxLength = 0;
-    glGetProgramiv(aShaderProgramHandle, GL_INFO_LOG_LENGTH, &maxLength);
-    
-    std::vector<GLchar> infoLog(maxLength);
-    glGetProgramInfoLog(aShaderProgramHandle, maxLength, &maxLength, &infoLog[0]);
-    
-    return std::string(infoLog.begin(),infoLog.end());
-}
 }
 ///////////////////////////////////////////////////////////////////////
 /*

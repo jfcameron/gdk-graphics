@@ -19,7 +19,6 @@ jfc_add_tests(
         "${CMAKE_CURRENT_LIST_DIR}/vertexattribute_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/vertexdata_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/vertexformat_test.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/window_test.cpp"
 
         #"${CMAKE_CURRENT_LIST_DIR}/glh_test.cpp"
 
