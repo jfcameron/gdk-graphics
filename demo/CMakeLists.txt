@@ -1,7 +1,5 @@
 # © 2018 Joseph Cameron - All Rights Reserved
 
-#jfc_log(FATAL_ERROR "BARL" "${gdkgraphics_INCLUDE_DIRECTORIES}")
-
 jfc_project(executable
     NAME "gdkgraphics-demo"
     VERSION 1.0
