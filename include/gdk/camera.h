@@ -19,7 +19,7 @@ namespace gdk
     class Model;
     
     /// \brief Position, orientation and perspective from which Model(s) are drawn
-    /// \todo separate ortho and persepective into subclasses
+    /// \TODO separate ortho and persepective into subclasses. Camera is modal. big no no.
     class Camera final
     {
         friend std::ostream &operator<< (std::ostream &, const Camera &);
@@ -42,7 +42,7 @@ namespace gdk
         ProjectionMode m_ProjectionMode =    ProjectionMode::Perspective; //this will be removed when subclassing
         
         graphics_vector2_type m_OrthoSize = {10, 10}; // this belongs to ortho
-        float m_FieldOfView =      {90.}; // this belongs to perspective
+        float m_FieldOfView = {90.}; // this belongs to perspective
 
         float m_NearClippingPlane = {0.001};
         float m_FarClippingPlane =  {20.};
