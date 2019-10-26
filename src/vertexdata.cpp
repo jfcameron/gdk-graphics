@@ -14,71 +14,78 @@ using namespace gdk;
 
 static constexpr char TAG[] = "VertexData";
 
-const jfc::lazy_ptr<gdk::VertexData> VertexData::Quad([](){
-        float size  = 1.;
-        float hsize = size/2.;
-        std::vector<GLfloat> data({
-                //        x,           y,    z,    u,    v,
-                size -hsize, size -hsize, 0.0f, 1.0f, 0.0f, // 1--0
-                    0.0f -hsize, size -hsize, 0.0f, 0.0f, 0.0f, // | /
-                    0.0f -hsize, 0.0f -hsize, 0.0f, 0.0f, 1.0f, // 2
-                    size -hsize, size -hsize, 0.0f, 1.0f, 0.0f, //    0
-                    0.0f -hsize, 0.0f -hsize, 0.0f, 0.0f, 1.0f, //  / |
-                    size -hsize, 0.0f -hsize, 0.0f, 1.0f, 1.0f, // 1--2
-                    });
-        return new gdk::VertexData("Quad", gdk::VertexData::Type::Static, gdk::VertexFormat::Pos3uv2, data);
+const jfc::lazy_ptr<gdk::VertexData> VertexData::Quad([]()
+{
+    float size  = 1.;
+    float hsize = size/2.;
+
+    std::vector<GLfloat> data(
+    {
+        //        x,           y,    z,    u,    v,
+        size -hsize, size -hsize, 0.0f, 1.0f, 0.0f, // 1--0
+        0.0f -hsize, size -hsize, 0.0f, 0.0f, 0.0f, // | /
+        0.0f -hsize, 0.0f -hsize, 0.0f, 0.0f, 1.0f, // 2
+        size -hsize, size -hsize, 0.0f, 1.0f, 0.0f, //    0
+        0.0f -hsize, 0.0f -hsize, 0.0f, 0.0f, 1.0f, //  / |
+        size -hsize, 0.0f -hsize, 0.0f, 1.0f, 1.0f, // 1--2
     });
 
-const jfc::lazy_ptr<gdk::VertexData> VertexData::Cube([](){
-        float size  = 1.;
-        float hsize = size/2.;
-        std::vector<GLfloat> data({
-                //        x,           y,      z,   u,   v,  Nx,  Ny,   Nz, North
-                size -hsize, size -hsize, -hsize, 0.0, 0.0,  0.0, 0.0, -1.0, // 2--0
-                    0.0f -hsize, 0.0f -hsize, -hsize, 1.0, 1.0,  0.0, 0.0, -1.0, // | /
-                    0.0f -hsize, size -hsize, -hsize, 1.0, 0.0,  0.0, 0.0, -1.0, // 1
-                    size -hsize, size -hsize, -hsize, 0.0, 0.0,  0.0, 0.0, -1.0, //    0
-                    size -hsize, 0.0f -hsize, -hsize, 0.0, 1.0,  0.0, 0.0, -1.0, //  / |
-                    0.0f -hsize, 0.0f -hsize, -hsize, 1.0, 1.0,  0.0, 0.0, -1.0, // 2--1 */
-                    //        x,           y,      z,   u,   v,   Nx,  Ny,   Nz, South
-                    size -hsize, size -hsize,  hsize, 1.0, 0.0,  0.0, 0.0, +1.0, // 1--0
-                    0.0f -hsize, size -hsize,  hsize, 0.0, 0.0,  0.0, 0.0, +1.0, // | /
-                    0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, 0.0, +1.0, // 2
-                    size -hsize, size -hsize,  hsize, 1.0, 0.0,  0.0, 0.0, +1.0, //    0
-                    0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, 0.0, +1.0, //  / |
-                    size -hsize, 0.0f -hsize,  hsize, 1.0, 1.0,  0.0, 0.0, +1.0, // 1--2 */
-                    //        x,           y       z,   u,   v,   Nx,  Ny,  Nz, West
-                    0.0f -hsize, size -hsize,  hsize, 1.0, 0.0, -1.0, 0.0, 0.0, // 2--0
-                    0.0f -hsize, size -hsize, -hsize, 0.0, 0.0, -1.0, 0.0, 0.0, // | /
-                    0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 1.0, -1.0, 0.0, 0.0, // 1
-                    0.0f -hsize, size -hsize,  hsize, 1.0, 0.0, -1.0, 0.0, 0.0, //    0
-                    0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 1.0, -1.0, 0.0, 0.0, //  / |
-                    0.0f -hsize, 0.0f -hsize,  hsize, 1.0, 1.0, -1.0, 0.0, 0.0, // 2--1 */
-                    //        x,           y,      z,   u,   v,   Nx,   Ny,  Nz, East
-                    size -hsize, size -hsize,  hsize, 0.0, 0.0, +1.0,  0.0, 0.0, // 2--0
-                    size -hsize, 0.0f -hsize, -hsize, 1.0, 1.0, +1.0,  0.0, 0.0, // | /
-                    size -hsize, size -hsize, -hsize, 1.0, 0.0, +1.0,  0.0, 0.0, // 1
-                    size -hsize, size -hsize,  hsize, 0.0, 0.0, +1.0,  0.0, 0.0, //    0
-                    size -hsize, 0.0f -hsize,  hsize, 0.0, 1.0, +1.0,  0.0, 0.0, //  / |
-                    size -hsize, 0.0f -hsize, -hsize, 1.0, 1.0, +1.0,  0.0, 0.0, // 2--1 */
-                    //        x,           y,      z,   u,   v,   Nx,  Ny,  Nz, Down
-                    size -hsize, 0.0f -hsize, -hsize, 1.0, 0.0,  0.0, -1.0, 0.0, // 2--0
-                    0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, -1.0, 0.0, // | /
-                    0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 0.0,  0.0, -1.0, 0.0, // 1
-                    size -hsize, 0.0f -hsize, -hsize, 1.0, 0.0,  0.0, -1.0, 0.0, //    0
-                    size -hsize, 0.0f -hsize,  hsize, 1.0, 1.0,  0.0, -1.0, 0.0, //  / |
-                    0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, -1.0, 0.0, // 2--1 */
-                    //        x,           y,      z,   u,   v,   Nx,   Ny,  Nz, Up
-                    size -hsize, 1.0f -hsize, -hsize, 1.0, 0.0,  0.0, +1.0, 0.0, // 1--0
-                    0.0f -hsize, 1.0f -hsize, -hsize, 0.0, 0.0,  0.0, +1.0, 0.0, // | /
-                    0.0f -hsize, 1.0f -hsize,  hsize, 0.0, 1.0,  0.0, +1.0, 0.0, // 2
-                    size -hsize, 1.0f -hsize, -hsize, 1.0, 0.0,  0.0, +1.0, 0.0, //    0
-                    0.0f -hsize, 1.0f -hsize,  hsize, 0.0, 1.0,  0.0, +1.0, 0.0, //  / |
-                    size -hsize, 1.0f -hsize,  hsize, 1.0, 1.0,  0.0, +1.0, 0.0, // 1--2 */            
-                    });
+    return new gdk::VertexData("Quad", gdk::VertexData::Type::Static, gdk::VertexFormat::Pos3uv2, data);
+});
 
-        return new gdk::VertexData("Cube", gdk::VertexData::Type::Static, gdk::VertexFormat::Pos3uv2Norm3, data);
+const jfc::lazy_ptr<gdk::VertexData> VertexData::Cube([]()
+{
+    float size  = 1.;
+    float hsize = size/2.;
+    
+    std::vector<GLfloat> data(
+    {
+        //        x,           y,      z,   u,   v,  Nx,  Ny,    Nz, North
+        size -hsize, size -hsize, -hsize, 0.0, 0.0,  0.0, 0.0, -1.0, // 2--0
+        0.0f -hsize, 0.0f -hsize, -hsize, 1.0, 1.0,  0.0, 0.0, -1.0, // | /
+        0.0f -hsize, size -hsize, -hsize, 1.0, 0.0,  0.0, 0.0, -1.0, // 1
+        size -hsize, size -hsize, -hsize, 0.0, 0.0,  0.0, 0.0, -1.0, //    0
+        size -hsize, 0.0f -hsize, -hsize, 0.0, 1.0,  0.0, 0.0, -1.0, //  / |
+        0.0f -hsize, 0.0f -hsize, -hsize, 1.0, 1.0,  0.0, 0.0, -1.0, // 2--1 */
+        //        x,           y,      z,   u,   v,   Nx,  Ny,   Nz, South
+        size -hsize, size -hsize,  hsize, 1.0, 0.0,  0.0, 0.0, +1.0, // 1--0
+        0.0f -hsize, size -hsize,  hsize, 0.0, 0.0,  0.0, 0.0, +1.0, // | /
+        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, 0.0, +1.0, // 2
+        size -hsize, size -hsize,  hsize, 1.0, 0.0,  0.0, 0.0, +1.0, //    0
+        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, 0.0, +1.0, //  / |
+        size -hsize, 0.0f -hsize,  hsize, 1.0, 1.0,  0.0, 0.0, +1.0, // 1--2 */
+        //        x,           y       z,   u,   v,   Nx,  Ny,  Nz, West
+        0.0f -hsize, size -hsize,  hsize, 1.0, 0.0, -1.0, 0.0, 0.0, // 2--0
+        0.0f -hsize, size -hsize, -hsize, 0.0, 0.0, -1.0, 0.0, 0.0, // | /
+        0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 1.0, -1.0, 0.0, 0.0, // 1
+        0.0f -hsize, size -hsize,  hsize, 1.0, 0.0, -1.0, 0.0, 0.0, //    0
+        0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 1.0, -1.0, 0.0, 0.0, //  / |
+        0.0f -hsize, 0.0f -hsize,  hsize, 1.0, 1.0, -1.0, 0.0, 0.0, // 2--1 */
+        //        x,           y,      z,   u,   v,   Nx,   Ny,  Nz, East
+        size -hsize, size -hsize,  hsize, 0.0, 0.0, +1.0,  0.0, 0.0, // 2--0
+        size -hsize, 0.0f -hsize, -hsize, 1.0, 1.0, +1.0,  0.0, 0.0, // | /
+        size -hsize, size -hsize, -hsize, 1.0, 0.0, +1.0,  0.0, 0.0, // 1
+        size -hsize, size -hsize,  hsize, 0.0, 0.0, +1.0,  0.0, 0.0, //    0
+        size -hsize, 0.0f -hsize,  hsize, 0.0, 1.0, +1.0,  0.0, 0.0, //  / |
+        size -hsize, 0.0f -hsize, -hsize, 1.0, 1.0, +1.0,  0.0, 0.0, // 2--1 */
+        //        x,           y,      z,   u,   v,   Nx,  Ny,  Nz, Down
+        size -hsize, 0.0f -hsize, -hsize, 1.0, 0.0,  0.0, -1.0, 0.0, // 2--0
+        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, -1.0, 0.0, // | /
+        0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 0.0,  0.0, -1.0, 0.0, // 1
+        size -hsize, 0.0f -hsize, -hsize, 1.0, 0.0,  0.0, -1.0, 0.0, //    0
+        size -hsize, 0.0f -hsize,  hsize, 1.0, 1.0,  0.0, -1.0, 0.0, //  / |
+        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, -1.0, 0.0, // 2--1 */
+        //        x,           y,      z,   u,   v,   Nx,   Ny,  Nz, Up
+        size -hsize, 1.0f -hsize, -hsize, 1.0, 0.0,  0.0, +1.0, 0.0, // 1--0
+        0.0f -hsize, 1.0f -hsize, -hsize, 0.0, 0.0,  0.0, +1.0, 0.0, // | /
+        0.0f -hsize, 1.0f -hsize,  hsize, 0.0, 1.0,  0.0, +1.0, 0.0, // 2
+        size -hsize, 1.0f -hsize, -hsize, 1.0, 0.0,  0.0, +1.0, 0.0, //    0
+        0.0f -hsize, 1.0f -hsize,  hsize, 0.0, 1.0,  0.0, +1.0, 0.0, //  / |
+        size -hsize, 1.0f -hsize,  hsize, 1.0, 1.0,  0.0, +1.0, 0.0, // 1--2 */            
     });
+
+    return new gdk::VertexData("Cube", gdk::VertexData::Type::Static, gdk::VertexFormat::Pos3uv2Norm3, data);
+});
 
 std::ostream& gdk::operator<<(std::ostream &s, const VertexData &a)
 {

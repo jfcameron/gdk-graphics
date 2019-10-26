@@ -2,8 +2,9 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 
-#include <jfc/window.h>
+#include <jfc/window_glfw.h>
 
 #include <gdk/camera.h>
 #include <gdk/model.h>
@@ -20,6 +21,8 @@ int main(int argc, char **argv)
     Camera camera;
 
     std::vector<std::shared_ptr<gdk::Model>> models;
+
+    auto cube = std::shared_ptr<VertexData>(VertexData::Cube);
 
     models.push_back(std::make_shared<Model>([&]()
     {
