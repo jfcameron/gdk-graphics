@@ -1,6 +1,5 @@
 // © 2018 Joseph Cameron - All Rights Reserved
 
-//#include <gdk/camera.h>
 #include <jfc/default_ptr.h>
 #include <gdk/glh.h>
 #include <gdk/mat4x4.h>

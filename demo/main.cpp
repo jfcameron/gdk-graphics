@@ -5,7 +5,7 @@
 
 #include <jfc/window.h>
 
-#include <gdk/camera.h>
+#include <gdk/perspective_camera.h>
 #include <gdk/model.h>
 #include <gdk/shaderprogram.h>
 #include <gdk/vertexdata.h>
@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 {
     SimpleGLFWWindow window("name");
 
-    Camera camera;
+    perspective_camera camera;
 
     std::vector<std::shared_ptr<gdk::Model>> models;
 

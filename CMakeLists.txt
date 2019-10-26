@@ -54,6 +54,7 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4uniformcollection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/perspective_camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/shaderprogram.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/textureuniformcollection.cpp

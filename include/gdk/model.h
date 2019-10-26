@@ -31,7 +31,7 @@ namespace gdk
     /// be broken out into a new abstraction. This work would be a good match for the "material" class seen in many engines.
     ///
     /// \todo I want to limit access to the draw function to be used by camera only... conceptually, a model can only be seen ("drawn") by a camera. but this will introduce a friend, prevent reuse of Model outside of this Graphics project, break encaps, make
-    /// Model harder to read (because now you must also read Camera), just bad things.
+    /// Model harder to read (because now you must also read perspective_camera), just bad things.
     /// 1) Is that a bad thing? yes 2) Is hiding draw(...) from the enduser overkill? depends on use-case 3) Conclusions: another way to accomplish this (hiding from user, showing to camera) would be via interfaces. Perhaps camera draw takes a 
     /// collection of drawables, not models.
     /// then for the end-user, perhaps it should be up to the direct user of this project to decide whether or not to hide draw from them, and to accomplish that via their own model interface that stands between user and an instance of this.
