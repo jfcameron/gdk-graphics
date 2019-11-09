@@ -16,7 +16,7 @@ using namespace jfc;
 
 int main(int argc, char **argv)
 {
-    SimpleGLFWWindow window("name");
+    SimpleGLFWWindow window("cool demo");
 
     camera camera;
 
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 
         model.setTexture("_Texture", default_ptr<Texture>(static_cast<std::shared_ptr<Texture>>(Texture::CheckeredTextureOfDeath)));
 
-        model.setModelMatrix(Vector3<float>{0., 0., -10.}, Quaternion<float>{});
+        model.setModelMatrix(Vector3<float>{0., 0., -11.}, Quaternion<float>());
 
         return model;
     }()));
@@ -47,6 +47,8 @@ int main(int argc, char **argv)
     while(!window.shouldClose())
     {
         window.pollEvents();
+       
+        for (auto mdl : models) mdl->setModelMatrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
         
         camera.setViewMatrix({std::sin(blar), 0, -10}, {});
 
