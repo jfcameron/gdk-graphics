@@ -6,9 +6,9 @@
 
 #include <jfc/window_glfw.h>
 
-#include <gdk/perspective_camera.h>
+#include <gdk/camera.h>
 #include <gdk/model.h>
-#include <gdk/shaderprogram.h>
+#include <gdk/shaderprogram.h> 
 #include <gdk/vertexdata.h>
 
 using namespace gdk;
@@ -18,7 +18,9 @@ int main(int argc, char **argv)
 {
     SimpleGLFWWindow window("name");
 
-    perspective_camera camera;
+    camera camera;
+
+    camera.setProjection(90, 0.01, 20, 1);
 
     std::vector<std::shared_ptr<gdk::Model>> models;
 

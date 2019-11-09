@@ -7,7 +7,7 @@
 
 #include "test_include.h"
 
-#include <gdk/perspective_camera.h>
+#include <gdk/camera.h>
 
 using namespace gdk;
 
@@ -17,7 +17,7 @@ TEST_CASE("camera constructors", "[camera]")
 
     SECTION("blarblarblarblar")
     {
-        perspective_camera camera;
+        camera camera;
 
         camera.setViewportSize(0.5, 1.0);
         camera.setViewportPosition(0.5, 0.0);
