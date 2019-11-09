@@ -8,8 +8,6 @@
 
 #include <vector>
 
-/// TODO: support move and copy semantics!
-
 namespace gdk
 {
     class Model;
@@ -28,6 +26,12 @@ namespace gdk
         };                          
 
     private:
+        /// \brief position of the camera viewport within the device viewport
+        graphics_vector2_type m_ViewportPosition = graphics_vector2_type::Zero;
+
+        /// \brief size of camera viewport within the device viewport
+        graphics_vector2_type m_ViewportSize = graphics_vector2_type(1., 1.); 
+        
         /// \brief World position of camera
         graphics_mat4x4_type m_ViewMatrix = graphics_mat4x4_type::Identity; 
 
@@ -40,12 +44,6 @@ namespace gdk
         /// \brief The color to replace all data in the color buffer with 
         /// (if color buffer is to be cleared)
         gdk::Color m_ClearColor = Color::CornflowerBlue;
-
-        /// \brief position of the camera viewport within the device viewport
-        graphics_vector2_type m_ViewportPosition = graphics_vector2_type::Zero;
-
-        /// \brief size of camera viewport within the device viewport
-        graphics_vector2_type m_ViewportSize = graphics_vector2_type(1., 1.); 
 
         //TODO: support render texture
         //RenderTexture m_RenderTexture;
@@ -81,8 +79,21 @@ namespace gdk
 
         /// \brief Draws a list of models to the framebuffer
         void draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels) const;
-        
+
+        /// \brief copy semantics
+        camera(const camera &a) = default;
+        /// \brief copy semantics
+        camera &operator=(const camera &a) = default;
+       
+        /// \brief move semantics
+        camera(camera &&) = default;
+        /// \brief move semantics
+        camera &operator=(camera &&a) = default;
+
+        /// \brief constructs a camera with reasonable default values
         camera();
+
+        ~camera() = default;
     };
 }
 

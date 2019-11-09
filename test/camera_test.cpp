@@ -1,29 +1,63 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
-#include <string>
-
 #include <jfc/catch.hpp>
 #include <jfc/types.h>
 
 #include "test_include.h"
 
 #include <gdk/camera.h>
+#include <gdk/graphics_types.h>
+
+#include <string>
 
 using namespace gdk;
 
-TEST_CASE("camera constructors", "[camera]")
+TEST_CASE("camera", "[camera]")
 {
     initGL();
 
-    SECTION("blarblarblarblar")
+    camera a;
+
+    SECTION("default ctor worked")
     {
-        camera camera;
+        REQUIRE(!jfc::glGetError());
+    }
+        
+    a.setClearColor(Color::Blue);
+    
+    a.setViewportPosition(0.5, 0.0);
+    
+    a.setViewportSize(0.5, 1.0);
 
-        camera.setViewportSize(0.5, 1.0);
-        camera.setViewportPosition(0.5, 0.0);
-        camera.setClearColor(Color::Blue);
+    a.setViewMatrix(graphics_vector3_type(0, 0, 0), graphics_quaternion_type());
 
-        camera.draw({}, {}, {}, {});
+    a.setProjection(90, 0.001, 20, 1);
+
+    SECTION("draw worked")
+    {
+        a.draw(0, 0, graphics_intvector2_type(), {});
+
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("copy semantics")
+    {
+        camera b(a);
+
+        auto c = b;
+
+        c.draw(0, 0, graphics_intvector2_type(), {});
+
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("move semantics")
+    {
+        camera b(std::move(a));
+
+        auto c = b;
+
+        c.draw({}, {}, {}, {});
 
         REQUIRE(!jfc::glGetError());
     }
