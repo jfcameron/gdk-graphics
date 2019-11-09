@@ -41,11 +41,6 @@ void camera::setViewportPosition(const float x, const float y)
     m_ViewportPosition.y = y;
 }
 
-gdk::graphics_vector2_type camera::getViewportPosition() const
-{
-    return m_ViewportPosition;
-}
-
 void camera::setViewportSize(const gdk::graphics_vector2_type &a)
 {
     m_ViewportSize = a;
@@ -57,26 +52,13 @@ void camera::setViewportSize(const float x, const float y)
     m_ViewportSize.y = y;
 }
 
-gdk::graphics_vector2_type camera::getViewportSize() const
-{
-    return m_ViewportSize;
-}
-
 void camera::setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
 {
     m_ViewMatrix.setToIdentity();
+
     m_ViewMatrix.rotate({aRotation.toEuler() * -1});
+
     m_ViewMatrix.translate(aWorldPos * -1);
-}
-
-const gdk::graphics_mat4x4_type &camera::getViewMatrix() const
-{
-    return m_ViewMatrix;
-}
-
-const gdk::graphics_mat4x4_type &camera::getProjectionMatrix() const
-{
-    return m_ProjectionMatrix;
 }
 
 void camera::setClearColor(const gdk::Color &aColor)
@@ -116,7 +98,7 @@ void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const g
         case ClearMode::Nothing: break;
     }
 
-    for (const auto model : aModels) model->draw(aTimeSinceStart, aDeltaTime, m_ViewMatrix, getProjectionMatrix());
+    for (const auto model : aModels) model->draw(aTimeSinceStart, aDeltaTime, m_ViewMatrix, m_ProjectionMatrix);
 }
 
 void camera::setProjection(const float aFieldOfView, 
@@ -126,3 +108,4 @@ void camera::setProjection(const float aFieldOfView,
 {
     m_ProjectionMatrix.setToPerspective(aFieldOfView, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
 }
+
