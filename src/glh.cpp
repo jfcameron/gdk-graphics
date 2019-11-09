@@ -9,12 +9,12 @@
 
 namespace glh
 {
-    void ClearColor(const gdk::Color &aColor)
+    void Clearcolor(const gdk::color &acolor)
     {
-        glClearColor(aColor.r, aColor.g, aColor.b, aColor.a);
+        glClearColor(acolor.r, acolor.g, acolor.b, acolor.a);
     }
 
-    bool EnableVertexAttribute(const std::string_view &aAttributeName, const GLuint aProgramHandle, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfVertexAttributeComponents)
+    bool Enablevertex_attribute(const std::string_view &aAttributeName, const GLuint aProgramHandle, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents)
     {
         GLint attribute = glGetAttribLocation(aProgramHandle, aAttributeName.data());
     
@@ -28,7 +28,7 @@ namespace glh
             aAttributeSize, //Pos size
             GL_FLOAT,       //data type of each member of the format (must be uniform, look at glbindbufferdata, it takes an array or ptr to an array, so no suprise)
             GL_FALSE,
-            sizeof(GLfloat)*aTotalNumberOfVertexAttributeComponents,
+            sizeof(GLfloat)*aTotalNumberOfvertex_attributeComponents,
             reinterpret_cast<void *>(sizeof(GLfloat) * aAttributeOffset));
     
         return true;
@@ -99,14 +99,14 @@ namespace glh
         return true;
     }
 
-    bool BindTextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint aTextureHandle, const int aTextureUnit)
+    bool BindtextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint atextureHandle, const int atextureUnit)
     {
         GLint uniformHandle  = glGetUniformLocation(aShaderHandle, aUniformName.data());
-        int theTextureType = GL_TEXTURE_2D;
+        int thetextureType = GL_TEXTURE_2D;
         
         if (uniformHandle == -1) return false;
         
-        switch (aTextureUnit)
+        switch (atextureUnit)
         {
             case 1: glActiveTexture(GL_TEXTURE1); break;
             case 2: glActiveTexture(GL_TEXTURE2); break;
@@ -119,8 +119,8 @@ namespace glh
             default: glActiveTexture( GL_TEXTURE0); break;
         }
         
-        glBindTexture(theTextureType, aTextureHandle);
-        glUniform1i(uniformHandle, aTextureUnit);
+        glBindTexture(thetextureType, atextureHandle);
+        glUniform1i(uniformHandle, atextureUnit);
         
         return true;
     }
@@ -141,13 +141,13 @@ namespace glh
         return "clear";
     }
 
-    std::string GetProgramInfoLog(const GLuint aShaderProgramHandle)
+    std::string GetProgramInfoLog(const GLuint ashader_programHandle)
     {
         GLint maxLength = 0;
-        glGetProgramiv(aShaderProgramHandle, GL_INFO_LOG_LENGTH, &maxLength);
+        glGetProgramiv(ashader_programHandle, GL_INFO_LOG_LENGTH, &maxLength);
         
         std::vector<GLchar> infoLog(maxLength);
-        glGetProgramInfoLog(aShaderProgramHandle, maxLength, &maxLength, &infoLog[0]);
+        glGetProgramInfoLog(ashader_programHandle, maxLength, &maxLength, &infoLog[0]);
         
         return std::string(infoLog.begin(),infoLog.end());
     }
@@ -159,7 +159,7 @@ namespace glh
 // Created on 17-07-02.
 #include <GL.h>
 //gdk inc
-#include <Color.h>
+#include <color.h>
 #include <Debug/Logger.h>]
 #include <Math/graphics_intvector2_type.h>
 #include <Math/graphics_mat4x4_type.h>
@@ -181,9 +181,9 @@ void glh::Scissor(const gdk::graphics_intvector2_type& aPos, const gdk::graphics
 glScissor(aPos.x, aPos.y, aSize.x, aSize.y);
 }
 
-void glh::ClearColor(const gdk::Color &aColor)
+void glh::Clearcolor(const gdk::color &acolor)
 {
-    glClearColor(aColor.r, aColor.g, aColor.b, aColor.a);
+    glClearColor(acolor.r, acolor.g, acolor.b, acolor.a);
 }
 */
 bool glh::GetError(std::string *aErrorCode)
@@ -273,15 +273,15 @@ void glh::ClearErrors()
     while (glGetError() != GL_NO_ERROR);
 }
 
-bool glh::BindTextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint aTextureHandle, const int aTextureUnit*//*, final GLenum &aTextureType*//*)
+bool glh::BindtextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint atextureHandle, const int atextureUnit*//*, final GLenum &atextureType*//*)
 {
     GLint uniformHandle  = glGetUniformLocation(aShaderHandle, aUniformName.c_str());
-    int theTextureType = GL_TEXTURE_2D;
+    int thetextureType = GL_TEXTURE_2D;
     
     if (uniformHandle == -1)
         return false;
     
-    switch (aTextureUnit)
+    switch (atextureUnit)
     {
         case 1: glActiveTexture(GL_TEXTURE1); break;
         case 2: glActiveTexture(GL_TEXTURE2); break;
@@ -294,8 +294,8 @@ bool glh::BindTextureUniform(const GLuint aShaderHandle, const std::string_view 
         default: glActiveTexture( GL_TEXTURE0); break;
     }
     
-    glBindTexture(theTextureType, aTextureHandle);
-    glUniform1i(uniformHandle, aTextureUnit);
+    glBindTexture(thetextureType, atextureHandle);
+    glUniform1i(uniformHandle, atextureUnit);
     
     return true;
 }

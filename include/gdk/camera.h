@@ -10,9 +10,9 @@
 
 namespace gdk
 {
-    class Model;
+    class model;
 
-    /// \brief Position, orientation and perspective from which Model(s) are drawn
+    /// \brief Position, orientation and perspective from which model(s) are drawn
     class camera
     {
         //friend std::ostream &operator<< (std::ostream &, const perspective_camera &);
@@ -21,7 +21,7 @@ namespace gdk
         enum class ClearMode 
         {
             Nothing,  //!< Do not clear any buffers
-            Color,    //!< Clear the color buffer
+            color,    //!< Clear the color buffer
             DepthOnly //!< Clear the Depth buffer
         };                          
 
@@ -39,18 +39,18 @@ namespace gdk
         graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::Identity; 
 
         /// \brief Determines which buffers in the FBO to clear before drawing
-        ClearMode m_ClearMode = ClearMode::Color;
+        ClearMode m_ClearMode = ClearMode::color;
 
         /// \brief The color to replace all data in the color buffer with 
         /// (if color buffer is to be cleared)
-        gdk::Color m_ClearColor = Color::CornflowerBlue;
+        gdk::color m_Clearcolor = color::CornflowerBlue;
 
         //TODO: support render texture
-        //RenderTexture m_RenderTexture;
+        //Rendertexture m_Rendertexture;
 
     public:
         /// \brief set clear color
-        void setClearColor(const gdk::Color &aColor);
+        void setClearcolor(const gdk::color &acolor);
 
         /// \brief sets the top left position of the viewport within the screen
         void setViewportPosition(const graphics_vector2_type &a);
@@ -78,7 +78,7 @@ namespace gdk
         //void setProject(height, width, depth);
 
         /// \brief Draws a list of models to the framebuffer
-        void draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels) const;
+        void draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::model>> &amodels) const;
 
         /// \brief copy semantics
         camera(const camera &a) = default;

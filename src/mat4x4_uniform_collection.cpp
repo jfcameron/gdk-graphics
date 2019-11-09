@@ -1,7 +1,7 @@
 // © 2018 Joseph Cameron - All Rights Reserved
 
 #include <gdk/glh.h>
-#include <gdk/mat4x4uniformcollection.h>
+#include <gdk/mat4x4_uniform_collection.h>
 #include <gdk/nlohmann_json_util.h>
 #include <gdk/opengl.h>
 
@@ -9,11 +9,11 @@
 
 #include <iostream>
 
-static constexpr char TAG[] = "Mat4x4UniformCollection";
+static constexpr char TAG[] = "mat4x4_uniform_collection";
 
 namespace gdk
 {
-    std::ostream &operator<<(std::ostream &s, const Mat4x4UniformCollection &a)
+    std::ostream &operator<<(std::ostream &s, const mat4x4_uniform_collection &a)
     {
         nlohmann::json root = 
         {
@@ -28,12 +28,12 @@ namespace gdk
         return s << root.dump();
     }
 
-    void Mat4x4UniformCollection::bind(const GLuint aProgramHandle) const
+    void mat4x4_uniform_collection::bind(const GLuint aProgramHandle) const
     {
         for (auto &pair : m_Map) glh::BindMatrix4x4(aProgramHandle, pair.first, pair.second);
     }
 
-    void Mat4x4UniformCollection::unbind(const GLuint aProgramHandle) const
+    void mat4x4_uniform_collection::unbind(const GLuint aProgramHandle) const
     {
         for (auto &pair : m_Map) glh::BindMatrix4x4(aProgramHandle, pair.first, graphics_mat4x4_type::Identity);    
     }

@@ -14,9 +14,9 @@ namespace gdk
     /// \brief Specifies drawing behaviours at [at least 2] of the programmable stages in the OpenGL programmable pipeline.
     ///
     /// \detailed none.
-    class ShaderProgram final
+    class shader_program final
     {
-        friend std::ostream &operator<< (std::ostream &, const ShaderProgram &);
+        friend std::ostream &operator<< (std::ostream &, const shader_program &);
         
         std::string m_Name;      //!< Human friendly identifier        
         GLuint m_ProgramHandle = {0}; //!< handle to the program in the context.
@@ -29,20 +29,20 @@ namespace gdk
         std::string getName() const;
         GLuint getHandle() const;
                 
-        ShaderProgram &operator=(const ShaderProgram &) = delete;
-        ShaderProgram &operator=(ShaderProgram &&) = delete;
+        shader_program &operator=(const shader_program &) = delete;
+        shader_program &operator=(shader_program &&) = delete;
                 
-        ShaderProgram() = delete;
-        ShaderProgram(const std::string &aName, std::string aVertexSource, std::string aFragmentSource);
-        ShaderProgram(const ShaderProgram &) = delete;
-        ShaderProgram(ShaderProgram &&);
-        ~ShaderProgram();
+        shader_program() = delete;
+        shader_program(const std::string &aName, std::string aVertexSource, std::string aFragmentSource);
+        shader_program(const shader_program &) = delete;
+        shader_program(shader_program &&);
+        ~shader_program();
         
-        static const jfc::lazy_ptr<gdk::ShaderProgram> PinkShaderOfDeath; //!< shader for indicating some kind of failure
-        static const jfc::lazy_ptr<gdk::ShaderProgram> AlphaCutOff;       //!< shader for drawing unlit surfaces with alpha channel based transparency
+        static const jfc::lazy_ptr<gdk::shader_program> PinkShaderOfDeath; //!< shader for indicating some kind of failure
+        static const jfc::lazy_ptr<gdk::shader_program> AlphaCutOff;       //!< shader for drawing unlit surfaces with alpha channel based transparency
     };
 
-    std::ostream &operator<< (std::ostream &, const ShaderProgram &);
+    std::ostream &operator<< (std::ostream &, const shader_program &);
 }
 
 #endif

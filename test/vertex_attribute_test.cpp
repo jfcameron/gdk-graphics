@@ -7,16 +7,16 @@
 
 #include "test_include.h"
 
-#include <gdk/vertexattribute.h>
+#include <gdk/vertex_attribute.h>
 
 using namespace gdk;
 
 TEST_CASE("vertexattribute constructors and assignment operators", "[vertexattribute]")
 {
     constexpr auto NAME = "uv";
-    constexpr decltype(VertexAttribute::size) SIZE(0);
+    constexpr decltype(vertex_attribute::size) SIZE(0);
 
-    const VertexAttribute a(NAME, SIZE);
+    const vertex_attribute a(NAME, SIZE);
 
     SECTION("standard ctor")
     {
@@ -26,7 +26,7 @@ TEST_CASE("vertexattribute constructors and assignment operators", "[vertexattri
 
     SECTION("copy ctor")
     {
-        VertexAttribute b(a);
+        vertex_attribute b(a);
         
         REQUIRE(b.name == NAME);
         REQUIRE(b.size == SIZE);
@@ -34,7 +34,7 @@ TEST_CASE("vertexattribute constructors and assignment operators", "[vertexattri
     
     SECTION("move ctor")
     {
-        VertexAttribute b(a);
+        vertex_attribute b(a);
         
         REQUIRE(b.name == NAME);
         REQUIRE(b.size == SIZE);
@@ -42,7 +42,7 @@ TEST_CASE("vertexattribute constructors and assignment operators", "[vertexattri
     
     SECTION("copy operator")
     {
-        VertexAttribute b = a;
+        vertex_attribute b = a;
         
         REQUIRE(b.name == NAME);
         REQUIRE(b.size == SIZE);
@@ -50,9 +50,9 @@ TEST_CASE("vertexattribute constructors and assignment operators", "[vertexattri
     
     SECTION("move operator")
     {
-        VertexAttribute b(a);
+        vertex_attribute b(a);
 
-        VertexAttribute c = std::move(b);
+        vertex_attribute c = std::move(b);
         
         REQUIRE(c.name == NAME);
         REQUIRE(c.size == SIZE);

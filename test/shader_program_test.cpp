@@ -7,7 +7,7 @@
 
 #include "test_include.h"
 
-#include <gdk/shaderprogram.h>
+#include <gdk/shader_program.h>
 
 using namespace gdk;
 
@@ -17,7 +17,7 @@ TEST_CASE("shaderprogram constructors", "[shaderprogram]")
 
     SECTION("AlphaCutOff shader initializes correctly")
     {
-        auto pShader = static_cast<std::shared_ptr<ShaderProgram>>(ShaderProgram::AlphaCutOff);
+        auto pShader = static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff);
 
         //TODO: require no gl errors
 

@@ -8,34 +8,34 @@
 namespace gdk
 {
     /// \brief Represents a 4 channel color: {Red, Green, Blue, Alpha}.
-    struct Color final
+    struct color final
     {
         using channel_type = float;
 
         channel_type r = 0, g = 0, b = 0, a = 1;
                         
-        bool operator==(const Color &aOther) const;
+        bool operator==(const color &aOther) const;
 
-        Color& operator=(const Color &aColor) = default;
-        Color& operator=(Color &&aColor) = default;
+        color& operator=(const color &acolor) = default;
+        color& operator=(color &&acolor) = default;
 
-        Color();
-        Color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA = 1);
-        Color(const Color &) = default;
-        Color(Color &&) = default;
-        ~Color() = default;
+        color();
+        color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA = 1);
+        color(const color &) = default;
+        color(color &&) = default;
+        ~color() = default;
 
-        static const Color Black;
-        static const Color White;
-        static const Color Red;
-        static const Color Green;
-        static const Color DarkGreen;
-        static const Color Blue;
-        static const Color DeathlyPink;
-        static const Color CornflowerBlue;
+        static const color Black;
+        static const color White;
+        static const color Red;
+        static const color Green;
+        static const color DarkGreen;
+        static const color Blue;
+        static const color DeathlyPink;
+        static const color CornflowerBlue;
     };
         
-    std::ostream &operator<<(std::ostream &stream, const Color &aColor);
+    std::ostream &operator<<(std::ostream &stream, const color &acolor);
 }
 
 #endif

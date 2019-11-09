@@ -14,30 +14,30 @@
 
 namespace gdk
 {
-    struct Color;
+    struct color;
 }
 
 namespace glh
 {
     // gdk-type friendly conveniences
-    void ClearColor(const gdk::Color &aColor);
+    void Clearcolor(const gdk::color &acolor);
     void Viewport(const gdk::graphics_intvector2_type &aPos, const gdk::graphics_intvector2_type &aSize);
     void Scissor(const gdk::graphics_intvector2_type &aPos, const gdk::graphics_intvector2_type &aSize);
     
     // Error detection & logging
     std::string GetShaderInfoLog(const GLuint aShaderStageHandle);
-    std::string GetProgramInfoLog(const GLuint aShaderProgramHandle);
+    std::string GetProgramInfoLog(const GLuint ashader_programHandle);
     bool GetError(std::string *aErrorCode = nullptr);
 /*    //std::vector<std::string> GetErrors();
     //void LogErrors(const bool &aDoNotLogIfNoErrors = false);
     void ClearErrors();*/
 
     //! Vertex binding
-    bool EnableVertexAttribute(const std::string_view &aAttributeName, const GLuint aProgramHandle, 
-        const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfVertexAttributeComponents);
+    bool Enablevertex_attribute(const std::string_view &aAttributeName, const GLuint aProgramHandle, 
+        const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents);
     
-    bool BindTextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint aTextureHandle,
-        const int aTextureUnit);//, final GLenum &aTextureType);
+    bool BindtextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint atextureHandle,
+        const int atextureUnit);//, final GLenum &atextureType);
 
     bool Bind1FloatUniform (const GLuint aShaderHandle, const std::string_view &aUniformName, const float aScalar);
     bool Bind2FloatUniform (const GLuint aShaderHandle, const std::string_view &aUniformName, 

@@ -18,7 +18,7 @@ namespace gdk
     ///
     /// \todo Cache uniform locations. currently uniform locations are resolved at every bind
     /// \todo replace string with string. no need for a deep copy
-    template<typename uniform_t> class UniformCollection
+    template<typename uniform_t> class uniform_collection
     {
     public:
         using uniform_type = uniform_t;
@@ -55,13 +55,13 @@ namespace gdk
         //! zeroes uniform data in currently used program
         virtual void unbind(const GLuint aProgramHandle) const = 0;
             
-        UniformCollection &operator=(const UniformCollection &) = delete;
-        UniformCollection &operator=(UniformCollection &&) = delete;
+        uniform_collection &operator=(const uniform_collection &) = delete;
+        uniform_collection &operator=(uniform_collection &&) = delete;
       
-        UniformCollection() = default;
-        UniformCollection(const UniformCollection &) = default;
-        UniformCollection(UniformCollection &&) = default;
-        virtual ~UniformCollection() = default;
+        uniform_collection() = default;
+        uniform_collection(const uniform_collection &) = default;
+        uniform_collection(uniform_collection &&) = default;
+        virtual ~uniform_collection() = default;
     };
 }
 

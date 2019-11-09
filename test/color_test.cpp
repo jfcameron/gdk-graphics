@@ -13,9 +13,9 @@ TEST_CASE("color constructors", "[color]")
 {
     SECTION("something")
     {
-        Color color;
+        color color;
 
-        REQUIRE(color == Color::Black);
+        REQUIRE(color == color::Black);
     }
 }
 

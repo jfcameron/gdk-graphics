@@ -2,7 +2,7 @@
 
 #include <gdk/glh.h>
 #include <gdk/opengl.h>
-#include <gdk/textureuniformcollection.h>
+#include <gdk/texture_uniform_collection.h>
 #include <gdk/nlohmann_json_util.h>
 
 #include <nlohmann/json.hpp>
@@ -13,7 +13,7 @@ using namespace gdk;
 
 constexpr auto TAG = "textureuniform";
 
-std::ostream& gdk::operator<<(std::ostream& s, const TextureUniformCollection& a)
+std::ostream& gdk::operator<<(std::ostream& s, const texture_uniform_collection& a)
 {
     nlohmann::json root = 
     {
@@ -28,7 +28,7 @@ std::ostream& gdk::operator<<(std::ostream& s, const TextureUniformCollection& a
     return s << root.dump();
 }
 
-void TextureUniformCollection::bind(const GLuint aProgramHandle) const
+void texture_uniform_collection::bind(const GLuint aProgramHandle) const
 {
     int i = 0;
     for (auto &pair : m_Map)
@@ -36,14 +36,14 @@ void TextureUniformCollection::bind(const GLuint aProgramHandle) const
         //gdk::log(TAG, "start a bind");
 
         auto texture = pair.second.lock();
-        glh::BindTextureUniform(aProgramHandle, pair.first, texture->getHandle(), i++);
+        glh::BindtextureUniform(aProgramHandle, pair.first, texture->getHandle(), i++);
 
         //gdk::log(TAG, "end a bind");
     }
 }
 
-void TextureUniformCollection::unbind(const GLuint aProgramHandle) const
+void texture_uniform_collection::unbind(const GLuint aProgramHandle) const
 {
     int i = 0;    
-    for (auto &pair : m_Map) glh::BindTextureUniform(aProgramHandle, pair.first, 0, i++);
+    for (auto &pair : m_Map) glh::BindtextureUniform(aProgramHandle, pair.first, 0, i++);
 }

@@ -6,8 +6,8 @@
 #include <gdk/model.h>
 #include <gdk/nlohmann_json_util.h>
 #include <gdk/opengl.h>
-#include <gdk/shaderprogram.h>
-#include <gdk/vertexdata.h>
+#include <gdk/shader_program.h>
+#include <gdk/vertex_data.h>
 
 #include <nlohmann/json.hpp>
 
@@ -15,9 +15,9 @@
 
 using namespace gdk;
 
-static constexpr char TAG[] = "Model";
+static constexpr char TAG[] = "model";
 
-std::ostream& gdk::operator<<(std::ostream& s, const Model& a)
+std::ostream& gdk::operator<<(std::ostream& s, const model& a)
 {
     return s << nlohmann::json
     {
@@ -27,10 +27,10 @@ std::ostream& gdk::operator<<(std::ostream& s, const Model& a)
         },
         
         {"m_Name", a.m_Name},
-        /*{"m_ModelMatrix", jfc::insertion_operator_to_nlohmann_json_object(a.m_ModelMatrix)},
-        {"m_VertexData", jfc::insertion_operator_to_nlohmann_json_object(a.m_VertexData.lock())},
-        {"m_ShaderProgram", jfc::insertion_operator_to_nlohmann_json_object(a.m_ShaderProgram.lock())},
-        {"m_Textures", jfc::insertion_operator_to_nlohmann_json_object(a.m_Textures)},
+        /*{"m_modelMatrix", jfc::insertion_operator_to_nlohmann_json_object(a.m_modelMatrix)},
+        {"m_vertex_data", jfc::insertion_operator_to_nlohmann_json_object(a.m_vertex_data.lock())},
+        {"m_shader_program", jfc::insertion_operator_to_nlohmann_json_object(a.m_shader_program.lock())},
+        {"m_textures", jfc::insertion_operator_to_nlohmann_json_object(a.m_textures)},
         {"m_Floats", jfc::insertion_operator_to_nlohmann_json_object(a.m_Floats)},
         {"m_Vector2Uniforms", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector2Uniforms)},
         {"m_Vector3Uniforms", jfc::insertion_operator_to_nlohmann_json_object(a.m_Vector3Uniforms)},
@@ -39,28 +39,28 @@ std::ostream& gdk::operator<<(std::ostream& s, const Model& a)
     .dump();
 }
 
-Model::Model(const std::string &aName, const jfc::default_ptr<VertexData> &aVertexData, const jfc::default_ptr<ShaderProgram> &aShaderProgram)
+model::model(const std::string &aName, const jfc::default_ptr<vertex_data> &avertex_data, const jfc::default_ptr<shader_program> &ashader_program)
 : m_Name(aName)
-, m_VertexData(aVertexData)
-, m_ShaderProgram(aShaderProgram)
+, m_vertex_data(avertex_data)
+, m_shader_program(ashader_program)
 {}
 
-Model::Model()
-    : Model("",
-            jfc::default_ptr<gdk::VertexData>(static_cast<std::shared_ptr<gdk::VertexData>>(VertexData::Quad)),
-            jfc::default_ptr<gdk::ShaderProgram>(static_cast<std::shared_ptr<gdk::ShaderProgram>>(ShaderProgram::AlphaCutOff)))
+model::model()
+    : model("",
+            jfc::default_ptr<gdk::vertex_data>(static_cast<std::shared_ptr<gdk::vertex_data>>(vertex_data::Quad)),
+            jfc::default_ptr<gdk::shader_program>(static_cast<std::shared_ptr<gdk::shader_program>>(shader_program::AlphaCutOff)))
 {}
 
-void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix)
+void model::draw(const double aTimeSinceStart, const double aDeltaTime, const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix)
 {
-    if (const auto pShader = m_ShaderProgram.lock()) //This function is not "try_draw" it is "draw". logical contract between user and implementor cannot be complete in the null case. except if null.
+    if (const auto pShader = m_shader_program.lock()) //This function is not "try_draw" it is "draw". logical contract between user and implementor cannot be complete in the null case. except if null.
     {
-        if (const auto pVertexData = m_VertexData.lock())
+        if (const auto pvertex_data = m_vertex_data.lock())
         {
             const GLuint programHandle = pShader->useProgram();
     
             //bind this model's uniforms
-            m_Textures.bind(programHandle);
+            m_textures.bind(programHandle);
             m_Floats.bind(programHandle);
             m_Vector2Uniforms.bind(programHandle);
             m_Vector3Uniforms.bind(programHandle);
@@ -73,21 +73,21 @@ void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const gr
         
             const graphics_mat4x4_type p = aProjectionMatrix;
             const graphics_mat4x4_type v = aViewMatrix;
-            const graphics_mat4x4_type m = getModelMatrix();
+            const graphics_mat4x4_type m = getmodelMatrix();
         
             const auto mvp = p * v * m;
         
             glh::Bind1FloatUniform(programHandle, "_DeltaTime",  deltaTime);
             glh::Bind1FloatUniform(programHandle, "_Time",       time     );
-            glh::BindMatrix4x4(programHandle,     "_Model",      m        );
+            glh::BindMatrix4x4(programHandle,     "_model",      m        );
             glh::BindMatrix4x4(programHandle,     "_View",       v        );
             glh::BindMatrix4x4(programHandle,     "_Projection", p        );
             glh::BindMatrix4x4(programHandle,     "_MVP",        mvp      );
 
-            pVertexData->draw(programHandle);
+            pvertex_data->draw(programHandle);
                 
             //unbind this model's uniforms
-            m_Textures.unbind(programHandle);
+            m_textures.unbind(programHandle);
             m_Floats.unbind(programHandle);
             m_Vector2Uniforms.unbind(programHandle);
             m_Vector3Uniforms.unbind(programHandle);
@@ -98,50 +98,50 @@ void Model::draw(const double aTimeSinceStart, const double aDeltaTime, const gr
 }
 
 // Accessors
-void Model::setTexture(const std::string &aUniformName, const jfc::default_ptr<Texture> &aTexture)
+void model::set_texture(const std::string &aUniformName, const jfc::default_ptr<texture> &atexture)
 {
-    m_Textures.insert(aUniformName, aTexture);
+    m_textures.insert(aUniformName, atexture);
 }
 
-void Model::setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat)
+void model::setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat)
 {
     m_Floats.insert(aUniformName, aFloat);
 }
 
-void Model::setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type)
+void model::setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type)
 {
     m_Vector2Uniforms.insert(aUniformName, agraphics_vector2_type);
 }
 
-void Model::setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type)
+void model::setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type)
 {
     m_Vector3Uniforms.insert(aUniformName, agraphics_vector3_type);
 }
 
-void Model::setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type)
+void model::setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type)
 {
     m_Vector4Uniforms.insert(aUniformName, agraphics_vector4_type);
 }
 
-void Model::setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type )
+void model::setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type )
 {
     m_Mat4x4Uniforms.insert(aUniformName, agraphics_mat4x4_type);
 }
 
-const graphics_mat4x4_type& Model::getModelMatrix() const
+const graphics_mat4x4_type& model::getmodelMatrix() const
 {
-    return m_ModelMatrix;
+    return m_modelMatrix;
 }
 
-void Model::setModelMatrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale)
+void model::set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale)
 {
-    m_ModelMatrix.setToIdentity();
-    m_ModelMatrix.translate(aWorldPos);
-    m_ModelMatrix.rotate(aRotation);
-    m_ModelMatrix.scale(aScale);
+    m_modelMatrix.setToIdentity();
+    m_modelMatrix.translate(aWorldPos);
+    m_modelMatrix.rotate(aRotation);
+    m_modelMatrix.scale(aScale);
 }
 
-void Model::setVertexData(const jfc::default_ptr<VertexData> &a)
+void model::setvertex_data(const jfc::default_ptr<vertex_data> &a)
 {
-    m_VertexData = a;
+    m_vertex_data = a;
 }

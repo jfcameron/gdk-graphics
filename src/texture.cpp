@@ -14,9 +14,9 @@
 
 using namespace gdk;
 
-static constexpr char TAG[] = "Texture";
+static constexpr char TAG[] = "texture";
 
-const jfc::lazy_ptr<gdk::Texture> Texture::CheckeredTextureOfDeath([]()
+const jfc::lazy_ptr<gdk::texture> texture::CheckeredTextureOfDeath([]()
 {
     std::vector<GLubyte> textureData(
     {
@@ -34,10 +34,10 @@ const jfc::lazy_ptr<gdk::Texture> Texture::CheckeredTextureOfDeath([]()
         0x60, 0x82
     });
     
-    return new gdk::Texture("CheckerboardOfDeath", textureData);
+    return new gdk::texture("CheckerboardOfDeath", textureData);
 });
 
-std::ostream &gdk::operator<<(std::ostream &s, const Texture &a)
+std::ostream &gdk::operator<<(std::ostream &s, const texture &a)
 {
     return s << nlohmann::json
     {
@@ -52,14 +52,14 @@ std::ostream &gdk::operator<<(std::ostream &s, const Texture &a)
     .dump();
 }
 
-Texture::Texture(const std::string &aName, const std::vector<GLubyte> &aTextureData)
+texture::texture(const std::string &aName, const std::vector<GLubyte> &atextureData)
     : m_Name(aName)
 {
     //decode the png rgba32 data
     int width, height, components;
-    if (GLubyte *const decodedData = stbi_load_from_memory(&aTextureData[0], static_cast<int>(aTextureData.size()), &width, &height, &components, STBI_rgb_alpha)) //is STBI_default preferred?
+    if (GLubyte *const decodedData = stbi_load_from_memory(&atextureData[0], static_cast<int>(atextureData.size()), &width, &height, &components, STBI_rgb_alpha)) //is STBI_default preferred?
     {
-        //gdk::log(TAG, "CREATED: ", *this, " USING: ", "(name: ", aName, ", aTextureData.size:", aTextureData.size(), ")");
+        //gdk::log(TAG, "CREATED: ", *this, " USING: ", "(name: ", aName, ", atextureData.size:", atextureData.size(), ")");
         
         //Copy the texture data to video memory
         glGenTextures(1, &m_Handle);
@@ -77,7 +77,7 @@ Texture::Texture(const std::string &aName, const std::vector<GLubyte> &aTextureD
     else throw std::runtime_error(std::string(TAG).append("Could not decode RGBA32 data. Name: ").append(aName));
 }
 
-Texture::Texture(Texture &&other)
+texture::texture(texture &&other)
 {
     m_Name   = std::move(other.m_Name);
     m_Handle = std::move(other.m_Handle);
@@ -85,17 +85,17 @@ Texture::Texture(Texture &&other)
     other.m_Handle = 0;
 }
 
-Texture::~Texture()
+texture::~texture()
 {
     if (m_Handle > 0) glDeleteTextures(1, &m_Handle);
 }
 
-std::string Texture::getName()const
+std::string texture::getName()const
 {
     return m_Name;
 }
 
-GLuint Texture::getHandle()const
+GLuint texture::getHandle()const
 {
     return m_Handle;
 }

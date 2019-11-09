@@ -8,7 +8,7 @@
 #include "test_include.h"
 
 #include <gdk/texture.h>
-#include <gdk/shaderprogram.h>
+#include <gdk/shader_program.h>
 
 using namespace gdk;
 
@@ -16,13 +16,13 @@ TEST_CASE("texture constructors", "[texture]")
 {
     initGL();
 
-    auto blar = std::shared_ptr<ShaderProgram>(ShaderProgram::AlphaCutOff);
+    auto blar = std::shared_ptr<shader_program>(shader_program::AlphaCutOff);
 
-    SECTION("Texture texture texture")
+    SECTION("texture texture texture")
     {
-        auto pTexture = static_cast<std::shared_ptr<Texture>>(Texture::CheckeredTextureOfDeath);
+        auto ptexture = static_cast<std::shared_ptr<texture>>(texture::CheckeredTextureOfDeath);
 
-        REQUIRE(pTexture->getName() == "CheckerboardOfDeath");
+        REQUIRE(ptexture->getName() == "CheckerboardOfDeath");
     }
 }
 

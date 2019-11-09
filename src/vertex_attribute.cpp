@@ -1,7 +1,7 @@
 // © 2018 Joseph Cameron - All Rights Reserved
 
 #include <gdk/nlohmann_json_util.h>
-#include <gdk/vertexattribute.h>
+#include <gdk/vertex_attribute.h>
 
 #include <nlohmann/json.hpp>
 
@@ -9,9 +9,9 @@
 
 using namespace gdk;
 
-static constexpr char TAG[] = "VertexAttribute";
+static constexpr char TAG[] = "vertex_attribute";
 
-std::ostream &gdk::operator<<(std::ostream &s, const VertexAttribute &a)
+std::ostream &gdk::operator<<(std::ostream &s, const vertex_attribute &a)
 {
     return s << nlohmann::json
     {
@@ -26,7 +26,7 @@ std::ostream &gdk::operator<<(std::ostream &s, const VertexAttribute &a)
     .dump();
 }
 
-VertexAttribute::VertexAttribute(const std::string &aName, const unsigned short &aSize)
+vertex_attribute::vertex_attribute(const std::string &aName, const unsigned short &aSize)
 : name(aName)
 , size(aSize)
 {}

@@ -12,12 +12,12 @@
 
 namespace gdk
 {
-    /// \brief Texture represents an image. RGBA32, 2D.
+    /// \brief texture represents an image. RGBA32, 2D.
     ///
     /// \todo Either throw on non power 2 textures OR support them (by padding or cropping)
-    class Texture final
+    class texture final
     {
-        friend std::ostream &operator <<(std::ostream &, const Texture &);
+        friend std::ostream &operator <<(std::ostream &, const texture &);
         
         std::string m_Name; //!< Human friendly identifier
         GLuint m_Handle = {0};   //!< handle to the texture in the context
@@ -33,19 +33,19 @@ namespace gdk
         std::string getName() const;
         GLuint getHandle() const;
             
-        Texture &operator =(const Texture &) = delete;
-        Texture &operator =(Texture &&) = delete;
+        texture &operator =(const texture &) = delete;
+        texture &operator =(texture &&) = delete;
         
-        Texture(const std::string &aName, const std::vector<GLubyte> &aRGBA32PNGTextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
-        Texture() = delete;
-        Texture(const Texture &) = delete;
-        Texture(Texture &&);
-        ~Texture();
+        texture(const std::string &aName, const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
+        texture() = delete;
+        texture(const texture &) = delete;
+        texture(texture &&);
+        ~texture();
 
-        static const jfc::lazy_ptr<gdk::Texture> CheckeredTextureOfDeath; //!< texture for indicating texture related failure
+        static const jfc::lazy_ptr<gdk::texture> CheckeredTextureOfDeath; //!< texture for indicating texture related failure
     };
 
-    std::ostream &operator<< (std::ostream &, const Texture &);
+    std::ostream &operator<< (std::ostream &, const texture &);
 }
 
 #endif

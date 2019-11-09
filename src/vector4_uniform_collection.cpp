@@ -3,8 +3,8 @@
 #include <gdk/glh.h>
 #include <gdk/nlohmann_json_util.h>
 #include <gdk/opengl.h>
-#include <gdk/vector2.h>
-#include <gdk/vector2uniformcollection.h>
+#include <gdk/vector4.h>
+#include <gdk/vector4_uniform_collection.h>
 
 #include <nlohmann/json.hpp>
 
@@ -12,9 +12,9 @@
 
 using namespace gdk;
 
-static constexpr char TAG[] = "Vector2UniformCollection";
+static constexpr char TAG[] = "vector4_uniform_collection";
 
-std::ostream &gdk::operator<<(std::ostream &s, const Vector2UniformCollection &a)
+std::ostream &gdk::operator<<(std::ostream &s, const vector4_uniform_collection &a)
 {
     nlohmann::json root = 
     {
@@ -29,12 +29,12 @@ std::ostream &gdk::operator<<(std::ostream &s, const Vector2UniformCollection &a
     return s << root.dump();
 }
 
-void Vector2UniformCollection::bind(const GLuint aProgramHandle) const
+void vector4_uniform_collection::bind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind2FloatUniform(aProgramHandle, pair.first, *pair.second.get());
+    for (auto &pair : m_Map) glh::Bind4FloatUniform(aProgramHandle, pair.first, *pair.second.get());
 }
 
-void Vector2UniformCollection::unbind(const GLuint aProgramHandle) const
+void vector4_uniform_collection::unbind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind2FloatUniform(aProgramHandle, pair.first, graphics_vector2_type::Zero);
+    for (auto &pair : m_Map) glh::Bind4FloatUniform(aProgramHandle, pair.first, graphics_vector4_type::Zero);
 }

@@ -4,7 +4,7 @@
 #define GDK_GFX_VERTEXFORMAT_H
 
 #include <gdk/opengl.h>
-#include <gdk/vertexattribute.h>
+#include <gdk/vertex_attribute.h>
 
 #include <iosfwd>
 #include <map>
@@ -24,35 +24,35 @@ namespace gdk
     /// 8..10 Tangent, then repeat (11-13 goes to Position etc...). Attributes, within the context of the graphics pipeline
     /// represents instanced data. In the context of the Vertex Shader stage, you will be able to access a set of attributes,
     /// representing a single full vertex.
-    class VertexFormat final
+    class vertex_format final
     {
-        friend std::ostream &operator<<(std::ostream &, const VertexFormat &);
+        friend std::ostream &operator<<(std::ostream &, const vertex_format &);
     
-        std::vector<VertexAttribute> m_Format = {}; //!< name and # of floats of each attribute in the format
+        std::vector<vertex_attribute> m_Format = {}; //!< name and # of floats of each attribute in the format
         int m_SumOfAttributeComponents = {0};       //!< total number of floats in the entire format
             
     public:
         //! prepares gl context to draw vertex data formatted according to this vertex format
-        void enableAttributes(const GLuint aShaderProgramHandle) const;
+        void enableAttributes(const GLuint ashader_programHandle) const;
 
         //!
         int getSumOfAttributeComponents() const;
             
-        VertexFormat& operator=(const VertexFormat &) = default;
-        VertexFormat& operator=(VertexFormat &&) = default;
+        vertex_format& operator=(const vertex_format &) = default;
+        vertex_format& operator=(vertex_format &&) = default;
       
-        VertexFormat(const std::vector<VertexAttribute> &aAttributes);
-        VertexFormat() = delete;
-        VertexFormat(const VertexFormat &) = default;
-        VertexFormat(VertexFormat &&) = default;
-        ~VertexFormat() = default;
+        vertex_format(const std::vector<vertex_attribute> &aAttributes);
+        vertex_format() = delete;
+        vertex_format(const vertex_format &) = default;
+        vertex_format(vertex_format &&) = default;
+        ~vertex_format() = default;
             
-        static const VertexFormat Pos3uv2Norm3;
-        static const VertexFormat Pos3uv2;
-        static const VertexFormat Pos3;
+        static const vertex_format Pos3uv2Norm3;
+        static const vertex_format Pos3uv2;
+        static const vertex_format Pos3;
     };
 
-    std::ostream &operator<< (std::ostream &, const VertexFormat &);
+    std::ostream &operator<< (std::ostream &, const vertex_format &);
 }
 
 #endif

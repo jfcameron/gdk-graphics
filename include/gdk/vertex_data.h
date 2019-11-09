@@ -3,7 +3,7 @@
 #ifndef GDK_GFX_MESH_H
 #define GDK_GFX_MESH_H
 
-#include <gdk/vertexformat.h>
+#include <gdk/vertex_format.h>
 #include <jfc/lazy_ptr.h>
 
 #include <iosfwd>
@@ -12,9 +12,9 @@
 namespace gdk
 {
     /// \brief Vertex data representing a 3D graphical object
-    class VertexData final
+    class vertex_data final
     {
-        friend std::ostream &operator<< (std::ostream &, const VertexData &);
+        friend std::ostream &operator<< (std::ostream &, const vertex_data &);
             
     public:
         
@@ -37,7 +37,7 @@ namespace gdk
         GLuint m_VertexBufferHandle = {0}; //!< Handle to the vertex buffer in the context
         GLsizei m_VertexCount =       {0}; //!< total number of vertexes
 
-        VertexFormat m_VertexFormat = VertexFormat::Pos3uv2; //!< Format of the vertex data
+        vertex_format m_vertex_format = vertex_format::Pos3uv2; //!< Format of the vertex data
         
         PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; //!< The primitive type to be generated using the vertex data
         
@@ -46,29 +46,29 @@ namespace gdk
         GLuint getHandle() const;
 
         //! Invokes the pipline on this vertex data
-        void draw(const GLuint aShaderProgramHandle) const;
+        void draw(const GLuint ashader_programHandle) const;
 
         //! replace current data in the vbo and ibo with new data
-        void updateVertexData(const std::vector<GLfloat> &aNewVertexData, const VertexFormat &aNewVertexFormat,
-                              const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), const VertexData::Type &aNewType = Type::Dynamic);
+        void updatevertex_data(const std::vector<GLfloat> &aNewvertex_data, const vertex_format &aNewvertex_format,
+                              const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), const vertex_data::Type &aNewType = Type::Dynamic);
             
-        VertexData &operator=(const VertexData &other) = default;
+        vertex_data &operator=(const vertex_data &other) = default;
             
-        VertexData &operator=(VertexData &&) = delete;
+        vertex_data &operator=(vertex_data &&) = delete;
       
-        VertexData(const std::string &aName, const VertexData::Type &aType, const VertexFormat &aVertexFormat, const std::vector<GLfloat> &aVertexData,
+        vertex_data(const std::string &aName, const vertex_data::Type &aType, const vertex_format &avertex_format, const std::vector<GLfloat> &avertex_data,
                    const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
         
-        VertexData() = delete;
-        VertexData(const VertexData &) = delete;
-        VertexData(VertexData &&);
-        ~VertexData();
+        vertex_data() = delete;
+        vertex_data(const vertex_data &) = delete;
+        vertex_data(vertex_data &&);
+        ~vertex_data();
 
-        static const jfc::lazy_ptr<gdk::VertexData> Quad; //!< a quad with format pos3uv2
-        static const jfc::lazy_ptr<gdk::VertexData> Cube; //!< a cube with format ps3uv2norm3
+        static const jfc::lazy_ptr<gdk::vertex_data> Quad; //!< a quad with format pos3uv2
+        static const jfc::lazy_ptr<gdk::vertex_data> Cube; //!< a cube with format ps3uv2norm3
     };
 
-    std::ostream &operator<< (std::ostream &, const VertexData &);
+    std::ostream &operator<< (std::ostream &, const vertex_data &);
 }
 
 #endif

@@ -8,8 +8,8 @@
 
 #include <gdk/camera.h>
 #include <gdk/model.h>
-#include <gdk/shaderprogram.h> 
-#include <gdk/vertexdata.h>
+#include <gdk/shader_program.h> 
+#include <gdk/vertex_data.h>
 
 using namespace gdk;
 using namespace jfc;
@@ -22,22 +22,22 @@ int main(int argc, char **argv)
 
     camera.setProjection(90, 0.01, 20, 1);
 
-    std::vector<std::shared_ptr<gdk::Model>> models;
+    std::vector<std::shared_ptr<gdk::model>> models;
 
-    auto cube = std::shared_ptr<VertexData>(VertexData::Cube);
+    auto cube = std::shared_ptr<vertex_data>(vertex_data::Cube);
 
-    models.push_back(std::make_shared<Model>([&]()
+    models.push_back(std::make_shared<model>([&]()
     {
-        auto cube = default_ptr<VertexData>(static_cast<std::shared_ptr<VertexData>>(VertexData::Cube));
-        auto alpha = default_ptr<ShaderProgram>(static_cast<std::shared_ptr<ShaderProgram>>(ShaderProgram::AlphaCutOff));
+        auto cube = default_ptr<vertex_data>(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube));
+        auto alpha = default_ptr<shader_program>(static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
 
-        Model model("MySuperCoolModel",
+        model model("MySuperCoolModel",
             cube,
             alpha);
 
-        model.setTexture("_Texture", default_ptr<Texture>(static_cast<std::shared_ptr<Texture>>(Texture::CheckeredTextureOfDeath)));
+        model.set_texture("_Texture", default_ptr<texture>(static_cast<std::shared_ptr<texture>>(texture::CheckeredTextureOfDeath)));
 
-        model.setModelMatrix(Vector3<float>{0., 0., -11.}, Quaternion<float>());
+        model.set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>());
 
         return model;
     }()));
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     {
         window.pollEvents();
        
-        for (auto mdl : models) mdl->setModelMatrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
+        for (auto mdl : models) mdl->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
         
         camera.setViewMatrix({std::sin(blar), 0, -10}, {});
 

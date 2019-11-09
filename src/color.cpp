@@ -8,24 +8,24 @@
 
 namespace gdk
 {
-    const Color Color::Black      (0.0f,0.0f,0.0f,1.0f);
-    const Color Color::White      (1.0f,1.0f,1.0f,1.0f);
-    const Color Color::Red        (1.0f,0.0f,0.0f,1.0f);
-    const Color Color::Green      (0.0f,1.0f,0.0f,1.0f);
-    const Color Color::DarkGreen  (0.0f,0.6f,0.0f,1.0f);
-    const Color Color::Blue       (0.0f,0.0f,1.0f,1.0f);
-    const Color Color::DeathlyPink(1.0f,0.2f,0.8f,1.0f);
+    const color color::Black      (0.0f,0.0f,0.0f,1.0f);
+    const color color::White      (1.0f,1.0f,1.0f,1.0f);
+    const color color::Red        (1.0f,0.0f,0.0f,1.0f);
+    const color color::Green      (0.0f,1.0f,0.0f,1.0f);
+    const color color::DarkGreen  (0.0f,0.6f,0.0f,1.0f);
+    const color color::Blue       (0.0f,0.0f,1.0f,1.0f);
+    const color color::DeathlyPink(1.0f,0.2f,0.8f,1.0f);
 
-    const Color Color::CornflowerBlue(
+    const color color::CornflowerBlue(
         0.3921568627450980392156862745098,
         0.58431372549019607843137254901961,
         0.92941176470588235294117647058824,
         1.
     );
 
-    static constexpr char TAG[] = "Color";
+    static constexpr char TAG[] = "color";
 
-    std::ostream &operator<<(std::ostream &s, const Color &a)
+    std::ostream &operator<<(std::ostream &s, const color &a)
     {
         return s << nlohmann::json
         {
@@ -42,7 +42,7 @@ namespace gdk
         .dump();
     }
 
-    bool Color::operator==(const Color &aOther) const
+    bool color::operator==(const color &aOther) const
     {
         return
             r == aOther.r &&
@@ -51,14 +51,14 @@ namespace gdk
             a == aOther.a;
     }
 
-    Color::Color()
+    color::color()
         : r(0)
         , g(0)
         , b(0)
         , a(1)
     {}
 
-    Color::Color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA)
+    color::color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA)
         : r(aR)
         , g(aG)
         , b(aB)

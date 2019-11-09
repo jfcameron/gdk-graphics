@@ -3,7 +3,7 @@
 #include <gdk/glh.h>
 #include <gdk/nlohmann_json_util.h>
 #include <gdk/opengl.h>
-#include <gdk/vector3uniformcollection.h>
+#include <gdk/vector3_uniform_collection.h>
 
 #include <nlohmann/json.hpp>
 
@@ -11,9 +11,9 @@
 
 using namespace gdk;
 
-static constexpr char TAG[] = "Vector3UniformCollection";
+static constexpr char TAG[] = "vector3_uniform_collection";
 
-std::ostream &gdk::operator<<(std::ostream &s, const Vector3UniformCollection &a)
+std::ostream &gdk::operator<<(std::ostream &s, const vector3_uniform_collection &a)
 {
     nlohmann::json root = 
     {
@@ -28,12 +28,12 @@ std::ostream &gdk::operator<<(std::ostream &s, const Vector3UniformCollection &a
     return s << root.dump();
 }
 
-void Vector3UniformCollection::bind(const GLuint aProgramHandle) const
+void vector3_uniform_collection::bind(const GLuint aProgramHandle) const
 {
     for (auto &pair : m_Map) glh::Bind3FloatUniform(aProgramHandle, pair.first, *pair.second.get());
 }
 
-void Vector3UniformCollection::unbind(const GLuint aProgramHandle) const
+void vector3_uniform_collection::unbind(const GLuint aProgramHandle) const
 {
     for (auto &pair : m_Map) glh::Bind3FloatUniform(aProgramHandle, pair.first, graphics_vector3_type::Zero);
 }

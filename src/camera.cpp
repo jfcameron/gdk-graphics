@@ -61,9 +61,9 @@ void camera::setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gd
     m_ViewMatrix.translate(aWorldPos * -1);
 }
 
-void camera::setClearColor(const gdk::Color &aColor)
+void camera::setClearcolor(const gdk::color &acolor)
 {
-    m_ClearColor = aColor;
+    m_Clearcolor = acolor;
 }
 
 void camera::setProjection(const graphics_mat4x4_type &matrix)
@@ -71,7 +71,7 @@ void camera::setProjection(const graphics_mat4x4_type &matrix)
     m_ProjectionMatrix = matrix;
 }
 
-void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::Model>> &aModels) const
+void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::model>> &amodels) const
 {
     gdk::graphics_intvector2_type viewportPixelPosition(aFrameBufferSize * m_ViewportPosition); 
 
@@ -83,9 +83,9 @@ void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const g
     
     switch(m_ClearMode)
     {
-        case ClearMode::Color:
+        case ClearMode::color:
         {
-            glh::ClearColor(m_ClearColor);
+            glh::Clearcolor(m_Clearcolor);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         } break;
@@ -98,7 +98,7 @@ void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const g
         case ClearMode::Nothing: break;
     }
 
-    for (const auto model : aModels) 
+    for (const auto model : amodels) 
         model->draw(aTimeSinceStart, aDeltaTime, m_ViewMatrix, m_ProjectionMatrix);
 }
 

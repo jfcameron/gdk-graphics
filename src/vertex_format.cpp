@@ -3,7 +3,7 @@
 #include <gdk/glh.h>
 #include <gdk/nlohmann_json_util.h>
 #include <gdk/opengl.h>
-#include <gdk/vertexformat.h>
+#include <gdk/vertex_format.h>
 
 #include <nlohmann/json.hpp>
 
@@ -11,28 +11,28 @@
 
 using namespace gdk;
 
-static constexpr char TAG[] = "VertexFormat";
+static constexpr char TAG[] = "vertex_format";
 
 // Special values
-VertexFormat const VertexFormat::Pos3uv2Norm3(
+vertex_format const vertex_format::Pos3uv2Norm3(
 {
     {"a_Position",3},
     {"a_UV"      ,2},
     {"a_Normal"  ,3}
 });
 
-VertexFormat const VertexFormat::Pos3uv2(
+vertex_format const vertex_format::Pos3uv2(
 {
     {"a_Position",3},
     {"a_UV"      ,2}
 });
 
-VertexFormat const VertexFormat::Pos3(
+vertex_format const vertex_format::Pos3(
 {
     {"a_Position",3}
 });
 
-std::ostream &gdk::operator<<(std::ostream &s, const VertexFormat &a)
+std::ostream &gdk::operator<<(std::ostream &s, const vertex_format &a)
 {
     (void)a;
     
@@ -48,7 +48,7 @@ std::ostream &gdk::operator<<(std::ostream &s, const VertexFormat &a)
     .dump();
 }
 
-VertexFormat::VertexFormat(const std::vector<VertexAttribute> &aAttributes)
+vertex_format::vertex_format(const std::vector<vertex_attribute> &aAttributes)
 : m_Format(aAttributes)
 , m_SumOfAttributeComponents(([aAttributes]() -> int
 {
@@ -60,7 +60,7 @@ VertexFormat::VertexFormat(const std::vector<VertexAttribute> &aAttributes)
 })())
 {}
 
-void VertexFormat::enableAttributes(const GLuint aShaderProgramHandle) const
+void vertex_format::enableAttributes(const GLuint ashader_programHandle) const
 {
     int attributeOffset = 0;
     
@@ -69,9 +69,9 @@ void VertexFormat::enableAttributes(const GLuint aShaderProgramHandle) const
         std::string attributeName = attribute.name;
         int attributeSize = attribute.size;
         
-        glh::EnableVertexAttribute(
+        glh::Enablevertex_attribute(
             attributeName, 
-            aShaderProgramHandle, 
+            ashader_programHandle, 
             attributeSize, 
             attributeOffset,
             m_SumOfAttributeComponents
@@ -81,7 +81,7 @@ void VertexFormat::enableAttributes(const GLuint aShaderProgramHandle) const
     }
 }
 
-int VertexFormat::getSumOfAttributeComponents() const
+int vertex_format::getSumOfAttributeComponents() const
 {
     return m_SumOfAttributeComponents;
 }

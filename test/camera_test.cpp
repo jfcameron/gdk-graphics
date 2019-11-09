@@ -23,7 +23,7 @@ TEST_CASE("camera", "[camera]")
         REQUIRE(!jfc::glGetError());
     }
         
-    a.setClearColor(Color::Blue);
+    a.setClearcolor(color::Blue);
     
     a.setViewportPosition(0.5, 0.0);
     

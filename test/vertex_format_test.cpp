@@ -7,7 +7,7 @@
 
 #include "test_include.h"
 
-#include <gdk/vertexformat.h>
+#include <gdk/vertex_format.h>
 
 using namespace gdk;
 
@@ -17,7 +17,7 @@ TEST_CASE("vertexformat constructors", "[vertexformat]")
 
     SECTION("vertexformat vertexformat")
     {
-        auto format = VertexFormat::Pos3;
+        auto format = vertex_format::Pos3;
         
         REQUIRE(format.getSumOfAttributeComponents() == decltype(format.getSumOfAttributeComponents())(3));
     }
