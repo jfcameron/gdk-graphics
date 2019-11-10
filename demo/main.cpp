@@ -35,7 +35,7 @@ int main(int argc, char **argv)
             cube,
             alpha);
 
-        model.set_texture("_Texture", default_ptr<texture>(static_cast<std::shared_ptr<texture>>(texture::CheckeredTextureOfDeath)));
+        model.set_texture("_Texture", texture::CheckeredTextureOfDeath());
 
         model.set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>());
 

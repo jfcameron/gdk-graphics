@@ -4,7 +4,6 @@
 #define GDK_GFX_TEXTURE_H
 
 #include <gdk/opengl.h>
-#include <jfc/lazy_ptr.h>
 #include <jfc/unique_handle.h>
 
 #include <iosfwd>
@@ -40,7 +39,9 @@ namespace gdk
         texture(const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
 
         /// \brief texture for indicating texture related failure
-        static const jfc::lazy_ptr<gdk::texture> CheckeredTextureOfDeath; 
+        static const std::shared_ptr<gdk::texture> CheckeredTextureOfDeath(); 
+
+        static texture make_from_png_rgba32(const std::vector<GLubyte> aRGBA32PNGData);
     };
 }
 

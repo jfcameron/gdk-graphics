@@ -6,6 +6,7 @@
 #include <gdk/graphics_types.h>
 #include <gdk/color.h>
 
+#include <memory>
 #include <vector>
 
 namespace gdk

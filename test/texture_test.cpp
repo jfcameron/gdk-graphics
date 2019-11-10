@@ -20,7 +20,7 @@ TEST_CASE("texture constructors", "[texture]")
 
     SECTION("texture texture texture")
     {
-        auto ptexture = static_cast<std::shared_ptr<texture>>(texture::CheckeredTextureOfDeath);
+        auto ptexture = texture::CheckeredTextureOfDeath();
 
         auto b = ptexture;
 
