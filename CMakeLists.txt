@@ -24,10 +24,11 @@ jfc_project(library
         ${gdkmemory_INCLUDE_DIRECTORIES}
         ${gdkmath_INCLUDE_DIRECTORIES} 
         ${simpleglfw_INCLUDE_DIRECTORIES}
-
+        ${jfc-smart_handles_INCLUDE_DIRECTORIES}
 
         #${GLEW_INCLUDE_DIR} # not currently used. must fix glfw/glew entanglement
         #${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
+
     PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
 

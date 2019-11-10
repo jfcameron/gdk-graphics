@@ -16,3 +16,6 @@
 [submodule "thirdparty/simple-glfw"]
 	path = thirdparty/simple-glfw
 	url = https://github.com/jfcameron/simple-glfw.git
+[submodule "thirdparty/jfc-smart_handles"]
+	path = thirdparty/jfc-smart_handles
+	url = https://github.com/jfcameron/jfc-smart_handles.git
