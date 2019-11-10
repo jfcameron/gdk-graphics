@@ -6,8 +6,6 @@
 
 #include <stb/stb_image.h>
 
-#include <nlohmann/json.hpp>
-
 #include <iostream>
 #include <vector>
 #include <stdexcept>
@@ -33,38 +31,26 @@ const jfc::lazy_ptr<gdk::texture> texture::CheckeredTextureOfDeath([]()
         0xa4, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42,
         0x60, 0x82
     });
-    
-    return new gdk::texture("CheckerboardOfDeath", textureData);
+
+    gdk::texture tex(textureData);
+
+    return new gdk::texture(std::move(tex));
 });
 
-std::ostream &gdk::operator<<(std::ostream &s, const texture &a)
+texture::texture(const std::vector<GLubyte> &atextureData)
+: m_Handle([&]()
 {
-    return s << nlohmann::json
-    {
-        {"Type", TAG}, 
-        {"Debug Info", //This part is expensive. Should only be written if some symbol is defined etc. "Debug Info" should also be standardized.
-            {}
-        },
-        
-        {"m_Name", a.m_Name},
-        {"m_Handle", a.m_Handle},
-    }
-    .dump();
-}
+    GLuint handle;
 
-texture::texture(const std::string &aName, const std::vector<GLubyte> &atextureData)
-    : m_Name(aName)
-{
     //decode the png rgba32 data
     int width, height, components;
     if (GLubyte *const decodedData = stbi_load_from_memory(&atextureData[0], static_cast<int>(atextureData.size()), &width, &height, &components, STBI_rgb_alpha)) //is STBI_default preferred?
     {
-        //gdk::log(TAG, "CREATED: ", *this, " USING: ", "(name: ", aName, ", atextureData.size:", atextureData.size(), ")");
-        
         //Copy the texture data to video memory
-        glGenTextures(1, &m_Handle);
+
+        glGenTextures(1, &handle);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_Handle);
+        glBindTexture(GL_TEXTURE_2D, handle);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, decodedData);
     
         //Apply texture parameters
@@ -74,29 +60,19 @@ texture::texture(const std::string &aName, const std::vector<GLubyte> &atextureD
         //Cleanup
         stbi_image_free(decodedData);
     }
-    else throw std::runtime_error(std::string(TAG).append("Could not decode RGBA32 data. Name: ").append(aName));
+    else throw std::runtime_error(std::string(TAG).append("Could not decode RGBA32 data provided to texture"));
+
+    return handle;
+}(),
+[](const GLuint handle)
+{
+    if (handle > 0) glDeleteTextures(1, &handle);
+})
+{
 }
 
-texture::texture(texture &&other)
+GLuint texture::getHandle() const
 {
-    m_Name   = std::move(other.m_Name);
-    m_Handle = std::move(other.m_Handle);
-    
-    other.m_Handle = 0;
-}
-
-texture::~texture()
-{
-    if (m_Handle > 0) glDeleteTextures(1, &m_Handle);
-}
-
-std::string texture::getName()const
-{
-    return m_Name;
-}
-
-GLuint texture::getHandle()const
-{
-    return m_Handle;
+    return m_Handle.get();
 }
 

@@ -5,6 +5,7 @@
 
 #include <gdk/opengl.h>
 #include <jfc/lazy_ptr.h>
+#include <jfc/unique_handle.h>
 
 #include <iosfwd>
 #include <string>
@@ -17,10 +18,8 @@ namespace gdk
     /// \todo Either throw on non power 2 textures OR support them (by padding or cropping)
     class texture final
     {
-        friend std::ostream &operator <<(std::ostream &, const texture &);
-        
-        std::string m_Name; //!< Human friendly identifier
-        GLuint m_Handle = {0};   //!< handle to the texture in the context
+        //GLuint m_Handle = {0};   //!< handle to the texture in the context
+        jfc::unique_handle<GLuint> m_Handle;
     
     public:
         /*enum ImageType
@@ -29,23 +28,20 @@ namespace gdk
             PNG_blahblah,
             JPG_blahblah
         }*/
-        
-        std::string getName() const;
+
+        /// \brief returns the handle to the texture in the opengl context
         GLuint getHandle() const;
-            
-        texture &operator =(const texture &) = delete;
-        texture &operator =(texture &&) = delete;
+
+        /// \brief move semantics
+        texture &operator=(texture &&) = default;
+        /// \brief move semantics
+        texture(texture &&) = default;
         
-        texture(const std::string &aName, const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
-        texture() = delete;
-        texture(const texture &) = delete;
-        texture(texture &&);
-        ~texture();
+        texture(const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
 
-        static const jfc::lazy_ptr<gdk::texture> CheckeredTextureOfDeath; //!< texture for indicating texture related failure
+        /// \brief texture for indicating texture related failure
+        static const jfc::lazy_ptr<gdk::texture> CheckeredTextureOfDeath; 
     };
-
-    std::ostream &operator<< (std::ostream &, const texture &);
 }
 
 #endif
