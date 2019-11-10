@@ -11,6 +11,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+
 using namespace gdk;
 
 static constexpr char TAG[] = "shader_program";
@@ -218,3 +219,4 @@ GLuint shader_program::getHandle() const
 {
     return m_ProgramHandle;
 }
+
