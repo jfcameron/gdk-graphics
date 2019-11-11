@@ -6,8 +6,6 @@
 #include <gdk/opengl.h>
 #include <gdk/vertex_attribute.h>
 
-#include <iosfwd>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -26,33 +24,36 @@ namespace gdk
     /// representing a single full vertex.
     class vertex_format final
     {
-        friend std::ostream &operator<<(std::ostream &, const vertex_format &);
-    
-        std::vector<vertex_attribute> m_Format = {}; //!< name and # of floats of each attribute in the format
-        int m_SumOfAttributeComponents = {0};       //!< total number of floats in the entire format
+        //! name and # of floats of each attribute in the format
+        std::vector<vertex_attribute> m_Format;
+
+        //! total number of floats in the entire format
+        vertex_attribute::size_type m_SumOfAttributeComponents = 0;       
             
     public:
         //! prepares gl context to draw vertex data formatted according to this vertex format
         void enableAttributes(const GLuint ashader_programHandle) const;
 
-        //!
+        //! Total number of components (sum of length of attributes)
         int getSumOfAttributeComponents() const;
-            
+
+        //! copy semantics
         vertex_format& operator=(const vertex_format &) = default;
-        vertex_format& operator=(vertex_format &&) = default;
-      
-        vertex_format(const std::vector<vertex_attribute> &aAttributes);
-        vertex_format() = delete;
+        //! copy semantics
         vertex_format(const vertex_format &) = default;
+
+        //! move semantics
+        vertex_format& operator=(vertex_format &&) = default;
+        //! move semantics
         vertex_format(vertex_format &&) = default;
-        ~vertex_format() = default;
+     
+        //! construct a format using supplied attributes.
+        vertex_format(const std::vector<vertex_attribute> &aAttributes);
             
         static const vertex_format Pos3uv2Norm3;
         static const vertex_format Pos3uv2;
         static const vertex_format Pos3;
     };
-
-    std::ostream &operator<< (std::ostream &, const vertex_format &);
 }
 
 #endif

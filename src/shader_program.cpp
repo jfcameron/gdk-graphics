@@ -111,6 +111,27 @@ const jfc::lazy_ptr<gdk::shader_program> shader_program::AlphaCutOff([]()
     return new gdk::shader_program(vertexShaderSource, fragmentShaderSource);
 });
 
+static inline void setUpFaceCullingMode(shader_program::FaceCullingMode a)
+{
+    if (a == shader_program::FaceCullingMode::None)
+    {
+        glDisable(GL_CULL_FACE);
+
+        return;
+    }
+
+    glEnable(GL_CULL_FACE);
+
+    switch(a)
+    {
+        case shader_program::FaceCullingMode::Front: glCullFace(GL_FRONT); break;
+        case shader_program::FaceCullingMode::Back: glCullFace(GL_BACK); break;
+        case shader_program::FaceCullingMode::FrontAndBack: glCullFace(GL_FRONT_AND_BACK); break;
+
+        case shader_program::FaceCullingMode::None: break;
+    }
+}
+
 shader_program::shader_program(std::string aVertexSource, std::string aFragmentSource)
 : m_ProgramHandle([&]()
 {
@@ -166,10 +187,10 @@ shader_program::shader_program(std::string aVertexSource, std::string aFragmentS
 
 GLuint shader_program::useProgram() const 
 {
+    setUpFaceCullingMode(m_FaceCullingMode);
+
     glUseProgram(m_ProgramHandle.get());
 
-    //glDrawCalls();
-    
     return m_ProgramHandle.get();
 }
 

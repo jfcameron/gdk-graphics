@@ -8,16 +8,16 @@ using namespace gdk;
 
 static constexpr char TAG[] = "vertex_attribute";
 
-bool vertex_attribute::operator==(const vertex_attribute &b) const
+bool vertex_attribute::operator==(const vertex_attribute &that) const
 {
     return 
-        name == b.name &&
-        size == b.size;
+        name == that.name &&
+        size == that.size;
 }
 
-bool vertex_attribute::operator!=(const vertex_attribute &b) const
+bool vertex_attribute::operator!=(const vertex_attribute &that) const
 {
-    return !(*this == b);
+    return !(*this == that);
 }
 
 vertex_attribute::vertex_attribute(const std::string &aName, const unsigned short &aSize)

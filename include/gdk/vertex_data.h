@@ -1,10 +1,11 @@
 // © 2018 Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GFX_MESH_H
-#define GDK_GFX_MESH_H
+#ifndef GDK_GFX_VERTEX_DATA_H
+#define GDK_GFX_VERTEX_DATA_H
 
 #include <gdk/vertex_format.h>
 #include <jfc/lazy_ptr.h>
+#include <jfc/unique_handle.h>
 
 #include <iosfwd>
 #include <string>
@@ -12,71 +13,111 @@
 namespace gdk
 {
     /// \brief Vertex data representing a 3D graphical object
+    // TODO: support multiple VBO objects, to allow using more appropriate Gl types for uvs, normals. Currently only supports interweaved GLBytes
     class vertex_data final
     {
-        friend std::ostream &operator<< (std::ostream &, const vertex_data &);
-            
     public:
         /// \brief Hint to the graphics device about how the vertex data will be used.
-        ///
-        /// \detailed Generally, dynamic data (data that is likely to be frequently rewritten) will be placed
-        /// in video memory with fast read write speeds while static will be placed in slower (and more plentiful)
-        /// video memory. Exact behaviours are implementation specific.        
         enum class Type 
         {
+            //! The data store contents will be modified repeatedly and used many times.
+            Dynamic,
+
+            //! The data store contents will be modified once and used many times.
             Static, 
-            Dynamic
+
+            //! The data store contents will be modified once and used at most a few times.
+            Stream
         };
         
         //! Determines the primitive type used at the primitive assembly stage.        
         enum class PrimitiveMode 
         {
-            Triangles, 
+            //! Every vertex is replaced with a point at the primitive assembly stage
+            Points, 
+
+            //! Every two verticies define a line
             Lines, 
-            Points
+            
+            //! Same as lines except the last vertex of the last defined line serves as the 
+            /// first vertex of the line currently being defined
+            LineStrip, 
+            
+            //! Same as LineStrip except an additional line is defined between the last and first vertex
+            LineLoop, 
+
+            //! Every 3 verticies define a triangle
+            Triangles,
+            
+            //! Every vertex after the first three define a new triangle
+            TriangleStrip, 
+
+            //! Same as Triangle strip except draws in a "fan shape" (???)
+            TriangleFan
         };
             
     private:
-        std::string m_Name; //!< Human friendly identifier for the resource
-            
-        GLuint m_IndexBufferHandle = {0}; //!< Handle to the (optional) index buffer in the context
-        GLsizei m_IndexCount =       {0}; //!< total number of indicies
-            
-        GLuint m_VertexBufferHandle = {0}; //!< Handle to the vertex buffer in the context
-        GLsizei m_VertexCount =       {0}; //!< total number of vertexes
+        //! Handle to the (optional) index buffer in the context
+        jfc::unique_handle<GLuint> m_IndexBufferHandle;
 
-        vertex_format m_vertex_format = vertex_format::Pos3uv2; //!< Format of the vertex data
+        //! total number of indicies
+        GLsizei m_IndexCount = 0; 
         
-        PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; //!< The primitive type to be generated using the vertex data
+        //! Handle to the vertex buffer in the context
+        jfc::unique_handle<GLuint> m_VertexBufferHandle; 
+        
+        //! total number of vertexes
+        GLsizei m_VertexCount = 0; 
+
+        //! Format of the vertex data
+        vertex_format m_vertex_format = vertex_format::Pos3uv2; 
+
+        //! The primitive type to be generated using the vertex data
+        PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
         
     public:
-        std::string const &getName() const;
-        GLuint getHandle() const;
+        //! Binds this vertex data to the pipeline, enables attributes on the currently used shaderprogram
+        /// \brief strong association with draw. If draw is on this instance is not called after bind on this
+        /// instance, behaviour is unintended. The bodies of these functions are separate because bind
+        /// is expensive and does not need to be called nearly as frequently as draw. Bind is per unique vertex data
+        /// draw is per unique model (that vertex data projected out somewhere into the scene.)
+        void bind(const GLuint currentShaderProgramHandle) const;
 
-        //! Invokes the pipline on this vertex data
+        //! Invokes the pipline on the currently bound vertex data, with the expectation that
+        /// the currently bound data is the data held by this instance
+        /// \warn if bind() has not been called before draw, the behaviour will be unintended
         void draw(const GLuint ashader_programHandle) const;
 
         //! replace current data in the vbo and ibo with new data
-        void updatevertex_data(const std::vector<GLfloat> &aNewvertex_data, const vertex_format &aNewvertex_format,
-                              const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), const vertex_data::Type &aNewType = Type::Dynamic);
-            
-        vertex_data &operator=(const vertex_data &other) = default;
-            
-        vertex_data &operator=(vertex_data &&) = delete;
+        void updatevertex_data(const std::vector<GLfloat> &aNewvertex_data, 
+            const vertex_format &aNewvertex_format,
+            const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
+            const vertex_data::Type &aNewType = Type::Dynamic);
       
-        vertex_data(const std::string &aName, const vertex_data::Type &aType, const vertex_format &avertex_format, const std::vector<GLfloat> &avertex_data,
-                   const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
-        
-        vertex_data() = delete;
-        vertex_data(const vertex_data &) = delete;
-        vertex_data(vertex_data &&);
-        ~vertex_data();
+        //! equality semantics based on handle values
+        bool operator==(const vertex_data &);
+        //! equality semantics based on handle values
+        bool operator!=(const vertex_data &);
 
+        //! move semantics
+        vertex_data &operator=(vertex_data &&) = default;
+        //! move semantics
+        vertex_data(vertex_data &&) = default;
+           
+        //! disable copy semantics
+        vertex_data &operator=(const vertex_data &other) = delete;
+        //! disable copy semantics
+        vertex_data(const vertex_data &) = delete;
+      
+        vertex_data(const vertex_data::Type &aType, 
+            const vertex_format &avertex_format, 
+            const std::vector<GLfloat> &avertex_data,
+            const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
+            const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
+        
         static const jfc::lazy_ptr<gdk::vertex_data> Quad; //!< a quad with format pos3uv2
         static const jfc::lazy_ptr<gdk::vertex_data> Cube; //!< a cube with format ps3uv2norm3
     };
-
-    std::ostream &operator<< (std::ostream &, const vertex_data &);
 }
 
 #endif

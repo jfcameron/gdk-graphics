@@ -18,29 +18,14 @@ TEST_CASE("gdk::vertexattribute", "[gdk::vertexattribute]")
 
     const vertex_attribute a(NAME, SIZE);
 
-    SECTION("standard ctor")
+    SECTION("equality semantics")
     {
-        REQUIRE(a.name == NAME);
-        REQUIRE(a.size == SIZE);
-    }
+        auto a = vertex_attribute("a_normal", 3);
+        auto b = vertex_attribute("a_uv", 2);
 
-    SECTION("copy ctor")
-    {
-        vertex_attribute b(a);
-        
-        REQUIRE(b.name == NAME);
-        REQUIRE(b.size == SIZE);
+        REQUIRE(a != b); 
     }
-    
-    SECTION("move ctor")
-    {
-        vertex_attribute b(a);
-        
-        REQUIRE(b.name == NAME);
-        REQUIRE(b.size == SIZE);
-    }
-    
-    SECTION("copy operator")
+    SECTION("copy semantics")
     {
         vertex_attribute b = a;
         
@@ -48,7 +33,7 @@ TEST_CASE("gdk::vertexattribute", "[gdk::vertexattribute]")
         REQUIRE(b.size == SIZE);
     }
     
-    SECTION("move operator")
+    SECTION("move semantics")
     {
         vertex_attribute b(a);
 
@@ -56,6 +41,12 @@ TEST_CASE("gdk::vertexattribute", "[gdk::vertexattribute]")
         
         REQUIRE(c.name == NAME);
         REQUIRE(c.size == SIZE);
+    }
+
+    SECTION("standard ctor")
+    {
+        REQUIRE(a.name == NAME);
+        REQUIRE(a.size == SIZE);
     }
 }
 

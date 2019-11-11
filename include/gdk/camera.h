@@ -21,17 +21,22 @@ namespace gdk
         /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
         enum class ClearMode 
         {
-            Nothing,  //!< Do not clear any buffers
-            Color,    //!< Clear the color buffer
-            DepthOnly //!< Clear the Depth buffer
-        };                          
+            //! Do not clear any buffers
+            Nothing,
+
+            //! Clear the color buffer
+            Color/*AndDepth*/,
+
+            //! Clear the Depth buffer
+            DepthOnly 
+        };
 
     private:
         /// \brief position of the camera viewport within the device viewport
         graphics_vector2_type m_ViewportPosition = graphics_vector2_type::Zero;
 
         /// \brief size of camera viewport within the device viewport
-        graphics_vector2_type m_ViewportSize = graphics_vector2_type(1., 1.); 
+        graphics_vector2_type m_ViewportSize = graphics_vector2_type(1, 1); 
         
         /// \brief World position of camera
         graphics_mat4x4_type m_ViewMatrix = graphics_mat4x4_type::Identity; 
@@ -44,12 +49,18 @@ namespace gdk
 
         /// \brief The color to replace all data in the color buffer with 
         /// (if color buffer is to be cleared)
-        gdk::color m_Clearcolor = color::CornflowerBlue;
+        gdk::color m_ClearColor = color::CornflowerBlue;
 
         //TODO: support render texture
         //Rendertexture m_Rendertexture;
 
     public:
+        //TODO implement this? A way to throw away models that will not contribute frags (ie behind the camera) before they are uploaded. Also a way to sort the scene for e.g: proper blending... ah but transpparency batches must always come after opaques. hnnh. need yet a higher level absrraction I think. A batch? Batch would be a good abstractoin for blend funcs/transparency ordering. Good abstraction for "geometry batching" as well (merging vertex data within glcontext)
+        // the transparency sort does need to be done on a percamera basis.. but transparency groups must come after opaque groups.
+        // These are two separate ideas..
+        //void setSortFunctor(ModelPtr a, ModelPtr b)
+        //void setCullFunctor(ModelPtr a, FustrumPos, FRot, FNearClip, FFarClip)
+
         /// \brief set clear color
         void setClearcolor(const gdk::color &acolor);
 
@@ -93,8 +104,6 @@ namespace gdk
 
         /// \brief constructs a camera with reasonable default values
         camera();
-
-        ~camera() = default;
     };
 }
 

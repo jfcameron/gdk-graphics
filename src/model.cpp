@@ -25,9 +25,34 @@ model::model(const std::shared_ptr<vertex_data> avertex_data, const std::shared_
 void model::draw(const double aTimeSinceStart, const double aDeltaTime, const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const
 {
     auto pvertex_data = m_vertex_data;
-        
+       
+    // refactor upwards, then propegate the handle down so MVP can be bound       
     const GLuint programHandle = m_ShaderProgram->useProgram();
+    
+    // Acceptable!
+    const graphics_mat4x4_type p = aProjectionMatrix;
+    const graphics_mat4x4_type v = aViewMatrix;
+    const graphics_mat4x4_type m = getmodelMatrix();
 
+    const auto mvp = p * v * m;
+
+    // these uniforms are good
+    glh::BindMatrix4x4(programHandle,     "_model",      m        );
+    glh::BindMatrix4x4(programHandle,     "_View",       v        );
+    glh::BindMatrix4x4(programHandle,     "_Projection", p        );
+    glh::BindMatrix4x4(programHandle,     "_MVP",        mvp      );
+    
+    //-=-=-==-=--=-==--= Refactor to .. scene? batch?
+    // these uniforms belong to a higherlevel abstraction. Higher than modelor camera. should be "scene".
+    //bind standard uniforms
+    const float time = aTimeSinceStart;
+    const float deltaTime = aDeltaTime;
+
+    glh::Bind1FloatUniform(programHandle, "_DeltaTime",  deltaTime);
+    glh::Bind1FloatUniform(programHandle, "_Time",       time     );
+    //-=-=-==-=--=-==--=
+
+    // =--==--==-= Refactor to material
     //bind this model's uniforms
     m_textures.bind(programHandle);
     m_Floats.bind(programHandle);
@@ -35,28 +60,10 @@ void model::draw(const double aTimeSinceStart, const double aDeltaTime, const gr
     m_Vector3Uniforms.bind(programHandle);
     m_Vector4Uniforms.bind(programHandle);
     m_Mat4x4Uniforms.bind(programHandle);
+    //-=-=-==-=--=-==--=
 
-    //bind standard uniforms
-    const float time = aTimeSinceStart;
-    const float deltaTime = aDeltaTime;
-
-    const graphics_mat4x4_type p = aProjectionMatrix;
-    const graphics_mat4x4_type v = aViewMatrix;
-    const graphics_mat4x4_type m = getmodelMatrix();
-
-    const auto mvp = p * v * m;
-
-    // these uniforms belong to a higherlevel abstraction.
-    glh::Bind1FloatUniform(programHandle, "_DeltaTime",  deltaTime);
-    glh::Bind1FloatUniform(programHandle, "_Time",       time     );
-
-    // these uniforms are good
-    glh::BindMatrix4x4(programHandle,     "_model",      m        );
-    glh::BindMatrix4x4(programHandle,     "_View",       v        );
-    glh::BindMatrix4x4(programHandle,     "_Projection", p        );
-    glh::BindMatrix4x4(programHandle,     "_MVP",        mvp      );
-
-    pvertex_data->draw(programHandle);
+    // -=-=-=-=-== Split in two (1) setting up vertex stuff, 2) draw) then do set up once per batch
+    pvertex_data->draw(programHandle); // inversion here. VertexData, format pointers etc shoul be done before this (once per batch)
 }
 
 // Accessors
