@@ -22,7 +22,7 @@ namespace gdk
         enum class ClearMode 
         {
             Nothing,  //!< Do not clear any buffers
-            color,    //!< Clear the color buffer
+            Color,    //!< Clear the color buffer
             DepthOnly //!< Clear the Depth buffer
         };                          
 
@@ -40,7 +40,7 @@ namespace gdk
         graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::Identity; 
 
         /// \brief Determines which buffers in the FBO to clear before drawing
-        ClearMode m_ClearMode = ClearMode::color;
+        ClearMode m_ClearMode = ClearMode::Color;
 
         /// \brief The color to replace all data in the color buffer with 
         /// (if color buffer is to be cleared)

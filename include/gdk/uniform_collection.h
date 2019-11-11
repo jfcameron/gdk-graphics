@@ -18,6 +18,7 @@ namespace gdk
     ///
     /// \todo Cache uniform locations. currently uniform locations are resolved at every bind
     /// \todo replace string with string. no need for a deep copy
+    /// TODO replace pure virtuals with bind/clear functors then final the template.
     template<typename uniform_t> class uniform_collection
     {
     public:

@@ -30,24 +30,14 @@ namespace gdk
     /// \todo the shaderprogram and uniform data (textures etc.)  Should probably
     /// be broken out into a new abstraction. This work would be a good match for the "material" class seen in many engines.
     ///
-    /// \todo I want to limit access to the draw function to be used by camera only... conceptually, a model can only be seen ("drawn") by a camera. but this will introduce a friend, prevent reuse of model outside of this Graphics project, break encaps, make
-    /// model harder to read (because now you must also read perspective_camera), just bad things.
-    /// 1) Is that a bad thing? yes 2) Is hiding draw(...) from the enduser overkill? depends on use-case 3) Conclusions: another way to accomplish this (hiding from user, showing to camera) would be via interfaces. Perhaps camera draw takes a 
-    /// collection of drawables, not models.
-    /// then for the end-user, perhaps it should be up to the direct user of this project to decide whether or not to hide draw from them, and to accomplish that via their own model interface that stands between user and an instance of this.
-    /// so the accessability of model::draw will be the responsibility to the direc tuser of this project (passing the buck because use cases vary). and tangentally, camera should possibly take a pointer via interface to "drawable"... possibly
-    /// model will have siblings in the future (?)
-    /// 4) perhaps there should be a new layer of abstraction? model, texture, e.g as they currently exist should be renamed GLmodel, GLtexture e.g since they are so tied to the GL, have a set of interfaces, logical texture, model etc. where the bare minimum
-    /// api is exposed. That does make sense.
+    /// \TODO break up all the uniform binding! Simplify!
     class model final
     {
-        friend std::ostream &operator<< (std::ostream &, const model &);
-            
-        std::string m_Name; //!< Resource Identifier
-        graphics_mat4x4_type m_modelMatrix; //!< Position in the world
+        //! Position in the world
+        graphics_mat4x4_type m_modelMatrix; 
         
-        jfc::default_ptr<vertex_data> m_vertex_data;
-        jfc::default_ptr<shader_program> m_shader_program;
+        std::shared_ptr<vertex_data> m_vertex_data;
+        std::shared_ptr<shader_program> m_ShaderProgram;
             
         texture_uniform_collection m_textures;
         float_uniform_collection   m_Floats;
@@ -58,16 +48,13 @@ namespace gdk
 
     public:
         /// \brief draws the model at its current world position, with respect to a view and projection matrix.
-        ///
-        /// \detailed generally should not be called by the end user. view, proj, are most easily provided to the model via a camera.
-        ///
-        /// \param[in] aTimeSinceStart time since the rendering context began. Could be since the app started or the scene loaded, as long as you are consistent it doenst matter.
-        /// \param[in] aDeltaTime time since last time draw was called.
-        /// \param[in] aViewMatrix the model's world transformation
-        /// \param[in] aProjectionMatrix the camera's projection matrix, to be applied to the model to give the appearance of e.g perspective warp
-        void draw(const double aTimeSinceStart, const double aDeltaTime, const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix);
+        /// generally should not be called by the end user. view, proj, are most easily provided to the model via a camera.
+        void draw(const double aTimeSinceStart, 
+            const double aDeltaTime, 
+            const graphics_mat4x4_type &aViewMatrix, 
+            const graphics_mat4x4_type &aProjectionMatrix) const;
 
-        void setvertex_data(const jfc::default_ptr<vertex_data> &);
+        void setvertex_data(const std::shared_ptr<vertex_data>);
         
         void set_texture(const std::string &aUniformName, const jfc::default_ptr<texture> &atexture);
         void setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat);
@@ -76,20 +63,26 @@ namespace gdk
         void setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type);
         void setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type);
             
-        void set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale = graphics_vector3_type::One);
+        void set_model_matrix(const graphics_vector3_type &aWorldPos, 
+            const graphics_quaternion_type &aRotation, 
+            const graphics_vector3_type &aScale = graphics_vector3_type::One);
+
         const graphics_mat4x4_type &getmodelMatrix() const;
-            
-        model &operator=(const model &) = delete;
-        model &operator=(model &&) = delete;
-      
-        model(const std::string &aName, const jfc::default_ptr<vertex_data> &, const jfc::default_ptr<shader_program> &);
-        model();
+
+        /// \brief copy semantics
         model(const model &) = default;
+        /// \brief copy semantics
+        model &operator=(const model &) = default;
+
+        /// \brief move semantics
         model(model &&) = default;
+        /// \brief move semantics
+        model &operator=(model &&) = default;
+
+        model(const std::shared_ptr<vertex_data>, const std::shared_ptr<shader_program>);
+
         ~model() = default;
     };
-        
-    std::ostream &operator<<(std::ostream &, const model &);
 }
 
 #endif

@@ -18,6 +18,7 @@ namespace gdk
         /// \brief format of uncompressed image data provided to the ctor & format of the texture data within the gl
         enum class format
         {
+            //!:t
             rgb,
             rgba
         };

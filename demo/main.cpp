@@ -28,12 +28,10 @@ int main(int argc, char **argv)
 
     models.push_back(std::make_shared<model>([&]()
     {
-        auto cube = default_ptr<vertex_data>(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube));
-        auto alpha = default_ptr<shader_program>(static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
+        auto cube = static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube);
+        auto alpha = static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff);
 
-        model model("MySuperCoolModel",
-            cube,
-            alpha);
+        model model(cube, alpha);
 
         model.set_texture("_Texture", texture::GetCheckerboardOfDeath());
 

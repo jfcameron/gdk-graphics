@@ -13,7 +13,7 @@
 
 using namespace gdk;
 
-TEST_CASE("model constructors", "[model]")
+TEST_CASE("gdk::model", "[gdk::model]")
 {
     initGL();
 
@@ -22,15 +22,29 @@ TEST_CASE("model constructors", "[model]")
 
     std::cout << "model shader: " << blar->getHandle() << std::endl;
 
-    SECTION("blarblarblarblar")
+    SECTION("builds and draws")
     {
-        model model("MySuperCoolmodel",
-            jfc::default_ptr<vertex_data>(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube)),
-            jfc::default_ptr<shader_program>(static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff)));
+        model model(
+            static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube),
+            static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
 
         model.draw({}, {}, {}, {});
 
         REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("move semantics")
+    {
+        model a(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube), static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
+
+        auto b = std::move(a);
+    }
+
+    SECTION("copy semantics")
+    {
+        const model a(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube), static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
+
+        auto b = a;
     }
 }
 
