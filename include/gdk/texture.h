@@ -6,7 +6,6 @@
 #include <gdk/opengl.h>
 #include <jfc/unique_handle.h>
 
-#include <iosfwd>
 #include <string>
 #include <vector>
 
@@ -80,9 +79,8 @@ namespace gdk
         /// \brief move semantics
         texture(texture &&) = default;
        
-        //texture(const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
-
         /// \brief creates a texture from decoded image data.
+        /// \exception length, width of the texture must be power of 2
         texture(GLubyte *const pDecodedImageData, const long width, 
             const long height, 
             const format = format::rgba,

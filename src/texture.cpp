@@ -17,7 +17,7 @@ using namespace gdk;
 
 static constexpr char TAG[] = "texture";
 
-bool static inline isPowerOfTwo(const long a)
+static inline bool isPowerOfTwo(const long a)
 {
     return std::ceil(std::log2(a)) == std::floor(std::log2(a));
 }
@@ -155,11 +155,11 @@ texture::texture(GLubyte *const pDecodedImageData,
         GL_UNSIGNED_BYTE, 
         pDecodedImageData);
 
-    //Selecting texture filter functions
+    //Select texture filter functions
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnification_filter_to_glint(magFilter));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minification_filter_to_glint(minFilter));
    
-    //Setting wrap modes
+    //Set wrap modes
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(wrapMode));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(wrapMode));
 

@@ -11,7 +11,7 @@ jfc_generate_documentation_doxygen(
         ../include/
 )
 
-jfc_generate_readme_md(
-    BRIEF "3D graphics rendering library. Current implementation supports GLES2.0. Plan to extend support for vulkan."
-)
+#jfc_generate_readme_md(
+#    BRIEF "3D graphics rendering library. Current implementation supports GLES2.0. Plan to extend support for vulkan."
+#)
 
