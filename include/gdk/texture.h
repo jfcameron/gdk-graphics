@@ -12,22 +12,12 @@
 
 namespace gdk
 {
-    /// \brief texture represents an image. RGBA32, 2D.
-    ///
-    /// \todo Either throw on non power 2 textures OR support them (by padding or cropping)
+    /// \brief a texture generally represents the color of a surface
     class texture final
     {
-        //GLuint m_Handle = {0};   //!< handle to the texture in the context
         jfc::unique_handle<GLuint> m_Handle;
     
     public:
-        /*enum ImageType
-        {
-            PNG_RGBA32,
-            PNG_blahblah,
-            JPG_blahblah
-        }*/
-
         /// \brief returns the handle to the texture in the opengl context
         GLuint getHandle() const;
 
@@ -35,12 +25,18 @@ namespace gdk
         texture &operator=(texture &&) = default;
         /// \brief move semantics
         texture(texture &&) = default;
-        
-        texture(const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
+       
+        //texture(const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
 
-        /// \brief texture for indicating texture related failure
-        static const std::shared_ptr<gdk::texture> CheckeredTextureOfDeath(); 
+        /// \brief creates a texture from decoded image data.
+        texture(GLubyte *const pDecodedImageData, const long width, const long height);
 
+        /// \brief texture useful for indicating texture related failure
+        /// lazily instantiated.
+        static const std::shared_ptr<gdk::texture> GetCheckerboardOfDeath(); 
+
+        /// \brief constructs a texture from png rgba32 file data
+        /// \throws invalid_argument if the image could not be decoded (badly formed or not a PNG with component format RGBA32, etc.)
         static texture make_from_png_rgba32(const std::vector<GLubyte> aRGBA32PNGData);
     };
 }

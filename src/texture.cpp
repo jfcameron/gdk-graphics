@@ -6,8 +6,10 @@
 
 #include <stb/stb_image.h>
 
+#include <cmath>
 #include <iostream>
 #include <mutex>
+#include <stdexcept>
 #include <stdexcept>
 #include <vector>
 
@@ -15,13 +17,18 @@ using namespace gdk;
 
 static constexpr char TAG[] = "texture";
 
-const std::shared_ptr<gdk::texture> texture::CheckeredTextureOfDeath()
+bool static inline isPowerOfTwo(const long a)
+{
+    return std::ceil(std::log2(a)) == std::floor(std::log2(a));
+}
+
+const std::shared_ptr<gdk::texture> texture::GetCheckerboardOfDeath()
 {
     static std::once_flag initFlag;
 
     static std::shared_ptr<gdk::texture> ptr;
 
-    std::call_once(initFlag, [&ptr]()
+    std::call_once(initFlag, []()
     {
         std::vector<GLubyte> textureData(
         {
@@ -39,7 +46,7 @@ const std::shared_ptr<gdk::texture> texture::CheckeredTextureOfDeath()
             0x60, 0x82
         });
         
-        ptr = std::make_shared<gdk::texture>(gdk::texture(textureData));
+        ptr = std::make_shared<gdk::texture>(texture::make_from_png_rgba32(textureData));
     });
     
     return ptr;
@@ -49,58 +56,48 @@ texture texture::make_from_png_rgba32(const std::vector<GLubyte> atextureData)
 {
     //decode the png rgba32 data
     int width, height, components;
-    if (GLubyte *const decodedData = stbi_load_from_memory(&atextureData[0], static_cast<int>(atextureData.size()), &width, &height, &components, STBI_rgb_alpha)) 
+
+    if (std::unique_ptr<GLubyte, std::function<void(GLubyte *)>> decodedData(
+        stbi_load_from_memory(&atextureData[0]
+            , static_cast<int>(atextureData.size())
+            , &width
+            , &height
+            , &components
+            , STBI_rgb_alpha)
+        , [](GLubyte *p)
+        {
+            stbi_image_free(p);
+        }); decodedData)
     {
-        /*//Copy the texture data to video memory
-        glGenTextures(1, &handle);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, handle);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, decodedData);
-    
-        //Apply texture parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);*/
-
-        //std::vector<GLubyte> data(decodedData, decodedData +
-        
-        //Cleanup
-        //stbi_image_free(decodedData);
+        return texture(decodedData.get(), width, height);
     }
-    //else throw std::runtime_error(std::string(TAG).append("Could not decode RGBA32 data provided to texture"));
-
-    return texture(std::vector<GLubyte>());
+    
+    throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to texture"));
 }
 
-texture::texture(const std::vector<GLubyte> &atextureData)
+texture::texture(GLubyte *const pDecodedImageData, const long width, const long height)
 : m_Handle([&]()
 {
+    if (!isPowerOfTwo(width) || !isPowerOfTwo(height)) 
+        throw std::invalid_argument(std::string(TAG).append(": texture dimensions must be power of 2"));
+
     GLuint handle;
-
-    //decode the png rgba32 data
-    int width, height, components;
-    if (GLubyte *const decodedData = stbi_load_from_memory(&atextureData[0], static_cast<int>(atextureData.size()), &width, &height, &components, STBI_rgb_alpha)) //is STBI_default preferred?
-    {
-        //Copy the texture data to video memory
-
-        glGenTextures(1, &handle);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, handle);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, decodedData);
-    
-        //Apply texture parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         
-        //Cleanup
-        stbi_image_free(decodedData);
-    }
-    else throw std::runtime_error(std::string(TAG).append("Could not decode RGBA32 data provided to texture"));
+    //Copy the texture data to video memory
+    glGenTextures(1, &handle);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, handle);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pDecodedImageData);
+
+    //Apply texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     return handle;
 }(),
 [](const GLuint handle)
 {
-    if (handle > 0) glDeleteTextures(1, &handle);
+    glDeleteTextures(1, &handle);
 })
 {}
 
