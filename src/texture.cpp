@@ -22,6 +22,55 @@ bool static inline isPowerOfTwo(const long a)
     return std::ceil(std::log2(a)) == std::floor(std::log2(a));
 }
 
+static inline GLint textureFormatToGLint(const texture::format a)
+{
+    switch(a)
+    {
+        case texture::format::rgb:  return GL_RGB;
+        case texture::format::rgba: return GL_RGBA;
+    }
+    
+    throw std::runtime_error("unhandled format type");
+}
+
+static inline GLint minification_filter_to_glint(const texture::minification_filter a)
+{
+    switch(a)
+    {
+        case texture::minification_filter::linear: return GL_LINEAR;
+        case texture::minification_filter::nearest: return GL_NEAREST;
+        case texture::minification_filter::nearest_mipmap_nearest: return GL_NEAREST_MIPMAP_NEAREST;
+        case texture::minification_filter::linear_mipmap_nearest: return GL_LINEAR_MIPMAP_NEAREST;
+        case texture::minification_filter::nearest_mipmap_linear: return GL_NEAREST_MIPMAP_LINEAR;
+        case texture::minification_filter::linear_mipmap_linear: return GL_LINEAR_MIPMAP_LINEAR;
+    }
+    
+    throw std::runtime_error("unhandled minification filter");
+}
+
+static inline GLint magnification_filter_to_glint(const texture::magnification_filter a)
+{
+    switch(a)
+    {
+        case texture::magnification_filter::linear: return GL_LINEAR;
+        case texture::magnification_filter::nearest: return GL_NEAREST;
+    }
+    
+    throw std::runtime_error("unhandled magnification filter");
+}
+
+static inline GLint wrap_mode_to_glint(const texture::wrap_mode a)
+{
+    switch(a)
+    {
+        case texture::wrap_mode::clamp_to_edge: return GL_CLAMP_TO_EDGE;
+        case texture::wrap_mode::repeat: return GL_REPEAT;
+        case texture::wrap_mode::mirrored_repeat: return GL_MIRRORED_REPEAT;
+    }
+    
+    throw std::runtime_error("unhandled wrap mode");
+}
+
 const std::shared_ptr<gdk::texture> texture::GetCheckerboardOfDeath()
 {
     static std::once_flag initFlag;
@@ -75,7 +124,13 @@ texture texture::make_from_png_rgba32(const std::vector<GLubyte> atextureData)
     throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to texture"));
 }
 
-texture::texture(GLubyte *const pDecodedImageData, const long width, const long height)
+texture::texture(GLubyte *const pDecodedImageData, 
+    const long width, 
+    const long height, 
+    const texture::format format,
+    const minification_filter minFilter,
+    const magnification_filter magFilter,
+    const wrap_mode wrapMode)
 : m_Handle([&]()
 {
     if (!isPowerOfTwo(width) || !isPowerOfTwo(height)) 
@@ -85,13 +140,28 @@ texture::texture(GLubyte *const pDecodedImageData, const long width, const long 
         
     //Copy the texture data to video memory
     glGenTextures(1, &handle);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, handle);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pDecodedImageData);
 
-    //Apply texture parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glActiveTexture(GL_TEXTURE0);
+
+    glBindTexture(GL_TEXTURE_2D, handle);
+
+    glTexImage2D(GL_TEXTURE_2D, 
+        0, 
+        textureFormatToGLint(format), 
+        width, 
+        height, 
+        0, 
+        textureFormatToGLint(format), 
+        GL_UNSIGNED_BYTE, 
+        pDecodedImageData);
+
+    //Selecting texture filter functions
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnification_filter_to_glint(magFilter));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minification_filter_to_glint(minFilter));
+   
+    //Setting wrap modes
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(wrapMode));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(wrapMode));
 
     return handle;
 }(),

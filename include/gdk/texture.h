@@ -15,6 +15,60 @@ namespace gdk
     /// \brief a texture generally represents the color of a surface
     class texture final
     {
+    public:
+        /// \brief format of uncompressed image data provided to the ctor & format of the texture data within the gl
+        enum class format
+        {
+            rgb,
+            rgba
+        };
+
+        //! The texture minifying function is used whenever the pixel being textured maps to an area greater than one texture element.
+        enum class minification_filter
+        {
+            //! Returns the value of the texture element that is nearest (in Manhattan distance) to the center of the pixel being textured.
+            linear,
+            
+            //! Returns the weighted average of the four texture elements that are closest to the center of the pixel being textured.
+            nearest,
+            
+            //! Chooses the mipmap that most closely matches the size of the pixel being textured and uses the GL_NEAREST criterion (the texture element nearest to the center of the pixel) to produce a texture value.
+            nearest_mipmap_nearest,
+
+            //!  Chooses the mipmap that most closely matches the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the four texture elements that are closest to the center of the pixel) to produce a texture value.
+            linear_mipmap_nearest,
+
+            //!  Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_NEAREST criterion (the texture element nearest to the center of the pixel) to produce a texture value from each mipmap.  The final texture value is a weighted average of those two values.
+            nearest_mipmap_linear,
+
+            //!  Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the four texture elements that are closest to the center of the pixel) to produce a texture value from each mipmap.  The final texture value is a weighted average of those two values.  
+            linear_mipmap_linear
+        };
+
+        //! The texture magnification function is used when the pixel being textured maps to an area less than or equal to one texture element
+        enum class magnification_filter
+        {
+            //! Returns the value of the texture element that is nearest (in Manhattan distance) to the center of the pixel being textured.
+            nearest,
+            
+            //! Returns the weighted average of the four texture elements that are closest to the center of the pixel being textured.
+            linear
+        };
+
+        //! affects behaviour of sampling a texel outside of the normal range (0 - 1) along a texture dimension
+        enum class wrap_mode
+        {
+            //! sampling above 1 will sample 1, sampling below 0 will sample 0
+            clamp_to_edge,
+
+            //! causes the integer part of the s coordinate to be ignored; the GL uses only the fractional part, thereby creating a repeating pattern.
+            repeat,
+
+            //! causes the s coordinate to be set to the fractional part of the texture coordinate if the integer part of s is even; if the integer part of s is odd, then the s texture coordinate is set to 1 - frac ⁡ s , where frac ⁡ s represents the fractional part of s.
+            mirrored_repeat
+        };
+
+    private:
         jfc::unique_handle<GLuint> m_Handle;
     
     public:
@@ -29,7 +83,12 @@ namespace gdk
         //texture(const std::vector<GLubyte> &aRGBA32PNGtextureData /* IMAGE_TYPE */ /*GLuint repeatmode = 0, GLuint magfilter = 0*/);
 
         /// \brief creates a texture from decoded image data.
-        texture(GLubyte *const pDecodedImageData, const long width, const long height);
+        texture(GLubyte *const pDecodedImageData, const long width, 
+            const long height, 
+            const format = format::rgba,
+            const minification_filter minFilter = minification_filter::linear,
+            const magnification_filter magFilter = magnification_filter::nearest,
+            const wrap_mode wrapMode = wrap_mode::repeat);
 
         /// \brief texture useful for indicating texture related failure
         /// lazily instantiated.
