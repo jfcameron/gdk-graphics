@@ -11,17 +11,23 @@
 
 using namespace gdk;
 
-TEST_CASE("shaderprogram constructors", "[shaderprogram]")
+TEST_CASE("gdk::shader_program", "[gdk::shader_program]")
 {
     initGL();
 
     SECTION("AlphaCutOff shader initializes correctly")
     {
-        auto pShader = static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff);
+        auto a = static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff);
 
-        //TODO: require no gl errors
+        REQUIRE(a->useProgram() != 0);
+    }
 
-        REQUIRE(pShader->getName() == "AlphaCutOff");
+    SECTION("equality semantics")
+    {
+        auto a = static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff);
+        auto b = a;
+
+        REQUIRE(*a == *b);
     }
 }
 

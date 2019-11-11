@@ -17,16 +17,24 @@ namespace gdk
         friend std::ostream &operator<< (std::ostream &, const vertex_data &);
             
     public:
-        
         /// \brief Hint to the graphics device about how the vertex data will be used.
         ///
         /// \detailed Generally, dynamic data (data that is likely to be frequently rewritten) will be placed
         /// in video memory with fast read write speeds while static will be placed in slower (and more plentiful)
         /// video memory. Exact behaviours are implementation specific.        
-        enum class Type {Static, Dynamic};
+        enum class Type 
+        {
+            Static, 
+            Dynamic
+        };
         
         //! Determines the primitive type used at the primitive assembly stage.        
-        enum class PrimitiveMode {Triangles, Lines, Points};
+        enum class PrimitiveMode 
+        {
+            Triangles, 
+            Lines, 
+            Points
+        };
             
     private:
         std::string m_Name; //!< Human friendly identifier for the resource

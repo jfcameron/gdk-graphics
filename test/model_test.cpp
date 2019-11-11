@@ -20,8 +20,6 @@ TEST_CASE("gdk::model", "[gdk::model]")
     {auto blar2 = std::shared_ptr<shader_program>(shader_program::AlphaCutOff);}
     auto blar = std::shared_ptr<shader_program>(shader_program::AlphaCutOff);
 
-    std::cout << "model shader: " << blar->getHandle() << std::endl;
-
     SECTION("builds and draws")
     {
         model model(

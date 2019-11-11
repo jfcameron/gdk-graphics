@@ -14,20 +14,30 @@ namespace gdk
     /// In the context of OpenGL, a component is a floating-point value.
     struct vertex_attribute final
     {
-        std::string name = "attribute"; //!< name of the attribute
-        unsigned short size = {0};      //!< number of components in the attribute
-            
-        vertex_attribute &operator=(const vertex_attribute &) = default;
-        vertex_attribute &operator=(vertex_attribute &&) = default;
-      
-        vertex_attribute() = delete;
-        vertex_attribute(const std::string &aName, const unsigned short &aSize);
-        vertex_attribute(const vertex_attribute &) = default;
-        vertex_attribute(vertex_attribute &&) = default;
-        ~vertex_attribute() = default;
-    };
+        //! name of the attribute
+        std::string name;
 
-    std::ostream &operator<< (std::ostream &, const vertex_attribute &);
+        //! number of components in the attribute
+        unsigned short size = 0;
+       
+        /// \brief equality semantics
+        bool operator==(const vertex_attribute &) const;
+        /// \brief equality semantics
+        bool operator!=(const vertex_attribute &) const;
+
+        /// \brief copy semantics
+        vertex_attribute(const vertex_attribute &) = default;
+        /// \brief copy semantics
+        vertex_attribute &operator=(const vertex_attribute &) = default;
+
+        /// \brief move semantics
+        vertex_attribute(vertex_attribute &&) = default;
+        /// \brief move semantics
+        vertex_attribute &operator=(vertex_attribute &&) = default;
+        
+        /// \brief constructs an attribute with a given name and number of components
+        vertex_attribute(const std::string &aName, const unsigned short &aSize);
+    };
 }
 
 #endif

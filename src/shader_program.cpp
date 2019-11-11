@@ -3,10 +3,7 @@
 #include <gdkgraphics/buildinfo.h>
 
 #include <gdk/glh.h>
-#include <gdk/nlohmann_json_util.h>
 #include <gdk/shader_program.h>
-
-#include <nlohmann/json.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -18,41 +15,43 @@ static constexpr char TAG[] = "shader_program";
 
 const jfc::lazy_ptr<gdk::shader_program> shader_program::PinkShaderOfDeath([]()
 {
-const std::string vertexShaderSource = R"V0G0N(    
-    //Uniforms
-    uniform mat4 _MVP;
-#if defined Emscripten
-    //VertIn
-    attribute highp vec3 a_Position;
+    const std::string vertexShaderSource(R"V0G0N(    
+        //Uniforms
+        uniform mat4 _MVP;
+        #if defined Emscripten
+        //VertIn
+        attribute highp vec3 a_Position;
 
-#elif defined Darwin || defined Windows || defined Linux
-    //VertIn
-    attribute vec3 a_Position;
-#endif
-    void main ()
-    {
-        gl_Position = _MVP * vec4(a_Position,1.0);
-    }
-)V0G0N";
+        #elif defined Darwin || defined Windows || defined Linux
+        //VertIn
+        attribute vec3 a_Position;
+        #endif
 
-const std::string fragmentShaderSource = R"V0G0N(
-#if defined Emscripten
-    precision mediump float;
-#endif
+        void main ()
+        {
+            gl_Position = _MVP * vec4(a_Position,1.0);
+        }
+    )V0G0N");
 
-    const vec4 DEATHLY_PINK = vec4(1,0.2,0.8,1);
-    void main()
-    {
-        gl_FragColor = DEATHLY_PINK;
-    }
-)V0G0N";
+    const std::string fragmentShaderSource(R"V0G0N(
+        #if defined Emscripten
+        precision mediump float;
+        #endif
 
-    return new gdk::shader_program("PinkShaderOfDeath", vertexShaderSource, fragmentShaderSource);
+        const vec4 DEATHLY_PINK = vec4(1,0.2,0.8,1);
+
+        void main()
+        {
+            gl_FragColor = DEATHLY_PINK;
+        }
+    )V0G0N");
+
+    return new gdk::shader_program(vertexShaderSource, fragmentShaderSource);
 });
 
 const jfc::lazy_ptr<gdk::shader_program> shader_program::AlphaCutOff([]()
 {
-    const std::string vertexShaderSource = R"V0G0N(
+    const std::string vertexShaderSource(R"V0G0N(
     //Uniforms
     uniform mat4 _MVP;
     uniform mat4 _Model; //separate mats arent used. should probably delete. they are useful though
@@ -60,89 +59,60 @@ const jfc::lazy_ptr<gdk::shader_program> shader_program::AlphaCutOff([]()
     uniform mat4 _Projection;
 
     // Programmable stage input formats. Consider how to clean this up.. the webgl requirement of precison prefixes.
-#if defined Emscripten
+    #if defined Emscripten
     //VertIn
     attribute highp   vec3 a_Position;
     attribute mediump vec2 a_UV;
     //FragIn
     varying mediump vec2 v_UV;
-#elif defined Darwin || defined Windows || defined Linux
+
+    #elif defined Darwin || defined Windows || defined Linux
     //VertIn
     attribute vec3 a_Position;
     attribute vec2 a_UV;
     //FragIn
     varying vec2 v_UV;
-#endif
+    #endif
+
     void main ()
     {
         gl_Position = _MVP * vec4(a_Position,1.0);
 
         v_UV = a_UV;
     }
-)V0G0N";
+)V0G0N");
 
-    const std::string fragmentShaderSource = R"V0G0N(
-#if defined Emscripten
-    precision mediump float;
-#endif
+    const std::string fragmentShaderSource(R"V0G0N(
+        #if defined Emscripten
+        precision mediump float;
+        #endif
 
-    //Uniforms
-    uniform sampler2D _Texture;
-#if defined Emscripten
-    //FragIn
-    varying lowp vec2 v_UV;
-#elif defined Darwin || defined Windows || defined Linux
-    //FragIn
-    varying vec2 v_UV;
-#endif
+        //Uniforms
+        uniform sampler2D _Texture;
+        #if defined Emscripten
+        //FragIn
+        varying lowp vec2 v_UV;
 
-    void main()
-    {
-        vec4 frag = texture2D(_Texture, v_UV);
+        #elif defined Darwin || defined Windows || defined Linux
+        //FragIn
+        varying vec2 v_UV;
+        #endif
 
-        if (frag[3] < 1.0) discard;
+        void main()
+        {
+            vec4 frag = texture2D(_Texture, v_UV);
 
-        gl_FragColor = frag;                        
-    }
-)V0G0N";
-    return new gdk::shader_program("AlphaCutOff", vertexShaderSource, fragmentShaderSource);
+            if (frag[3] < 1.0) discard;
+
+            gl_FragColor = frag;                        
+        }
+    )V0G0N");
+
+    return new gdk::shader_program(vertexShaderSource, fragmentShaderSource);
 });
 
-std::ostream &gdk::operator<<(std::ostream &s, const shader_program &a) 
-{
-    return s << nlohmann::json
-    {
-        {"Type", TAG},
-        {"Debug Info", //This part is expensive. Should only be written if some symbol is defined etc. "Debug Info" should also be standardized.
-            {"Active Attributes", [&]()
-                {
-                    GLint activeAttribs = 0;
-
-                    glGetProgramiv(a.m_ProgramHandle, GL_ACTIVE_ATTRIBUTES, &activeAttribs);
-
-                    return activeAttribs;
-                }()
-            },
-            {"Active Uniforms", [&]()
-                {
-                    GLint activeUniforms = 0;
-
-                    glGetProgramiv(a.m_ProgramHandle, GL_ACTIVE_UNIFORMS, &activeUniforms);
-
-                    return activeUniforms;
-                }()
-            },
-        },
-        
-        {"m_Name", jfc::insertion_operator_to_nlohmann_json_object(a.m_Name)},
-        {"m_ProgramHandle", jfc::insertion_operator_to_nlohmann_json_object(a.m_ProgramHandle)},
-    }
-    .dump();
-}
-
-shader_program::shader_program(const std::string &aName, std::string aVertexSource, std::string aFragmentSource)
-: m_Name(aName)
-, m_ProgramHandle([&]()
+shader_program::shader_program(std::string aVertexSource, std::string aFragmentSource)
+: m_ProgramHandle([&]()
 {
     aVertexSource.insert  (0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
     aFragmentSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
@@ -177,46 +147,35 @@ shader_program::shader_program(const std::string &aName, std::string aVertexSour
     {
         std::ostringstream message;
         
-        message << "The shader: \"" << aName << "\" has failed to compile!" << std::endl
-        << std::endl << "program compilation log: " <<         glh::GetProgramInfoLog(programHandle) << std::endl
-        << std::endl << "vertex shader compilation log: " <<   glh::GetShaderInfoLog(vs) << std::endl
-        << std::endl << "fragment shader compilation log: " << glh::GetShaderInfoLog(fs);
+        message 
+            << "The shader has failed to compile!\n" 
+            << "program compilation log: " << glh::GetProgramInfoLog(programHandle) << "\n"
+            << "vertex shader compilation log:\n=-=-==-=-=--=\n" << glh::GetShaderInfoLog(vs) << "\n=-=-==-=-=--=\n" 
+            << "fragment shader compilation log:\n=-=-==-=-=--=\n" << glh::GetShaderInfoLog(fs) << "\n=-=-==-=-=--=\n";
 
         throw std::runtime_error(std::string(TAG).append(message.str()));
     }
 
-    return programHandle;
+    return jfc::unique_handle<GLuint>(programHandle,
+        [](const GLuint handle)
+        {
+            glDeleteProgram(handle);
+        });
 }())
 {}
 
-shader_program::shader_program(shader_program &&ashader_program) 
-{
-    m_Name =          std::move(ashader_program.m_Name);
-    m_ProgramHandle = std::move(ashader_program.m_ProgramHandle);
-    
-    ashader_program.m_ProgramHandle = 0;
-}
-
-shader_program::~shader_program() 
-{
-    if (m_ProgramHandle > 0) glDeleteProgram(m_ProgramHandle);
-}
-
 GLuint shader_program::useProgram() const 
 {
-    glUseProgram(m_ProgramHandle);
+    glUseProgram(m_ProgramHandle.get());
+
     //glDrawCalls();
     
-    return m_ProgramHandle;
+    return m_ProgramHandle.get();
 }
 
-std::string shader_program::getName() const 
+bool shader_program::operator==(const shader_program &b) const
 {
-    return m_Name;
+    return m_ProgramHandle == b.m_ProgramHandle;
 }
-    
-GLuint shader_program::getHandle() const 
-{
-    return m_ProgramHandle;
-}
+bool shader_program::operator!=(const shader_program &b) const {return !(*this == b);}
 

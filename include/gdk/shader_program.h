@@ -5,44 +5,38 @@
 
 #include <gdk/opengl.h>
 #include <jfc/lazy_ptr.h>
+#include <jfc/unique_handle.h>
 
-#include <iosfwd>
 #include <string>
 
 namespace gdk
 {
-    /// \brief Specifies drawing behaviours at [at least 2] of the programmable stages in the OpenGL programmable pipeline.
-    ///
-    /// \detailed none.
+    /// \brief Specifies drawing behaviours at [at least 2] of the programmable stages in the OpenGL pipeline.
     class shader_program final
     {
-        friend std::ostream &operator<< (std::ostream &, const shader_program &);
-        
-        std::string m_Name;      //!< Human friendly identifier        
-        GLuint m_ProgramHandle = {0}; //!< handle to the program in the context.
+        jfc::unique_handle<GLuint> m_ProgramHandle; //!< handle to the program in the context.
         
     public:
-        //! Installs the program to the pipeline. This program's programmable stages
+        //! Installs this program's shaders to their corresponding programmable stages 
         /// will be used for subsequent draw calls until a different program is installed.
         GLuint useProgram() const;
-        
-        std::string getName() const;
-        GLuint getHandle() const;
                 
-        shader_program &operator=(const shader_program &) = delete;
-        shader_program &operator=(shader_program &&) = delete;
-                
-        shader_program() = delete;
-        shader_program(const std::string &aName, std::string aVertexSource, std::string aFragmentSource);
-        shader_program(const shader_program &) = delete;
-        shader_program(shader_program &&);
-        ~shader_program();
+        /// \brief equality semantics
+        bool operator==(const shader_program &) const; 
+        /// \brief equality semantics
+        bool operator!=(const shader_program &) const; 
+
+        /// \brief move semantics
+        shader_program(shader_program &&) = default;
+        /// \brief move semantics
+        shader_program &operator=(shader_program &&) = default;
         
+        /// \brief constructs a shader program with glsl source file contents for a vertex shader and a fragment shader 
+        shader_program(std::string aVertexSource, std::string aFragmentSource);
+
         static const jfc::lazy_ptr<gdk::shader_program> PinkShaderOfDeath; //!< shader for indicating some kind of failure
         static const jfc::lazy_ptr<gdk::shader_program> AlphaCutOff;       //!< shader for drawing unlit surfaces with alpha channel based transparency
     };
-
-    std::ostream &operator<< (std::ostream &, const shader_program &);
 }
 
 #endif

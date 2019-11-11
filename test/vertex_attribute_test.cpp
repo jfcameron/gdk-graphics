@@ -11,10 +11,10 @@
 
 using namespace gdk;
 
-TEST_CASE("vertexattribute constructors and assignment operators", "[vertexattribute]")
+TEST_CASE("gdk::vertexattribute", "[gdk::vertexattribute]")
 {
     constexpr auto NAME = "uv";
-    constexpr decltype(vertex_attribute::size) SIZE(0);
+    constexpr decltype(vertex_attribute::size) SIZE(2);
 
     const vertex_attribute a(NAME, SIZE);
 

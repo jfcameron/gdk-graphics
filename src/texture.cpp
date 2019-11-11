@@ -176,3 +176,8 @@ GLuint texture::getHandle() const
     return m_Handle.get();
 }
 
+bool texture::operator==(const texture &b) const
+{
+    return m_Handle == b.m_Handle;
+}
+bool texture::operator!=(const texture &b) const { return !(*this == b); }

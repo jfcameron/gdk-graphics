@@ -18,8 +18,10 @@ namespace gdk
         /// \brief format of uncompressed image data provided to the ctor & format of the texture data within the gl
         enum class format
         {
-            //!:t
+            //! red, green, blue channels only
             rgb,
+
+            //! red, green, blue, alpha channels
             rgba
         };
 
@@ -74,6 +76,11 @@ namespace gdk
     public:
         /// \brief returns the handle to the texture in the opengl context
         GLuint getHandle() const;
+
+        /// \brief equality semantics
+        bool operator==(const texture &) const;
+        /// \brief equality semantics
+        bool operator!=(const texture &) const;
 
         /// \brief move semantics
         texture &operator=(texture &&) = default;
