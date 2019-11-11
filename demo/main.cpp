@@ -35,18 +35,21 @@ int main(int argc, char **argv)
 
         model.set_texture("_Texture", texture::GetCheckerboardOfDeath());
 
-        model.set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>());
+        model.set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
 
         return model;
     }()));
+
+    models.push_back(std::make_shared<model>(model(*models.back())));
 
     float blar = 0;
 
     while(!window.shouldClose())
     {
         window.pollEvents();
-       
-        for (auto mdl : models) mdl->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
+      
+        auto mdl = models.back();
+        /*for (auto mdl : models)*/ mdl->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
         
         camera.setViewMatrix({std::sin(blar), 0, -10}, {});
 
