@@ -16,8 +16,6 @@ namespace gdk
     /// \brief Position, orientation and perspective from which model(s) are drawn
     class camera
     {
-        //friend std::ostream &operator<< (std::ostream &, const perspective_camera &);
-
         /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
         enum class ClearMode 
         {
@@ -25,7 +23,7 @@ namespace gdk
             Nothing,
 
             //! Clear the color buffer
-            Color/*AndDepth*/,
+            ColorAndDepth,
 
             //! Clear the Depth buffer
             DepthOnly 
@@ -36,7 +34,7 @@ namespace gdk
         graphics_vector2_type m_ViewportPosition = graphics_vector2_type::Zero;
 
         /// \brief size of camera viewport within the device viewport
-        graphics_vector2_type m_ViewportSize = graphics_vector2_type(1, 1); 
+        graphics_vector2_type m_ViewportSize = graphics_vector2_type(2, 2); 
         
         /// \brief World position of camera
         graphics_mat4x4_type m_ViewMatrix = graphics_mat4x4_type::Identity; 
@@ -45,7 +43,7 @@ namespace gdk
         graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::Identity; 
 
         /// \brief Determines which buffers in the FBO to clear before drawing
-        ClearMode m_ClearMode = ClearMode::Color;
+        ClearMode m_ClearMode = ClearMode::ColorAndDepth;
 
         /// \brief The color to replace all data in the color buffer with 
         /// (if color buffer is to be cleared)

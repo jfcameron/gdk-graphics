@@ -83,7 +83,7 @@ void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const g
     
     switch(m_ClearMode)
     {
-        case ClearMode::Color:
+        case ClearMode::ColorAndDepth:
         {
             glh::Clearcolor(m_ClearColor);
 
