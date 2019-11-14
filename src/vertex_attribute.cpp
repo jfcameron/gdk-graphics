@@ -2,8 +2,6 @@
 
 #include <gdk/vertex_attribute.h>
 
-#include <nlohmann/json.hpp>
-
 using namespace gdk;
 
 static constexpr char TAG[] = "vertex_attribute";

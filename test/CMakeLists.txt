@@ -23,6 +23,8 @@ jfc_add_tests(
 
         #"${CMAKE_CURRENT_LIST_DIR}/glh_test.cpp"
 
+        "${CMAKE_CURRENT_LIST_DIR}/uniform_manager_test.cpp"
+
     INCLUDE_DIRECTORIES
         "${${PROJECT_NAME}_INCLUDE_DIRECTORIES}"
 

@@ -4,6 +4,7 @@
 #define GDK_GFX_VERTEXFORMAT_H
 
 #include <gdk/opengl.h>
+#include <gdk/shader_program.h>
 #include <gdk/vertex_attribute.h>
 
 #include <string>
@@ -22,6 +23,8 @@ namespace gdk
     /// 8..10 Tangent, then repeat (11-13 goes to Position etc...). Attributes, within the context of the graphics pipeline
     /// represents instanced data. In the context of the Vertex Shader stage, you will be able to access a set of attributes,
     /// representing a single full vertex.
+    /// TODO: need to support different GL types. forcing float is esay to think about but wasteful.
+    /// TODO: maybe call this one interleaved_vertex_format? Then support multivbo elsewhere?
     class vertex_format final
     {
         //! name and # of floats of each attribute in the format
@@ -32,7 +35,7 @@ namespace gdk
             
     public:
         //! prepares gl context to draw vertex data formatted according to this vertex format
-        void enableAttributes(const GLuint ashader_programHandle) const;
+        void enableAttributes(const shader_program &aShaderProgram) const;
 
         //! Total number of components (sum of length of attributes)
         int getSumOfAttributeComponents() const;

@@ -124,16 +124,16 @@ bool vertex_data::operator!=(const vertex_data &that)
     return !(*this == that);
 }
 
-void vertex_data::bind(const GLuint currentShaderProgramHandle) const
+void vertex_data::bind(const shader_program &aShaderProgram) const
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
     
-    m_vertex_format.enableAttributes(currentShaderProgramHandle);
+    m_vertex_format.enableAttributes(aShaderProgram);
 }
 
-void vertex_data::draw(const GLuint ashader_programHandle) const
+void vertex_data::draw() const
 {
-    bind(ashader_programHandle); //TODO: move this call to "batch", will grealty reduce frequency of gl state changes.
+    //bind(ashader_programHandle); //TODO: move this call to "batch", will grealty reduce frequency of gl state changes.
 
     GLenum primitiveMode = PrimitiveModeToOpenGLPrimitiveType(m_PrimitiveMode);
 

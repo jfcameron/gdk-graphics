@@ -32,9 +32,8 @@ namespace glh
     //void LogErrors(const bool &aDoNotLogIfNoErrors = false);
     void ClearErrors();*/
 
-    //! Vertex binding
-    bool Enablevertex_attribute(const std::string_view &aAttributeName, const GLuint aProgramHandle, 
-        const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents);
+    //! Vertex binding on the currently used program
+    void Enablevertex_attribute(const GLint attributeLocation, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents);
     
     bool BindtextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint atextureHandle,
         const int atextureUnit);//, final GLenum &atextureType);

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 using namespace gdk;
 
@@ -18,14 +19,15 @@ const jfc::lazy_ptr<gdk::shader_program> shader_program::PinkShaderOfDeath([]()
     const std::string vertexShaderSource(R"V0G0N(    
         //Uniforms
         uniform mat4 _MVP;
-        #if defined Emscripten
+
+    #if defined Emscripten
         //VertIn
         attribute highp vec3 a_Position;
 
-        #elif defined Darwin || defined Windows || defined Linux
+    #elif defined Darwin || defined Windows || defined Linux
         //VertIn
         attribute vec3 a_Position;
-        #endif
+    #endif
 
         void main ()
         {
@@ -34,9 +36,9 @@ const jfc::lazy_ptr<gdk::shader_program> shader_program::PinkShaderOfDeath([]()
     )V0G0N");
 
     const std::string fragmentShaderSource(R"V0G0N(
-        #if defined Emscripten
+    #if defined Emscripten
         precision mediump float;
-        #endif
+    #endif
 
         const vec4 DEATHLY_PINK = vec4(1,0.2,0.8,1);
 
@@ -52,51 +54,51 @@ const jfc::lazy_ptr<gdk::shader_program> shader_program::PinkShaderOfDeath([]()
 const jfc::lazy_ptr<gdk::shader_program> shader_program::AlphaCutOff([]()
 {
     const std::string vertexShaderSource(R"V0G0N(
-    //Uniforms
-    uniform mat4 _MVP;
-    uniform mat4 _Model; //separate mats arent used. should probably delete. they are useful though
-    uniform mat4 _View;
-    uniform mat4 _Projection;
+        //Uniforms
+        uniform mat4 _MVP;
+        uniform mat4 _Model; //separate mats arent used. should probably delete. they are useful though
+        uniform mat4 _View;
+        uniform mat4 _Projection;
 
-    // Programmable stage input formats. Consider how to clean this up.. the webgl requirement of precison prefixes.
+        // Programmable stage input formats. Consider how to clean this up.. the webgl requirement of precison prefixes.
     #if defined Emscripten
-    //VertIn
-    attribute highp   vec3 a_Position;
-    attribute mediump vec2 a_UV;
-    //FragIn
-    varying mediump vec2 v_UV;
+        //VertIn
+        attribute highp   vec3 a_Position;
+        attribute mediump vec2 a_UV;
+        //FragIn
+        varying mediump vec2 v_UV;
 
     #elif defined Darwin || defined Windows || defined Linux
-    //VertIn
-    attribute vec3 a_Position;
-    attribute vec2 a_UV;
-    //FragIn
-    varying vec2 v_UV;
+        //VertIn
+        attribute vec3 a_Position;
+        attribute vec2 a_UV;
+        //FragIn
+        varying vec2 v_UV;
     #endif
 
-    void main ()
-    {
-        gl_Position = _MVP * vec4(a_Position,1.0);
+        void main ()
+        {
+            gl_Position = _MVP * vec4(a_Position,1.0);
 
-        v_UV = a_UV;
-    }
+            v_UV = a_UV;
+        }
 )V0G0N");
 
     const std::string fragmentShaderSource(R"V0G0N(
-        #if defined Emscripten
+    #if defined Emscripten
         precision mediump float;
-        #endif
+    #endif
 
         //Uniforms
         uniform sampler2D _Texture;
-        #if defined Emscripten
+    #if defined Emscripten
         //FragIn
         varying lowp vec2 v_UV;
 
-        #elif defined Darwin || defined Windows || defined Linux
+    #elif defined Darwin || defined Windows || defined Linux
         //FragIn
         varying vec2 v_UV;
-        #endif
+    #endif
 
         void main()
         {
@@ -133,34 +135,56 @@ static inline void setUpFaceCullingMode(shader_program::FaceCullingMode a)
 }
 
 shader_program::shader_program(std::string aVertexSource, std::string aFragmentSource)
-: m_ProgramHandle([&]()
+: m_VertexShaderHandle([&aVertexSource]()
 {
-    aVertexSource.insert  (0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
-    aFragmentSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
+    aVertexSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
 
-#if defined JFC_TARGET_PLATFORM_Emscripten // version must be the first line in source. version must be present for WebGL platforms
-    aVertexSource.insert  (0, std::string("#version 100\n"));
-    aFragmentSource.insert(0, std::string("#version 100\n"));
+#if defined JFC_TARGET_PLATFORM_Emscripten // version must be the first line in source. version must be present for WebGL platforms, one of the small differences between EmbeddedSystems 2 and Web 1
+    aVertexSource.insert(0, std::string("#version 100\n"));
 #endif
 
     // Compile vertex stage
-    const char *const vertex_shader = aVertexSource.c_str();
     const GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    const char *const vertex_shader = aVertexSource.c_str();
     glShaderSource(vs, 1, &vertex_shader, 0);
     glCompileShader(vs);
- 
+
+    return decltype(m_VertexShaderHandle)(vs, [](const GLuint handle)
+    {
+        glDeleteShader(handle);
+    });
+}())
+, m_FragmentShaderHandle([&aFragmentSource]()
+{
+    aFragmentSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
+
+#if defined JFC_TARGET_PLATFORM_Emscripten // version must be the first line in source. version must be present for WebGL platforms, one of the small differences between EmbeddedSystems 2 and Web 1
+    aFragmentSource.insert(0, std::string("#version 100\n"));
+#endif
+    
     // Compile fragment stage
     const char *const fragment_shader = aFragmentSource.c_str();
     const GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fs, 1, &fragment_shader, 0);
     glCompileShader(fs);
-    
+
+    return decltype(m_FragmentShaderHandle)(fs, [](const GLuint handle)
+    {
+        glDeleteShader(handle);
+    });
+}())
+, m_ProgramHandle([this]()
+{
+    const auto vs = m_VertexShaderHandle.get();
+    const auto fs = m_FragmentShaderHandle.get();
+
     // Link the program
     GLuint programHandle = glCreateProgram();
     glAttachShader(programHandle, vs);
     glAttachShader(programHandle, fs);
     glLinkProgram(programHandle);
-    
+
+    // Confirm no compilation/link errors
     GLint status(-1);
     glGetProgramiv(programHandle, GL_LINK_STATUS, &status);
     
@@ -183,7 +207,76 @@ shader_program::shader_program(std::string aVertexSource, std::string aFragmentS
             glDeleteProgram(handle);
         });
 }())
-{}
+{
+    const auto programHandle = m_ProgramHandle.get();
+
+    GLint count;
+
+    GLsizei currentNameLength;
+  
+    // poll active attributes, record their names and locations for attribute enabling & creating vertex attrib pointers
+    {
+        // (c string bookkeeping) create a buffer big enough to contain the longest active attrib's name
+        GLint maxAttribNameLength(0);
+        glGetProgramiv(programHandle, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribNameLength);
+        
+        std::vector<GLchar> attrib_name_buffer(maxAttribNameLength); 
+
+        glGetProgramiv(programHandle, GL_ACTIVE_ATTRIBUTES, &count);
+
+        for (decltype(count) i(0); i < count; ++i)
+        {
+            GLint component_count;
+            GLenum component_type;
+
+            glGetActiveAttrib(programHandle, 
+                i, 
+                attrib_name_buffer.size(),    // (c string bookkeeping) max size the gl can safely write into my buffer
+                &currentNameLength,           // (c string bookkeeping) actual char count for the current attribute's name 
+                &component_count,             // e.g: 3 //TODO This isnt what I tohught it was. Size is the number of gltypes.. so vec2 would == 1 as in 1 vec 2, not 2 floats, being the components... need to rename all this stuff...
+                &component_type,              // e.g: float
+                &attrib_name_buffer.front()); // e.g: "a_Position"
+
+            m_ActiveAttributes[std::string(attrib_name_buffer.begin(), attrib_name_buffer.begin() + currentNameLength)] =
+            shader_program::active_attribute_info({
+                .location = i,
+                .type = component_type,
+                .count = component_count
+            });
+        }
+    }
+
+    // poll active uniforms, record their names and locations for uniform value assignments
+    {
+        // (c string bookkeeping) create a buffer likely big enough to contain the longest active attrib's name
+        // There is a GL_ACTIVE_UNIFORM_MAX_LENGTH (equivalent of above attrib code), but found a few posts on SO that point to
+        // drivers returning incorrect values.. so just making a very large buffer instead.
+        std::vector<GLchar> uniform_name_buffer(256); 
+
+        glGetProgramiv(programHandle, GL_ACTIVE_UNIFORMS, &count);
+
+        for (decltype(count) i(0); i < count; ++i)
+        {
+            GLint attribute_size;
+            GLenum attribute_type;
+
+            glGetActiveUniform(programHandle, 
+                i, 
+                uniform_name_buffer.size(),    // (c string bookkeeping) max size the gl can safely write into my buffer
+                &currentNameLength,            // (c string bookkeeping) actual char count for the current attribute's name
+                &attribute_size,               // e.g: "1"
+                &attribute_type,               // e.g: "texture"
+                &uniform_name_buffer.front()); // e.g: "u_Diffuse" 
+
+            m_ActiveUniforms[std::string(uniform_name_buffer.begin(), uniform_name_buffer.begin() + currentNameLength)] =
+            shader_program::active_uniform_info({
+                .location = i,
+                .type = attribute_type,
+                .size = attribute_size 
+            });
+        }
+    }
+}
 
 GLuint shader_program::useProgram() const 
 {
@@ -193,6 +286,7 @@ GLuint shader_program::useProgram() const
 
     return m_ProgramHandle.get();
 }
+
 
 bool shader_program::operator==(const shader_program &b) const
 {

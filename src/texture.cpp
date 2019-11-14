@@ -1,7 +1,6 @@
 // © 2018 Joseph Cameron - All Rights Reserved
 
 #include <gdk/glh.h>
-#include <gdk/nlohmann_json_util.h>
 #include <gdk/texture.h>
 
 #include <stb/stb_image.h>

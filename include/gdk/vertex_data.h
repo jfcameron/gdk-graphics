@@ -81,12 +81,12 @@ namespace gdk
         /// instance, behaviour is unintended. The bodies of these functions are separate because bind
         /// is expensive and does not need to be called nearly as frequently as draw. Bind is per unique vertex data
         /// draw is per unique model (that vertex data projected out somewhere into the scene.)
-        void bind(const GLuint currentShaderProgramHandle) const;
+        void bind(const shader_program &aShaderProgram) const;
 
         //! Invokes the pipline on the currently bound vertex data, with the expectation that
         /// the currently bound data is the data held by this instance
         /// \warn if bind() has not been called before draw, the behaviour will be unintended
-        void draw(const GLuint ashader_programHandle) const;
+        void draw() const;
 
         //! replace current data in the vbo and ibo with new data
         void updatevertex_data(const std::vector<GLfloat> &aNewvertex_data, 

@@ -33,7 +33,6 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
 
         ${stb_INCLUDE_DIR}
-        ${nlohmann_INCLUDE_DIR}
 
     LIBRARIES
         ${gdkmath_LIBRARIES}
@@ -64,6 +63,9 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_attribute.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_format.cpp
+        
+        #new
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/uniform_manager.cpp
 )
 
 if (JFC_BUILD_DEMO)

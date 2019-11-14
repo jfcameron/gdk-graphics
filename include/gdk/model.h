@@ -30,7 +30,8 @@ namespace gdk
     /// \todo the shaderprogram and uniform data (textures etc.)  Should probably
     /// be broken out into a new abstraction. This work would be a good match for the "material" class seen in many engines.
     ///
-    /// \TODO break up all the uniform binding! Simplify!
+    /// \TODO break up all the uniform binding! Simplify!. Model is a dumping ground.. badly defined abstraction, too much responsibility.
+    /// TODO replace model with objects that are more sympathetic to opengl: batch, pipeline, entity.
     class model final
     {
         //! Position in the world

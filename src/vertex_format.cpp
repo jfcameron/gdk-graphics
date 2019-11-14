@@ -3,6 +3,7 @@
 #include <gdk/glh.h>
 #include <gdk/opengl.h>
 #include <gdk/vertex_format.h>
+#include <gdk/shader_program.h>
 
 using namespace gdk;
 
@@ -39,21 +40,28 @@ vertex_format::vertex_format(const std::vector<vertex_attribute> &aAttributes)
 })())
 {}
 
-void vertex_format::enableAttributes(const GLuint ashader_programHandle) const
+void vertex_format::enableAttributes(const shader_program &aShaderProgram) const
 {
     int attributeOffset(0);
     
     for (const auto &attribute : m_Format)
     {
         std::string attributeName = attribute.name;
-
         int attributeSize = attribute.size;
-        
-        glh::Enablevertex_attribute(attributeName, 
-            ashader_programHandle, 
-            attributeSize, 
-            attributeOffset,
-            m_SumOfAttributeComponents);
+
+        if (auto found = aShaderProgram.m_ActiveAttributes.find(attributeName); found != aShaderProgram.m_ActiveAttributes.end())
+        {
+            if (attributeName == found->first //&&
+                //attributeType == found->type && //TODO: support types, so not forced to use floats for small range datatypes
+                //attributeSize == found->second.count) //TODO: count is not component count, its number of e.g vector2s
+                )
+            {
+                glh::Enablevertex_attribute(found->second.location, 
+                    attributeSize, 
+                    attributeOffset,
+                    m_SumOfAttributeComponents);
+            }
+        }
         
         attributeOffset += attributeSize;
     }

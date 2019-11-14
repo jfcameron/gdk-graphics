@@ -3,8 +3,6 @@
 #include <gdk/color.h>
 #include <gdk/glh.h>
 
-#include <nlohmann/json.hpp>
-
 #include <vector>
 
 namespace glh
@@ -14,24 +12,19 @@ namespace glh
         glClearColor(acolor.r, acolor.g, acolor.b, acolor.a);
     }
 
-    bool Enablevertex_attribute(const std::string_view &aAttributeName, const GLuint aProgramHandle, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents)
+    /// TODO: Hugely wasetful! Stop attrib location polling! ahh!!
+    void Enablevertex_attribute(const GLint attributeLocation, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents)
     {
-        GLint attribute = glGetAttribLocation(aProgramHandle, aAttributeName.data());
-    
-        if (attribute == -1) return false; // The attribute either does not exist or is not used in the current shader program
-         
-        glEnableVertexAttribArray(attribute);
+        glEnableVertexAttribArray(attributeLocation);
     
         //Create vertex attribute pointers..
         glVertexAttribPointer(
-            attribute,      //Position attribute index
+            attributeLocation,      //Position attribute index
             aAttributeSize, //Pos size
-            GL_FLOAT,       //data type of each member of the format (must be uniform, look at glbindbufferdata, it takes an array or ptr to an array, so no suprise)
+            GL_FLOAT,       //data type of each member of the format (must be uniform, look at glbindbufferdata, it takes an array or ptr to an array, so no suprise) TODO: support different types.
             GL_FALSE,
-            sizeof(GLfloat)*aTotalNumberOfvertex_attributeComponents,
+            sizeof(GLfloat) * aTotalNumberOfvertex_attributeComponents,
             reinterpret_cast<void *>(sizeof(GLfloat) * aAttributeOffset));
-    
-        return true;
     }
 
     void Viewport(const gdk::graphics_intvector2_type& aPos, const gdk::graphics_intvector2_type& aSize)
@@ -44,6 +37,7 @@ namespace glh
         glScissor(aPos.x, aPos.y, aSize.x, aSize.y);
     }
 
+    /// TODO: Constantly calling glGetUniformLocation is hugely wasetful! ahh
     bool Bind1FloatUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const float aValue)
     {
         GLint uniformHandle = glGetUniformLocation(aShaderHandle, aUniformName.data());

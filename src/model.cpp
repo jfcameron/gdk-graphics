@@ -4,14 +4,9 @@
 #include <gdk/glh.h>
 #include <gdk/mat4x4.h>
 #include <gdk/model.h>
-#include <gdk/nlohmann_json_util.h>
 #include <gdk/opengl.h>
 #include <gdk/shader_program.h>
 #include <gdk/vertex_data.h>
-
-#include <nlohmann/json.hpp>
-
-#include <iostream>
 
 using namespace gdk;
 
@@ -63,7 +58,9 @@ void model::draw(const double aTimeSinceStart, const double aDeltaTime, const gr
     //-=-=-==-=--=-==--=
 
     // -=-=-=-=-== Split in two (1) setting up vertex stuff, 2) draw) then do set up once per batch
-    pvertex_data->draw(programHandle); // inversion here. VertexData, format pointers etc shoul be done before this (once per batch)
+    pvertex_data->bind(*m_ShaderProgram); // inversion here. VertexData, format pointers etc shoul be done before this (once per batch)
+
+    pvertex_data->draw(); // inversion here. VertexData, format pointers etc shoul be done before this (once per batch)
 }
 
 // Accessors
