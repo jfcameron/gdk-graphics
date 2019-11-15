@@ -133,11 +133,8 @@ void vertex_data::bind(const shader_program &aShaderProgram) const
 
 void vertex_data::draw() const
 {
-    //bind(ashader_programHandle); //TODO: move this call to "batch", will grealty reduce frequency of gl state changes.
-
     GLenum primitiveMode = PrimitiveModeToOpenGLPrimitiveType(m_PrimitiveMode);
 
-    // This part is fine
     if (m_IndexBufferHandle.get() > 0)
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.get());
@@ -190,8 +187,14 @@ vertex_data::vertex_data(const vertex_data::Type &aType,
     if (aIndexData.size() > 0)
     {
         glGenBuffers(1, &ibo);
+        
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * aIndexData.size(), &aIndexData[0], vertex_dataTypeToOpenGLDrawType(aType));
+        
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
+            sizeof(GLushort) * aIndexData.size(), 
+            &aIndexData[0], 
+            vertex_dataTypeToOpenGLDrawType(aType));
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
         std::string errorCode;

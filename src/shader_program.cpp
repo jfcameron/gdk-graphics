@@ -571,12 +571,14 @@ void shader_program::setUniform(const std::string &aName, const gdk::texture &aT
     const auto &search = m_ActiveUniforms.find(aName);
 
     if (search != m_ActiveUniforms.end()) 
-    {
-        const GLint unit(GL_TEXTURE0 + 0); // TODO: gotta iterate
+    {   
+        // TODO: gotta iterate. Try to think of how to hide this. probably cant. think
+        const GLint unit(GL_TEXTURE0 + 0); 
 
-        if (unit <= 8) // 8 is the guaranteed minimum across all es2/web1 implementations.
+        if (unit <= 8) // 8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that
         {
-            const GLenum target(GL_TEXTURE_2D); //TODO: parameterize! Improve texture as well to support non2ds
+            //TODO: parameterize! Improve texture as well to support non2ds
+            const GLenum target(GL_TEXTURE_2D); 
 
             glActiveTexture(unit);
 

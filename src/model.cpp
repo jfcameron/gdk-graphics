@@ -26,10 +26,27 @@ void model::draw(
     const graphics_mat4x4_type &aViewMatrix, 
     const graphics_mat4x4_type &aProjectionMatrix) const
 {
-    auto pvertex_data = m_vertex_data;
-       
-    // refactor upwards, then propegate the handle down so MVP can be bound       
+    // TODO: refactor upwards, then propegate the handle down so MVP can be bound       
+    // program should be installed to the pipeline in the "pipeline" abstraction
     const GLuint programHandle = m_ShaderProgram->useProgram();
+    
+    //TODO Refactor to .. scene? batch?
+    // these uniforms belong to a higherlevel abstraction. Higher than modelor camera. should be "scene".
+    //bind standard uniforms
+    /*const float time = aTimeSinceStart;
+    const float deltaTime = aDeltaTime;
+
+    glh::Bind1FloatUniform(programHandle, "_DeltaTime",  deltaTime);
+    glh::Bind1FloatUniform(programHandle, "_Time",       time     );*/
+
+    // Refactor to material
+    //bind this model's uniforms
+    /*m_textures.bind(programHandle);
+    m_Floats.bind(programHandle);
+    m_Vector2Uniforms.bind(programHandle);
+    m_Vector3Uniforms.bind(programHandle);
+    m_Vector4Uniforms.bind(programHandle);
+    m_Mat4x4Uniforms.bind(programHandle);*/
     
     // Acceptable!
     const graphics_mat4x4_type p = aProjectionMatrix;
@@ -43,62 +60,12 @@ void model::draw(
     m_ShaderProgram->setUniform("_Projection", mvp);
     m_ShaderProgram->setUniform("_MVP", mvp);
 
-    //-=-=-==-=--=-==--= Refactor to .. scene? batch?
-    // these uniforms belong to a higherlevel abstraction. Higher than modelor camera. should be "scene".
-    //bind standard uniforms
-    const float time = aTimeSinceStart;
-    const float deltaTime = aDeltaTime;
+    // TODO Refactor this to "batch" abstraction
+    m_vertex_data->bind(*m_ShaderProgram);
 
-    /*glh::Bind1FloatUniform(programHandle, "_DeltaTime",  deltaTime);
-    glh::Bind1FloatUniform(programHandle, "_Time",       time     );*/
-    //-=-=-==-=--=-==--=
-
-    // =--==--==-= Refactor to material
-    //bind this model's uniforms
-    /*m_textures.bind(programHandle);
-    m_Floats.bind(programHandle);
-    m_Vector2Uniforms.bind(programHandle);
-    m_Vector3Uniforms.bind(programHandle);
-    m_Vector4Uniforms.bind(programHandle);
-    m_Mat4x4Uniforms.bind(programHandle);*/
-    //-=-=-==-=--=-==--=
-
-    // -=-=-=-=-== Split in two (1) setting up vertex stuff, 2) draw) then do set up once per batch
-    pvertex_data->bind(*m_ShaderProgram); // inversion here. VertexData, format pointers etc shoul be done before this (once per batch)
-
-    pvertex_data->draw(); // inversion here. VertexData, format pointers etc shoul be done before this (once per batch)
+    // Acceptable!
+    m_vertex_data->draw();
 }
-
-// Accessors
-/*void model::set_texture(const std::string &aUniformName, const jfc::default_ptr<texture> &atexture)
-{
-    //m_textures.insert(aUniformName, atexture);
-}
-
-void model::setFloat(const std::string &aUniformName, const std::shared_ptr<float> &aFloat)
-{
-    //m_Floats.insert(aUniformName, aFloat);
-}
-
-void model::setVector2(const std::string &aUniformName, const std::shared_ptr<graphics_vector2_type> &agraphics_vector2_type)
-{
-    //m_Vector2Uniforms.insert(aUniformName, agraphics_vector2_type);
-}
-
-void model::setVector3(const std::string &aUniformName, const std::shared_ptr<graphics_vector3_type> &agraphics_vector3_type)
-{
-    //m_Vector3Uniforms.insert(aUniformName, agraphics_vector3_type);
-}
-
-void model::setVector4(const std::string &aUniformName, const std::shared_ptr<graphics_vector4_type> &agraphics_vector4_type)
-{
-    //m_Vector4Uniforms.insert(aUniformName, agraphics_vector4_type);
-}
-
-void model::setMat4x4(const std::string &aUniformName, const graphics_mat4x4_type &agraphics_mat4x4_type )
-{
-    //m_Mat4x4Uniforms.insert(aUniformName, agraphics_mat4x4_type);
-}*/
 
 const graphics_mat4x4_type& model::getmodelMatrix() const
 {
