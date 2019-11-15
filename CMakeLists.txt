@@ -50,22 +50,13 @@ jfc_project(library
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/float_uniform_collection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/mat4x4_uniform_collection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/shader_program.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture_uniform_collection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector2_uniform_collection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector3_uniform_collection.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vector4_uniform_collection.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_attribute.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_format.cpp
-        
-        #new
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/uniform_manager.cpp
 )
 
 if (JFC_BUILD_DEMO)
