@@ -37,13 +37,14 @@ namespace gdk
             //! Chooses the mipmap that most closely matches the size of the pixel being textured and uses the GL_NEAREST criterion (the texture element nearest to the center of the pixel) to produce a texture value.
             nearest_mipmap_nearest,
 
-            //!  Chooses the mipmap that most closely matches the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the four texture elements that are closest to the center of the pixel) to produce a texture value.
+            //! Chooses the mipmap that most closely matches the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the four texture elements that are closest to the center of the pixel) to produce a texture value.
             linear_mipmap_nearest,
 
-            //!  Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_NEAREST criterion (the texture element nearest to the center of the pixel) to produce a texture value from each mipmap.  The final texture value is a weighted average of those two values.
+            //! Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_NEAREST criterion (the texture element nearest to the center of the pixel) to produce a texture value from each mipmap.  The final texture value is a weighted average of those two values.
             nearest_mipmap_linear,
 
-            //!  Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the four texture elements that are closest to the center of the pixel) to produce a texture value from each mipmap.  The final texture value is a weighted average of those two values.  
+            //! Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the four texture elements that are closest to the center of the pixel) 
+            /// to produce a texture value from each mipmap.  The final texture value is a weighted average of those two values.  
             linear_mipmap_linear
         };
 
@@ -66,11 +67,25 @@ namespace gdk
             //! causes the integer part of the s coordinate to be ignored; the GL uses only the fractional part, thereby creating a repeating pattern.
             repeat,
 
-            //! causes the s coordinate to be set to the fractional part of the texture coordinate if the integer part of s is even; if the integer part of s is odd, then the s texture coordinate is set to 1 - frac ⁡ s , where frac ⁡ s represents the fractional part of s.
+            //! causes the s coordinate to be set to the fractional part of the texture coordinate if the integer part of s is even; 
+            /// if the integer part of s is odd, then the s texture coordinate is set to 1 - frac ⁡ s , where frac ⁡ s represents the fractional part of s.
             mirrored_repeat
         };
 
+        //! GLES2.0/Web1.0 defines 2 bind targets
+        enum class bind_target
+        {
+            //! 2 dimensional image, generally used for coloring surfaces
+            texture_2d,
+            //! 6 2d images, generally used for coloring a skybox, reflection map etc.
+            cube_map
+        };
+
     private:
+        //! the target type. Cannot be changed after construction. Decides whether the texture data is 2d or cubic
+        GLenum m_BindTarget;
+
+        //! handle to the texture buffer
         jfc::unique_handle<GLuint> m_Handle;
     
     public:
@@ -92,6 +107,7 @@ namespace gdk
         texture(GLubyte *const pDecodedImageData, const long width, 
             const long height, 
             const format = format::rgba,
+            const bind_target aBindTarget = bind_target::texture_2d, //Does this make sense? hmm. Data is probably different between 2d and cubic. probably a separate ctor is more appropriate.
             const minification_filter minFilter = minification_filter::linear,
             const magnification_filter magFilter = magnification_filter::nearest,
             const wrap_mode wrapMode = wrap_mode::repeat);

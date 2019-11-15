@@ -87,6 +87,7 @@ namespace gdk
 
         //! Whether or not to discard polygons based on [model space] normal direction
         FaceCullingMode m_FaceCullingMode = FaceCullingMode::None;
+
         
     public:
         using integer2_uniform_type = std::array<GLint, 2>;

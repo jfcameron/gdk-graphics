@@ -12,6 +12,8 @@ namespace gdk
     ///
     /// \detailed Vertex attributes are made up of an arbitrary set of components.
     /// In the context of OpenGL, a component is a floating-point value.
+    // TODO: support more than just GLfloat.
+    // TODO: may have to break out into two siblings: interleaved attribute and noninterleaved? I am not sure. that may be more appropriately controlled at the format level. Need to whiteboard this.
     struct vertex_attribute final
     {
         using size_type = unsigned short;

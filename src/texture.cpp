@@ -70,6 +70,18 @@ static inline GLint wrap_mode_to_glint(const texture::wrap_mode a)
     throw std::runtime_error("unhandled wrap mode");
 }
 
+static inline GLenum bind_target_to_glenum(const texture::bind_target a)
+{
+    switch(a)
+    {
+        case texture::bind_target::texture_2d: return GL_TEXTURE_2D;
+        case texture::bind_target::cube_map: return GL_TEXTURE_CUBE_MAP;
+    }
+
+    throw std::runtime_error("unhandled bind target");
+}
+
+
 const std::shared_ptr<gdk::texture> texture::GetCheckerboardOfDeath()
 {
     static std::once_flag initFlag;
@@ -127,24 +139,26 @@ texture::texture(GLubyte *const pDecodedImageData,
     const long width, 
     const long height, 
     const texture::format format,
+    const bind_target aBindTarget,
     const minification_filter minFilter,
     const magnification_filter magFilter,
     const wrap_mode wrapMode)
-: m_Handle([&]()
+: m_BindTarget(bind_target_to_glenum(aBindTarget))    
+, m_Handle([&]()
 {
     if (!isPowerOfTwo(width) || !isPowerOfTwo(height)) 
         throw std::invalid_argument(std::string(TAG).append(": texture dimensions must be power of 2"));
 
     GLuint handle;
-        
+
     //Copy the texture data to video memory
     glGenTextures(1, &handle);
 
     glActiveTexture(GL_TEXTURE0);
 
-    glBindTexture(GL_TEXTURE_2D, handle);
+    glBindTexture(m_BindTarget, handle);
 
-    glTexImage2D(GL_TEXTURE_2D, 
+    glTexImage2D(m_BindTarget, 
         0, 
         textureFormatToGLint(format), 
         width, 

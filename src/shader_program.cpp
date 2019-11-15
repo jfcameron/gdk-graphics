@@ -14,6 +14,10 @@ using namespace gdk;
 
 static constexpr char TAG[] = "shader_program";
 
+//TODO: use this to throw is uniform data is being assigned to an unused shdaer program
+//TODO: is address really a good idea? probably not: a ptr could point to a dead instance & crash. a ptr could point to a different shader starting at the same address after a deletion. is handle a good idea? No crashes but again could point to new shader in reclaimed handle. Im not sure how to enforce. weak_handle may be the solution, since it safely nulls after the owner of the handle falls out of scope.
+static std::atomic<GLint> s_CurrentShaderProgramHandle(-1);
+
 const jfc::lazy_ptr<gdk::shader_program> shader_program::PinkShaderOfDeath([]()
 {
     const std::string vertexShaderSource(R"V0G0N(    
@@ -133,10 +137,6 @@ static inline void setUpFaceCullingMode(shader_program::FaceCullingMode a)
         case shader_program::FaceCullingMode::None: break;
     }
 }
-
-//TODO: use this to throw is uniform data is being assigned to an unused shdaer program
-static std::atomic<const shader_program *> CURRENT_SHADER_PROGRAM = nullptr;
-
 
 shader_program::shader_program(std::string aVertexSource, std::string aFragmentSource)
 : m_VertexShaderHandle([&aVertexSource]()
@@ -282,15 +282,30 @@ shader_program::shader_program(std::string aVertexSource, std::string aFragmentS
     }
 }
 
-GLuint shader_program::useProgram() const 
+//! map of active textures. Allows to overwrite textures with the same names to the same units, since units are very limited.
+// TODO: i think this can be local to tranlsation unit
+static std::unordered_map<std::string, GLint> m_ActiveTextureUniformNameToUnit;
+
+static short m_ActiveTextureUnitCounter(0);
+
+GLuint shader_program::useProgram() const
 {
-    setUpFaceCullingMode(m_FaceCullingMode);
+    const auto handle = m_ProgramHandle.get();
 
-    glUseProgram(m_ProgramHandle.get());
+    if (s_CurrentShaderProgramHandle != handle)
+    {
+        s_CurrentShaderProgramHandle = handle;
 
-    return m_ProgramHandle.get();
+        m_ActiveTextureUniformNameToUnit.clear();
+        m_ActiveTextureUnitCounter = 0;
+
+        setUpFaceCullingMode(m_FaceCullingMode); //this should move I think. Its a pipline option not necessarily directly associated with shader program. Maybe a "material" abstraction property? im not sure.
+
+        glUseProgram(handle);
+    }
+
+    return handle;
 }
-
 
 bool shader_program::operator==(const shader_program &b) const
 {
@@ -553,12 +568,9 @@ void shader_program::setUniform(const std::string &aName, const std::vector<grap
 
         for (const auto &mat : a) 
         {
-            for (int y(0); y < magnitude; ++y)
+            for (int y(0); y < magnitude; ++y) for (int x(0); x < magnitude; ++x)
             {
-                for (int x(0); x < magnitude; ++x)
-                {
-                    data.push_back(mat.m[y][x]);
-                }
+                data.push_back(mat.m[y][x]);
             }
         }
 
@@ -568,23 +580,26 @@ void shader_program::setUniform(const std::string &aName, const std::vector<grap
 
 void shader_program::setUniform(const std::string &aName, const gdk::texture &aTexture) const
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    const auto &activeUniformSearch = m_ActiveUniforms.find(aName);
 
-    if (search != m_ActiveUniforms.end()) 
+    if (activeUniformSearch != m_ActiveUniforms.end()) 
     {   
-        // TODO: gotta iterate. Try to think of how to hide this. probably cant. think
-        const GLint unit(GL_TEXTURE0 + 0); 
+        const auto &activeTextureSearch = m_ActiveTextureUniformNameToUnit.find(aName);
+
+        const GLint unit = activeTextureSearch != m_ActiveTextureUniformNameToUnit.end()
+            ? activeTextureSearch->second
+            : GL_TEXTURE0 + m_ActiveTextureUnitCounter++; //TODO need to increment in this case
 
         if (unit <= 8) // 8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that
         {
-            //TODO: parameterize! Improve texture as well to support non2ds
+            //TODO: parameterize! Improve texture as well to support non2ds. The type (2d or cube) should be a property of the texture abstraction.
             const GLenum target(GL_TEXTURE_2D); 
 
             glActiveTexture(unit);
 
             glBindTexture(target, aTexture.getHandle());
 
-            glUniform1i(search->second.location, unit);
+            glUniform1i(activeUniformSearch->second.location, unit);
 
             return;
         }
