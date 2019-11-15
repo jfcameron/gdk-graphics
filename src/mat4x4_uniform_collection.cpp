@@ -8,12 +8,12 @@ static constexpr char TAG[] = "mat4x4_uniform_collection";
 
 using namespace gdk;
     
-void mat4x4_uniform_collection::bind(const GLuint aProgramHandle) const
+void mat4x4_uniform_collection::bind(const gdk::shader_program &aProgram) const
 {
-    for (auto &pair : m_Map) glh::BindMatrix4x4(aProgramHandle, pair.first, pair.second);
+    for (auto &pair : m_Map) glh::BindMatrix4x4(pair.first, pair.second);
 }
 
-void mat4x4_uniform_collection::unbind(const GLuint aProgramHandle) const
+void mat4x4_uniform_collection::unbind(const gdk::shader_program &aProgram) const
 {
-    for (auto &pair : m_Map) glh::BindMatrix4x4(aProgramHandle, pair.first, graphics_mat4x4_type::Identity);    
+    for (auto &pair : m_Map) glh::BindMatrix4x4(pair.first, graphics_mat4x4_type::Identity);    
 }

@@ -98,7 +98,14 @@ void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const g
         case ClearMode::Nothing: break;
     }
 
-    for (const auto model : amodels) model->draw(aTimeSinceStart, aDeltaTime, m_ViewMatrix, m_ProjectionMatrix);
+    for (const auto model : amodels) model->draw(
+        //currentSHaderprogram
+
+        aTimeSinceStart, 
+        aDeltaTime, 
+
+        m_ViewMatrix, 
+        m_ProjectionMatrix);
 }
 
 void camera::setProjection(const float aFieldOfView, 

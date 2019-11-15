@@ -16,7 +16,7 @@ void texture_uniform_collection::bind(const GLuint aProgramHandle) const
         //gdk::log(TAG, "start a bind");
 
         auto texture = pair.second.lock();
-        glh::BindtextureUniform(aProgramHandle, pair.first, texture->getHandle(), i++);
+        glh::BindtextureUniform(pair.first, texture->getHandle(), i++);
 
         //gdk::log(TAG, "end a bind");
     }
@@ -25,5 +25,5 @@ void texture_uniform_collection::bind(const GLuint aProgramHandle) const
 void texture_uniform_collection::unbind(const GLuint aProgramHandle) const
 {
     int i = 0;    
-    for (auto &pair : m_Map) glh::BindtextureUniform(aProgramHandle, pair.first, 0, i++);
+    for (auto &pair : m_Map) glh::BindtextureUniform(pair.first, 0, i++);
 }

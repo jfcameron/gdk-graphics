@@ -11,10 +11,10 @@ static constexpr char TAG[] = "vector4_uniform_collection";
 
 void vector4_uniform_collection::bind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind4FloatUniform(aProgramHandle, pair.first, *pair.second.get());
+    for (auto &pair : m_Map) glh::Bind4FloatUniform(pair.first, *pair.second.get());
 }
 
 void vector4_uniform_collection::unbind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind4FloatUniform(aProgramHandle, pair.first, graphics_vector4_type::Zero);
+    for (auto &pair : m_Map) glh::Bind4FloatUniform(pair.first, graphics_vector4_type::Zero);
 }

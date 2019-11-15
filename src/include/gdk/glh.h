@@ -32,23 +32,31 @@ namespace glh
     //void LogErrors(const bool &aDoNotLogIfNoErrors = false);
     void ClearErrors();*/
 
-    //! Vertex binding on the currently used program
-    void Enablevertex_attribute(const GLint attributeLocation, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents);
-    
-    bool BindtextureUniform(const GLuint aShaderHandle, const std::string_view &aUniformName, const GLuint atextureHandle,
-        const int atextureUnit);//, final GLenum &atextureType);
+    //! Prepares the vertex data for drawing: enables the attribute array, sets up the attribute pointers for
+    /// the used shader program
+    void Enablevertex_attribute(const GLint attributeLocation, 
+        const int aAttributeSize, 
+        const int aAttributeOffset, 
+        const int aTotalNumberOfvertex_attributeComponents);
 
-    bool Bind1FloatUniform (const GLuint aShaderHandle, const std::string_view &aUniformName, const float aScalar);
-    bool Bind2FloatUniform (const GLuint aShaderHandle, const std::string_view &aUniformName, 
-        const gdk::graphics_vector2_type &agraphics_vector2_type);
+    //! provides texture data to the used shader program
+    /// @aUniformHandle handle to the active texture uniform in the used shader program
+    void BindtextureUniform(const GLuint aUniformHandle, const GLuint atextureHandle, const int atextureUnit);//, final GLenum &atextureType);
 
-    bool Bind3FloatUniform (const GLuint aShaderHandle, const std::string_view &aUniformName, 
-        const gdk::graphics_vector3_type &agraphics_vector3_type);
+    //! assigns float value to a float uniform at uniform handle within the currently used program
+    void Bind1FloatUniform(const GLint uniformHandle, const float aScalar);
 
-    bool Bind4FloatUniform (const GLuint aShaderHandle, const std::string_view &aUniformName, 
-        const gdk::graphics_vector4_type &agraphics_vector4_type);
+    //! assigns float2 value to a float2 uniform at uniform handle within the currently used program
+    void Bind2FloatUniform(const GLint uniformHandle, const gdk::graphics_vector2_type &agraphics_vector2_type);
 
-    bool BindMatrix4x4(const GLuint aShaderHandle, const std::string_view &aUniformName, const gdk::graphics_mat4x4_type &aMatrix4x4);
+    //! assigns float3 value to a float3 uniform at uniform handle within the currently used program
+    void Bind3FloatUniform (const GLint uniformHandle, const gdk::graphics_vector3_type &agraphics_vector3_type);
+
+    //! assigns float4 value to a float4 uniform at uniform handle within the currently used program
+    void Bind4FloatUniform (const GLint uniformHandle, const gdk::graphics_vector4_type &agraphics_vector4_type);
+
+    //! assigns mat4x4 value to a mat4x4 uniform at uniform handle within the currently used program
+    void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_mat4x4_type &aMatrix4x4);
 }
 
 #endif

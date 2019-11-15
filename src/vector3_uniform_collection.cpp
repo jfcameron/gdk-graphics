@@ -10,10 +10,10 @@ static constexpr char TAG[] = "vector3_uniform_collection";
 
 void vector3_uniform_collection::bind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind3FloatUniform(aProgramHandle, pair.first, *pair.second.get());
+    for (auto &pair : m_Map) glh::Bind3FloatUniform(pair.first, *pair.second.get());
 }
 
 void vector3_uniform_collection::unbind(const GLuint aProgramHandle) const
 {
-    for (auto &pair : m_Map) glh::Bind3FloatUniform(aProgramHandle, pair.first, graphics_vector3_type::Zero);
+    for (auto &pair : m_Map) glh::Bind3FloatUniform(pair.first, graphics_vector3_type::Zero);
 }

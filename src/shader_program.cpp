@@ -134,6 +134,10 @@ static inline void setUpFaceCullingMode(shader_program::FaceCullingMode a)
     }
 }
 
+//TODO: use this to throw is uniform data is being assigned to an unused shdaer program
+static std::atomic<const shader_program *> CURRENT_SHADER_PROGRAM = nullptr;
+
+
 shader_program::shader_program(std::string aVertexSource, std::string aFragmentSource)
 : m_VertexShaderHandle([&aVertexSource]()
 {
@@ -293,4 +297,296 @@ bool shader_program::operator==(const shader_program &b) const
     return m_ProgramHandle == b.m_ProgramHandle;
 }
 bool shader_program::operator!=(const shader_program &b) const {return !(*this == b);}
+
+void shader_program::setUniform(const std::string &aName, const GLfloat aValue) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform1f(search->second.location, aValue);
+}
+
+void shader_program::setUniform(const std::string &aName, const graphics_vector2_type &aValue) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform2f(search->second.location, aValue.x, aValue.y);
+}
+
+void shader_program::setUniform(const std::string &aName, const graphics_vector3_type &aValue) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform3f(search->second.location, aValue.x, aValue.y, aValue.z);
+}
+
+void shader_program::setUniform(const std::string &aName, const graphics_vector4_type &aValue) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform4f(search->second.location, aValue.x, aValue.y, aValue.z, aValue.w);
+}
+
+void shader_program::setUniform(const std::string &aName, const std::vector<GLfloat> &avalue) const 
+{
+    if (!avalue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform1fv(search->second.location, avalue.size(), &avalue[0]);
+}
+
+void shader_program::setUniform(const std::string &aName, const std::vector<graphics_vector2_type> &avalue) const 
+{
+    if (!avalue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        std::vector<graphics_vector2_type::component_type> data;
+
+        data.reserve(avalue.size() * 2);
+
+        for (const auto &vec : avalue) 
+        {
+            data.push_back(vec.x);
+            data.push_back(vec.y);
+        }
+
+        glUniform2fv(search->second.location, avalue.size(), &data[0]);
+    }
+} 
+
+void shader_program::setUniform(const std::string &aName, const std::vector<graphics_vector3_type> &avalue) const 
+{
+    if (!avalue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        std::vector<graphics_vector3_type::component_type> data;
+
+        data.reserve(avalue.size() * 3);
+
+        for (const auto &vec : avalue) 
+        {
+            data.push_back(vec.x);
+            data.push_back(vec.y);
+            data.push_back(vec.z);
+        }
+
+        glUniform3fv(search->second.location, avalue.size(), &data[0]);
+    }
+}
+
+void shader_program::setUniform(const std::string &aName, const std::vector<graphics_vector4_type> &avalue) const 
+{
+    if (!avalue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        std::vector<graphics_vector4_type::component_type> data;
+
+        data.reserve(avalue.size() * 4);
+
+        for (const auto &vec : avalue) 
+        {
+            data.push_back(vec.x);
+            data.push_back(vec.y);
+            data.push_back(vec.z);
+            data.push_back(vec.w);
+        }
+
+        glUniform4fv(search->second.location, avalue.size(), &data[0]);
+    }
+} 
+
+void shader_program::setUniform(const std::string &aName, const GLint aValue) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform1i(search->second.location, aValue);
+}
+
+void shader_program::setUniform(const std::string aName, const integer2_uniform_type &a) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform2i(search->second.location, a[0], a[1]);
+}
+
+void shader_program::setUniform(const std::string aName, const integer3_uniform_type &a) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform3i(search->second.location, a[0], a[1], a[2]);
+}
+
+void shader_program::setUniform(const std::string aName, const integer4_uniform_type &a) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform4i(search->second.location, a[0], a[1], a[2], a[3]);
+}
+
+void shader_program::setUniform(const std::string &aName, const std::vector<GLint> &aValue) const 
+{
+    if (!aValue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniform1iv(search->second.location, aValue.size(), &aValue[0]);
+}
+
+void shader_program::setUniform(const std::string &aName, const std::vector<integer2_uniform_type> &aValue) const 
+{
+    if (!aValue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        std::vector<integer2_uniform_type::value_type> data;
+
+        data.reserve(aValue.size() * 2);
+
+        for (const auto &vec : aValue) 
+        {
+            data.push_back(vec[0]);
+            data.push_back(vec[1]);
+        }
+
+        glUniform2iv(search->second.location, aValue.size(), &data[0]);
+    }
+}
+
+void shader_program::setUniform(const std::string &aName, const std::vector<integer3_uniform_type> &aValue) const 
+{
+    if (!aValue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        std::vector<integer3_uniform_type::value_type> data;
+
+        data.reserve(aValue.size() * 3);
+
+        for (const auto &vec : aValue) 
+        {
+            data.push_back(vec[0]);
+            data.push_back(vec[1]);
+            data.push_back(vec[2]);
+        }
+
+        glUniform3iv(search->second.location, aValue.size(), &data[0]);
+    }
+}
+
+void shader_program::setUniform(const std::string &aName, const std::vector<integer4_uniform_type> &aValue) const 
+{
+    if (!aValue.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        std::vector<integer4_uniform_type::value_type> data;
+
+        data.reserve(aValue.size() * 4);
+
+        for (const auto &vec : aValue) 
+        {
+            data.push_back(vec[0]);
+            data.push_back(vec[1]);
+            data.push_back(vec[2]);
+            data.push_back(vec[3]);
+        }
+
+        glUniform3iv(search->second.location, aValue.size(), &data[0]);
+    }
+}
+
+/*void shader_program::setUniform(const std::string &aName, const graphics_mat2x2_type &avalue) const 
+{
+
+} 
+
+void shader_program::setUniform(const std::string &aName, const std::vector<graphics_mat2x2_type> &avalue) const 
+{
+
+} 
+
+void shader_program::setUniform(const std::string &aName, const graphics_mat3x3_type &avalue) const 
+{
+
+} 
+
+void shader_program::setUniform(const std::string &aName, const std::vector<graphics_mat3x3_type> &avalue) const 
+{
+
+}*/
+
+void shader_program::setUniform(const std::string &aName, const graphics_mat4x4_type &a) const 
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &a.m[0][0]);
+} 
+
+void shader_program::setUniform(const std::string &aName, const std::vector<graphics_mat4x4_type> &a) const 
+{
+    if (!a.size()) return;
+
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    static constexpr auto magnitude(graphics_mat4x4_type::RowOrColumnCount);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        std::vector<graphics_mat4x4_type::component_type> data;
+
+        data.reserve(a.size() * magnitude * magnitude);
+
+        for (const auto &mat : a) 
+        {
+            for (int y(0); y < magnitude; ++y)
+            {
+                for (int x(0); x < magnitude; ++x)
+                {
+                    data.push_back(mat.m[y][x]);
+                }
+            }
+        }
+
+        glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &data[0]);
+    }
+} 
+
+void shader_program::setUniform(const std::string &aName, const gdk::texture &aTexture) const
+{
+    const auto &search = m_ActiveUniforms.find(aName);
+
+    if (search != m_ActiveUniforms.end()) 
+    {
+        const GLint unit(GL_TEXTURE0 + 0); // TODO: gotta iterate
+
+        if (unit <= 8) // 8 is the guaranteed minimum across all es2/web1 implementations.
+        {
+            const GLenum target(GL_TEXTURE_2D); //TODO: parameterize! Improve texture as well to support non2ds
+
+            glActiveTexture(unit);
+
+            glBindTexture(target, aTexture.getHandle());
+
+            glUniform1i(search->second.location, unit);
+
+            return;
+        }
+        //default: throw std::invalid_argument("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context");
+    }
+}
 
