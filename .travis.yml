@@ -23,7 +23,10 @@ matrix:
             - libxcursor-dev
             - libxi-dev
             - libegl1-mesa-dev
+            - libglapi-mesa
+            - libosmesa6
             - freeglut3-dev
+            #- libxkbcommon-dev
 
       script:
         - |
