@@ -5,6 +5,7 @@
 #include <gdk/glh.h>
 #include <gdk/shader_program.h>
 
+#include <atomic>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
