@@ -25,7 +25,7 @@ matrix:
             - libegl1-mesa-dev
             - libglu1-mesa-dev
             - libglapi-mesa
-            - libosmesa6
+            - libosmesa6-dev
             - freeglut3-dev
             #- libxkbcommon-dev
 
