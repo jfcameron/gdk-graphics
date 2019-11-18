@@ -1,0 +1,70 @@
+# © 2019 Joseph Cameron - All Rights Reserved
+# jfc-smart_handles ci script
+
+dist: bionic 
+sudo: required
+language: cpp
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode11.2
+      compiler: clang
+      env: Build, Test & Deploy
+      script:
+        - |
+          cd workspace
+          cmake .. -DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++"
+          make
+          ctest --extra-verbose
+
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - cmake
+            - git
+      env: Build, Test & Deploy
+      script:
+        - |
+          gcc -v; g++ -v; cmake --version
+          cd workspace
+          cmake .. -DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native"
+          make
+          ctest --extra-verbose
+
+    - os: linux
+    #  if: branch = master
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - doxygen
+      env: Generate documentation
+      script:
+        - |
+          cd workspace
+          cmake .. -DJFC_BUILD_DEMO=OFF -DJFC_BUILD_DOCS=ON -DJFC_BUILD_TESTS=OFF
+          mv docs ~
+          cd ..
+          git remote set-url --push origin https://${GITHUB_PUBLIC_REPO_TOKEN}@$(git config --get remote.origin.url | sed -e "s/^https:\/\///")
+          git fetch --all
+          git clean -fxd
+          git checkout --orphan gh-pages;git pull origin gh-pages;git clean -fxd;git reset --hard
+          git branch -r
+          git branch
+          git pull
+          cp -R ~/docs .
+          git add docs
+          git commit -m "docs update"
+          git push --force --set-upstream origin gh-pages
+
+
+before_script: 
+  - |
+    CURRENT_COMMIT_HASH="$(git rev-parse HEAD)"
+    CURRENT_REMOTE_URL="$(git remote get-url origin)"
+ 
