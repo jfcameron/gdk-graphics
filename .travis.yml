@@ -20,7 +20,7 @@ matrix:
             - git
       script:
         - |
-          cd workspace
+          cd workspace;git submodule update --init --recursive
           cmake .. -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native" 
           make
           ctest --extra-verbose
@@ -31,7 +31,7 @@ matrix:
       compiler: clang
       script:
         - |
-          cd workspace
+          cd workspace;git submodule update --init --recursive
           cmake .. -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++" 
           make
           ctest --extra-verbose
@@ -41,7 +41,7 @@ matrix:
       compiler: MSVC
       script: 
         - |
-          cd workspace
+          cd workspace;git submodule update --init --recursive
           cmake .. -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS=" /W4 /EHsc /WX /std:c++17 /permissive-" 
           cmake --build .
 
@@ -51,7 +51,7 @@ matrix:
       install: choco install mingw
       script: 
         - |
-          cd workspace
+          cd workspace;git submodule update --init --recursive
           cmake .. -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native" 
           cmake --build .
 
@@ -66,7 +66,7 @@ matrix:
             - doxygen
       script:
         - |
-          cd workspace
+          cd workspace;git submodule update --init --recursive
           cmake .. -DJFC_BUILD_DEMO=OFF -DJFC_BUILD_DOCS=ON -DJFC_BUILD_TESTS=OFF
           mv docs ~
           REMOTE_URL=$(git config --get remote.origin.url | sed -e "s/^https:\/\///")
@@ -86,7 +86,7 @@ matrix:
       before_install: pip install --user cpp-coveralls
       script:
         - |
-          cd workspace
+          cd workspace;git submodule update --init --recursive
           cmake .. -DJFC_BUILD_DOCS=OFF -DCMAKE_CXX_FLAGS="-g -O0 -Wall -fprofile-arcs -ftest-coverage"
           make
           make test
