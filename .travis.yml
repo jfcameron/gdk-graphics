@@ -30,7 +30,7 @@ matrix:
           cd workspace;git submodule update --init --recursive
           cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_DEMO=OFF -DJFC_BUILD_TESTS=OFF #-DGLEW_OSMESA=1 #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native" 
           make
-          ctest --extra-verbose
+          #ctest --extra-verbose
 
     - os: osx
       name: build macos clang
@@ -41,7 +41,7 @@ matrix:
           cd workspace;git submodule update --init --recursive
           cmake .. -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++" 
           make
-          ctest --extra-verbose
+          #ctest --extra-verbose
 
     - os: windows
       name: build windows msvc
