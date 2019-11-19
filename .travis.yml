@@ -25,20 +25,10 @@ matrix:
             - mesa-utils 
             - libgl1-mesa-dev
             - libglu1-mesa-dev
-            #- freeglut3-dev
-            #- libosmesa6-dev
-            #- libgl1-mesa-glx
-            #- libglapi-mesa
-            #- libxkbcommon-dev #unknonw
-            # libgl1-mesa-glx #This is where libGL is defined, but this isnt a dev
-            #libegl1-mesa-dev ->possible accident here. all other mesa packages above are gl not egl. so possibly try setting all to egl is gl doesnt work? Problem is missing definitions for glXGetProcAddress
-            #libgl1 or libgl1-mesa-swx11 and libegl1-mesa
-            #mesa-utils libgl1-mesa-swx11 libgl1-mesa-swx11-dev
-
       script:
         - |
           cd workspace;git submodule update --init --recursive
-          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_DEMO=OFF -DGLEW_OSMESA=1 #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native" 
+          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_DEMO=OFF -DJFC_BUILD_TESTS=OFF #-DGLEW_OSMESA=1 #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native" 
           make
           ctest --extra-verbose
 
