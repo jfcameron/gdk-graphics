@@ -18,14 +18,16 @@ matrix:
           packages:
             - cmake
             - git
+            - libxcursor-dev
+            - libxi-dev
             - libxinerama-dev
             - libxrandr-dev
             - libgl1-mesa-dev 
             - libglu1-mesa-dev
-            #- libxi-dev
+            - libegl1-mesa-dev 
+            - libeglu1-mesa-dev
             #- freeglut3-dev
             #- libosmesa6-dev
-            #- libxcursor-dev
             #- libgl1-mesa-glx
             #- libglapi-mesa
             #- libxkbcommon-dev #unknonw
