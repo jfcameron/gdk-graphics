@@ -19,15 +19,19 @@ matrix:
             - cmake
             - git
             - libxrandr-dev
-            - libxinerama-dev
-            - libxcursor-dev
-            - libxi-dev
-            - libegl1-mesa-dev
+            - libgl1-mesa-dev 
             - libglu1-mesa-dev
-            - libglapi-mesa
-            - libosmesa6-dev
-            - freeglut3-dev
-            #- libxkbcommon-dev
+            #- libxinerama-dev
+            #- libxi-dev
+            #- freeglut3-dev
+            #- libosmesa6-dev
+            #- libxcursor-dev
+            #- libgl1-mesa-glx
+            #- libglapi-mesa
+            #- libxkbcommon-dev #unknonw
+            # libgl1-mesa-glx #This is where libGL is defined, but this isnt a dev
+            #libegl1-mesa-dev ->possible accident here. all other mesa packages above are gl not egl. so possibly try setting all to egl is gl doesnt work? Problem is missing definitions for glXGetProcAddress
+            #libgl1 or libgl1-mesa-swx11 and libegl1-mesa
 
       script:
         - |
