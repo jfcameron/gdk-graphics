@@ -39,7 +39,7 @@ matrix:
       script:
         - |
           cd workspace;git submodule update --init --recursive
-          cmake .. -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++" 
+          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++" 
           make
           #ctest --extra-verbose
 
@@ -49,7 +49,7 @@ matrix:
       script: 
         - |
           cd workspace;git submodule update --init --recursive
-          cmake .. -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS=" /W4 /EHsc /WX /std:c++17 /permissive-" 
+          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=OFF #-DCMAKE_CXX_FLAGS=" /W4 /EHsc /WX /std:c++17 /permissive-" 
           cmake --build .
 
     - os: windows
@@ -59,7 +59,7 @@ matrix:
       script: 
         - |
           cd workspace;git submodule update --init --recursive
-          cmake .. -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native" 
+          cmake .. -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native" 
           cmake --build .
 
     # Documentation 
@@ -71,6 +71,13 @@ matrix:
         apt:
           packages:
             - doxygen
+            - libxcursor-dev
+            - libxi-dev
+            - libxinerama-dev
+            - libxrandr-dev
+            - mesa-utils 
+            - libgl1-mesa-dev
+            - libglu1-mesa-dev
       script:
         - |
           cd workspace;git submodule update --init --recursive
