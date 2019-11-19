@@ -39,7 +39,7 @@ matrix:
       script:
         - |
           cd workspace;git submodule update --init --recursive
-          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++" 
+          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS="GL_SILENCE_DEPRECATION" #-DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++" 
           make
           #ctest --extra-verbose
 
