@@ -18,10 +18,10 @@ matrix:
           packages:
             - cmake
             - git
+            - libxinerama-dev
             - libxrandr-dev
             - libgl1-mesa-dev 
             - libglu1-mesa-dev
-            #- libxinerama-dev
             #- libxi-dev
             #- freeglut3-dev
             #- libosmesa6-dev
