@@ -285,9 +285,9 @@ shader_program::shader_program(std::string aVertexSource, std::string aFragmentS
 
 //! map of active textures. Allows to overwrite textures with the same names to the same units, since units are very limited.
 // TODO: i think this can be local to tranlsation unit
-static std::unordered_map<std::string, GLint> m_ActiveTextureUniformNameToUnit;
+static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
 
-static short m_ActiveTextureUnitCounter(0);
+static short s_ActiveTextureUnitCounter(0);
 
 GLuint shader_program::useProgram() const
 {
@@ -297,8 +297,8 @@ GLuint shader_program::useProgram() const
     {
         s_CurrentShaderProgramHandle = handle;
 
-        m_ActiveTextureUniformNameToUnit.clear();
-        m_ActiveTextureUnitCounter = 0;
+        s_ActiveTextureUniformNameToUnit.clear();
+        s_ActiveTextureUnitCounter = 0;
 
         setUpFaceCullingMode(m_FaceCullingMode); //this should move I think. Its a pipline option not necessarily directly associated with shader program. Maybe a "material" abstraction property? im not sure.
 
@@ -585,11 +585,11 @@ void shader_program::setUniform(const std::string &aName, const gdk::texture &aT
 
     if (activeUniformSearch != m_ActiveUniforms.end()) 
     {   
-        const auto &activeTextureSearch = m_ActiveTextureUniformNameToUnit.find(aName);
+        const auto &activeTextureSearch = s_ActiveTextureUniformNameToUnit.find(aName);
 
-        const GLint unit = activeTextureSearch != m_ActiveTextureUniformNameToUnit.end()
+        const GLint unit = activeTextureSearch != s_ActiveTextureUniformNameToUnit.end()
             ? activeTextureSearch->second
-            : GL_TEXTURE0 + m_ActiveTextureUnitCounter++; //TODO need to increment in this case
+            : GL_TEXTURE0 + s_ActiveTextureUnitCounter++;
 
         if (unit <= 8) // 8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that
         {
@@ -601,10 +601,8 @@ void shader_program::setUniform(const std::string &aName, const gdk::texture &aT
             glBindTexture(target, aTexture.getHandle());
 
             glUniform1i(activeUniformSearch->second.location, unit);
-
-            return;
         }
-        //default: throw std::invalid_argument("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context");
+        else throw std::invalid_argument("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context");
     }
 }
 
