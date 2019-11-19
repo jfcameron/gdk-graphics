@@ -25,7 +25,6 @@ matrix:
             - libgl1-mesa-dev 
             - libglu1-mesa-dev
             - libegl1-mesa-dev 
-            - libeglu1-mesa-dev
             #- freeglut3-dev
             #- libosmesa6-dev
             #- libgl1-mesa-glx
