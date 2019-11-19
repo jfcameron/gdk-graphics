@@ -23,9 +23,8 @@ matrix:
             - libxinerama-dev
             - libxrandr-dev
             - mesa-utils 
-            - libgl1-mesa-swx11 
-            - libgl1-mesa-swx11-dev
-            #- libgl1-mesa-dev - libglu1-mesa-dev - mesa-utils
+            - libgl1-mesa-dev
+            - libglu1-mesa-dev
             #- freeglut3-dev
             #- libosmesa6-dev
             #- libgl1-mesa-glx
