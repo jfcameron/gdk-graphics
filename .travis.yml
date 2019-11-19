@@ -24,7 +24,6 @@ matrix:
             - libxrandr-dev
             - libgl1-mesa-dev 
             - libglu1-mesa-dev
-            - libgl1-mesa-x11-dev
             - mesa-utils
             #- freeglut3-dev
             #- libosmesa6-dev
