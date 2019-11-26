@@ -29,6 +29,9 @@ jfc_project(library
         #${GLEW_INCLUDE_DIR} # not currently used. must fix glfw/glew entanglement
         #${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
 
+        #/Users/josephcameron/Workspace/emscripten/system/include/
+
+
     PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
 
@@ -45,7 +48,7 @@ jfc_project(library
     DEPENDENCIES
         "stb"
         "gdkmath"
-        "simpleglfw" #remove
+        #"simpleglfw" #remove
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp

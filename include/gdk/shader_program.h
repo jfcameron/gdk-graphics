@@ -192,8 +192,11 @@ namespace gdk
         static const jfc::lazy_ptr<gdk::shader_program> PinkShaderOfDeath;
 
         //! shader for drawing unlit surfaces with alpha channel based fragment discard. Suitable for text rendering, 
-        /// GUI element rendering, 2D Sprite rendering. Extremely lightweight.
+        //! GUI element rendering, 2D Sprite rendering. Extremely lightweight.
         static const jfc::lazy_ptr<gdk::shader_program> AlphaCutOff;
+
+        //! 8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that
+        static const size_t MAX_TEXTURE_UNITS = 8;
     };
 }
 

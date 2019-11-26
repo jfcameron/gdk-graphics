@@ -591,7 +591,7 @@ void shader_program::setUniform(const std::string &aName, const gdk::texture &aT
             ? activeTextureSearch->second
             : GL_TEXTURE0 + s_ActiveTextureUnitCounter++;
 
-        if (unit <= 8) // 8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that
+        if (s_ActiveTextureUnitCounter < shader_program::MAX_TEXTURE_UNITS) 
         {
             //TODO: parameterize! Improve texture as well to support non2ds. The type (2d or cube) should be a property of the texture abstraction.
             const GLenum target(GL_TEXTURE_2D); 
@@ -602,7 +602,7 @@ void shader_program::setUniform(const std::string &aName, const gdk::texture &aT
 
             glUniform1i(activeUniformSearch->second.location, unit);
         }
-        else throw std::invalid_argument("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context");
+        else throw std::invalid_argument(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context: ") + std::to_string(s_ActiveTextureUnitCounter));
     }
 }
 

@@ -4,19 +4,21 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <jfc/window_glfw.h>
+#include <jfc/glfw_window.h>
 
 #include <gdk/camera.h>
 #include <gdk/model.h>
 #include <gdk/shader_program.h> 
 #include <gdk/vertex_data.h>
 
+#include <GLFW/glfw3.h>
+
 using namespace gdk;
 using namespace jfc;
 
 int main(int argc, char **argv)
 {
-    SimpleGLFWWindow window("cool demo");
+    glfw_window window("cool demo");
 
     camera camera;
 
@@ -46,7 +48,7 @@ int main(int argc, char **argv)
 
     while(!window.shouldClose())
     {
-        window.pollEvents();
+        glfwPollEvents();
       
         auto mdl = models.back();
         /*for (auto mdl : models)*/ mdl->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
