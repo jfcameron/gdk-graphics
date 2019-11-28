@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">ffee1b7880bdb36696ed8b7030843b1676616eb0</span>
+   &#160;<span id="projectnumber">d3081b72d7cb912d118b24e658cd082601e01ec2</span>
    </div>
   </td>
  </tr>
@@ -104,7 +104,7 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9636e1700ad18970a58bcec29efd7914"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1vertex__data.html#a9636e1700ad18970a58bcec29efd7914">bind</a> (const <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &amp;aShaderProgram) const</td></tr>
-<tr class="memdesc:a9636e1700ad18970a58bcec29efd7914"><td class="mdescLeft">&#160;</td><td class="mdescRight">strong association with draw. If draw is on this instance is not called after bind on this instance, behaviour is unintended. The bodies of these functions are separate because bind is expensive and does not need to be called nearly as frequently as draw. Bind is per unique vertex data draw is per unique model (that vertex data projected out somewhere into the scene.)  <a href="#a9636e1700ad18970a58bcec29efd7914">More...</a><br /></td></tr>
+<tr class="memdesc:a9636e1700ad18970a58bcec29efd7914"><td class="mdescLeft">&#160;</td><td class="mdescRight">strong association with draw. If draw is on this instance is not called after bind on this instance, behaviour is unintended. The bodies of these functions are separate because bind is expensive and does not need to be called nearly as frequently as draw. Bind is per unique vertex data draw is per unique entity (that vertex data projected out somewhere into the scene.)  <a href="#a9636e1700ad18970a58bcec29efd7914">More...</a><br /></td></tr>
 <tr class="separator:a9636e1700ad18970a58bcec29efd7914"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ce927b6555ef616bf586b8e481561f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1vertex__data.html#a4ce927b6555ef616bf586b8e481561f6">draw</a> () const</td></tr>
 <tr class="separator:a4ce927b6555ef616bf586b8e481561f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -243,7 +243,7 @@ static const jfc::lazy_ptr&lt; <a class="el" href="classgdk_1_1vertex__data.html
       </table>
 </div><div class="memdoc">
 
-<p>strong association with draw. If draw is on this instance is not called after bind on this instance, behaviour is unintended. The bodies of these functions are separate because bind is expensive and does not need to be called nearly as frequently as draw. Bind is per unique vertex data draw is per unique model (that vertex data projected out somewhere into the scene.) </p>
+<p>strong association with draw. If draw is on this instance is not called after bind on this instance, behaviour is unintended. The bodies of these functions are separate because bind is expensive and does not need to be called nearly as frequently as draw. Bind is per unique vertex data draw is per unique entity (that vertex data projected out somewhere into the scene.) </p>
 <p>Binds this vertex data to the pipeline, enables attributes on the currently used shaderprogram </p>
 
 </div>
