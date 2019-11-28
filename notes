@@ -1,0 +1,52 @@
+scene
+    draw()
+
+    cameras_collection
+
+    opaque_batch_collection
+        vertex_data
+        material
+        entity_list
+
+    transparent_batch_collection -> Somehow sort by blend options
+        blend_options
+        vertex_data
+        material
+        sorted_by_depth_entity_list
+
+    drawOpaqueBatches
+    {
+        if blend state is not opaque then reset... this implies a "pipeline" object || naive impl is just flatten it
+
+        for (batch : opaques) batch.draw(
+                                |
+                                > vertex_data.bind
+                                  material.bind
+                                  |
+                                  > shader.bind
+                                    upload all the material's uniforms
+    }
+
+    drawTransparents
+    {
+        ??
+    }
+
+    draw()
+    {
+        for (camera : cameras)
+        {
+            camera.bind
+
+            for (opaque : opaques) opaque.draw()
+
+            for (transparent : transparents) transparent.draw()
+        }
+    }
+
+camera
+    draw(entity? entity list?)
+
+material
+    uniform state
+    shader ptr
