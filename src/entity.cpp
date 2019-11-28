@@ -3,21 +3,21 @@
 #include <jfc/default_ptr.h>
 #include <gdk/glh.h>
 #include <gdk/mat4x4.h>
-#include <gdk/model.h>
+#include <gdk/entity.h>
 #include <gdk/opengl.h>
 #include <gdk/shader_program.h>
 #include <gdk/vertex_data.h>
 
 using namespace gdk;
 
-static constexpr char TAG[] = "model";
+static constexpr char TAG[] = "entity";
 
-model::model(const std::shared_ptr<vertex_data> avertex_data, const std::shared_ptr<shader_program> ashader_program)
+entity::entity(const std::shared_ptr<vertex_data> avertex_data, const std::shared_ptr<shader_program> ashader_program)
 : m_vertex_data(avertex_data)
 , m_ShaderProgram(ashader_program)
 {}
 
-void model::draw(
+void entity::draw(
     //const shader_program &aCurrentShaderProgram, // Required to assign uniforms 
 
     const double aTimeSinceStart, 
@@ -31,7 +31,7 @@ void model::draw(
     const GLuint programHandle = m_ShaderProgram->useProgram();
     
     //TODO Refactor to .. scene? batch?
-    // these uniforms belong to a higherlevel abstraction. Higher than modelor camera. should be "scene".
+    // these uniforms belong to a higherlevel abstraction. Higher than entityor camera. should be "scene".
     //bind standard uniforms
     /*const float time = aTimeSinceStart;
     const float deltaTime = aDeltaTime;
@@ -40,7 +40,7 @@ void model::draw(
     glh::Bind1FloatUniform(programHandle, "_Time",       time     );*/
 
     // Refactor to material
-    //bind this model's uniforms
+    //bind this entity's uniforms
     /*m_textures.bind(programHandle);
     m_Floats.bind(programHandle);
     m_Vector2Uniforms.bind(programHandle);
@@ -51,7 +51,7 @@ void model::draw(
     // Acceptable!
     const graphics_mat4x4_type p = aProjectionMatrix;
     const graphics_mat4x4_type v = aViewMatrix;
-    const graphics_mat4x4_type m = getmodelMatrix();
+    const graphics_mat4x4_type m = getModelMatrix();
 
     const auto mvp = p * v * m;
 
@@ -67,20 +67,20 @@ void model::draw(
     m_vertex_data->draw();
 }
 
-const graphics_mat4x4_type& model::getmodelMatrix() const
+const graphics_mat4x4_type &entity::getModelMatrix() const
 {
-    return m_modelMatrix;
+    return m_ModelMatrix;
 }
 
-void model::set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale)
+void entity::set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale)
 {
-    m_modelMatrix.setToIdentity();
-    m_modelMatrix.translate(aWorldPos);
-    m_modelMatrix.rotate(aRotation);
-    m_modelMatrix.scale(aScale);
+    m_ModelMatrix.setToIdentity();
+    m_ModelMatrix.translate(aWorldPos);
+    m_ModelMatrix.rotate(aRotation);
+    m_ModelMatrix.scale(aScale);
 }
 
-void model::setvertex_data(const std::shared_ptr<vertex_data> a)
+void entity::set_vertex_data(const std::shared_ptr<vertex_data> a)
 {
     m_vertex_data = a;
 }

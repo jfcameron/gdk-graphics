@@ -54,7 +54,7 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/entity.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/shader_program.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_attribute.cpp

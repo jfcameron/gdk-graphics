@@ -180,9 +180,9 @@ vertex_data::vertex_data(const vertex_data::Type &aType,
     const std::vector<GLfloat> &avertex_data, 
     const std::vector<GLushort> &aIndexData,
     const PrimitiveMode &aPrimitiveMode)
-: m_IndexBufferHandle([&aIndexData, &aType]() -> GLuint
+: m_IndexBufferHandle([&aIndexData, &aType]()
 {
-    GLuint ibo = 0;
+    GLuint ibo(0);
     
     if (aIndexData.size() > 0)
     {
@@ -209,11 +209,11 @@ vertex_data::vertex_data(const vertex_data::Type &aType,
     glDeleteBuffers(1, &handle);
 })
 , m_IndexCount((GLsizei)aIndexData.size())
-, m_VertexBufferHandle([&avertex_data, &aType]() -> GLuint
+, m_VertexBufferHandle([&avertex_data, &aType]()
 {
-    if (avertex_data.size() == 0) std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
+    if (!avertex_data.size()) std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
     
-    GLuint vbo = 0;
+    GLuint vbo(0);
     
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);

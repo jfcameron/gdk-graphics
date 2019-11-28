@@ -85,7 +85,7 @@ namespace gdk
         /// \brief uniform name to metadata
         active_uniform_collection_type m_ActiveUniforms;
 
-        //! Whether or not to discard polygons based on [model space] normal direction
+        //! Whether or not to discard polygons based on [entity space] normal direction
         FaceCullingMode m_FaceCullingMode = FaceCullingMode::None;
 
         

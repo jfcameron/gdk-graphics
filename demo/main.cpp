@@ -7,7 +7,7 @@
 #include <jfc/glfw_window.h>
 
 #include <gdk/camera.h>
-#include <gdk/model.h>
+#include <gdk/entity.h>
 #include <gdk/shader_program.h> 
 #include <gdk/vertex_data.h>
 
@@ -24,25 +24,25 @@ int main(int argc, char **argv)
 
     camera.setProjection(90, 0.01, 20, 1);
 
-    std::vector<std::shared_ptr<gdk::model>> models;
+    std::vector<std::shared_ptr<gdk::entity>> models;
 
     auto cube = std::shared_ptr<vertex_data>(vertex_data::Cube);
 
-    models.push_back(std::make_shared<model>([&]()
+    models.push_back(std::make_shared<entity>([&]()
     {
         auto cube = static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube);
         auto alpha = static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff);
 
-        model model(cube, alpha);
+        entity model(cube, alpha);
 
-        model.set_texture("_Texture", texture::GetCheckerboardOfDeath());
+        //model.set_texture("_Texture", texture::GetCheckerboardOfDeath());
 
         model.set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
 
         return model;
     }()));
 
-    models.push_back(std::make_shared<model>(model(*models.back())));
+    models.push_back(std::make_shared<entity>(entity(*models.back())));
 
     float blar = 0;
 

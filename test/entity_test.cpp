@@ -7,13 +7,13 @@
 
 #include "test_include.h"
 
-#include <gdk/model.h>
+#include <gdk/entity.h>
 #include <gdk/vertex_data.h>
 #include <gdk/shader_program.h>
 
 using namespace gdk;
 
-TEST_CASE("gdk::model", "[gdk::model]")
+TEST_CASE("gdk::entity", "[gdk::entity]")
 {
     initGL();
 
@@ -22,25 +22,25 @@ TEST_CASE("gdk::model", "[gdk::model]")
 
     SECTION("builds and draws")
     {
-        model model(
+        entity entity(
             static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube),
             static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
 
-        model.draw({}, {}, {}, {});
+        entity.draw({}, {}, {}, {});
 
         REQUIRE(!jfc::glGetError());
     }
 
     SECTION("move semantics")
     {
-        model a(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube), static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
+        entity a(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube), static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
 
         auto b = std::move(a);
     }
 
     SECTION("copy semantics")
     {
-        const model a(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube), static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
+        const entity a(static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube), static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff));
 
         auto b = a;
     }

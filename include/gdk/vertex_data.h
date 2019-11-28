@@ -80,7 +80,7 @@ namespace gdk
         /// \brief strong association with draw. If draw is on this instance is not called after bind on this
         /// instance, behaviour is unintended. The bodies of these functions are separate because bind
         /// is expensive and does not need to be called nearly as frequently as draw. Bind is per unique vertex data
-        /// draw is per unique model (that vertex data projected out somewhere into the scene.)
+        /// draw is per unique entity (that vertex data projected out somewhere into the scene.)
         void bind(const shader_program &aShaderProgram) const;
 
         //! Invokes the pipline on the currently bound vertex data, with the expectation that

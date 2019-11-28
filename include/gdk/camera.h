@@ -11,9 +11,9 @@
 
 namespace gdk
 {
-    class model;
+    class entity;
 
-    /// \brief Position, orientation and perspective from which model(s) are drawn
+    /// \brief Position, orientation and perspective from which entity(s) are drawn
     class camera
     {
         /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
@@ -22,7 +22,7 @@ namespace gdk
             //! Do not clear any buffers
             Nothing,
 
-            //! Clear the color buffer
+            //! Clear the color and depth buffers
             ColorAndDepth,
 
             //! Clear the Depth buffer
@@ -53,7 +53,7 @@ namespace gdk
         //Rendertexture m_Rendertexture;
 
     public:
-        //TODO implement this? A way to throw away models that will not contribute frags (ie behind the camera) before they are uploaded. Also a way to sort the scene for e.g: proper blending... ah but transpparency batches must always come after opaques. hnnh. need yet a higher level absrraction I think. A batch? Batch would be a good abstractoin for blend funcs/transparency ordering. Good abstraction for "geometry batching" as well (merging vertex data within glcontext)
+        //TODO implement this? A way to throw away entitys that will not contribute frags (ie behind the camera) before they are uploaded. Also a way to sort the scene for e.g: proper blending... ah but transpparency batches must always come after opaques. hnnh. need yet a higher level absrraction I think. A batch? Batch would be a good abstractoin for blend funcs/transparency ordering. Good abstraction for "geometry batching" as well (merging vertex data within glcontext)
         // the transparency sort does need to be done on a percamera basis.. but transparency groups must come after opaque groups.
         // These are two separate ideas..
         //void setSortFunctor(ModelPtr a, ModelPtr b)
@@ -87,8 +87,8 @@ namespace gdk
         /// \brief set projection matrix from orthographic bounds
         //void setProject(height, width, depth);
 
-        /// \brief Draws a list of models to the framebuffer
-        void draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::model>> &amodels) const;
+        /// \brief Draws a list of entitys to the framebuffer
+        void draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::entity>> &aentitys) const;
 
         /// \brief copy semantics
         camera(const camera &a) = default;

@@ -5,7 +5,7 @@
 #include <gdk/glh.h>
 #include <gdk/intvector2.h>
 #include <gdk/mat4x4.h>
-#include <gdk/model.h>
+#include <gdk/entity.h>
 #include <gdk/opengl.h>
 #include <gdk/quaternion.h>
 #include <gdk/vector2.h>
@@ -71,7 +71,7 @@ void camera::setProjection(const graphics_mat4x4_type &matrix)
     m_ProjectionMatrix = matrix;
 }
 
-void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::model>> &amodels) const
+void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::entity>> &aentitys) const
 {
     gdk::graphics_intvector2_type viewportPixelPosition(aFrameBufferSize * m_ViewportPosition); 
 
@@ -98,7 +98,7 @@ void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const g
         case ClearMode::Nothing: break;
     }
 
-    for (const auto model : amodels) model->draw(
+    for (const auto entity : aentitys) entity->draw(
         //currentSHaderprogram
 
         aTimeSinceStart, 
