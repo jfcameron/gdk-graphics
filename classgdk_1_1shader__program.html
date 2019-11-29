@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">19971c290871f61621caeb0179d79f35a42140e9</span>
+   &#160;<span id="projectnumber">c88e8af356e2bd5d06fafdbf1cc2091f8f5020a3</span>
    </div>
   </td>
  </tr>
@@ -68,7 +68,6 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classgdk_1_1shader__program-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -100,23 +99,32 @@ Public Types</h2></td></tr>
 </td></tr>
 <tr class="separator:a7b4361404feed73471b7f7aba1b8ac7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade215954370e4c15b7aab427c89548ab"><td class="memItemLeft" align="right" valign="top"><a id="ade215954370e4c15b7aab427c89548ab"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>active_attribute_collection_type</b> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1shader__program_1_1active__attribute__info.html">active_attribute_info</a> &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#ade215954370e4c15b7aab427c89548ab">active_attribute_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1shader__program_1_1active__attribute__info.html">active_attribute_info</a> &gt;</td></tr>
+<tr class="memdesc:ade215954370e4c15b7aab427c89548ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">associative collection which maps an active attribute by its name to its index in the program. used in memoization strategy to reduce opengl api calls <br /></td></tr>
 <tr class="separator:ade215954370e4c15b7aab427c89548ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22a248be62d8e62bf1230bbf2ff3b3d2"><td class="memItemLeft" align="right" valign="top"><a id="a22a248be62d8e62bf1230bbf2ff3b3d2"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>active_uniform_collection_type</b> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1shader__program_1_1active__uniform__info.html">active_uniform_info</a> &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a22a248be62d8e62bf1230bbf2ff3b3d2">active_uniform_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1shader__program_1_1active__uniform__info.html">active_uniform_info</a> &gt;</td></tr>
+<tr class="memdesc:a22a248be62d8e62bf1230bbf2ff3b3d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">associative collection which maps an active uniform by its name to its index in the program. used in memoization strategy to reduce opengl api calls <br /></td></tr>
 <tr class="separator:a22a248be62d8e62bf1230bbf2ff3b3d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1fe405f2281af971c42615968174acfe"><td class="memItemLeft" align="right" valign="top"><a id="a1fe405f2281af971c42615968174acfe"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>integer2_uniform_type</b> = std::array&lt; GLint, 2 &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a1fe405f2281af971c42615968174acfe">integer2_uniform_type</a> = std::array&lt; GLint, 2 &gt;</td></tr>
+<tr class="memdesc:a1fe405f2281af971c42615968174acfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">type alias used for setting int2 uniform value <br /></td></tr>
 <tr class="separator:a1fe405f2281af971c42615968174acfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa13f9a479ed84dff42c69aa2cb1f5b6f"><td class="memItemLeft" align="right" valign="top"><a id="aa13f9a479ed84dff42c69aa2cb1f5b6f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>integer3_uniform_type</b> = std::array&lt; GLint, 3 &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#aa13f9a479ed84dff42c69aa2cb1f5b6f">integer3_uniform_type</a> = std::array&lt; GLint, 3 &gt;</td></tr>
+<tr class="memdesc:aa13f9a479ed84dff42c69aa2cb1f5b6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">type alias used for setting int3 uniform value <br /></td></tr>
 <tr class="separator:aa13f9a479ed84dff42c69aa2cb1f5b6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb6aaab9a2bbff2a5dc9c64cc316d429"><td class="memItemLeft" align="right" valign="top"><a id="abb6aaab9a2bbff2a5dc9c64cc316d429"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>integer4_uniform_type</b> = std::array&lt; GLint, 4 &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#abb6aaab9a2bbff2a5dc9c64cc316d429">integer4_uniform_type</a> = std::array&lt; GLint, 4 &gt;</td></tr>
+<tr class="memdesc:abb6aaab9a2bbff2a5dc9c64cc316d429"><td class="mdescLeft">&#160;</td><td class="mdescRight">type alias used for setting int4 uniform value <br /></td></tr>
 <tr class="separator:abb6aaab9a2bbff2a5dc9c64cc316d429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a32ebda876c346026d4999684c43f8d4b"><td class="memItemLeft" align="right" valign="top"><a id="a32ebda876c346026d4999684c43f8d4b"></a>
+std::optional&lt; <a class="el" href="structgdk_1_1shader__program_1_1active__attribute__info.html">active_attribute_info</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a32ebda876c346026d4999684c43f8d4b">tryGetActiveAttribute</a> (const std::string &amp;aAttributeName) const</td></tr>
+<tr class="memdesc:a32ebda876c346026d4999684c43f8d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a nonnull optional to an attribute info if one with the given name exists <br /></td></tr>
+<tr class="separator:a32ebda876c346026d4999684c43f8d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a336afee2d4b04b0c33968e8b59baf6cc"><td class="memItemLeft" align="right" valign="top"><a id="a336afee2d4b04b0c33968e8b59baf6cc"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a336afee2d4b04b0c33968e8b59baf6cc">setUniform</a> (const std::string &amp;aName, const GLfloat aValue) const</td></tr>
 <tr class="memdesc:a336afee2d4b04b0c33968e8b59baf6cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a float1 uniform from a float <br /></td></tr>
@@ -154,15 +162,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a8f73487c1f3ead811105f0f8c335e624"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer uniform <br /></td></tr>
 <tr class="separator:a8f73487c1f3ead811105f0f8c335e624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26f24ed0df5d81423889e8605648095c"><td class="memItemLeft" align="right" valign="top"><a id="a26f24ed0df5d81423889e8605648095c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a26f24ed0df5d81423889e8605648095c">setUniform</a> (const std::string aName, const integer2_uniform_type &amp;aValue) const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a26f24ed0df5d81423889e8605648095c">setUniform</a> (const std::string aName, const <a class="el" href="classgdk_1_1shader__program.html#a1fe405f2281af971c42615968174acfe">integer2_uniform_type</a> &amp;aValue) const</td></tr>
 <tr class="memdesc:a26f24ed0df5d81423889e8605648095c"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer2 uniform <br /></td></tr>
 <tr class="separator:a26f24ed0df5d81423889e8605648095c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0934fdd67533048afd09a7d293650a4"><td class="memItemLeft" align="right" valign="top"><a id="aa0934fdd67533048afd09a7d293650a4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#aa0934fdd67533048afd09a7d293650a4">setUniform</a> (const std::string aName, const integer3_uniform_type &amp;aValue) const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#aa0934fdd67533048afd09a7d293650a4">setUniform</a> (const std::string aName, const <a class="el" href="classgdk_1_1shader__program.html#aa13f9a479ed84dff42c69aa2cb1f5b6f">integer3_uniform_type</a> &amp;aValue) const</td></tr>
 <tr class="memdesc:aa0934fdd67533048afd09a7d293650a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer3 uniform <br /></td></tr>
 <tr class="separator:aa0934fdd67533048afd09a7d293650a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67fc228ddd717ec1243616ea4d2ea897"><td class="memItemLeft" align="right" valign="top"><a id="a67fc228ddd717ec1243616ea4d2ea897"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a67fc228ddd717ec1243616ea4d2ea897">setUniform</a> (const std::string aName, const integer4_uniform_type &amp;aValue) const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a67fc228ddd717ec1243616ea4d2ea897">setUniform</a> (const std::string aName, const <a class="el" href="classgdk_1_1shader__program.html#abb6aaab9a2bbff2a5dc9c64cc316d429">integer4_uniform_type</a> &amp;aValue) const</td></tr>
 <tr class="memdesc:a67fc228ddd717ec1243616ea4d2ea897"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer4 uniform <br /></td></tr>
 <tr class="separator:a67fc228ddd717ec1243616ea4d2ea897"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a638cf1704e77e83ef9c420d97cd9c43d"><td class="memItemLeft" align="right" valign="top"><a id="a638cf1704e77e83ef9c420d97cd9c43d"></a>
@@ -170,15 +178,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a638cf1704e77e83ef9c420d97cd9c43d"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer uniform array <br /></td></tr>
 <tr class="separator:a638cf1704e77e83ef9c420d97cd9c43d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34f77e5eca3cc02cea96ffb364aaaac3"><td class="memItemLeft" align="right" valign="top"><a id="a34f77e5eca3cc02cea96ffb364aaaac3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a34f77e5eca3cc02cea96ffb364aaaac3">setUniform</a> (const std::string &amp;aName, const std::vector&lt; integer2_uniform_type &gt; &amp;aValue) const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a34f77e5eca3cc02cea96ffb364aaaac3">setUniform</a> (const std::string &amp;aName, const std::vector&lt; <a class="el" href="classgdk_1_1shader__program.html#a1fe405f2281af971c42615968174acfe">integer2_uniform_type</a> &gt; &amp;aValue) const</td></tr>
 <tr class="memdesc:a34f77e5eca3cc02cea96ffb364aaaac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer2 uniform array <br /></td></tr>
 <tr class="separator:a34f77e5eca3cc02cea96ffb364aaaac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af07f4e9b79c789e02a0b120b677091a0"><td class="memItemLeft" align="right" valign="top"><a id="af07f4e9b79c789e02a0b120b677091a0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#af07f4e9b79c789e02a0b120b677091a0">setUniform</a> (const std::string &amp;aName, const std::vector&lt; integer3_uniform_type &gt; &amp;aValue) const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#af07f4e9b79c789e02a0b120b677091a0">setUniform</a> (const std::string &amp;aName, const std::vector&lt; <a class="el" href="classgdk_1_1shader__program.html#aa13f9a479ed84dff42c69aa2cb1f5b6f">integer3_uniform_type</a> &gt; &amp;aValue) const</td></tr>
 <tr class="memdesc:af07f4e9b79c789e02a0b120b677091a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer3 uniform array <br /></td></tr>
 <tr class="separator:af07f4e9b79c789e02a0b120b677091a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c6e63d01e9f24b57d315357b7252eeb"><td class="memItemLeft" align="right" valign="top"><a id="a4c6e63d01e9f24b57d315357b7252eeb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a4c6e63d01e9f24b57d315357b7252eeb">setUniform</a> (const std::string &amp;aName, const std::vector&lt; integer4_uniform_type &gt; &amp;aValue) const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a4c6e63d01e9f24b57d315357b7252eeb">setUniform</a> (const std::string &amp;aName, const std::vector&lt; <a class="el" href="classgdk_1_1shader__program.html#abb6aaab9a2bbff2a5dc9c64cc316d429">integer4_uniform_type</a> &gt; &amp;aValue) const</td></tr>
 <tr class="memdesc:a4c6e63d01e9f24b57d315357b7252eeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign a value to a integer4 uniform array <br /></td></tr>
 <tr class="separator:a4c6e63d01e9f24b57d315357b7252eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6144932578d2b47c1b2a55aaa69e964"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#ab6144932578d2b47c1b2a55aaa69e964">setUniform</a> (const std::string &amp;aName, const graphics_mat4x4_type &amp;avalue) const</td></tr>
@@ -216,33 +224,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a91c164352e36785100029ec04c9564d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructs a shader program with glsl source file contents for a vertex shader and a fragment shader <br /></td></tr>
 <tr class="separator:a91c164352e36785100029ec04c9564d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a46dd7cfee9defe96880fa4e4ca7ffea5"><td class="memItemLeft" align="right" valign="top"><a id="a46dd7cfee9defe96880fa4e4ca7ffea5"></a>
-jfc::unique_handle&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a46dd7cfee9defe96880fa4e4ca7ffea5">m_VertexShaderHandle</a></td></tr>
-<tr class="memdesc:a46dd7cfee9defe96880fa4e4ca7ffea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle to the vertex shader <br /></td></tr>
-<tr class="separator:a46dd7cfee9defe96880fa4e4ca7ffea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1281c8f062b7cbec9f5a6273f169c4d"><td class="memItemLeft" align="right" valign="top"><a id="ad1281c8f062b7cbec9f5a6273f169c4d"></a>
-jfc::unique_handle&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#ad1281c8f062b7cbec9f5a6273f169c4d">m_FragmentShaderHandle</a></td></tr>
-<tr class="memdesc:ad1281c8f062b7cbec9f5a6273f169c4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle to the fragment shader <br /></td></tr>
-<tr class="separator:ad1281c8f062b7cbec9f5a6273f169c4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35e0da98f314961109bdf5bf85966a90"><td class="memItemLeft" align="right" valign="top"><a id="a35e0da98f314961109bdf5bf85966a90"></a>
-jfc::unique_handle&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a35e0da98f314961109bdf5bf85966a90">m_ProgramHandle</a></td></tr>
-<tr class="memdesc:a35e0da98f314961109bdf5bf85966a90"><td class="mdescLeft">&#160;</td><td class="mdescRight">handle to the program in the gl context. <br /></td></tr>
-<tr class="separator:a35e0da98f314961109bdf5bf85966a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03746211a57fe0b4519fa8541c110dc8"><td class="memItemLeft" align="right" valign="top"><a id="a03746211a57fe0b4519fa8541c110dc8"></a>
-active_attribute_collection_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a03746211a57fe0b4519fa8541c110dc8">m_ActiveAttributes</a></td></tr>
-<tr class="memdesc:a03746211a57fe0b4519fa8541c110dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">attrib name to metadata <br /></td></tr>
-<tr class="separator:a03746211a57fe0b4519fa8541c110dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6260db1cedcf3c99f669b2e3be0c448"><td class="memItemLeft" align="right" valign="top"><a id="aa6260db1cedcf3c99f669b2e3be0c448"></a>
-active_uniform_collection_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#aa6260db1cedcf3c99f669b2e3be0c448">m_ActiveUniforms</a></td></tr>
-<tr class="memdesc:aa6260db1cedcf3c99f669b2e3be0c448"><td class="mdescLeft">&#160;</td><td class="mdescRight">uniform name to metadata <br /></td></tr>
-<tr class="separator:aa6260db1cedcf3c99f669b2e3be0c448"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf6fe7f3ed0550c0ae1ea7dec956d407"><td class="memItemLeft" align="right" valign="top"><a id="adf6fe7f3ed0550c0ae1ea7dec956d407"></a>
-<a class="el" href="classgdk_1_1shader__program.html#a7b4361404feed73471b7f7aba1b8ac7d">FaceCullingMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#adf6fe7f3ed0550c0ae1ea7dec956d407">m_FaceCullingMode</a> = <a class="el" href="classgdk_1_1shader__program.html#a7b4361404feed73471b7f7aba1b8ac7da6adf97f83acf6453d4a6a4b1070f3754">FaceCullingMode::None</a></td></tr>
-<tr class="memdesc:adf6fe7f3ed0550c0ae1ea7dec956d407"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not to discard polygons based on [entity space] normal direction. <br /></td></tr>
-<tr class="separator:adf6fe7f3ed0550c0ae1ea7dec956d407"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a991f7bcc628010096c9a065f9031b975"><td class="memItemLeft" align="right" valign="top"><a id="a991f7bcc628010096c9a065f9031b975"></a>
@@ -251,9 +232,7 @@ static const jfc::lazy_ptr&lt; <a class="el" href="classgdk_1_1shader__program.h
 <tr class="separator:a991f7bcc628010096c9a065f9031b975"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf3c5a7e94773a29b820bae99058e933"><td class="memItemLeft" align="right" valign="top">static const jfc::lazy_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">gdk::shader_program</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#acf3c5a7e94773a29b820bae99058e933">AlphaCutOff</a></td></tr>
 <tr class="separator:acf3c5a7e94773a29b820bae99058e933"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19ff47d1165fcf92900d493dc0581a5c"><td class="memItemLeft" align="right" valign="top"><a id="a19ff47d1165fcf92900d493dc0581a5c"></a>
-static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a19ff47d1165fcf92900d493dc0581a5c">MAX_TEXTURE_UNITS</a> = 8</td></tr>
-<tr class="memdesc:a19ff47d1165fcf92900d493dc0581a5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that <br /></td></tr>
+<tr class="memitem:a19ff47d1165fcf92900d493dc0581a5c"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1shader__program.html#a19ff47d1165fcf92900d493dc0581a5c">MAX_TEXTURE_UNITS</a> = 8</td></tr>
 <tr class="separator:a19ff47d1165fcf92900d493dc0581a5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -366,6 +345,29 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class=
 </table>
 </div><div class="memdoc">
 <p>shader for drawing unlit surfaces with alpha channel based fragment discard. Suitable for text rendering, GUI element rendering, 2D Sprite rendering. Extremely lightweight. </p>
+
+</div>
+</div>
+<a id="a19ff47d1165fcf92900d493dc0581a5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19ff47d1165fcf92900d493dc0581a5c">&#9670;&nbsp;</a></span>MAX_TEXTURE_UNITS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const size_t gdk::shader_program::MAX_TEXTURE_UNITS = 8</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that, therefore define the "max" as the guaranteed minimum. </p>
 
 </div>
 </div>

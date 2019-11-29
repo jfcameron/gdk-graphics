@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">19971c290871f61621caeb0179d79f35a42140e9</span>
+   &#160;<span id="projectnumber">c88e8af356e2bd5d06fafdbf1cc2091f8f5020a3</span>
    </div>
   </td>
  </tr>
@@ -66,6 +66,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classgdk_1_1camera-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">gdk::camera Class Reference</div>  </div>
@@ -99,21 +100,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a4a839fd71bce9c35ca562ce9a0b89d35">setViewportSize</a> (const float x, const float y)</td></tr>
 <tr class="memdesc:a4a839fd71bce9c35ca562ce9a0b89d35"><td class="mdescLeft">&#160;</td><td class="mdescRight">override <br /></td></tr>
 <tr class="separator:a4a839fd71bce9c35ca562ce9a0b89d35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4135f6974edc80abef525bcb8deba750"><td class="memItemLeft" align="right" valign="top"><a id="a4135f6974edc80abef525bcb8deba750"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a4135f6974edc80abef525bcb8deba750">setViewMatrix</a> (const gdk::graphics_vector3_type &amp;aWorldPos, const gdk::graphics_quaternion_type &amp;aRotation)</td></tr>
-<tr class="memdesc:a4135f6974edc80abef525bcb8deba750"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebuilds the view matrix from a 3d position and rotation <br /></td></tr>
-<tr class="separator:a4135f6974edc80abef525bcb8deba750"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34d8f8870a02ec9db938d7e681fbcc4b"><td class="memItemLeft" align="right" valign="top"><a id="a34d8f8870a02ec9db938d7e681fbcc4b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a34d8f8870a02ec9db938d7e681fbcc4b">set_view_matrix</a> (const gdk::graphics_vector3_type &amp;aWorldPos, const gdk::graphics_quaternion_type &amp;aRotation)</td></tr>
+<tr class="memdesc:a34d8f8870a02ec9db938d7e681fbcc4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebuilds the view matrix from a 3d position and rotation <br /></td></tr>
+<tr class="separator:a34d8f8870a02ec9db938d7e681fbcc4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa29f2333b9f319c20ea3d4f54ec706c2"><td class="memItemLeft" align="right" valign="top"><a id="aa29f2333b9f319c20ea3d4f54ec706c2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#aa29f2333b9f319c20ea3d4f54ec706c2">setProjection</a> (const graphics_mat4x4_type &amp;matrix)</td></tr>
 <tr class="memdesc:aa29f2333b9f319c20ea3d4f54ec706c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets projection matrix via copy <br /></td></tr>
 <tr class="separator:aa29f2333b9f319c20ea3d4f54ec706c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a311969aa6d37abb490783df7197780b2"><td class="memItemLeft" align="right" valign="top"><a id="a311969aa6d37abb490783df7197780b2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a311969aa6d37abb490783df7197780b2">setProjection</a> (const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)</td></tr>
-<tr class="memdesc:a311969aa6d37abb490783df7197780b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to a perspective projection //TODO: change name? is overloading really appropriate? <br /></td></tr>
+<tr class="memdesc:a311969aa6d37abb490783df7197780b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to a perspective projection <br /></td></tr>
 <tr class="separator:a311969aa6d37abb490783df7197780b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ce6f21dfce8bdc10dbaa4a6ea12a379"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a9ce6f21dfce8bdc10dbaa4a6ea12a379">draw</a> (const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &amp;aFrameBufferSize, const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classgdk_1_1entity.html">gdk::entity</a> &gt;&gt; &amp;aentitys) const</td></tr>
-<tr class="memdesc:a9ce6f21dfce8bdc10dbaa4a6ea12a379"><td class="mdescLeft">&#160;</td><td class="mdescRight">set projection matrix from orthographic bounds  <a href="#a9ce6f21dfce8bdc10dbaa4a6ea12a379">More...</a><br /></td></tr>
-<tr class="separator:a9ce6f21dfce8bdc10dbaa4a6ea12a379"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1619c3ce19ca808c443e7511de10de38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a1619c3ce19ca808c443e7511de10de38">activate</a> (const gdk::graphics_intvector2_type &amp;aFrameBufferSize) const</td></tr>
+<tr class="memdesc:a1619c3ce19ca808c443e7511de10de38"><td class="mdescLeft">&#160;</td><td class="mdescRight">set projection matrix from orthographic bounds  <a href="#a1619c3ce19ca808c443e7511de10de38">More...</a><br /></td></tr>
+<tr class="separator:a1619c3ce19ca808c443e7511de10de38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6b982934a22dc4ac9171cdccc63a54d"><td class="memItemLeft" align="right" valign="top"><a id="ab6b982934a22dc4ac9171cdccc63a54d"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#ab6b982934a22dc4ac9171cdccc63a54d">camera</a> (const <a class="el" href="classgdk_1_1camera.html">camera</a> &amp;a)=default</td></tr>
 <tr class="memdesc:ab6b982934a22dc4ac9171cdccc63a54d"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy semantics <br /></td></tr>
@@ -134,50 +135,55 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a75405864864608545bfea3da22c5cbee">camera</a> ()</td></tr>
 <tr class="memdesc:a75405864864608545bfea3da22c5cbee"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructs a camera with reasonable default values <br /></td></tr>
 <tr class="separator:a75405864864608545bfea3da22c5cbee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a0cc5d557427d7636983decbb84e84e4c"><td class="memItemLeft" align="right" valign="top"><a id="a0cc5d557427d7636983decbb84e84e4c"></a>
+graphics_vector2_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a0cc5d557427d7636983decbb84e84e4c">m_ViewportPosition</a> = graphics_vector2_type::Zero</td></tr>
+<tr class="memdesc:a0cc5d557427d7636983decbb84e84e4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">position of the camera viewport within the device viewport <br /></td></tr>
+<tr class="separator:a0cc5d557427d7636983decbb84e84e4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab66be11a69152b5827b43176bbddc9f9"><td class="memItemLeft" align="right" valign="top"><a id="ab66be11a69152b5827b43176bbddc9f9"></a>
+graphics_vector2_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#ab66be11a69152b5827b43176bbddc9f9">m_ViewportSize</a> = graphics_vector2_type(2, 2)</td></tr>
+<tr class="memdesc:ab66be11a69152b5827b43176bbddc9f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">size of camera viewport within the device viewport <br /></td></tr>
+<tr class="separator:ab66be11a69152b5827b43176bbddc9f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe8c14deb1da7160eb8f3a3cc4052577"><td class="memItemLeft" align="right" valign="top"><a id="afe8c14deb1da7160eb8f3a3cc4052577"></a>
+graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#afe8c14deb1da7160eb8f3a3cc4052577">m_ViewMatrix</a> = graphics_mat4x4_type::Identity</td></tr>
+<tr class="memdesc:afe8c14deb1da7160eb8f3a3cc4052577"><td class="mdescLeft">&#160;</td><td class="mdescRight">World position of camera. <br /></td></tr>
+<tr class="separator:afe8c14deb1da7160eb8f3a3cc4052577"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fe593691ccbe48012fac5391636243e"><td class="memItemLeft" align="right" valign="top"><a id="a5fe593691ccbe48012fac5391636243e"></a>
+graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a5fe593691ccbe48012fac5391636243e">m_ProjectionMatrix</a> = graphics_mat4x4_type::Identity</td></tr>
+<tr class="memdesc:a5fe593691ccbe48012fac5391636243e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Projection of the camera. <br /></td></tr>
+<tr class="separator:a5fe593691ccbe48012fac5391636243e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a115a3dccec1e8b5278be9f374e5a5c61"><td class="memItemLeft" align="right" valign="top"><a id="a115a3dccec1e8b5278be9f374e5a5c61"></a>
+ClearMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a115a3dccec1e8b5278be9f374e5a5c61">m_ClearMode</a> = ClearMode::ColorAndDepth</td></tr>
+<tr class="memdesc:a115a3dccec1e8b5278be9f374e5a5c61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines which buffers in the FBO to clear before drawing. <br /></td></tr>
+<tr class="separator:a115a3dccec1e8b5278be9f374e5a5c61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9991fcec1cc9045d3d55d6cff44127c"><td class="memItemLeft" align="right" valign="top"><a id="ad9991fcec1cc9045d3d55d6cff44127c"></a>
+<a class="el" href="structgdk_1_1color.html">gdk::color</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#ad9991fcec1cc9045d3d55d6cff44127c">m_ClearColor</a> = <a class="el" href="structgdk_1_1color.html#a6d8e35c063b3252f624183f6920b37c4">color::CornflowerBlue</a></td></tr>
+<tr class="memdesc:ad9991fcec1cc9045d3d55d6cff44127c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The color to replace all data in the color buffer with (if color buffer is to be cleared) <br /></td></tr>
+<tr class="separator:ad9991fcec1cc9045d3d55d6cff44127c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Position, orientation and perspective from which entity(s) are drawn. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9ce6f21dfce8bdc10dbaa4a6ea12a379"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ce6f21dfce8bdc10dbaa4a6ea12a379">&#9670;&nbsp;</a></span>draw()</h2>
+<a id="a1619c3ce19ca808c443e7511de10de38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1619c3ce19ca808c443e7511de10de38">&#9670;&nbsp;</a></span>activate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void gdk::camera::draw </td>
+          <td class="memname">void gdk::camera::activate </td>
           <td>(</td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aTimeSinceStart</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aDeltaTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">const gdk::graphics_intvector2_type &amp;&#160;</td>
-          <td class="paramname"><em>aFrameBufferSize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classgdk_1_1entity.html">gdk::entity</a> &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>aentitys</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
+          <td class="paramname"><em>aFrameBufferSize</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>set projection matrix from orthographic bounds </p>
-<p>Draws a list of entitys to the framebuffer </p>
+<p>activates this camera; mutates gl according to this camera's state </p>
 
 </div>
 </div>
