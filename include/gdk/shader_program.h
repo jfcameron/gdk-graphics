@@ -25,51 +25,43 @@ namespace gdk
         /// \brief index, size, type of an active attribute used in the shader program
         struct active_attribute_info
         {
-            //! location of the attribute
-            GLint location;
-
-            //! type of the attribute's components, e.g: float
-            GLenum type;
-
-            //! number of components in the attribute, e.g: 2
-            GLint count; //TODO this is not component count. this is number of types (vec2 is 1 not 2)
+            GLint location; //!< location of the attribute
+            GLenum type; //!< type of the attribute's components, e.g: float
+            //TODO this is not component count. this is number of types (vec2 is 1 not 2)
+            GLint count; //!< number of components in the attribute, e.g: 2
         };
 
         /// \brief index. size. type o an active uniform used in the shader program
         struct active_uniform_info
         {
-            //! location of the uniform  e.g: 1
-            GLint location;
-
-            //! type of the uniform e.g: Texture
-            GLenum type;
-
-            //! size of the uniform e.g: 1
-            GLint size;
+            GLint location; //!< location of the uniform  e.g: 1
+            GLenum type; //!< type of the uniform e.g: Texture
+            GLint size; //!< size of the uniform e.g: 1
         };
 
+        //! associative collection which maps an active attribute by its name to its index in the program. used in memoization strategy to reduce opengl api calls
         using active_attribute_collection_type = std::unordered_map<std::string, active_attribute_info>;
+        //! associative collection which maps an active uniform by its name to its index in the program. used in memoization strategy to reduce opengl api calls
         using active_uniform_collection_type = std::unordered_map<std::string, active_uniform_info>;
 
         //! specify whether front- or back-facing polygons can be culled
         // TODO: Does this belong to shader or to a separate "pipline" abstraction? Im not sure. Answer has to do with how strongly associated I believe culmode is to userdefined fragment stage is?
         enum class FaceCullingMode 
         {
-            //! cull front facing polygons
-            Front,
-
-            //! cull back facing polygons
-            Back,
-
-            //! cull front and back facing polygons
-            FrontAndBack,
-            
-            //! do not cull any polygons
-            None
+            Front, //!< cull front facing polygons
+            Back, //!< cull back facing polygons
+            FrontAndBack, //!< cull front and back facing polygons
+            None //!< do not cull any polygons
         };
+       
+        //! type alias used for setting int2 uniform value
+        using integer2_uniform_type = std::array<GLint, 2>;
+        //! type alias used for setting int3 uniform value
+        using integer3_uniform_type = std::array<GLint, 3>;
+        //! type alias used for setting int4 uniform value
+        using integer4_uniform_type = std::array<GLint, 4>;
 
-    public://private: //TODO fix access specifier
-
+    private:
         //! handle to the  vertex shader
         jfc::unique_handle<GLuint> m_VertexShaderHandle;
 
@@ -87,12 +79,10 @@ namespace gdk
 
         //! Whether or not to discard polygons based on [entity space] normal direction
         FaceCullingMode m_FaceCullingMode = FaceCullingMode::None;
-
         
     public:
-        using integer2_uniform_type = std::array<GLint, 2>;
-        using integer3_uniform_type = std::array<GLint, 3>;
-        using integer4_uniform_type = std::array<GLint, 4>;
+        //! returns a nonnull optional to an attribute info if one with the given name exists
+        std::optional<active_attribute_info> tryGetActiveAttribute(const std::string &aAttributeName) const;
 
         //! assign a float1 uniform from a float
         void setUniform(const std::string &aName, const GLfloat aValue) const;
@@ -192,10 +182,12 @@ namespace gdk
         static const jfc::lazy_ptr<gdk::shader_program> PinkShaderOfDeath;
 
         //! shader for drawing unlit surfaces with alpha channel based fragment discard. Suitable for text rendering, 
-        //! GUI element rendering, 2D Sprite rendering. Extremely lightweight.
+        /// GUI element rendering, 2D Sprite rendering. Extremely lightweight.
         static const jfc::lazy_ptr<gdk::shader_program> AlphaCutOff;
 
-        //! 8 is the guaranteed minimum across all es2/web1 implementations. Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that
+        //! 8 is the guaranteed minimum across all es2/web1 implementations. 
+        /// Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that, 
+        /// therefore define the "max" as the guaranteed minimum.
         static const size_t MAX_TEXTURE_UNITS = 8;
     };
 }

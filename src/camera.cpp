@@ -52,7 +52,7 @@ void camera::setViewportSize(const float x, const float y)
     m_ViewportSize.y = y;
 }
 
-void camera::setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
+void camera::set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
 {
     m_ViewMatrix.setToIdentity();
 
@@ -71,11 +71,11 @@ void camera::setProjection(const graphics_mat4x4_type &matrix)
     m_ProjectionMatrix = matrix;
 }
 
-void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::entity>> &aentitys) const
+void camera::activate(const gdk::graphics_intvector2_type &aFrameBufferSize) const
 {
     gdk::graphics_intvector2_type viewportPixelPosition(aFrameBufferSize * m_ViewportPosition); 
 
-    gdk::graphics_intvector2_type viewportPixelSize (aFrameBufferSize * m_ViewportSize);
+    gdk::graphics_intvector2_type viewportPixelSize(aFrameBufferSize * m_ViewportSize);
     
     glh::Viewport(viewportPixelPosition, viewportPixelSize);
 
@@ -97,15 +97,6 @@ void camera::draw(const double aTimeSinceStart, const double aDeltaTime, const g
             
         case ClearMode::Nothing: break;
     }
-
-    for (const auto entity : aentitys) entity->draw(
-        //currentSHaderprogram
-
-        aTimeSinceStart, 
-        aDeltaTime, 
-
-        m_ViewMatrix, 
-        m_ProjectionMatrix);
 }
 
 void camera::setProjection(const float aFieldOfView, 

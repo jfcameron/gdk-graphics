@@ -19,17 +19,12 @@ namespace gdk
         /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
         enum class ClearMode 
         {
-            //! Do not clear any buffers
-            Nothing,
-
-            //! Clear the color and depth buffers
-            ColorAndDepth,
-
-            //! Clear the Depth buffer
-            DepthOnly 
+            Nothing, //!< Do not clear any buffers
+            ColorAndDepth, //!< Clear the color and depth buffers
+            DepthOnly //!< Clear the Depth buffer
         };
 
-    private:
+    public: //private: //TODO: set this back to private
         /// \brief position of the camera viewport within the device viewport
         graphics_vector2_type m_ViewportPosition = graphics_vector2_type::Zero;
 
@@ -73,12 +68,12 @@ namespace gdk
         void setViewportSize(const float x, const float y);
 
         /// \brief rebuilds the view matrix from a 3d position and rotation
-        void setViewMatrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation);
+        void set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation);
 
         /// \brief sets projection matrix via copy
         void setProjection(const graphics_mat4x4_type &matrix);
 
-        /// \brief sets the projection matrix to a perspective projection //TODO: change name? is overloading really appropriate?
+        /// \brief sets the projection matrix to a perspective projection
         void setProjection(const float aFieldOfView, 
             const float aNearClippingPlane, 
             const float aFarClippingPlane, 
@@ -87,8 +82,8 @@ namespace gdk
         /// \brief set projection matrix from orthographic bounds
         //void setProject(height, width, depth);
 
-        /// \brief Draws a list of entitys to the framebuffer
-        void draw(const double aTimeSinceStart, const double aDeltaTime, const gdk::graphics_intvector2_type &aFrameBufferSize, const std::vector<std::shared_ptr<gdk::entity>> &aentitys) const;
+        /// \brief activates this camera; mutates gl according to this camera's state
+        void activate(const gdk::graphics_intvector2_type &aFrameBufferSize) const;
 
         /// \brief copy semantics
         camera(const camera &a) = default;

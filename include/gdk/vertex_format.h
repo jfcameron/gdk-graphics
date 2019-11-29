@@ -23,8 +23,8 @@ namespace gdk
     /// 8..10 Tangent, then repeat (11-13 goes to Position etc...). Attributes, within the context of the graphics pipeline
     /// represents instanced data. In the context of the Vertex Shader stage, you will be able to access a set of attributes,
     /// representing a single full vertex.
-    /// TODO: need to support different GL types. forcing float is esay to think about but wasteful.
-    /// TODO: maybe call this one interleaved_vertex_format? Then support multivbo elsewhere?
+    /// TODO: need to support different GL types. forcing float is esay to think about but wasteful in the case of many attribs (uv, color, normal).
+    /// TODO: need to support multiple vbos instead of just 1. then allow user to type and use as theyd like, potentially interleaving attribs in 1 vbo and not another. e.g vbo1: float, position; vbo2: short, normal, uv interleaved.
     class vertex_format final
     {
         //! name and # of floats of each attribute in the format

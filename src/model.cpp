@@ -2,16 +2,16 @@
 
 #include <gdk/glh.h>
 #include <gdk/opengl.h>
-#include <gdk/vertex_data.h>
+#include <gdk/model.h>
 
 #include <iostream>
 #include <stdexcept>
 
 using namespace gdk;
 
-static constexpr char TAG[] = "vertex_data";
+static constexpr char TAG[] = "model";
 
-const jfc::lazy_ptr<gdk::vertex_data> vertex_data::Quad([]()
+const jfc::lazy_ptr<gdk::model> model::Quad([]()
 {
     float size  = 1.;
     float hsize = size/2.;
@@ -27,10 +27,10 @@ const jfc::lazy_ptr<gdk::vertex_data> vertex_data::Quad([]()
         size -hsize, 0.0f -hsize, 0.0f, 1.0f, 1.0f, // 1--2
     });
 
-    return new gdk::vertex_data(gdk::vertex_data::Type::Static, gdk::vertex_format::Pos3uv2, data);
+    return new gdk::model(gdk::model::Type::Static, gdk::vertex_format::Pos3uv2, data);
 });
 
-const jfc::lazy_ptr<gdk::vertex_data> vertex_data::Cube([]()
+const jfc::lazy_ptr<gdk::model> model::Cube([]()
 {
     float size  = 1.;
     float hsize = size/2.;
@@ -81,57 +81,57 @@ const jfc::lazy_ptr<gdk::vertex_data> vertex_data::Cube([]()
         size -hsize, 1.0f -hsize,  hsize, 1.0, 1.0,  0.0, +1.0, 0.0, // 1--2 */            
     });
 
-    return new gdk::vertex_data(gdk::vertex_data::Type::Static, gdk::vertex_format::Pos3uv2Norm3, data);
+    return new gdk::model(gdk::model::Type::Static, gdk::vertex_format::Pos3uv2Norm3, data);
 });
 
-static inline GLenum vertex_dataTypeToOpenGLDrawType(const vertex_data::Type aType)
+static inline GLenum modelTypeToOpenGLDrawType(const model::Type aType)
 {
     switch (aType)
     {
-        case vertex_data::Type::Dynamic: return GL_DYNAMIC_DRAW;        
-        case vertex_data::Type::Static: return GL_STATIC_DRAW;
-        case vertex_data::Type::Stream: return GL_STREAM_DRAW;        
+        case model::Type::Dynamic: return GL_DYNAMIC_DRAW;        
+        case model::Type::Static: return GL_STATIC_DRAW;
+        case model::Type::Stream: return GL_STREAM_DRAW;        
     }
 
     throw std::invalid_argument("unhandled vertex data type");
 }
 
-static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const vertex_data::PrimitiveMode aPrimitiveMode)
+static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const model::PrimitiveMode aPrimitiveMode)
 {
     switch (aPrimitiveMode)
     {
-        case vertex_data::PrimitiveMode::Points: return GL_POINTS;
-        case vertex_data::PrimitiveMode::Lines: return GL_LINES;
-        case vertex_data::PrimitiveMode::LineStrip: return GL_LINE_STRIP; 
-        case vertex_data::PrimitiveMode::LineLoop: return GL_LINE_LOOP; 
-        case vertex_data::PrimitiveMode::Triangles: return GL_TRIANGLES;            
-        case vertex_data::PrimitiveMode::TriangleStrip: return GL_TRIANGLE_STRIP;
-        case vertex_data::PrimitiveMode::TriangleFan: return GL_TRIANGLE_FAN;
+        case model::PrimitiveMode::Points: return GL_POINTS;
+        case model::PrimitiveMode::Lines: return GL_LINES;
+        case model::PrimitiveMode::LineStrip: return GL_LINE_STRIP; 
+        case model::PrimitiveMode::LineLoop: return GL_LINE_LOOP; 
+        case model::PrimitiveMode::Triangles: return GL_TRIANGLES;            
+        case model::PrimitiveMode::TriangleStrip: return GL_TRIANGLE_STRIP;
+        case model::PrimitiveMode::TriangleFan: return GL_TRIANGLE_FAN;
     }
     
     throw std::invalid_argument("unhandled vertex primitive mode");
 }
 
-bool vertex_data::operator==(const vertex_data &that)
+bool model::operator==(const model &that)
 {
     return
         m_IndexBufferHandle == that.m_IndexBufferHandle
         && m_VertexBufferHandle == that.m_VertexBufferHandle;
 }
 
-bool vertex_data::operator!=(const vertex_data &that)
+bool model::operator!=(const model &that)
 {
     return !(*this == that);
 }
 
-void vertex_data::bind(const shader_program &aShaderProgram) const
+void model::bind(const shader_program &aShaderProgram) const
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
     
     m_vertex_format.enableAttributes(aShaderProgram);
 }
 
-void vertex_data::draw() const
+void model::draw() const
 {
     GLenum primitiveMode = PrimitiveModeToOpenGLPrimitiveType(m_PrimitiveMode);
 
@@ -147,18 +147,18 @@ void vertex_data::draw() const
     else glDrawArrays(primitiveMode, 0, m_VertexCount);
 }
 
-void vertex_data::updatevertex_data(const std::vector<GLfloat> &aNewvertex_data
+void model::updatemodel(const std::vector<GLfloat> &aNewmodel
     , const vertex_format &aNewvertex_format
     , const std::vector<GLushort> &aIndexData
-    , const vertex_data::Type &aNewType)
+    , const model::Type &aNewType)
 {
     //VBO
     m_vertex_format = aNewvertex_format;
-    m_VertexCount  = static_cast<GLsizei>(aNewvertex_data.size() / aNewvertex_format.getSumOfAttributeComponents());
-    GLint type = vertex_dataTypeToOpenGLDrawType(aNewType);
+    m_VertexCount  = static_cast<GLsizei>(aNewmodel.size() / aNewvertex_format.getSumOfAttributeComponents());
+    GLint type = modelTypeToOpenGLDrawType(aNewType);
     
     glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
-    glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * aNewvertex_data.size(), &aNewvertex_data[0], type);
+    glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * aNewmodel.size(), &aNewmodel[0], type);
     //glBindBuffer (GL_ARRAY_BUFFER,0);
 
     //IBO    
@@ -166,7 +166,7 @@ void vertex_data::updatevertex_data(const std::vector<GLfloat> &aNewvertex_data
     {
         //glGenBuffers(1, &m_IndexBufferHandle.get());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.get());
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * aIndexData.size(), &aIndexData[0], vertex_dataTypeToOpenGLDrawType(aNewType));
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * aIndexData.size(), &aIndexData[0], modelTypeToOpenGLDrawType(aNewType));
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
         std::string errorCode;
@@ -175,9 +175,9 @@ void vertex_data::updatevertex_data(const std::vector<GLfloat> &aNewvertex_data
     }
 }
 
-vertex_data::vertex_data(const vertex_data::Type &aType, 
+model::model(const model::Type &aType, 
     const vertex_format &avertex_format,
-    const std::vector<GLfloat> &avertex_data, 
+    const std::vector<GLfloat> &amodel, 
     const std::vector<GLushort> &aIndexData,
     const PrimitiveMode &aPrimitiveMode)
 : m_IndexBufferHandle([&aIndexData, &aType]()
@@ -193,7 +193,7 @@ vertex_data::vertex_data(const vertex_data::Type &aType,
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
             sizeof(GLushort) * aIndexData.size(), 
             &aIndexData[0], 
-            vertex_dataTypeToOpenGLDrawType(aType));
+            modelTypeToOpenGLDrawType(aType));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
@@ -209,16 +209,16 @@ vertex_data::vertex_data(const vertex_data::Type &aType,
     glDeleteBuffers(1, &handle);
 })
 , m_IndexCount((GLsizei)aIndexData.size())
-, m_VertexBufferHandle([&avertex_data, &aType]()
+, m_VertexBufferHandle([&amodel, &aType]()
 {
-    if (!avertex_data.size()) std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
+    if (!amodel.size()) std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
     
     GLuint vbo(0);
     
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * avertex_data.size(), &avertex_data[0], vertex_dataTypeToOpenGLDrawType(aType));
-    glBindBuffer(GL_ARRAY_BUFFER,0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * amodel.size(), &amodel[0], modelTypeToOpenGLDrawType(aType));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     std::string errorCode;
 
@@ -230,7 +230,7 @@ vertex_data::vertex_data(const vertex_data::Type &aType,
 {
     glDeleteBuffers(1, &handle);
 })
-, m_VertexCount((int)avertex_data.size()/avertex_format.getSumOfAttributeComponents())
+, m_VertexCount(static_cast<GLsizei>(amodel.size())/avertex_format.getSumOfAttributeComponents())
 , m_vertex_format(avertex_format)
 , m_PrimitiveMode(aPrimitiveMode)
 {}

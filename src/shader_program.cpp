@@ -593,7 +593,8 @@ void shader_program::setUniform(const std::string &aName, const gdk::texture &aT
 
         if (s_ActiveTextureUnitCounter < shader_program::MAX_TEXTURE_UNITS) 
         {
-            //TODO: parameterize! Improve texture as well to support non2ds. The type (2d or cube) should be a property of the texture abstraction.
+            //TODO: parameterize! Improve texture as well to support non2ds. 
+            // The type (2d or cube) should be a property of the texture abstraction.
             const GLenum target(GL_TEXTURE_2D); 
 
             glActiveTexture(unit);
@@ -604,5 +605,12 @@ void shader_program::setUniform(const std::string &aName, const gdk::texture &aT
         }
         else throw std::invalid_argument(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context: ") + std::to_string(s_ActiveTextureUnitCounter));
     }
+}
+
+std::optional<shader_program::active_attribute_info> shader_program::tryGetActiveAttribute(const std::string &aAttributeName) const
+{
+    if (auto found = m_ActiveAttributes.find(aAttributeName); found != m_ActiveAttributes.end()) return found->second;
+
+    return {};
 }
 

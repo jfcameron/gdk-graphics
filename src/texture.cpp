@@ -129,6 +129,13 @@ texture texture::make_from_png_rgba32(const std::vector<GLubyte> atextureData)
             stbi_image_free(p);
         }); decodedData)
     {
+        //TODO make use of this
+        /*texture_2d_data_type data;
+        data.width = width;
+        data.height = height;
+        data.format = format::rgba;
+        //data.data = */
+
         return texture(decodedData.get(), width, height);
     }
     
@@ -139,11 +146,10 @@ texture::texture(GLubyte *const pDecodedImageData,
     const long width, 
     const long height, 
     const texture::format format,
-    const bind_target aBindTarget,
     const minification_filter minFilter,
     const magnification_filter magFilter,
     const wrap_mode wrapMode)
-: m_BindTarget(bind_target_to_glenum(aBindTarget))    
+: m_BindTarget(bind_target_to_glenum(bind_target::texture_2d))    
 , m_Handle([&]()
 {
     if (!isPowerOfTwo(width) || !isPowerOfTwo(height)) 

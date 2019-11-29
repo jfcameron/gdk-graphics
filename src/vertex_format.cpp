@@ -49,18 +49,16 @@ void vertex_format::enableAttributes(const shader_program &aShaderProgram) const
         std::string attributeName = attribute.name;
         int attributeSize = attribute.size;
 
-        if (auto found = aShaderProgram.m_ActiveAttributes.find(attributeName); found != aShaderProgram.m_ActiveAttributes.end())
+        if (auto activeAttribute = aShaderProgram.tryGetActiveAttribute(attributeName); activeAttribute)
         {
-            if (attributeName == found->first //&&
-                //attributeType == found->type && //TODO: support types, so not forced to use floats for small range datatypes
+            //if (attributeType == found->type && //TODO: support types, so not forced to use floats for small range datatypes
                 //attributeSize == found->second.count) //TODO: count is not component count, its number of e.g vector2s
-                )
-            {
-                glh::Enablevertex_attribute(found->second.location, 
+            //{
+                glh::Enablevertex_attribute(activeAttribute->location, 
                     attributeSize, 
                     attributeOffset,
                     m_SumOfAttributeComponents);
-            }
+            //}
         }
         
         attributeOffset += attributeSize;

@@ -14,7 +14,7 @@ namespace gdk
 {
     /// \brief Vertex data representing a 3D graphical object
     // TODO: support multiple VBO objects, to allow using more appropriate Gl types for uvs, normals. Currently only supports interweaved GLBytes
-    class vertex_data final
+    class model final
     {
     public:
         /// \brief Hint to the graphics device about how the vertex data will be used.
@@ -89,34 +89,34 @@ namespace gdk
         void draw() const;
 
         //! replace current data in the vbo and ibo with new data
-        void updatevertex_data(const std::vector<GLfloat> &aNewvertex_data, 
+        void updatemodel(const std::vector<GLfloat> &aNewmodel, 
             const vertex_format &aNewvertex_format,
             const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
-            const vertex_data::Type &aNewType = Type::Dynamic);
+            const model::Type &aNewType = Type::Dynamic);
       
         //! equality semantics based on handle values
-        bool operator==(const vertex_data &);
+        bool operator==(const model &);
         //! equality semantics based on handle values
-        bool operator!=(const vertex_data &);
+        bool operator!=(const model &);
 
         //! move semantics
-        vertex_data &operator=(vertex_data &&) = default;
+        model &operator=(model &&) = default;
         //! move semantics
-        vertex_data(vertex_data &&) = default;
+        model(model &&) = default;
            
         //! disable copy semantics
-        vertex_data &operator=(const vertex_data &other) = delete;
+        model &operator=(const model &other) = delete;
         //! disable copy semantics
-        vertex_data(const vertex_data &) = delete;
+        model(const model &) = delete;
       
-        vertex_data(const vertex_data::Type &aType, 
+        model(const model::Type &aType, 
             const vertex_format &avertex_format, 
-            const std::vector<GLfloat> &avertex_data,
+            const std::vector<GLfloat> &amodel,
             const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
             const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
         
-        static const jfc::lazy_ptr<gdk::vertex_data> Quad; //!< a quad with format pos3uv2
-        static const jfc::lazy_ptr<gdk::vertex_data> Cube; //!< a cube with format ps3uv2norm3
+        static const jfc::lazy_ptr<gdk::model> Quad; //!< a quad with format pos3uv2
+        static const jfc::lazy_ptr<gdk::model> Cube; //!< a cube with format ps3uv2norm3
     };
 }
 

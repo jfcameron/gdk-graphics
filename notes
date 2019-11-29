@@ -50,3 +50,49 @@ camera
 material
     uniform state
     shader ptr
+
+-=-=-=
+thoughts on uniform value state:
+Goal: want to be able to specify values at different points in scene render.
+Problem: when a value is set, you lose the last value. So if a value is set on a shaderprogram basis (most efficient), as soon as an entity coems along with a new value, it gets run over for subsequent entity draw calls.
+Solution: store old values somehow.
+Entity
+    UniformValues
+
+Shader
+    UniformValues
+
+Shader::use()
+{
+    useProgram;
+    assignUniformValues();
+}
+
+Entity::draw()
+{
+    for (uniform : uniforms)
+        if (pShader->setUniform(uniform)
+}
+
+Shader::setUniform(name, data) //This optimization is bad. i thik just overwite, let the user optimize themselves. (ie dont overwite a shader's uniform's per-shader value with a per entity vlaue. easy to avoid)
+{
+    if (auto search = m_Uniforms[name]; !search == m_Uniforms.end() && search->second != data) //not sure how important this optimization is.
+    {
+        glUniform(name,data);
+    }
+
+    ... now how to reset? Cant here. Need to call assignUniformValues again. guard gl calls with memoization.
+}
+
+Shader::assignUniformValues() // Shader::setUniforms? hmmm.
+{
+    for (uniform : uniforms) //this is the important opti
+    {
+        // Where s_LastActiveAttribtueValue is a map that gets reset at beginning on  glUseProgram() call.
+        if (auto search = s_LastActiveAttribtueValue[uniform.name]; search != s_LastActiveAttribtueValue.end() && search.value != uniform.value)
+        {
+            glUniform(uniform.name, uniform.value);
+        }
+    }
+}
+the above is close to correct.. but it ties uniform state directly to a shader. Thats not correct because it means we cant share shaders among "materials".. material is an abstraction taht doesnt exist yet. A material is a shader, uniform state, other draw related pipeline state?

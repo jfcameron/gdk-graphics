@@ -29,13 +29,13 @@ TEST_CASE("camera", "[camera]")
     
     a.setViewportSize(0.5, 1.0);
 
-    a.setViewMatrix(graphics_vector3_type(0, 0, 0), graphics_quaternion_type());
+    a.set_view_matrix(graphics_vector3_type(0, 0, 0), graphics_quaternion_type());
 
     a.setProjection(90, 0.001, 20, 1);
 
-    SECTION("draw worked")
+    SECTION("activate worked")
     {
-        a.draw(0, 0, graphics_intvector2_type(), {});
+        a.activate(graphics_intvector2_type());
 
         REQUIRE(!jfc::glGetError());
     }
@@ -46,7 +46,7 @@ TEST_CASE("camera", "[camera]")
 
         auto c = b;
 
-        c.draw(0, 0, graphics_intvector2_type(), {});
+        c.activate(graphics_intvector2_type());
 
         REQUIRE(!jfc::glGetError());
     }
@@ -57,7 +57,7 @@ TEST_CASE("camera", "[camera]")
 
         auto c = b;
 
-        c.draw({}, {}, {}, {});
+        c.activate({});
 
         REQUIRE(!jfc::glGetError());
     }

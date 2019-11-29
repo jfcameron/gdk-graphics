@@ -6,25 +6,18 @@
 #include <gdk/entity.h>
 #include <gdk/opengl.h>
 #include <gdk/shader_program.h>
-#include <gdk/vertex_data.h>
+#include <gdk/model.h>
 
 using namespace gdk;
 
 static constexpr char TAG[] = "entity";
 
-entity::entity(const std::shared_ptr<vertex_data> avertex_data, const std::shared_ptr<shader_program> ashader_program)
-: m_vertex_data(avertex_data)
+entity::entity(const std::shared_ptr<model> amodel, const std::shared_ptr<shader_program> ashader_program)
+: m_model(amodel)
 , m_ShaderProgram(ashader_program)
 {}
 
-void entity::draw(
-    //const shader_program &aCurrentShaderProgram, // Required to assign uniforms 
-
-    const double aTimeSinceStart, 
-    const double aDeltaTime, 
-
-    const graphics_mat4x4_type &aViewMatrix, 
-    const graphics_mat4x4_type &aProjectionMatrix) const
+void entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const
 {
     // TODO: refactor upwards, then propegate the handle down so MVP can be bound       
     // program should be installed to the pipeline in the "pipeline" abstraction
@@ -61,10 +54,10 @@ void entity::draw(
     m_ShaderProgram->setUniform("_MVP", mvp);
 
     // TODO Refactor this to "batch" abstraction
-    m_vertex_data->bind(*m_ShaderProgram);
+    m_model->bind(*m_ShaderProgram);
 
     // Acceptable!
-    m_vertex_data->draw();
+    m_model->draw();
 }
 
 const graphics_mat4x4_type &entity::getModelMatrix() const
@@ -80,8 +73,8 @@ void entity::set_model_matrix(const graphics_vector3_type &aWorldPos, const grap
     m_ModelMatrix.scale(aScale);
 }
 
-void entity::set_vertex_data(const std::shared_ptr<vertex_data> a)
+void entity::set_model(const std::shared_ptr<model> a)
 {
-    m_vertex_data = a;
+    m_model = a;
 }
 

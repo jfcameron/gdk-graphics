@@ -9,12 +9,13 @@
 #include <gdk/camera.h>
 #include <gdk/entity.h>
 #include <gdk/shader_program.h> 
-#include <gdk/vertex_data.h>
+#include <gdk/model.h>
 
 #include <GLFW/glfw3.h>
 
 using namespace gdk;
 using namespace jfc;
+
 
 int main(int argc, char **argv)
 {
@@ -24,25 +25,28 @@ int main(int argc, char **argv)
 
     camera.setProjection(90, 0.01, 20, 1);
 
-    std::vector<std::shared_ptr<gdk::entity>> models;
+    std::vector<std::shared_ptr<gdk::entity>> entities;
 
-    auto cube = std::shared_ptr<vertex_data>(vertex_data::Cube);
+    auto cube = std::shared_ptr<model>(model::Cube);
 
-    models.push_back(std::make_shared<entity>([&]()
+    entities.push_back(std::make_shared<entity>([&]()
     {
-        auto cube = static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube);
+        auto cube = static_cast<std::shared_ptr<model>>(model::Cube);
         auto alpha = static_cast<std::shared_ptr<shader_program>>(shader_program::AlphaCutOff);
 
-        entity model(cube, alpha);
+        //TODO: hacky. silly.
+        alpha->setUniform("_Texture", *texture::GetCheckerboardOfDeath());
 
-        //model.set_texture("_Texture", texture::GetCheckerboardOfDeath());
+        entity entity(cube, alpha);
 
-        model.set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
+        //entity.set_texture("_Texture", texture::GetCheckerboardOfDeath());
 
-        return model;
+        entity.set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
+
+        return entity;
     }()));
 
-    models.push_back(std::make_shared<entity>(entity(*models.back())));
+    entities.push_back(std::make_shared<entity>(entity(*entities.back())));
 
     float blar = 0;
 
@@ -50,12 +54,18 @@ int main(int argc, char **argv)
     {
         glfwPollEvents();
       
-        auto mdl = models.back();
-        /*for (auto mdl : models)*/ mdl->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
+        auto mdl = entities.back();
+        mdl->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
         
-        camera.setViewMatrix({std::sin(blar), 0, -10}, {});
+        camera.set_view_matrix({std::sin(blar), 0, -10}, {});
 
-        camera.draw(0, 0, window.getWindowSize(), models);
+        camera.activate(window.getWindowSize());
+
+        for(auto &m : entities) 
+        {
+            //m->activate
+            m->draw(camera.m_ViewMatrix, camera.m_ProjectionMatrix);
+        }
 
         window.swapBuffer(); 
 

@@ -7,7 +7,7 @@
 
 #include "test_include.h"
 
-#include <gdk/vertex_data.h>
+#include <gdk/model.h>
 
 using namespace gdk;
 
@@ -17,11 +17,11 @@ TEST_CASE("vertexdata constructors", "[vertexdata]")
 
     SECTION("Hardcoded vertex data is well formed")
     {
-        /*auto pCube = static_cast<std::shared_ptr<vertex_data>>(vertex_data::Cube);
+        /*auto pCube = static_cast<std::shared_ptr<model>>(model::Cube);
 
         REQUIRE(pCube->getHandle() >= 0);
 
-        auto pQuad = static_cast<std::shared_ptr<vertex_data>>(vertex_data::Quad);
+        auto pQuad = static_cast<std::shared_ptr<model>>(model::Quad);
 
         REQUIRE(pQuad->getHandle() >= 0);*/
     }
