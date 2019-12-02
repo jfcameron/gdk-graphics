@@ -43,14 +43,14 @@ matrix:
           make
           #ctest --extra-verbose
 
-#    - os: windows
-#      name: build windows msvc
-#      compiler: MSVC
-#      script: 
-#        - |
-#          cd workspace;git submodule update --init --recursive
-#          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=OFF #-DCMAKE_CXX_FLAGS=" /W4 /EHsc /WX /std:c++17 /permissive-" 
-#          cmake --build .
+    - os: windows
+      name: build windows msvc
+      compiler: MSVC
+      script: 
+        - |
+          cd workspace;git submodule update --init --recursive
+          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=ON #-DCMAKE_CXX_FLAGS=" /W4 /EHsc /WX /std:c++17 /permissive-" 
+          cmake --build .
 #
 #    - os: windows
 #      name: build windows mingw
