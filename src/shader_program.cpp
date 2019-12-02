@@ -242,12 +242,12 @@ shader_program::shader_program(std::string aVertexSource, std::string aFragmentS
                 &component_type,              // e.g: float
                 &attrib_name_buffer.front()); // e.g: "a_Position"
 
-            m_ActiveAttributes[std::string(attrib_name_buffer.begin(), attrib_name_buffer.begin() + currentNameLength)] =
-            shader_program::active_attribute_info({
-                .location = i,
-                .type = component_type,
-                .count = component_count
-            });
+            shader_program::active_attribute_info info;
+            info.location = i;
+            info.type = component_type;
+            info.count = component_count;
+
+            m_ActiveAttributes[std::string(attrib_name_buffer.begin(), attrib_name_buffer.begin() + currentNameLength)] = std::move(info);
         }
     }
 
@@ -273,12 +273,12 @@ shader_program::shader_program(std::string aVertexSource, std::string aFragmentS
                 &attribute_type,               // e.g: "texture"
                 &uniform_name_buffer.front()); // e.g: "u_Diffuse" 
 
-            m_ActiveUniforms[std::string(uniform_name_buffer.begin(), uniform_name_buffer.begin() + currentNameLength)] =
-            shader_program::active_uniform_info({
-                .location = i,
-                .type = attribute_type,
-                .size = attribute_size 
-            });
+            shader_program::active_uniform_info info;
+            info.location = i;
+            info.type = attribute_type;
+            info.size = attribute_size;
+
+            m_ActiveUniforms[std::string(uniform_name_buffer.begin(), uniform_name_buffer.begin() + currentNameLength)] = std::move(info);
         }
     }
 }

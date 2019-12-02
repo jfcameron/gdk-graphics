@@ -10,6 +10,7 @@
 #include <jfc/unique_handle.h>
 
 #include <array>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
