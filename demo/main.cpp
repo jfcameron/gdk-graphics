@@ -10,6 +10,7 @@
 #include <gdk/webgl1es2_entity.h>
 #include <gdk/webgl1es2_shader_program.h> 
 #include <gdk/webgl1es2_model.h>
+#include <gdk/webgl1es2_material.h>
 
 #include <GLFW/glfw3.h>
 
@@ -30,8 +31,9 @@ int main(int argc, char **argv)
 
     auto alpha = static_cast<std::shared_ptr<webgl1es2_shader_program>>(webgl1es2_shader_program::AlphaCutOff);
 
-    //TODO: hacky. silly.
-    alpha->setUniform("_Texture", *webgl1es2_texture::GetCheckerboardOfDeath());
+    webgl1es2_material material(alpha);
+
+    material.setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
 
     entities.push_back(std::make_shared<webgl1es2_entity>([&]()
     {

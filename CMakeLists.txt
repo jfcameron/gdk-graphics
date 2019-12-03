@@ -46,6 +46,7 @@ jfc_project(library
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/context.cpp
         
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
 
