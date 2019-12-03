@@ -7,6 +7,10 @@
 
 namespace gdk::graphics
 {
+    //! entry point for gdk-graphics
+    /// the context is responsible for establishing a context on the graphical hardware,
+    /// creating a rendering environment (a window, in a desktop environment)
+    /// constructing graphics types (shader, model, etc.)
     class context
     {
     public:
@@ -24,11 +28,12 @@ namespace gdk::graphics
         //! factory method
         static context_ptr_type make(const implementation &);
 
+        //! virtual destructor
         virtual ~context() = default;
-    private:
 
-        context() = delete;
-
+    protected:
+        //! prevent instantiation
+        context() = default;
     };
 }
 

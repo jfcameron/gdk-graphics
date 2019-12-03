@@ -12,13 +12,19 @@
 #include <gdk/webgl1es2_model.h>
 #include <gdk/webgl1es2_material.h>
 
+//abstraction work...
+#include <gdk/graphics_context.h>
+
 #include <GLFW/glfw3.h>
 
 using namespace gdk;
 using namespace jfc;
 
 int main(int argc, char **argv)
-{
+{   
+    //TODO make use of this as interface layer is written
+    auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
+
     glfw_window window("cool demo");
 
     webgl1es2_camera camera;

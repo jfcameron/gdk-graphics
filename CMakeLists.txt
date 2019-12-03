@@ -46,11 +46,12 @@ jfc_project(library
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/context.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/graphics_context.cpp
         
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_context.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_entity.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_material.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_model.cpp
