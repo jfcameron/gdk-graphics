@@ -242,7 +242,7 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
                 &component_type,              // e.g: float
                 &attrib_name_buffer.front()); // e.g: "a_Position"
 
-            shader_program::active_attribute_info info;
+            webgl1es2_shader_program::active_attribute_info info;
             info.location = i;
             info.type = component_type;
             info.count = component_count;
@@ -273,7 +273,7 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
                 &attribute_type,               // e.g: "texture"
                 &uniform_name_buffer.front()); // e.g: "u_Diffuse" 
 
-            shader_program::active_uniform_info info;
+            webgl1es2_shader_program::active_uniform_info info;
             info.location = i;
             info.type = attribute_type;
             info.size = attribute_size;
