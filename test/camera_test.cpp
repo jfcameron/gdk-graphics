@@ -5,7 +5,7 @@
 
 #include "test_include.h"
 
-#include <gdk/camera.h>
+#include <gdk/webgl1es2_camera.h>
 #include <gdk/graphics_types.h>
 
 #include <string>
@@ -16,7 +16,7 @@ TEST_CASE("camera", "[camera]")
 {
     initGL();
 
-    camera a;
+    webgl1es2_camera a;
 
     SECTION("default ctor worked")
     {
@@ -42,7 +42,7 @@ TEST_CASE("camera", "[camera]")
 
     SECTION("copy semantics")
     {
-        camera b(a);
+        webgl1es2_camera b(a);
 
         auto c = b;
 
@@ -53,7 +53,7 @@ TEST_CASE("camera", "[camera]")
 
     SECTION("move semantics")
     {
-        camera b(std::move(a));
+        webgl1es2_camera b(std::move(a));
 
         auto c = b;
 

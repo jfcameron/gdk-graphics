@@ -1,7 +1,7 @@
 // © 2018 Joseph Cameron - All Rights Reserved
 
 #include <gdk/glh.h>
-#include <gdk/texture.h>
+#include <gdk/webgl1es2_texture.h>
 
 #include <stb/stb_image.h>
 
@@ -21,76 +21,76 @@ static inline bool isPowerOfTwo(const long a)
     return std::ceil(std::log2(a)) == std::floor(std::log2(a));
 }
 
-static inline GLint textureFormatToGLint(const texture::format a)
+static inline GLint textureFormatToGLint(const webgl1es2_texture::format a)
 {
     switch(a)
     {
-        case texture::format::rgb:  return GL_RGB;
-        case texture::format::rgba: return GL_RGBA;
+        case webgl1es2_texture::format::rgb:  return GL_RGB;
+        case webgl1es2_texture::format::rgba: return GL_RGBA;
     }
     
     throw std::runtime_error("unhandled format type");
 }
 
-static inline GLint minification_filter_to_glint(const texture::minification_filter a)
+static inline GLint minification_filter_to_glint(const webgl1es2_texture::minification_filter a)
 {
     switch(a)
     {
-        case texture::minification_filter::linear: return GL_LINEAR;
-        case texture::minification_filter::nearest: return GL_NEAREST;
-        case texture::minification_filter::nearest_mipmap_nearest: return GL_NEAREST_MIPMAP_NEAREST;
-        case texture::minification_filter::linear_mipmap_nearest: return GL_LINEAR_MIPMAP_NEAREST;
-        case texture::minification_filter::nearest_mipmap_linear: return GL_NEAREST_MIPMAP_LINEAR;
-        case texture::minification_filter::linear_mipmap_linear: return GL_LINEAR_MIPMAP_LINEAR;
+        case webgl1es2_texture::minification_filter::linear: return GL_LINEAR;
+        case webgl1es2_texture::minification_filter::nearest: return GL_NEAREST;
+        case webgl1es2_texture::minification_filter::nearest_mipmap_nearest: return GL_NEAREST_MIPMAP_NEAREST;
+        case webgl1es2_texture::minification_filter::linear_mipmap_nearest: return GL_LINEAR_MIPMAP_NEAREST;
+        case webgl1es2_texture::minification_filter::nearest_mipmap_linear: return GL_NEAREST_MIPMAP_LINEAR;
+        case webgl1es2_texture::minification_filter::linear_mipmap_linear: return GL_LINEAR_MIPMAP_LINEAR;
     }
     
     throw std::runtime_error("unhandled minification filter");
 }
 
-static inline GLint magnification_filter_to_glint(const texture::magnification_filter a)
+static inline GLint magnification_filter_to_glint(const webgl1es2_texture::magnification_filter a)
 {
     switch(a)
     {
-        case texture::magnification_filter::linear: return GL_LINEAR;
-        case texture::magnification_filter::nearest: return GL_NEAREST;
+        case webgl1es2_texture::magnification_filter::linear: return GL_LINEAR;
+        case webgl1es2_texture::magnification_filter::nearest: return GL_NEAREST;
     }
     
     throw std::runtime_error("unhandled magnification filter");
 }
 
-static inline GLint wrap_mode_to_glint(const texture::wrap_mode a)
+static inline GLint wrap_mode_to_glint(const webgl1es2_texture::wrap_mode a)
 {
     switch(a)
     {
-        case texture::wrap_mode::clamp_to_edge: return GL_CLAMP_TO_EDGE;
-        case texture::wrap_mode::repeat: return GL_REPEAT;
-        case texture::wrap_mode::mirrored_repeat: return GL_MIRRORED_REPEAT;
+        case webgl1es2_texture::wrap_mode::clamp_to_edge: return GL_CLAMP_TO_EDGE;
+        case webgl1es2_texture::wrap_mode::repeat: return GL_REPEAT;
+        case webgl1es2_texture::wrap_mode::mirrored_repeat: return GL_MIRRORED_REPEAT;
     }
     
     throw std::runtime_error("unhandled wrap mode");
 }
 
-static inline GLenum bind_target_to_glenum(const texture::bind_target a)
+static inline GLenum bind_target_to_glenum(const webgl1es2_texture::bind_target a)
 {
     switch(a)
     {
-        case texture::bind_target::texture_2d: return GL_TEXTURE_2D;
-        case texture::bind_target::cube_map: return GL_TEXTURE_CUBE_MAP;
+        case webgl1es2_texture::bind_target::texture_2d: return GL_TEXTURE_2D;
+        case webgl1es2_texture::bind_target::cube_map: return GL_TEXTURE_CUBE_MAP;
     }
 
     throw std::runtime_error("unhandled bind target");
 }
 
 
-const std::shared_ptr<gdk::texture> texture::GetCheckerboardOfDeath()
+const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboardOfDeath()
 {
     static std::once_flag initFlag;
 
-    static std::shared_ptr<gdk::texture> ptr;
+    static std::shared_ptr<gdk::webgl1es2_texture> ptr;
 
     std::call_once(initFlag, []()
     {
-        std::vector<GLubyte> textureData(
+        std::vector<GLubyte> webgl1es2_textureData(
         {
             0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
             0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x08,
@@ -106,20 +106,20 @@ const std::shared_ptr<gdk::texture> texture::GetCheckerboardOfDeath()
             0x60, 0x82
         });
         
-        ptr = std::make_shared<gdk::texture>(texture::make_from_png_rgba32(textureData));
+        ptr = std::make_shared<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(webgl1es2_textureData));
     });
     
     return ptr;
 };
 
-texture texture::make_from_png_rgba32(const std::vector<GLubyte> atextureData)
+webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<GLubyte> awebgl1es2_textureData)
 {
     //decode the png rgba32 data
     int width, height, components;
 
     if (std::unique_ptr<GLubyte, std::function<void(GLubyte *)>> decodedData(
-        stbi_load_from_memory(&atextureData[0]
-            , static_cast<int>(atextureData.size())
+        stbi_load_from_memory(&awebgl1es2_textureData[0]
+            , static_cast<int>(awebgl1es2_textureData.size())
             , &width
             , &height
             , &components
@@ -130,22 +130,22 @@ texture texture::make_from_png_rgba32(const std::vector<GLubyte> atextureData)
         }); decodedData)
     {
         //TODO make use of this
-        /*texture_2d_data_type data;
+        /*webgl1es2_texture_2d_data_type data;
         data.width = width;
         data.height = height;
         data.format = format::rgba;
         //data.data = */
 
-        return texture(decodedData.get(), width, height);
+        return webgl1es2_texture(decodedData.get(), width, height);
     }
     
-    throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to texture"));
+    throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to webgl1es2_texture"));
 }
 
-texture::texture(GLubyte *const pDecodedImageData, 
+webgl1es2_texture::webgl1es2_texture(GLubyte *const pDecodedImageData, 
     const long width, 
     const long height, 
-    const texture::format format,
+    const webgl1es2_texture::format format,
     const minification_filter minFilter,
     const magnification_filter magFilter,
     const wrap_mode wrapMode)
@@ -153,11 +153,11 @@ texture::texture(GLubyte *const pDecodedImageData,
 , m_Handle([&]()
 {
     if (!isPowerOfTwo(width) || !isPowerOfTwo(height)) 
-        throw std::invalid_argument(std::string(TAG).append(": texture dimensions must be power of 2"));
+        throw std::invalid_argument(std::string(TAG).append(": webgl1es2_texture dimensions must be power of 2"));
 
     GLuint handle;
 
-    //Copy the texture data to video memory
+    //Copy the webgl1es2_texture data to video memory
     glGenTextures(1, &handle);
 
     glActiveTexture(GL_TEXTURE0);
@@ -174,7 +174,7 @@ texture::texture(GLubyte *const pDecodedImageData,
         GL_UNSIGNED_BYTE, 
         pDecodedImageData);
 
-    //Select texture filter functions
+    //Select webgl1es2_texture filter functions
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnification_filter_to_glint(magFilter));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minification_filter_to_glint(minFilter));
    
@@ -190,13 +190,13 @@ texture::texture(GLubyte *const pDecodedImageData,
 })
 {}
 
-GLuint texture::getHandle() const
+GLuint webgl1es2_texture::getHandle() const
 {
     return m_Handle.get();
 }
 
-bool texture::operator==(const texture &b) const
+bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const
 {
     return m_Handle == b.m_Handle;
 }
-bool texture::operator!=(const texture &b) const { return !(*this == b); }
+bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }

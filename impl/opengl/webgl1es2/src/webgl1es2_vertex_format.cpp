@@ -2,33 +2,33 @@
 
 #include <gdk/glh.h>
 #include <gdk/opengl.h>
-#include <gdk/vertex_format.h>
-#include <gdk/shader_program.h>
+#include <gdk/webgl1es2_vertex_format.h>
+#include <gdk/webgl1es2_shader_program.h>
 
 using namespace gdk;
 
 static constexpr char TAG[] = "vertex_format";
 
 // Special values
-vertex_format const vertex_format::Pos3uv2Norm3(
+webgl1es2_vertex_format const webgl1es2_vertex_format::Pos3uv2Norm3(
 {
     {"a_Position",3},
     {"a_UV"      ,2},
     {"a_Normal"  ,3}
 });
 
-vertex_format const vertex_format::Pos3uv2(
+webgl1es2_vertex_format const webgl1es2_vertex_format::Pos3uv2(
 {
     {"a_Position",3},
     {"a_UV"      ,2}
 });
 
-vertex_format const vertex_format::Pos3(
+webgl1es2_vertex_format const webgl1es2_vertex_format::Pos3(
 {
     {"a_Position",3}
 });
 
-vertex_format::vertex_format(const std::vector<vertex_attribute> &aAttributes)
+webgl1es2_vertex_format::webgl1es2_vertex_format(const std::vector<webgl1es2_vertex_attribute> &aAttributes)
 : m_Format(aAttributes)
 , m_SumOfAttributeComponents(([aAttributes]()
 {
@@ -40,7 +40,7 @@ vertex_format::vertex_format(const std::vector<vertex_attribute> &aAttributes)
 })())
 {}
 
-void vertex_format::enableAttributes(const shader_program &aShaderProgram) const
+void webgl1es2_vertex_format::enableAttributes(const webgl1es2_shader_program &aShaderProgram) const
 {
     int attributeOffset(0);
     
@@ -65,7 +65,7 @@ void vertex_format::enableAttributes(const shader_program &aShaderProgram) const
     }
 }
 
-int vertex_format::getSumOfAttributeComponents() const
+int webgl1es2_vertex_format::getSumOfAttributeComponents() const
 {
     return m_SumOfAttributeComponents;
 }

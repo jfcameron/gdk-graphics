@@ -7,11 +7,11 @@
 
 #include "test_include.h"
 
-#include <gdk/model.h>
+#include <gdk/webgl1es2_model.h>
 
 using namespace gdk;
 
-TEST_CASE("vertexdata constructors", "[vertexdata]")
+TEST_CASE("webgl1es2_model", "[gdk::webgl1es2_model]")
 {
     initGL();
 

@@ -4,8 +4,8 @@
 #define GDK_GFX_VERTEXFORMAT_H
 
 #include <gdk/opengl.h>
-#include <gdk/shader_program.h>
-#include <gdk/vertex_attribute.h>
+#include <gdk/webgl1es2_shader_program.h>
+#include <gdk/webgl1es2_vertex_attribute.h>
 
 #include <string>
 #include <vector>
@@ -25,37 +25,37 @@ namespace gdk
     /// representing a single full vertex.
     /// TODO: need to support different GL types. forcing float is esay to think about but wasteful in the case of many attribs (uv, color, normal).
     /// TODO: need to support multiple vbos instead of just 1. then allow user to type and use as theyd like, potentially interleaving attribs in 1 vbo and not another. e.g vbo1: float, position; vbo2: short, normal, uv interleaved.
-    class vertex_format final
+    class webgl1es2_vertex_format final
     {
         //! name and # of floats of each attribute in the format
-        std::vector<vertex_attribute> m_Format;
+        std::vector<webgl1es2_vertex_attribute> m_Format;
 
         //! total number of floats in the entire format
-        vertex_attribute::size_type m_SumOfAttributeComponents = 0;       
+        webgl1es2_vertex_attribute::size_type m_SumOfAttributeComponents = 0;       
             
     public:
         //! prepares gl context to draw vertex data formatted according to this vertex format
-        void enableAttributes(const shader_program &aShaderProgram) const;
+        void enableAttributes(const webgl1es2_shader_program &aShaderProgram) const;
 
         //! Total number of components (sum of length of attributes)
         int getSumOfAttributeComponents() const;
 
         //! copy semantics
-        vertex_format& operator=(const vertex_format &) = default;
+        webgl1es2_vertex_format& operator=(const webgl1es2_vertex_format &) = default;
         //! copy semantics
-        vertex_format(const vertex_format &) = default;
+        webgl1es2_vertex_format(const webgl1es2_vertex_format &) = default;
 
         //! move semantics
-        vertex_format& operator=(vertex_format &&) = default;
+        webgl1es2_vertex_format& operator=(webgl1es2_vertex_format &&) = default;
         //! move semantics
-        vertex_format(vertex_format &&) = default;
+        webgl1es2_vertex_format(webgl1es2_vertex_format &&) = default;
      
         //! construct a format using supplied attributes.
-        vertex_format(const std::vector<vertex_attribute> &aAttributes);
+        webgl1es2_vertex_format(const std::vector<webgl1es2_vertex_attribute> &aAttributes);
             
-        static const vertex_format Pos3uv2Norm3;
-        static const vertex_format Pos3uv2;
-        static const vertex_format Pos3;
+        static const webgl1es2_vertex_format Pos3uv2Norm3;
+        static const webgl1es2_vertex_format Pos3uv2;
+        static const webgl1es2_vertex_format Pos3;
     };
 }
 

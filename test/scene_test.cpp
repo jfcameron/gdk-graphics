@@ -5,16 +5,19 @@
 #include <jfc/catch.hpp>
 #include <jfc/types.h>
 
-#include <gdk/scene.h>
+#include <gdk/webgl1es2_entity.h>
+#include <gdk/webgl1es2_scene.h>
 
 using namespace gdk;
 
-TEST_CASE("gdk::scene", "[gdk::scene]")
+TEST_CASE("gdk::webgl1es2_scene", "[gdk::webgl1es2_scene]")
 {
-    scene a;
+    webgl1es2_scene a;
 
     SECTION("blar")
     {
+        a.draw({0, 0});
+
         REQUIRE(true);
     }
 }

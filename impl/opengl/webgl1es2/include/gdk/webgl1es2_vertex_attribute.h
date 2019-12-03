@@ -14,7 +14,7 @@ namespace gdk
     /// In the context of OpenGL, a component is a floating-point value.
     // TODO: support more than just GLfloat.
     // TODO: may have to break out into two siblings: interleaved attribute and noninterleaved? I am not sure. that may be more appropriately controlled at the format level. Need to whiteboard this.
-    struct vertex_attribute final
+    struct webgl1es2_vertex_attribute final
     {
         using size_type = unsigned short;
 
@@ -25,22 +25,22 @@ namespace gdk
         size_type size = 0;
        
         /// \brief equality semantics
-        bool operator==(const vertex_attribute &) const;
+        bool operator==(const webgl1es2_vertex_attribute &) const;
         /// \brief equality semantics
-        bool operator!=(const vertex_attribute &) const;
+        bool operator!=(const webgl1es2_vertex_attribute &) const;
 
         /// \brief copy semantics
-        vertex_attribute(const vertex_attribute &) = default;
+        webgl1es2_vertex_attribute(const webgl1es2_vertex_attribute &) = default;
         /// \brief copy semantics
-        vertex_attribute &operator=(const vertex_attribute &) = default;
+        webgl1es2_vertex_attribute &operator=(const webgl1es2_vertex_attribute &) = default;
 
         /// \brief move semantics
-        vertex_attribute(vertex_attribute &&) = default;
+        webgl1es2_vertex_attribute(webgl1es2_vertex_attribute &&) = default;
         /// \brief move semantics
-        vertex_attribute &operator=(vertex_attribute &&) = default;
+        webgl1es2_vertex_attribute &operator=(webgl1es2_vertex_attribute &&) = default;
         
         /// \brief constructs an attribute with a given name and number of components
-        vertex_attribute(const std::string &aName, const unsigned short &aSize);
+        webgl1es2_vertex_attribute(const std::string &aName, const unsigned short &aSize);
     };
 }
 

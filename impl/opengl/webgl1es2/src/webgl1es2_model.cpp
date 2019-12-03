@@ -2,7 +2,8 @@
 
 #include <gdk/glh.h>
 #include <gdk/opengl.h>
-#include <gdk/model.h>
+
+#include <gdk/webgl1es2_model.h>
 
 #include <iostream>
 #include <stdexcept>
@@ -11,7 +12,7 @@ using namespace gdk;
 
 static constexpr char TAG[] = "model";
 
-const jfc::lazy_ptr<gdk::model> model::Quad([]()
+const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
 {
     float size  = 1.;
     float hsize = size/2.;
@@ -27,10 +28,10 @@ const jfc::lazy_ptr<gdk::model> model::Quad([]()
         size -hsize, 0.0f -hsize, 0.0f, 1.0f, 1.0f, // 1--2
     });
 
-    return new gdk::model(gdk::model::Type::Static, gdk::vertex_format::Pos3uv2, data);
+    return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, gdk::webgl1es2_vertex_format::Pos3uv2, data);
 });
 
-const jfc::lazy_ptr<gdk::model> model::Cube([]()
+const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
 {
     float size  = 1.;
     float hsize = size/2.;
@@ -81,57 +82,57 @@ const jfc::lazy_ptr<gdk::model> model::Cube([]()
         size -hsize, 1.0f -hsize,  hsize, 1.0, 1.0,  0.0, +1.0, 0.0, // 1--2 */            
     });
 
-    return new gdk::model(gdk::model::Type::Static, gdk::vertex_format::Pos3uv2Norm3, data);
+    return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, gdk::webgl1es2_vertex_format::Pos3uv2Norm3, data);
 });
 
-static inline GLenum modelTypeToOpenGLDrawType(const model::Type aType)
+static inline GLenum webgl1es2_modelTypeToOpenGLDrawType(const webgl1es2_model::Type aType)
 {
     switch (aType)
     {
-        case model::Type::Dynamic: return GL_DYNAMIC_DRAW;        
-        case model::Type::Static: return GL_STATIC_DRAW;
-        case model::Type::Stream: return GL_STREAM_DRAW;        
+        case webgl1es2_model::Type::Dynamic: return GL_DYNAMIC_DRAW;        
+        case webgl1es2_model::Type::Static: return GL_STATIC_DRAW;
+        case webgl1es2_model::Type::Stream: return GL_STREAM_DRAW;        
     }
 
     throw std::invalid_argument("unhandled vertex data type");
 }
 
-static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const model::PrimitiveMode aPrimitiveMode)
+static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const webgl1es2_model::PrimitiveMode aPrimitiveMode)
 {
     switch (aPrimitiveMode)
     {
-        case model::PrimitiveMode::Points: return GL_POINTS;
-        case model::PrimitiveMode::Lines: return GL_LINES;
-        case model::PrimitiveMode::LineStrip: return GL_LINE_STRIP; 
-        case model::PrimitiveMode::LineLoop: return GL_LINE_LOOP; 
-        case model::PrimitiveMode::Triangles: return GL_TRIANGLES;            
-        case model::PrimitiveMode::TriangleStrip: return GL_TRIANGLE_STRIP;
-        case model::PrimitiveMode::TriangleFan: return GL_TRIANGLE_FAN;
+        case webgl1es2_model::PrimitiveMode::Points: return GL_POINTS;
+        case webgl1es2_model::PrimitiveMode::Lines: return GL_LINES;
+        case webgl1es2_model::PrimitiveMode::LineStrip: return GL_LINE_STRIP; 
+        case webgl1es2_model::PrimitiveMode::LineLoop: return GL_LINE_LOOP; 
+        case webgl1es2_model::PrimitiveMode::Triangles: return GL_TRIANGLES;            
+        case webgl1es2_model::PrimitiveMode::TriangleStrip: return GL_TRIANGLE_STRIP;
+        case webgl1es2_model::PrimitiveMode::TriangleFan: return GL_TRIANGLE_FAN;
     }
     
     throw std::invalid_argument("unhandled vertex primitive mode");
 }
 
-bool model::operator==(const model &that)
+bool webgl1es2_model::operator==(const webgl1es2_model &that)
 {
     return
         m_IndexBufferHandle == that.m_IndexBufferHandle
         && m_VertexBufferHandle == that.m_VertexBufferHandle;
 }
 
-bool model::operator!=(const model &that)
+bool webgl1es2_model::operator!=(const webgl1es2_model &that)
 {
     return !(*this == that);
 }
 
-void model::bind(const shader_program &aShaderProgram) const
+void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
     
     m_vertex_format.enableAttributes(aShaderProgram);
 }
 
-void model::draw() const
+void webgl1es2_model::draw() const
 {
     GLenum primitiveMode = PrimitiveModeToOpenGLPrimitiveType(m_PrimitiveMode);
 
@@ -147,18 +148,18 @@ void model::draw() const
     else glDrawArrays(primitiveMode, 0, m_VertexCount);
 }
 
-void model::updatemodel(const std::vector<GLfloat> &aNewmodel
-    , const vertex_format &aNewvertex_format
+void webgl1es2_model::updatewebgl1es2_model(const std::vector<GLfloat> &aNewwebgl1es2_model
+    , const webgl1es2_vertex_format &aNewvertex_format
     , const std::vector<GLushort> &aIndexData
-    , const model::Type &aNewType)
+    , const webgl1es2_model::Type &aNewType)
 {
     //VBO
     m_vertex_format = aNewvertex_format;
-    m_VertexCount  = static_cast<GLsizei>(aNewmodel.size() / aNewvertex_format.getSumOfAttributeComponents());
-    GLint type = modelTypeToOpenGLDrawType(aNewType);
+    m_VertexCount  = static_cast<GLsizei>(aNewwebgl1es2_model.size() / aNewvertex_format.getSumOfAttributeComponents());
+    GLint type = webgl1es2_modelTypeToOpenGLDrawType(aNewType);
     
     glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
-    glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * aNewmodel.size(), &aNewmodel[0], type);
+    glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * aNewwebgl1es2_model.size(), &aNewwebgl1es2_model[0], type);
     //glBindBuffer (GL_ARRAY_BUFFER,0);
 
     //IBO    
@@ -166,7 +167,7 @@ void model::updatemodel(const std::vector<GLfloat> &aNewmodel
     {
         //glGenBuffers(1, &m_IndexBufferHandle.get());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.get());
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * aIndexData.size(), &aIndexData[0], modelTypeToOpenGLDrawType(aNewType));
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * aIndexData.size(), &aIndexData[0], webgl1es2_modelTypeToOpenGLDrawType(aNewType));
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
         std::string errorCode;
@@ -175,9 +176,9 @@ void model::updatemodel(const std::vector<GLfloat> &aNewmodel
     }
 }
 
-model::model(const model::Type &aType, 
-    const vertex_format &avertex_format,
-    const std::vector<GLfloat> &amodel, 
+webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType, 
+    const webgl1es2_vertex_format &avertex_format,
+    const std::vector<GLfloat> &awebgl1es2_model, 
     const std::vector<GLushort> &aIndexData,
     const PrimitiveMode &aPrimitiveMode)
 : m_IndexBufferHandle([&aIndexData, &aType]()
@@ -193,7 +194,7 @@ model::model(const model::Type &aType,
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
             sizeof(GLushort) * aIndexData.size(), 
             &aIndexData[0], 
-            modelTypeToOpenGLDrawType(aType));
+            webgl1es2_modelTypeToOpenGLDrawType(aType));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
@@ -209,15 +210,15 @@ model::model(const model::Type &aType,
     glDeleteBuffers(1, &handle);
 })
 , m_IndexCount((GLsizei)aIndexData.size())
-, m_VertexBufferHandle([&amodel, &aType]()
+, m_VertexBufferHandle([&awebgl1es2_model, &aType]()
 {
-    if (!amodel.size()) std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
+    if (!awebgl1es2_model.size()) std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
     
     GLuint vbo(0);
     
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * amodel.size(), &amodel[0], modelTypeToOpenGLDrawType(aType));
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * awebgl1es2_model.size(), &awebgl1es2_model[0], webgl1es2_modelTypeToOpenGLDrawType(aType));
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     std::string errorCode;
@@ -230,7 +231,7 @@ model::model(const model::Type &aType,
 {
     glDeleteBuffers(1, &handle);
 })
-, m_VertexCount(static_cast<GLsizei>(amodel.size())/avertex_format.getSumOfAttributeComponents())
+, m_VertexCount(static_cast<GLsizei>(awebgl1es2_model.size())/avertex_format.getSumOfAttributeComponents())
 , m_vertex_format(avertex_format)
 , m_PrimitiveMode(aPrimitiveMode)
 {}

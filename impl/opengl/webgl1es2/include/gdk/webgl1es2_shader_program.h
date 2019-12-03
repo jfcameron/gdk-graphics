@@ -2,9 +2,8 @@
 
 #ifndef GDK_GFX_SHADERPROGRAM_H
 #define GDK_GFX_SHADERPROGRAM_H
-
 #include <gdk/opengl.h>
-#include <gdk/texture.h>
+#include <gdk/webgl1es2_texture.h>
 #include <gdk/graphics_types.h>
 #include <jfc/lazy_ptr.h>
 #include <jfc/unique_handle.h>
@@ -19,7 +18,7 @@ namespace gdk
     /// (the vertex shader stage and fragment shader stage)
     //TODO: consider a "pipeline" abstraction, which specifies all fixed options, then takes a program to specify programmable ones.
     //TODO: pipline abstraction is required to properly support blend-based transparencies, since frag order matters when blending.
-    class shader_program final
+    class webgl1es2_shader_program final
     {
     public:
         /// \brief index, size, type of an active attribute used in the shader program
@@ -155,7 +154,7 @@ namespace gdk
 
         //TODO: texture needs to support more than tex2d!
         //! bind a texture to the context then assign it to a texture uniform
-        void setUniform(const std::string &aName, const gdk::texture &aTexture) const;
+        void setUniform(const std::string &aName, const gdk::webgl1es2_texture &aTexture) const;
 
         //TODO: texture needs to support more than tex2d!
         //! bind an array of textures to the context then assign them to texture uniforms
@@ -166,24 +165,24 @@ namespace gdk
         GLuint useProgram() const;
                 
         /// \brief equality semantics
-        bool operator==(const shader_program &) const; 
+        bool operator==(const webgl1es2_shader_program &) const; 
         /// \brief equality semantics
-        bool operator!=(const shader_program &) const; 
+        bool operator!=(const webgl1es2_shader_program &) const; 
 
         /// \brief move semantics
-        shader_program(shader_program &&) = default;
+        webgl1es2_shader_program(webgl1es2_shader_program &&) = default;
         /// \brief move semantics
-        shader_program &operator=(shader_program &&) = default;
+        webgl1es2_shader_program &operator=(webgl1es2_shader_program &&) = default;
         
         /// \brief constructs a shader program with glsl source file contents for a vertex shader and a fragment shader 
-        shader_program(std::string aVertexSource, std::string aFragmentSource);
+        webgl1es2_shader_program(std::string aVertexSource, std::string aFragmentSource);
 
         //! shader useful for indicating some kind of failure. Performs MVP mul then colors all frags bright pink.
-        static const jfc::lazy_ptr<gdk::shader_program> PinkShaderOfDeath;
+        static const jfc::lazy_ptr<gdk::webgl1es2_shader_program> PinkShaderOfDeath;
 
         //! shader for drawing unlit surfaces with alpha channel based fragment discard. Suitable for text rendering, 
         /// GUI element rendering, 2D Sprite rendering. Extremely lightweight.
-        static const jfc::lazy_ptr<gdk::shader_program> AlphaCutOff;
+        static const jfc::lazy_ptr<gdk::webgl1es2_shader_program> AlphaCutOff;
 
         //! 8 is the guaranteed minimum across all es2/web1 implementations. 
         /// Can check against max but that invites the possibility of shaders working on some impls and not others.. want to avoid that, 

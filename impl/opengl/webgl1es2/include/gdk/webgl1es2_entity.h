@@ -4,7 +4,7 @@
 #define GDK_GFX_MODEL_H
 
 #include <gdk/graphics_types.h>
-#include <gdk/texture.h>
+#include <gdk/webgl1es2_texture.h>
 #include <jfc/default_ptr.h>
 
 #include <iosfwd>
@@ -13,8 +13,8 @@
 
 namespace gdk
 {
-    class model;
-    class shader_program;
+    class webgl1es2_model;
+    class webgl1es2_shader_program;
     
     /// \brief Represents an observable 3D object. 
     ///
@@ -28,23 +28,24 @@ namespace gdk
     ///
     /// \TODO break up all the uniform binding! Simplify!. Model is a dumping ground.. badly defined abstraction, too much responsibility.
     /// TODO replace entity with objects that are more sympathetic to opengl: batch, pipeline, entity.
-    class entity final
+    class webgl1es2_entity final
     {
+    public: //TODO switch to private
         //TODO refactor to batch
-        std::shared_ptr<model> m_model;
+        std::shared_ptr<webgl1es2_model> m_model;
         
         //TODO refactor to pipeline
-        std::shared_ptr<shader_program> m_ShaderProgram;
+        std::shared_ptr<webgl1es2_shader_program> m_ShaderProgram;
 
         //! Position in the world
         graphics_mat4x4_type m_ModelMatrix;
 
     public:
-        /// \brief draws the entity at its current world position, with respect to a view and projection matrix.
-        /// generally should not be called by the end user. view, proj, are most easily provided to the entity via a camera.
+        /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
+        /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity via a camera.
         void draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const;
 
-        void set_model(const std::shared_ptr<model> a);
+        void set_model(const std::shared_ptr<webgl1es2_model> a);
             
         void set_model_matrix(const graphics_vector3_type &aWorldPos, 
             const graphics_quaternion_type &aRotation, 
@@ -53,18 +54,18 @@ namespace gdk
         const graphics_mat4x4_type &getModelMatrix() const;
 
         /// \brief copy semantics
-        entity(const entity &) = default;
+        webgl1es2_entity(const webgl1es2_entity &) = default;
         /// \brief copy semantics
-        entity &operator=(const entity &) = default;
+        webgl1es2_entity &operator=(const webgl1es2_entity &) = default;
 
         /// \brief move semantics
-        entity(entity &&) = default;
+        webgl1es2_entity(webgl1es2_entity &&) = default;
         /// \brief move semantics
-        entity &operator=(entity &&) = default;
+        webgl1es2_entity &operator=(webgl1es2_entity &&) = default;
 
-        entity(const std::shared_ptr<model>, const std::shared_ptr<shader_program>);
+        webgl1es2_entity(const std::shared_ptr<webgl1es2_model>, const std::shared_ptr<webgl1es2_shader_program>);
 
-        ~entity() = default;
+        ~webgl1es2_entity() = default;
     };
 }
 

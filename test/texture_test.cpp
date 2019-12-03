@@ -7,7 +7,7 @@
 
 #include "test_include.h"
 
-#include <gdk/texture.h>
+#include <gdk/webgl1es2_texture.h>
 
 using namespace gdk;
 
@@ -27,22 +27,22 @@ static const std::vector<GLubyte> textureDataPNGRGBA32(
     0x60, 0x82
 });
 
-TEST_CASE("gdk::texture", "[gdk::texture]")
+TEST_CASE("gdk::webgl1es2_texture", "[gdk::webgl1es2_texture]")
 {
     initGL();
 
-    SECTION("texture produces a valid texture in the gl context")
+    SECTION("webgl1es2_texture produces a valid webgl1es2_texture in the gl context")
     {
-        auto tex = texture::GetCheckerboardOfDeath();
+        auto tex = webgl1es2_texture::GetCheckerboardOfDeath();
 
         REQUIRE(tex->getHandle() != 0);
     }
 
     SECTION("regular ctor and move semantics work")
     {
-        texture tex(texture::make_from_png_rgba32(textureDataPNGRGBA32));
+        webgl1es2_texture tex(webgl1es2_texture::make_from_png_rgba32(textureDataPNGRGBA32));
 
-        texture b = std::move(tex);
+        webgl1es2_texture b = std::move(tex);
     }
 }
 

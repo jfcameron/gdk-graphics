@@ -3,28 +3,29 @@
 #include <jfc/default_ptr.h>
 #include <gdk/glh.h>
 #include <gdk/mat4x4.h>
-#include <gdk/entity.h>
 #include <gdk/opengl.h>
-#include <gdk/shader_program.h>
-#include <gdk/model.h>
+
+#include <gdk/webgl1es2_entity.h>
+#include <gdk/webgl1es2_shader_program.h>
+#include <gdk/webgl1es2_model.h>
 
 using namespace gdk;
 
 static constexpr char TAG[] = "entity";
 
-entity::entity(const std::shared_ptr<model> amodel, const std::shared_ptr<shader_program> ashader_program)
+webgl1es2_entity::webgl1es2_entity(const std::shared_ptr<webgl1es2_model> amodel, const std::shared_ptr<webgl1es2_shader_program> ashader_program)
 : m_model(amodel)
 , m_ShaderProgram(ashader_program)
 {}
 
-void entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const
+void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const
 {
     // TODO: refactor upwards, then propegate the handle down so MVP can be bound       
     // program should be installed to the pipeline in the "pipeline" abstraction
-    const GLuint programHandle = m_ShaderProgram->useProgram();
+    //const GLuint programHandle = m_ShaderProgram->useProgram();
     
     //TODO Refactor to .. scene? batch?
-    // these uniforms belong to a higherlevel abstraction. Higher than entityor camera. should be "scene".
+    // these uniforms belong to a higherlevel abstraction. Higher than webgl1es2_entityor camera. should be "scene".
     //bind standard uniforms
     /*const float time = aTimeSinceStart;
     const float deltaTime = aDeltaTime;
@@ -33,7 +34,7 @@ void entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4
     glh::Bind1FloatUniform(programHandle, "_Time",       time     );*/
 
     // Refactor to material
-    //bind this entity's uniforms
+    //bind this webgl1es2_entity's uniforms
     /*m_textures.bind(programHandle);
     m_Floats.bind(programHandle);
     m_Vector2Uniforms.bind(programHandle);
@@ -54,18 +55,18 @@ void entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4
     m_ShaderProgram->setUniform("_MVP", mvp);
 
     // TODO Refactor this to "batch" abstraction
-    m_model->bind(*m_ShaderProgram);
+    //m_model->bind(*m_ShaderProgram);
 
     // Acceptable!
     m_model->draw();
 }
 
-const graphics_mat4x4_type &entity::getModelMatrix() const
+const graphics_mat4x4_type &webgl1es2_entity::getModelMatrix() const
 {
     return m_ModelMatrix;
 }
 
-void entity::set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale)
+void webgl1es2_entity::set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale)
 {
     m_ModelMatrix.setToIdentity();
     m_ModelMatrix.translate(aWorldPos);
@@ -73,7 +74,7 @@ void entity::set_model_matrix(const graphics_vector3_type &aWorldPos, const grap
     m_ModelMatrix.scale(aScale);
 }
 
-void entity::set_model(const std::shared_ptr<model> a)
+void webgl1es2_entity::set_model(const std::shared_ptr<webgl1es2_model> a)
 {
     m_model = a;
 }

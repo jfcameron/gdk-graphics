@@ -20,48 +20,44 @@ jfc_project(library
 
     PUBLIC_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/include
         
-        ${gdkmemory_INCLUDE_DIRECTORIES}
         ${gdkmath_INCLUDE_DIRECTORIES} 
-        ${simpleglfw_INCLUDE_DIRECTORIES}
+        ${gdkmemory_INCLUDE_DIRECTORIES}
         ${jfc-smart_handles_INCLUDE_DIRECTORIES}
-
-        #${GLEW_INCLUDE_DIR} # not currently used. must fix glfw/glew entanglement
-        #${glfw_INCLUDE_DIR} # this was required on windows to get access to glew. This is a good reason to separate the two # TODO: SEPARATE GLFW from GLEW
-
-        #/Users/josephcameron/Workspace/emscripten/system/include/
-
+        ${simpleglfw_INCLUDE_DIRECTORIES}
 
     PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/include
 
         ${stb_INCLUDE_DIR}
 
     LIBRARIES
         ${gdkmath_LIBRARIES}
         ${simpleglfw_LIBRARIES}
-        
-        #${GLEW_LIBRARIES} # not currently used. must fix glfw/glew entanglement
-        #${glfw_LIBRARIES} # Separate GLEW, you fool
         ${stb_LIBRARIES}
 
     DEPENDENCIES
         "stb"
         "gdkmath"
-        #"simpleglfw" #remove
+        "simpleglfw"
 
     SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/entity.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/glh.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/material.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/scene.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/shader_program.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_attribute.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_format.cpp
+        
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_entity.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_material.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_model.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_scene.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_shader_program.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_vertex_attribute.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_vertex_format.cpp
 )
 
 if (JFC_BUILD_DEMO)

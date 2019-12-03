@@ -14,7 +14,7 @@ namespace gdk
     class entity;
 
     /// \brief Position, orientation and perspective from which entity(s) are drawn
-    class camera
+    class webgl1es2_camera
     {
         /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
         enum class ClearMode 
@@ -83,20 +83,21 @@ namespace gdk
         //void setProject(height, width, depth);
 
         /// \brief activates this camera; mutates gl according to this camera's state
+        //TODO: although technically `const`able, this does mutate gl state. not logically const.
         void activate(const gdk::graphics_intvector2_type &aFrameBufferSize) const;
 
         /// \brief copy semantics
-        camera(const camera &a) = default;
+        webgl1es2_camera(const webgl1es2_camera &a) = default;
         /// \brief copy semantics
-        camera &operator=(const camera &a) = default;
+        webgl1es2_camera &operator=(const webgl1es2_camera &a) = default;
        
         /// \brief move semantics
-        camera(camera &&) = default;
+        webgl1es2_camera(webgl1es2_camera &&) = default;
         /// \brief move semantics
-        camera &operator=(camera &&a) = default;
+        webgl1es2_camera &operator=(webgl1es2_camera &&a) = default;
 
-        /// \brief constructs a camera with reasonable default values
-        camera();
+        /// \brief constructs a webgl1es2_camera with reasonable default values
+        webgl1es2_camera();
     };
 }
 

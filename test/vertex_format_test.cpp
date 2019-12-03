@@ -7,17 +7,17 @@
 
 #include "test_include.h"
 
-#include <gdk/vertex_format.h>
+#include <gdk/webgl1es2_vertex_format.h>
 
 using namespace gdk;
 
-TEST_CASE("vertexformat constructors", "[vertexformat]")
+TEST_CASE("webgl1es2_vertex_format", "[gdk::webgl1es2_vertex_format]")
 {
     initGL();
 
-    SECTION("vertexformat vertexformat")
+    SECTION("webgl1es2_vertex_format webgl1es2_vertex_format")
     {
-        auto format = vertex_format::Pos3;
+        auto format = webgl1es2_vertex_format::Pos3;
         
         REQUIRE(format.getSumOfAttributeComponents() == decltype(format.getSumOfAttributeComponents())(3));
     }

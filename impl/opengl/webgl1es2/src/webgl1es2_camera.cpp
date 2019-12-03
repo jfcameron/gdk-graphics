@@ -1,15 +1,16 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
-#include <gdk/camera.h>
-#include <gdk/color.h>
-#include <gdk/glh.h>
+#include <gdk/webgl1es2_camera.h>
+#include <gdk/webgl1es2_entity.h>
+
 #include <gdk/intvector2.h>
 #include <gdk/mat4x4.h>
-#include <gdk/entity.h>
 #include <gdk/opengl.h>
 #include <gdk/quaternion.h>
 #include <gdk/vector2.h>
 #include <gdk/vector3.h>
+#include <gdk/color.h>
+#include <gdk/glh.h>
 
 #include <iostream>
 #include <mutex>
@@ -18,7 +19,7 @@
 
 using namespace gdk;
 
-camera::camera()
+webgl1es2_camera::webgl1es2_camera()
 {
     static std::once_flag once;
 
@@ -30,29 +31,29 @@ camera::camera()
     });
 }
 
-void camera::setViewportPosition(const gdk::graphics_vector2_type &a)
+void webgl1es2_camera::setViewportPosition(const gdk::graphics_vector2_type &a)
 {
     m_ViewportPosition = a;
 }
 
-void camera::setViewportPosition(const float x, const float y)
+void webgl1es2_camera::setViewportPosition(const float x, const float y)
 {
     m_ViewportPosition.x = x;
     m_ViewportPosition.y = y;
 }
 
-void camera::setViewportSize(const gdk::graphics_vector2_type &a)
+void webgl1es2_camera::setViewportSize(const gdk::graphics_vector2_type &a)
 {
     m_ViewportSize = a;
 }
     
-void camera::setViewportSize(const float x, const float y)
+void webgl1es2_camera::setViewportSize(const float x, const float y)
 {
     m_ViewportSize.x = x;
     m_ViewportSize.y = y;
 }
 
-void camera::set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
+void webgl1es2_camera::set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
 {
     m_ViewMatrix.setToIdentity();
 
@@ -61,17 +62,17 @@ void camera::set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const 
     m_ViewMatrix.translate(aWorldPos * -1);
 }
 
-void camera::setClearcolor(const gdk::color &acolor)
+void webgl1es2_camera::setClearcolor(const gdk::color &acolor)
 {
     m_ClearColor = acolor;
 }
 
-void camera::setProjection(const graphics_mat4x4_type &matrix)
+void webgl1es2_camera::setProjection(const graphics_mat4x4_type &matrix)
 {
     m_ProjectionMatrix = matrix;
 }
 
-void camera::activate(const gdk::graphics_intvector2_type &aFrameBufferSize) const
+void webgl1es2_camera::activate(const gdk::graphics_intvector2_type &aFrameBufferSize) const
 {
     gdk::graphics_intvector2_type viewportPixelPosition(aFrameBufferSize * m_ViewportPosition); 
 
@@ -99,7 +100,7 @@ void camera::activate(const gdk::graphics_intvector2_type &aFrameBufferSize) con
     }
 }
 
-void camera::setProjection(const float aFieldOfView, 
+void webgl1es2_camera::setProjection(const float aFieldOfView, 
     const float aNearClippingPlane, 
     const float aFarClippingPlane, 
     const float aViewportAspectRatio)
