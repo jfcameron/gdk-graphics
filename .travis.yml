@@ -9,6 +9,30 @@ matrix:
   include:
     # Build scripts
     - os: linux
+      dist: bionic 
+      arch: arm64
+      name: build linux gcc
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - sourceline: 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - cmake
+            - git
+            - gcc-9
+            - g++-9
+      script:
+        - |
+          export CXX="g++-9" CC="gcc-9"; 
+          cd workspace
+          cmake .. -DJFC_BUILD_DOCS=OFF -DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native"
+          make
+          ctest --extra-verbose
+
+    - os: linux
       name: build linux gcc
       compiler: gcc
       addons:
