@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">2c0687ede797a2a69b29b3d4fb871cac62a7aa0b</span>
+   &#160;<span id="projectnumber">09a688d082abf901663e3f535b596d74785acae8</span>
    </div>
   </td>
  </tr>
@@ -66,12 +66,16 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classgdk_1_1graphics_1_1context-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">gdk::graphics::context Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="graphics__context_8h_source.html">graphics_context.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -84,14 +88,30 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="memdesc:af93b7e0f05e7f081bf46fc89727ee224"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr type returned by factory method <br /></td></tr>
 <tr class="separator:af93b7e0f05e7f081bf46fc89727ee224"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a1fb77ed39b70039626ba88fbd171c8ef"><td class="memItemLeft" align="right" valign="top"><a id="a1fb77ed39b70039626ba88fbd171c8ef"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a1fb77ed39b70039626ba88fbd171c8ef">~context</a> ()=default</td></tr>
+<tr class="memdesc:a1fb77ed39b70039626ba88fbd171c8ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">virtual destructor <br /></td></tr>
+<tr class="separator:a1fb77ed39b70039626ba88fbd171c8ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:acacaef1324b8d0f5e516a8c1efb928ce"><td class="memItemLeft" align="right" valign="top"><a id="acacaef1324b8d0f5e516a8c1efb928ce"></a>
 static <a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f081bf46fc89727ee224">context_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#acacaef1324b8d0f5e516a8c1efb928ce">make</a> (const <a class="el" href="classgdk_1_1graphics_1_1context.html#a44ec17c92a83487666ee69a2ba5be2d6">implementation</a> &amp;)</td></tr>
 <tr class="memdesc:acacaef1324b8d0f5e516a8c1efb928ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">factory method <br /></td></tr>
 <tr class="separator:acacaef1324b8d0f5e516a8c1efb928ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:adc81c1f64e90a53255a5a1258a4a800e"><td class="memItemLeft" align="right" valign="top"><a id="adc81c1f64e90a53255a5a1258a4a800e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#adc81c1f64e90a53255a5a1258a4a800e">context</a> ()=default</td></tr>
+<tr class="memdesc:adc81c1f64e90a53255a5a1258a4a800e"><td class="mdescLeft">&#160;</td><td class="mdescRight">prevent instantiation <br /></td></tr>
+<tr class="separator:adc81c1f64e90a53255a5a1258a4a800e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Enumeration Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>entry point for gdk-graphics the context is responsible for establishing a context on the graphical hardware, creating a rendering environment (a window, in a desktop environment) constructing graphics types (shader, model, etc.) </p>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a44ec17c92a83487666ee69a2ba5be2d6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a44ec17c92a83487666ee69a2ba5be2d6">&#9670;&nbsp;</a></span>implementation</h2>
 
@@ -121,7 +141,7 @@ static <a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f08
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/travis/build/jfcameron/gdk-graphics/include/gdk/<a class="el" href="context_8h_source.html">context.h</a></li>
+<li>/home/travis/build/jfcameron/gdk-graphics/include/gdk/<a class="el" href="graphics__context_8h_source.html">graphics_context.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
