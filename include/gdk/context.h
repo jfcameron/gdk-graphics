@@ -24,10 +24,11 @@ namespace gdk::graphics
         //! factory method
         static context_ptr_type make(const implementation &);
 
+        virtual ~context() = default;
     private:
+
         context() = delete;
 
-        ~context() = default;
     };
 }
 
