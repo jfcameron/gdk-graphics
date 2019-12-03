@@ -31,7 +31,7 @@ matrix:
           git clone https://github.com/emscripten-core/emscripten.git ~/emscripten
           popd
           cd workspace
-          cmake .. -G "Unix Makefiles" -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_DEMO=ON -DJFC_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS="-s USE_GLFW=3" -DCMAKE_TOOLCHAIN_FILE="~/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+          cmake .. -G "Unix Makefiles" -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_DEMO=OFF -DJFC_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS="-s USE_GLFW=3" -DCMAKE_TOOLCHAIN_FILE="~/emscripten/cmake/Modules/Platform/Emscripten.cmake"
           make
 
     - os: linux
