@@ -9,6 +9,7 @@ jfc_generate_documentation_doxygen(
     
     INCLUDE_DIRECTORIES
         ../include/
+        ../impl/opengl/webgl1es2/include
 )
 
 #jfc_generate_readme_md(
