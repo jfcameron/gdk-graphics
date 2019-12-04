@@ -61,11 +61,10 @@ const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::Alp
     const std::string vertexShaderSource(R"V0G0N(
         //Uniforms
         uniform mat4 _MVP;
-        uniform mat4 _Model; //separate mats arent used. should probably delete. they are useful though
+        uniform mat4 _Model;
         uniform mat4 _View;
         uniform mat4 _Projection;
 
-        // Programmable stage input formats. Consider how to clean this up.. the webgl requirement of precison prefixes.
     #if defined Emscripten
         //VertIn
         attribute highp   vec3 a_Position;
@@ -88,7 +87,7 @@ const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::Alp
             v_UV = a_UV;
         }
 )V0G0N");
-
+    //TODO: Add UV scaling and offsetting, add THRESHOLD uniform instead of < 1.0 for discard. very common and useful
     const std::string fragmentShaderSource(R"V0G0N(
     #if defined Emscripten
         precision mediump float;
@@ -96,6 +95,7 @@ const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::Alp
 
         //Uniforms
         uniform sampler2D _Texture;
+
     #if defined Emscripten
         //FragIn
         varying lowp vec2 v_UV;
@@ -300,7 +300,7 @@ GLuint webgl1es2_shader_program::useProgram() const
         s_ActiveTextureUniformNameToUnit.clear();
         s_ActiveTextureUnitCounter = 0;
 
-        setUpFaceCullingMode(m_FaceCullingMode); //this should move I think. Its a pipline option not necessarily directly associated with shader program. Maybe a "material" abstraction property? im not sure.
+        setUpFaceCullingMode(m_FaceCullingMode);
 
         glUseProgram(handle);
     }
@@ -583,13 +583,22 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const gdk::w
 {
     const auto &activeUniformSearch = m_ActiveUniforms.find(aName);
 
-    if (activeUniformSearch != m_ActiveUniforms.end()) 
+    if (activeUniformSearch != m_ActiveUniforms.end())
     {   
         const auto &activeTextureSearch = s_ActiveTextureUniformNameToUnit.find(aName);
+        
+        GLint unit;
 
-        const GLint unit = activeTextureSearch != s_ActiveTextureUniformNameToUnit.end()
-            ? activeTextureSearch->second
-            : GL_TEXTURE0 + s_ActiveTextureUnitCounter++;
+        if (activeTextureSearch == s_ActiveTextureUniformNameToUnit.end())
+        {
+            unit = s_ActiveTextureUnitCounter++;
+
+            s_ActiveTextureUniformNameToUnit[aName] = unit;
+        }
+        else
+        {
+            unit = activeTextureSearch->second;
+        }
 
         if (s_ActiveTextureUnitCounter < webgl1es2_shader_program::MAX_TEXTURE_UNITS) 
         {
@@ -597,7 +606,7 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const gdk::w
             // The type (2d or cube) should be a property of the texture abstraction.
             const GLenum target(GL_TEXTURE_2D); 
 
-            glActiveTexture(unit);
+            glActiveTexture(GL_TEXTURE0 + unit);
 
             glBindTexture(target, aTexture.getHandle());
 

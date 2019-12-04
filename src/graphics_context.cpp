@@ -12,10 +12,7 @@ context::context_ptr_type context::make(const context::implementation &impl)
 {
     switch (impl)
     {
-        case implementation::opengl_webgl1_gles2: 
-        {
-            return std::make_unique<graphics::context>(webgl1es2_context());
-        } break;
+        case implementation::opengl_webgl1_gles2: return std::make_unique<webgl1es2_context>(webgl1es2_context()); break;
     }
 
     throw std::invalid_argument("unhandled implementation");

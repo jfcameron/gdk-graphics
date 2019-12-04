@@ -81,6 +81,28 @@ static inline GLenum bind_target_to_glenum(const webgl1es2_texture::bind_target 
     throw std::runtime_error("unhandled bind target");
 }
 
+const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetTestTexture()
+{
+    static std::once_flag initFlag;
+
+    static std::shared_ptr<gdk::webgl1es2_texture> ptr;
+
+    std::call_once(initFlag, []()
+    {
+        std::vector<GLubyte> webgl1es2_textureData(
+        {
+            0xff, 0x00, 0x00, 0xff,
+            0x00, 0xff, 0x00, 0xff,
+            0x00, 0x00, 0xff, 0xff,
+            0x00, 0xff, 0xff, 0xff,
+        });
+        
+        ptr = std::make_shared<gdk::webgl1es2_texture>(
+            webgl1es2_texture(&webgl1es2_textureData[0], 2, 2));
+    });
+    
+    return ptr;
+}
 
 const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboardOfDeath()
 {
@@ -90,7 +112,7 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboard
 
     std::call_once(initFlag, []()
     {
-        std::vector<GLubyte> webgl1es2_textureData(
+        std::vector<GLubyte> webgl1es2_textureData( //TODO think about replacing this with much less data. This data repeats; its redundant
         {
             0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
             0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x08,
@@ -200,3 +222,4 @@ bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const
     return m_Handle == b.m_Handle;
 }
 bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }
+

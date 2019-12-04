@@ -36,8 +36,9 @@ jfc_project(library
 
     LIBRARIES
         ${gdkmath_LIBRARIES}
-        ${simpleglfw_LIBRARIES}
         ${stb_LIBRARIES}
+        
+        ${simpleglfw_LIBRARIES} # TODO: wrong. Split this up. gfx depend on OpenGL headers, not on glfw 
 
     DEPENDENCIES
         "stb"

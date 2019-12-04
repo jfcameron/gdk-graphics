@@ -1,10 +1,11 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GFX_CAMERA_H
-#define GDK_GFX_CAMERA_H
+#ifndef GDK_GFX_WEBGL1ES2_CAMERA_H
+#define GDK_GFX_WEBGL1ES2_CAMERA_H
 
-#include <gdk/graphics_types.h>
+#include <gdk/camera.h>
 #include <gdk/color.h>
+#include <gdk/graphics_types.h>
 
 #include <memory>
 #include <vector>
@@ -13,8 +14,8 @@ namespace gdk
 {
     class entity;
 
-    /// \brief Position, orientation and perspective from which entity(s) are drawn
-    class webgl1es2_camera
+    /// \brief webgl1es2_camera implementation of camera
+    class webgl1es2_camera final : public camera
     {
         /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
         enum class ClearMode 

@@ -13,9 +13,9 @@ using namespace gdk;
 
 static constexpr char TAG[] = "entity";
 
-webgl1es2_entity::webgl1es2_entity(const std::shared_ptr<webgl1es2_model> amodel, const std::shared_ptr<webgl1es2_shader_program> ashader_program)
+webgl1es2_entity::webgl1es2_entity(const std::shared_ptr<webgl1es2_model> amodel, const std::shared_ptr<webgl1es2_material> aMaterial)
 : m_model(amodel)
-, m_ShaderProgram(ashader_program)
+, m_Material(aMaterial)
 {}
 
 void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const
@@ -49,10 +49,10 @@ void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graph
 
     const auto mvp = p * v * m;
 
-    m_ShaderProgram->setUniform("_Model", mvp);
-    m_ShaderProgram->setUniform("_View", mvp);
-    m_ShaderProgram->setUniform("_Projection", mvp);
-    m_ShaderProgram->setUniform("_MVP", mvp);
+    m_Material->m_pShaderProgram->setUniform("_Model", mvp); // HMMMMM. Incorrect. should be m_pMaterial->m_ShaderProgram->setUniform(...) or even better m_pMaterial->setUniform(...). or hm. ahh not sure
+    m_Material->m_pShaderProgram->setUniform("_View", mvp);
+    m_Material->m_pShaderProgram->setUniform("_Projection", mvp);
+    m_Material->m_pShaderProgram->setUniform("_MVP", mvp);
 
     // TODO Refactor this to "batch" abstraction
     //m_model->bind(*m_ShaderProgram);

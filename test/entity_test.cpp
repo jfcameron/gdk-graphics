@@ -8,6 +8,7 @@
 #include "test_include.h"
 
 #include <gdk/webgl1es2_entity.h>
+#include <gdk/webgl1es2_material.h>
 #include <gdk/webgl1es2_model.h>
 #include <gdk/webgl1es2_shader_program.h>
 
@@ -17,7 +18,7 @@ TEST_CASE("gdk::webgl1es2_entity", "[gdk::webgl1es2_entity]")
 {
     initGL();
 
-    {auto blar2 = std::shared_ptr<webgl1es2_shader_program>(webgl1es2_shader_program::AlphaCutOff);}
+    /*{auto blar2 = std::shared_ptr<webgl1es2_shader_program>(webgl1es2_shader_program::AlphaCutOff);}
     auto blar = std::shared_ptr<webgl1es2_shader_program>(webgl1es2_shader_program::AlphaCutOff);
 
     SECTION("builds and draws")
@@ -43,6 +44,6 @@ TEST_CASE("gdk::webgl1es2_entity", "[gdk::webgl1es2_entity]")
         const webgl1es2_entity a(static_cast<std::shared_ptr<webgl1es2_model>>(webgl1es2_model::Cube), static_cast<std::shared_ptr<webgl1es2_shader_program>>(webgl1es2_shader_program::AlphaCutOff));
 
         auto b = a;
-    }
+    }*/
 }
 

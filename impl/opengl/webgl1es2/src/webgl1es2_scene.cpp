@@ -26,7 +26,7 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
 
            for (auto &[current_model, current_entity_collection] : current_model_to_entity_collection)
            {
-               current_model->bind(*current_material->m_pShader); //sets up the current vertex data
+               current_model->bind(*current_material->m_pShaderProgram); //sets up the current vertex data
 
                for (auto &current_entity : current_entity_collection) 
                {

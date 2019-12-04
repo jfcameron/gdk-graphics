@@ -1,10 +1,12 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GFX_SHADERPROGRAM_H
-#define GDK_GFX_SHADERPROGRAM_H
-#include <gdk/opengl.h>
-#include <gdk/webgl1es2_texture.h>
+#ifndef GDK_GFX_WEBGL1ES2_SHADER_PROGRAM_H
+#define GDK_GFX_WEBGL1ES2_SHADER_PROGRAM_H
+
 #include <gdk/graphics_types.h>
+#include <gdk/opengl.h>
+#include <gdk/shader_program.h>
+#include <gdk/webgl1es2_texture.h>
 #include <jfc/lazy_ptr.h>
 #include <jfc/unique_handle.h>
 
@@ -19,7 +21,7 @@ namespace gdk
     /// (the vertex shader stage and fragment shader stage)
     //TODO: consider a "pipeline" abstraction, which specifies all fixed options, then takes a program to specify programmable ones.
     //TODO: pipline abstraction is required to properly support blend-based transparencies, since frag order matters when blending.
-    class webgl1es2_shader_program final
+    class webgl1es2_shader_program final : public shader_program
     {
     public:
         /// \brief index, size, type of an active attribute used in the shader program

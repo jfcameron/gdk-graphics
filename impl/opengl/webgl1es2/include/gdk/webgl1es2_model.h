@@ -3,6 +3,7 @@
 #ifndef GDK_GFX_VERTEX_DATA_H
 #define GDK_GFX_VERTEX_DATA_H
 
+#include <gdk/model.h>
 #include <gdk/webgl1es2_vertex_format.h>
 #include <jfc/lazy_ptr.h>
 #include <jfc/unique_handle.h>
@@ -14,7 +15,7 @@ namespace gdk
 {
     /// \brief Vertex data representing a 3D graphical object
     // TODO: support multiple VBO objects, to allow using more appropriate Gl types for uvs, normals. Currently only supports interweaved GLBytes
-    class webgl1es2_model final
+    class webgl1es2_model final : public model
     {
     public:
         /// \brief Hint to the graphics device about how the vertex data will be used.

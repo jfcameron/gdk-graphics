@@ -22,28 +22,31 @@ using namespace jfc;
 
 int main(int argc, char **argv)
 {   
-    //TODO make use of this as interface layer is written
-    auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
-
+    // Separate lib, used to init GL and get a window ready for rendering
     glfw_window window("cool demo");
 
-    webgl1es2_camera camera;
+    // specifying the library's implementation to be used
+    //TODO: continue expanding context methods. eventually remove static_casts, virtualize minimum methods required
+    auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
 
-    camera.setProjection(90, 0.01, 20, 1);
+    auto pCamera = std::dynamic_pointer_cast<webgl1es2_camera>(std::shared_ptr<gdk::camera>(std::move(pContext->make_camera())));
+    pCamera->setProjection(90, 0.01, 20, 1);
+    
+    auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_alpha_cutoff_shader());
+
+    auto pCube = std::static_pointer_cast<webgl1es2_model>(pContext->get_cube_model());
+
+    auto pMaterial2 = std::make_shared<webgl1es2_material>(pAlpha);
+    pMaterial2->setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
+
+    auto pMaterial = std::make_shared<webgl1es2_material>(pAlpha);
+    pMaterial->setTexture("_Texture", webgl1es2_texture::GetTestTexture());
 
     std::vector<std::shared_ptr<gdk::webgl1es2_entity>> entities;
 
-    auto cube = std::shared_ptr<webgl1es2_model>(webgl1es2_model::Cube);
-
-    auto alpha = static_cast<std::shared_ptr<webgl1es2_shader_program>>(webgl1es2_shader_program::AlphaCutOff);
-
-    webgl1es2_material material(alpha);
-
-    material.setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
-
     entities.push_back(std::make_shared<webgl1es2_entity>([&]()
     {
-        webgl1es2_entity entity(cube, alpha);
+        webgl1es2_entity entity(pCube, pMaterial);
 
         entity.set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
 
@@ -59,19 +62,32 @@ int main(int argc, char **argv)
         glfwPollEvents();
       
         auto coolEntity = entities.back();
-        coolEntity->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar,2*(blar/2),4}});
+        coolEntity->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar, 2 * (blar / 2), 4}});
         
-        camera.set_view_matrix({std::sin(blar), 0, -10}, {});
+        pCamera->set_view_matrix({std::sin(blar), 0, -10}, {});
 
-        camera.activate(window.getWindowSize());
+        pCamera->activate(window.getWindowSize());
 
         for(auto &current_entities : entities) 
         {
-            alpha->useProgram(); //uses shader program
+            static bool yepp = false;
 
-            cube->bind(*alpha); //binds vertex data
+            if (yepp)
+            {
+                pMaterial2->activate();
 
-            current_entities->draw(camera.m_ViewMatrix, camera.m_ProjectionMatrix); //draws the data
+                yepp = false;
+            }
+            else
+            {
+                pMaterial->activate();
+
+                yepp = true;
+            }
+
+            pCube->bind(*pAlpha); //binds vertex data
+
+            current_entities->draw(pCamera->m_ViewMatrix, pCamera->m_ProjectionMatrix); //draws the data
         }
 
         window.swapBuffer(); 
