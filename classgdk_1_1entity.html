@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">6dde88dc347b0aafa33a354c7c9637cfe4f31108</span>
+   &#160;<span id="projectnumber">1d0a5e9179bf0e299325cd63af9270981b0a7191</span>
    </div>
   </td>
  </tr>
@@ -65,59 +65,27 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classgdk_1_1entity-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gdk::entity Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
+<div class="title">gdk::entity Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Represents an observable 3D object.  
+<p>represents an observable 3d object.  
  <a href="classgdk_1_1entity.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="entity_8h_source.html">entity.h</a>&gt;</code></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:a42628200451dc36d367b23b3489fb601"><td class="memItemLeft" align="right" valign="top"><a id="a42628200451dc36d367b23b3489fb601"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a42628200451dc36d367b23b3489fb601">draw</a> (const graphics_mat4x4_type &amp;aViewMatrix, const graphics_mat4x4_type &amp;aProjectionMatrix) const</td></tr>
-<tr class="memdesc:a42628200451dc36d367b23b3489fb601"><td class="mdescLeft">&#160;</td><td class="mdescRight">draws the entity at its current world position, with respect to a view and projection matrix. generally should not be called by the end user. view, proj, are most easily provided to the entity via a camera. <br /></td></tr>
-<tr class="separator:a42628200451dc36d367b23b3489fb601"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4788b6427572e51019d634d2433c1a9c"><td class="memItemLeft" align="right" valign="top"><a id="a4788b6427572e51019d634d2433c1a9c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_model</b> (const std::shared_ptr&lt; <a class="el" href="classgdk_1_1model.html">model</a> &gt; a)</td></tr>
-<tr class="separator:a4788b6427572e51019d634d2433c1a9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab66f13eeb0f905a5e4d9cd2812f23750"><td class="memItemLeft" align="right" valign="top"><a id="ab66f13eeb0f905a5e4d9cd2812f23750"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_model_matrix</b> (const graphics_vector3_type &amp;aWorldPos, const graphics_quaternion_type &amp;aRotation, const graphics_vector3_type &amp;aScale=graphics_vector3_type::One)</td></tr>
-<tr class="separator:ab66f13eeb0f905a5e4d9cd2812f23750"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5571b8407b940494d507d0a758fee236"><td class="memItemLeft" align="right" valign="top"><a id="a5571b8407b940494d507d0a758fee236"></a>
-const graphics_mat4x4_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getModelMatrix</b> () const</td></tr>
-<tr class="separator:a5571b8407b940494d507d0a758fee236"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a840205706bd38938435efd3197651db2"><td class="memItemLeft" align="right" valign="top"><a id="a840205706bd38938435efd3197651db2"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a840205706bd38938435efd3197651db2">entity</a> (const <a class="el" href="classgdk_1_1entity.html">entity</a> &amp;)=default</td></tr>
-<tr class="memdesc:a840205706bd38938435efd3197651db2"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy semantics <br /></td></tr>
-<tr class="separator:a840205706bd38938435efd3197651db2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27bf4180a7d48d12cce3c532d2b54245"><td class="memItemLeft" align="right" valign="top"><a id="a27bf4180a7d48d12cce3c532d2b54245"></a>
-<a class="el" href="classgdk_1_1entity.html">entity</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a27bf4180a7d48d12cce3c532d2b54245">operator=</a> (const <a class="el" href="classgdk_1_1entity.html">entity</a> &amp;)=default</td></tr>
-<tr class="memdesc:a27bf4180a7d48d12cce3c532d2b54245"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy semantics <br /></td></tr>
-<tr class="separator:a27bf4180a7d48d12cce3c532d2b54245"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0e1bdae99b32593900f90930208db08"><td class="memItemLeft" align="right" valign="top"><a id="ac0e1bdae99b32593900f90930208db08"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#ac0e1bdae99b32593900f90930208db08">entity</a> (<a class="el" href="classgdk_1_1entity.html">entity</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:ac0e1bdae99b32593900f90930208db08"><td class="mdescLeft">&#160;</td><td class="mdescRight">move semantics <br /></td></tr>
-<tr class="separator:ac0e1bdae99b32593900f90930208db08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02a541e45a8d75312af9bda1712510cf"><td class="memItemLeft" align="right" valign="top"><a id="a02a541e45a8d75312af9bda1712510cf"></a>
-<a class="el" href="classgdk_1_1entity.html">entity</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a02a541e45a8d75312af9bda1712510cf">operator=</a> (<a class="el" href="classgdk_1_1entity.html">entity</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a02a541e45a8d75312af9bda1712510cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">move semantics <br /></td></tr>
-<tr class="separator:a02a541e45a8d75312af9bda1712510cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87166ef88caab081da72e60e7b0e90cc"><td class="memItemLeft" align="right" valign="top"><a id="a87166ef88caab081da72e60e7b0e90cc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> (const std::shared_ptr&lt; <a class="el" href="classgdk_1_1model.html">model</a> &gt;, const std::shared_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &gt;)</td></tr>
-<tr class="separator:a87166ef88caab081da72e60e7b0e90cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
+<div class="dynheader">
+Inheritance diagram for gdk::entity:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classgdk_1_1entity.png" usemap="#gdk::entity_map" alt=""/>
+  <map id="gdk::entity_map" name="gdk::entity_map">
+<area href="classgdk_1_1webgl1es2__entity.html" title="Represents an observable 3D object. " alt="gdk::webgl1es2_entity" shape="rect" coords="0,56,135,80"/>
+</map>
+ </div></div>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents an observable 3D object. </p>
-<p>Contains a model, a set of uniform collections, a shader, animations, a skeleton.</p>
-<dl class="section warning"><dt>Warning</dt><dd>I think this class contains a bit too much implementation. (see draw method). It seems weird that "entity" is responsible for binding and clearing all uniform data for the shader.</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>the shaderprogram and uniform data (textures etc.) Should probably be broken out into a new abstraction. This work would be a good match for the "material" class seen in many engines.</dd></dl>
-<p>break up all the uniform binding! Simplify!. Model is a dumping ground.. badly defined abstraction, too much responsibility. TODO replace entity with objects that are more sympathetic to opengl: batch, pipeline, entity. </p>
+<div class="textblock"><p>represents an observable 3d object. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/include/gdk/<a class="el" href="entity_8h_source.html">entity.h</a></li>
 </ul>

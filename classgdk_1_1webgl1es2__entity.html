@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">4787316587e324fb17d404d6a2a54747cd2a9a98</span>
+   &#160;<span id="projectnumber">1d0a5e9179bf0e299325cd63af9270981b0a7191</span>
    </div>
   </td>
  </tr>
@@ -77,6 +77,15 @@ $(function() {
  <a href="classgdk_1_1webgl1es2__entity.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="webgl1es2__entity_8h_source.html">webgl1es2_entity.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for gdk::webgl1es2_entity:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classgdk_1_1webgl1es2__entity.png" usemap="#gdk::webgl1es2_5Fentity_map" alt=""/>
+  <map id="gdk::webgl1es2_5Fentity_map" name="gdk::webgl1es2_5Fentity_map">
+<area href="classgdk_1_1entity.html" title="represents an observable 3d object. " alt="gdk::entity" shape="rect" coords="0,0,135,24"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -85,13 +94,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:ac1f96397fab34f3813f435053285528b"><td class="mdescLeft">&#160;</td><td class="mdescRight">draws the <a class="el" href="classgdk_1_1webgl1es2__entity.html" title="Represents an observable 3D object. ">webgl1es2_entity</a> at its current world position, with respect to a view and projection matrix. generally should not be called by the end user. view, proj, are most easily provided to the <a class="el" href="classgdk_1_1webgl1es2__entity.html" title="Represents an observable 3D object. ">webgl1es2_entity</a> via a camera. <br /></td></tr>
 <tr class="separator:ac1f96397fab34f3813f435053285528b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6c53abc1ff319c60023509a5760f91a"><td class="memItemLeft" align="right" valign="top"><a id="ac6c53abc1ff319c60023509a5760f91a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_model</b> (const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &gt; a)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#ac6c53abc1ff319c60023509a5760f91a">set_model</a> (const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &gt; a)</td></tr>
+<tr class="memdesc:ac6c53abc1ff319c60023509a5760f91a"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets this entity's model. <br /></td></tr>
 <tr class="separator:ac6c53abc1ff319c60023509a5760f91a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28a234f62463cda46ad9fbd2205ba2cf"><td class="memItemLeft" align="right" valign="top"><a id="a28a234f62463cda46ad9fbd2205ba2cf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_model_matrix</b> (const graphics_vector3_type &amp;aWorldPos, const graphics_quaternion_type &amp;aRotation, const graphics_vector3_type &amp;aScale=graphics_vector3_type::One)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a28a234f62463cda46ad9fbd2205ba2cf">set_model_matrix</a> (const graphics_vector3_type &amp;aWorldPos, const graphics_quaternion_type &amp;aRotation, const graphics_vector3_type &amp;aScale=graphics_vector3_type::One)</td></tr>
+<tr class="memdesc:a28a234f62463cda46ad9fbd2205ba2cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the model matrix using a vec3 position, quat rotation, vec3 scale <br /></td></tr>
 <tr class="separator:a28a234f62463cda46ad9fbd2205ba2cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31ce06c4785d633a505c3f9fa6c0c34e"><td class="memItemLeft" align="right" valign="top"><a id="a31ce06c4785d633a505c3f9fa6c0c34e"></a>
-const graphics_mat4x4_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getModelMatrix</b> () const</td></tr>
+const graphics_mat4x4_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a31ce06c4785d633a505c3f9fa6c0c34e">getModelMatrix</a> () const</td></tr>
+<tr class="memdesc:a31ce06c4785d633a505c3f9fa6c0c34e"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a const ref to the model matrix <br /></td></tr>
 <tr class="separator:a31ce06c4785d633a505c3f9fa6c0c34e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf7f7a43417228f33c30cd996ed8d7b5"><td class="memItemLeft" align="right" valign="top"><a id="adf7f7a43417228f33c30cd996ed8d7b5"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#adf7f7a43417228f33c30cd996ed8d7b5">webgl1es2_entity</a> (const <a class="el" href="classgdk_1_1webgl1es2__entity.html">webgl1es2_entity</a> &amp;)=default</td></tr>
@@ -109,18 +121,25 @@ const graphics_mat4x4_type &amp;&#160;</td><td class="memItemRight" valign="bott
 <a class="el" href="classgdk_1_1webgl1es2__entity.html">webgl1es2_entity</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a0c301c5cb45f992607ceae68b81e3a35">operator=</a> (<a class="el" href="classgdk_1_1webgl1es2__entity.html">webgl1es2_entity</a> &amp;&amp;)=default</td></tr>
 <tr class="memdesc:a0c301c5cb45f992607ceae68b81e3a35"><td class="mdescLeft">&#160;</td><td class="mdescRight">move semantics <br /></td></tr>
 <tr class="separator:a0c301c5cb45f992607ceae68b81e3a35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78e0a24eacf71175ff398292dba6029d"><td class="memItemLeft" align="right" valign="top"><a id="a78e0a24eacf71175ff398292dba6029d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>webgl1es2_entity</b> (const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &gt;, const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__shader__program.html">webgl1es2_shader_program</a> &gt;)</td></tr>
-<tr class="separator:a78e0a24eacf71175ff398292dba6029d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bcced066cb0237f0198fd289c1deb45"><td class="memItemLeft" align="right" valign="top"><a id="a4bcced066cb0237f0198fd289c1deb45"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a4bcced066cb0237f0198fd289c1deb45">webgl1es2_entity</a> (const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &gt;, const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__material.html">webgl1es2_material</a> &gt;)</td></tr>
+<tr class="memdesc:a4bcced066cb0237f0198fd289c1deb45"><td class="mdescLeft">&#160;</td><td class="mdescRight">standard constructor. requires a model and a material <br /></td></tr>
+<tr class="separator:a4bcced066cb0237f0198fd289c1deb45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ed162cd3add7f49bcba1f9552bfaf15"><td class="memItemLeft" align="right" valign="top"><a id="a2ed162cd3add7f49bcba1f9552bfaf15"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a2ed162cd3add7f49bcba1f9552bfaf15">~webgl1es2_entity</a> ()=default</td></tr>
+<tr class="memdesc:a2ed162cd3add7f49bcba1f9552bfaf15"><td class="mdescLeft">&#160;</td><td class="mdescRight">trivial destructor <br /></td></tr>
+<tr class="separator:a2ed162cd3add7f49bcba1f9552bfaf15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a2af5a963bcf0e6beea33e1aea102b95b"><td class="memItemLeft" align="right" valign="top"><a id="a2af5a963bcf0e6beea33e1aea102b95b"></a>
-std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_model</b></td></tr>
+std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a2af5a963bcf0e6beea33e1aea102b95b">m_model</a></td></tr>
+<tr class="memdesc:a2af5a963bcf0e6beea33e1aea102b95b"><td class="mdescLeft">&#160;</td><td class="mdescRight">model used when rendering the entity <br /></td></tr>
 <tr class="separator:a2af5a963bcf0e6beea33e1aea102b95b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa971bcf2413f83d84c7c0665585de11d"><td class="memItemLeft" align="right" valign="top"><a id="aa971bcf2413f83d84c7c0665585de11d"></a>
-std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__shader__program.html">webgl1es2_shader_program</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_ShaderProgram</b></td></tr>
-<tr class="separator:aa971bcf2413f83d84c7c0665585de11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d96006c1a384070ec46484a27c62402"><td class="memItemLeft" align="right" valign="top"><a id="a2d96006c1a384070ec46484a27c62402"></a>
+std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__material.html">webgl1es2_material</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a2d96006c1a384070ec46484a27c62402">m_Material</a></td></tr>
+<tr class="memdesc:a2d96006c1a384070ec46484a27c62402"><td class="mdescLeft">&#160;</td><td class="mdescRight">material used when rendering the entity <br /></td></tr>
+<tr class="separator:a2d96006c1a384070ec46484a27c62402"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b4b9400c351bcf331836140c09d5fe9"><td class="memItemLeft" align="right" valign="top"><a id="a5b4b9400c351bcf331836140c09d5fe9"></a>
 graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a5b4b9400c351bcf331836140c09d5fe9">m_ModelMatrix</a></td></tr>
 <tr class="memdesc:a5b4b9400c351bcf331836140c09d5fe9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in the world. <br /></td></tr>

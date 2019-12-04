@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">4787316587e324fb17d404d6a2a54747cd2a9a98</span>
+   &#160;<span id="projectnumber">1d0a5e9179bf0e299325cd63af9270981b0a7191</span>
    </div>
   </td>
  </tr>
@@ -71,7 +71,7 @@ $(function() {
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classgdk_1_1graphics_1_1context-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gdk::graphics::context Class Reference</div>  </div>
+<div class="title">gdk::graphics::context Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -82,7 +82,7 @@ Inheritance diagram for gdk::graphics::context:</div>
  <div class="center">
   <img src="classgdk_1_1graphics_1_1context.png" usemap="#gdk::graphics::context_map" alt=""/>
   <map id="gdk::graphics::context_map" name="gdk::graphics::context_map">
-<area href="classgdk_1_1webgl1es2__context.html" title="! brief webgl1/gles2.0 context implementation " alt="gdk::webgl1es2_context" shape="rect" coords="0,56,145,80"/>
+<area href="classgdk_1_1webgl1es2__context.html" title="brief webgl1/gles2.0 context implementation " alt="gdk::webgl1es2_context" shape="rect" coords="0,56,145,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -96,30 +96,72 @@ Public Types</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f081bf46fc89727ee224">context_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1graphics_1_1context.html">context</a> &gt;</td></tr>
 <tr class="memdesc:af93b7e0f05e7f081bf46fc89727ee224"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr type returned by factory method <br /></td></tr>
 <tr class="separator:af93b7e0f05e7f081bf46fc89727ee224"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a271532fca609657b9fec9310e989e867"><td class="memItemLeft" align="right" valign="top"><a id="a271532fca609657b9fec9310e989e867"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a271532fca609657b9fec9310e989e867">camera_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1camera.html">camera</a> &gt;</td></tr>
+<tr class="memdesc:a271532fca609657b9fec9310e989e867"><td class="mdescLeft">&#160;</td><td class="mdescRight">camera factory return type <br /></td></tr>
+<tr class="separator:a271532fca609657b9fec9310e989e867"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bb52340da7c01148a31c2f7036b74d2"><td class="memItemLeft" align="right" valign="top"><a id="a2bb52340da7c01148a31c2f7036b74d2"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a2bb52340da7c01148a31c2f7036b74d2">entity_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1entity.html">entity</a> &gt;</td></tr>
+<tr class="memdesc:a2bb52340da7c01148a31c2f7036b74d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">entity factory return type <br /></td></tr>
+<tr class="separator:a2bb52340da7c01148a31c2f7036b74d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6879a831f369a3f8a331be8b96e9a434"><td class="memItemLeft" align="right" valign="top"><a id="a6879a831f369a3f8a331be8b96e9a434"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a6879a831f369a3f8a331be8b96e9a434">shader_program_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &gt;</td></tr>
+<tr class="memdesc:a6879a831f369a3f8a331be8b96e9a434"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classgdk_1_1shader__program.html" title="Specifies drawing behaviours at the programmable stages in the graphics pipeline. ...">shader_program</a> factory return type <br /></td></tr>
+<tr class="separator:a6879a831f369a3f8a331be8b96e9a434"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5d25ee7bf260de68793238e1bb62b9e"><td class="memItemLeft" align="right" valign="top"><a id="ac5d25ee7bf260de68793238e1bb62b9e"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ac5d25ee7bf260de68793238e1bb62b9e">model_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1model.html">model</a> &gt;</td></tr>
+<tr class="memdesc:ac5d25ee7bf260de68793238e1bb62b9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">model factory return type <br /></td></tr>
+<tr class="separator:ac5d25ee7bf260de68793238e1bb62b9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af79abe012069d8383881b241f130d04c"><td class="memItemLeft" align="right" valign="top"><a id="af79abe012069d8383881b241f130d04c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#af79abe012069d8383881b241f130d04c">material_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1material.html">material</a> &gt;</td></tr>
+<tr class="memdesc:af79abe012069d8383881b241f130d04c"><td class="mdescLeft">&#160;</td><td class="mdescRight">material factory return type <br /></td></tr>
+<tr class="separator:af79abe012069d8383881b241f130d04c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada0051e49d70a63e57517e93906bbc28"><td class="memItemLeft" align="right" valign="top"><a id="ada0051e49d70a63e57517e93906bbc28"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1model.html">model</a> &gt;</td></tr>
+<tr class="memdesc:ada0051e49d70a63e57517e93906bbc28"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr type for built in models provided by the implementation <br /></td></tr>
+<tr class="separator:ada0051e49d70a63e57517e93906bbc28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4d98b51f6efd84944653fa0c2d97962"><td class="memItemLeft" align="right" valign="top"><a id="ad4d98b51f6efd84944653fa0c2d97962"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &gt;</td></tr>
+<tr class="memdesc:ad4d98b51f6efd84944653fa0c2d97962"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr type for built in shaders provided by the implementation <br /></td></tr>
+<tr class="separator:ad4d98b51f6efd84944653fa0c2d97962"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1fb77ed39b70039626ba88fbd171c8ef"><td class="memItemLeft" align="right" valign="top"><a id="a1fb77ed39b70039626ba88fbd171c8ef"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a1fb77ed39b70039626ba88fbd171c8ef">~context</a> ()=default</td></tr>
-<tr class="memdesc:a1fb77ed39b70039626ba88fbd171c8ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">virtual destructor <br /></td></tr>
+<tr class="memitem:aa3ad734b0a7ccefe0e1931cf41daeed2"><td class="memItemLeft" align="right" valign="top"><a id="aa3ad734b0a7ccefe0e1931cf41daeed2"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a271532fca609657b9fec9310e989e867">camera_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#aa3ad734b0a7ccefe0e1931cf41daeed2">make_camera</a> () const =0</td></tr>
+<tr class="memdesc:aa3ad734b0a7ccefe0e1931cf41daeed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera <br /></td></tr>
+<tr class="separator:aa3ad734b0a7ccefe0e1931cf41daeed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7b14eec1465d03572a77b598ef928a2"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#af7b14eec1465d03572a77b598ef928a2">get_alpha_cutoff_shader</a> () const =0</td></tr>
+<tr class="memdesc:af7b14eec1465d03572a77b598ef928a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">create a special implementation-provided shader program -&gt; NAH  <a href="#af7b14eec1465d03572a77b598ef928a2">More...</a><br /></td></tr>
+<tr class="separator:af7b14eec1465d03572a77b598ef928a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbf51d9d8bac683b8fccccf8793b5b26"><td class="memItemLeft" align="right" valign="top"><a id="abbf51d9d8bac683b8fccccf8793b5b26"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#abbf51d9d8bac683b8fccccf8793b5b26">get_pink_shader_of_death</a> () const =0</td></tr>
+<tr class="memdesc:abbf51d9d8bac683b8fccccf8793b5b26"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets a lazily instantiated shader provided by the context implementation <br /></td></tr>
+<tr class="separator:abbf51d9d8bac683b8fccccf8793b5b26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7a06a583a3b38bd92ca06ed9d3112d2"><td class="memItemLeft" align="right" valign="top"><a id="ab7a06a583a3b38bd92ca06ed9d3112d2"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ab7a06a583a3b38bd92ca06ed9d3112d2">get_cube_model</a> () const =0</td></tr>
+<tr class="memdesc:ab7a06a583a3b38bd92ca06ed9d3112d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets a lazily instantiated model provided by the context implementation <br /></td></tr>
+<tr class="separator:ab7a06a583a3b38bd92ca06ed9d3112d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fb77ed39b70039626ba88fbd171c8ef"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a1fb77ed39b70039626ba88fbd171c8ef">~context</a> ()=default</td></tr>
+<tr class="memdesc:a1fb77ed39b70039626ba88fbd171c8ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets a lazily instantiated model provided by the context implementation  <a href="#a1fb77ed39b70039626ba88fbd171c8ef">More...</a><br /></td></tr>
 <tr class="separator:a1fb77ed39b70039626ba88fbd171c8ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:acacaef1324b8d0f5e516a8c1efb928ce"><td class="memItemLeft" align="right" valign="top"><a id="acacaef1324b8d0f5e516a8c1efb928ce"></a>
 static <a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f081bf46fc89727ee224">context_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#acacaef1324b8d0f5e516a8c1efb928ce">make</a> (const <a class="el" href="classgdk_1_1graphics_1_1context.html#a44ec17c92a83487666ee69a2ba5be2d6">implementation</a> &amp;)</td></tr>
-<tr class="memdesc:acacaef1324b8d0f5e516a8c1efb928ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">factory method <br /></td></tr>
+<tr class="memdesc:acacaef1324b8d0f5e516a8c1efb928ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">context factory method <br /></td></tr>
 <tr class="separator:acacaef1324b8d0f5e516a8c1efb928ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:adc81c1f64e90a53255a5a1258a4a800e"><td class="memItemLeft" align="right" valign="top"><a id="adc81c1f64e90a53255a5a1258a4a800e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#adc81c1f64e90a53255a5a1258a4a800e">context</a> ()=default</td></tr>
-<tr class="memdesc:adc81c1f64e90a53255a5a1258a4a800e"><td class="mdescLeft">&#160;</td><td class="mdescRight">prevent instantiation <br /></td></tr>
+<tr class="memdesc:adc81c1f64e90a53255a5a1258a4a800e"><td class="mdescLeft">&#160;</td><td class="mdescRight">prevent instantiation; context is the interface to all context implementations <br /></td></tr>
 <tr class="separator:adc81c1f64e90a53255a5a1258a4a800e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>entry point for gdk-graphics the context is responsible for establishing a context on the graphical hardware, creating a rendering environment (a window, in a desktop environment) constructing graphics types (shader, model, etc.) </p>
+<div class="textblock"><p>entry point for gdk-graphics to use, call make with the desired implementation implementation chooses what Graphics API/API Standard to use  the context is not responsible for establishing a context on the graphical hardware,  The context does not know about the windowing system (or lack thereof)  Initializing OpenGL etc. to the correct standard, managing &amp; swapping buffers etc., creating and managing X11 windows, etc. must be done independently </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a44ec17c92a83487666ee69a2ba5be2d6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a44ec17c92a83487666ee69a2ba5be2d6">&#9670;&nbsp;</a></span>implementation</h2>
@@ -146,6 +188,66 @@ Protected Member Functions</h2></td></tr>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a44ec17c92a83487666ee69a2ba5be2d6aa75db5d93f453b93efcaee7d409803cf"></a>opengl_webgl1_gles2&#160;</td><td class="fielddoc"><p>limited subset of OpenGL API available on a wide variety of desktop, mobile devices and browsers </p>
 </td></tr>
 </table>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a1fb77ed39b70039626ba88fbd171c8ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fb77ed39b70039626ba88fbd171c8ef">&#9670;&nbsp;</a></span>~context()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual gdk::graphics::context::~context </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>gets a lazily instantiated model provided by the context implementation </p>
+<p>virtual destructor </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="af7b14eec1465d03572a77b598ef928a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7b14eec1465d03572a77b598ef928a2">&#9670;&nbsp;</a></span>get_alpha_cutoff_shader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a> gdk::graphics::context::get_alpha_cutoff_shader </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>create a special implementation-provided shader program -&gt; NAH </p>
+<p>gets a lazily instantiated shader provided by the context implementation </p>
+
+<p>Implemented in <a class="el" href="classgdk_1_1webgl1es2__context.html#a4dfb73ce3ba687f00398fb6c89c0170f">gdk::webgl1es2_context</a>.</p>
 
 </div>
 </div>
