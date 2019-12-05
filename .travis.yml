@@ -96,14 +96,14 @@ matrix:
           cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS="-DGL_SILENCE_DEPRECATION" #-DCMAKE_CXX_FLAGS="-pedantic -Weverything -Wno-c++98-compat -Wno-padded -Ofast -flto -funroll-loops -m64 -march=native -std=c++17 -stdlib=libc++" 
           cmake --build .
 
-#    - os: windows
-#      name: build windows msvc
-#      compiler: MSVC
-#      script: 
-#        - |
-#          cd workspace;git submodule update --init --recursive
-#          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=ON #-DCMAKE_CXX_FLAGS=" /W4 /EHsc /WX /std:c++17 /permissive-" 
-#          cmake --build .
+    - os: windows
+      name: build windows msvc
+      compiler: MSVC
+      script: 
+        - |
+          cd workspace;git submodule update --init --recursive
+          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_TESTS=ON #-DCMAKE_CXX_FLAGS=" /W4 /EHsc /WX /std:c++17 /permissive-" 
+          cmake --build .
 
 #    - os: windows
 #      name: build windows mingw
