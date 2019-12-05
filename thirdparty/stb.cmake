@@ -28,6 +28,8 @@ function(import_stb_projects)
         RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 
     set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 90)
+    
+    set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "lib")
 
     add_custom_command(TARGET ${PROJECT_NAME}
         POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> "${PROJECT_BINARY_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>")
@@ -60,6 +62,6 @@ jfc_set_dependency_symbols(
         ${PROJECT_BINARY_DIR}/include
 
     LIBRARIES
-        ${PROJECT_BINARY_DIR}/lib${JFC_DEPENDENCY_NAME}.a
+        ${PROJECT_BINARY_DIR}/lib${JFC_DEPENDENCY_NAME}${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
 
