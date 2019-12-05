@@ -200,7 +200,7 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_type &textu
         0, 
         textureFormatToGLint(textureData2d.format), 
         GL_UNSIGNED_BYTE, 
-        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&textureData2d.data[0]))); //pDecodedImageData
+        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&textureData2d.data[0])));
 
     //Select webgl1es2_texture filter functions
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnification_filter_to_glint(magFilter));
