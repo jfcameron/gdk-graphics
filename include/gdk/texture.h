@@ -3,6 +3,9 @@
 #ifndef GDK_GFX_TEXTURE_H
 #define GDK_GFX_TEXTURE_H
 
+#include <cstddef>
+#include <vector>
+
 namespace gdk
 {
     /// \brief 2d data generally used to color primitive surfaces
