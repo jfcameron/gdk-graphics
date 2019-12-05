@@ -58,6 +58,7 @@ namespace gdk::graphics
         //virtual material_ptr_type make_material(pShader?) const = 0;
         //virtual model_ptr_type make_model(bytes..) const = 0;
         //virtual shader_program_ptr_type make_shader(string aVertexGLSL, string aFragGLSL) = const 0;
+        //virtual texture make_texture(std::vector<std::byte>> 
         
         //! create a special implementation-provided shader program -> NAH
         //virtual shader_program_ptr_type make_shader_program(const build_in_shader_program) const = 0;

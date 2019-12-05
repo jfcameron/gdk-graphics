@@ -1,9 +1,10 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GFX_TEXTURE_H
-#define GDK_GFX_TEXTURE_H
+#ifndef GDK_GFX_WEBGL1ES2_TEXTURE_H
+#define GDK_GFX_WEBGL1ES2_TEXTURE_H
 
 #include <gdk/opengl.h>
+#include <gdk/texture.h>
 #include <jfc/unique_handle.h>
 
 #include <array>
@@ -14,7 +15,7 @@
 namespace gdk
 {
     /// \brief a texture generally represents the color of a surface
-    class webgl1es2_texture final
+    class webgl1es2_texture final : texture
     {
     public:
         /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture data within the gl
