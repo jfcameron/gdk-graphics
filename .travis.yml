@@ -60,7 +60,7 @@ matrix:
       script:
         - |
           cd workspace #export CXX="g++-9" CC="gcc-9"; 
-          cmake .. -DJFC_BUILD_DOCS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native"
+          cmake .. -DJFC_BUILD_DOCS=OFF -DJFC_BUILD_DEMO=OFF -DJFC_BUILD_TESTS=OFF #-DCMAKE_CXX_FLAGS="-pedantic -Wall -Wextra -Ofast -flto -funroll-loops -m64 -march=native"
           cmake --build .
 
     - os: linux
