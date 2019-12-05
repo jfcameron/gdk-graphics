@@ -10,6 +10,7 @@
 #include <mutex>
 #include <stdexcept>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 using namespace gdk;
@@ -89,16 +90,21 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetTestTexture(
 
     std::call_once(initFlag, []()
     {
-        std::vector<GLubyte> webgl1es2_textureData(
+        std::vector<std::underlying_type<std::byte>::type> webgl1es2_textureData(
         {
             0xff, 0x00, 0x00, 0xff,
             0x00, 0xff, 0x00, 0xff,
             0x00, 0x00, 0xff, 0xff,
             0x00, 0xff, 0xff, 0xff,
         });
-        
-        ptr = std::make_shared<gdk::webgl1es2_texture>(
-            webgl1es2_texture(&webgl1es2_textureData[0], 2, 2));
+       
+        webgl1es2_texture_2d_data_type data;
+        data.width = 2;
+        data.height = 2;
+        data.format = format::rgba;
+        data.data = reinterpret_cast<std::byte *>(&webgl1es2_textureData[0]);
+
+        ptr = std::make_shared<gdk::webgl1es2_texture>(data);
     });
     
     return ptr;
@@ -151,30 +157,30 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<GLub
             stbi_image_free(p);
         }); decodedData)
     {
-        //TODO make use of this
-        /*webgl1es2_texture_2d_data_type data;
+        webgl1es2_texture_2d_data_type data;
         data.width = width;
         data.height = height;
         data.format = format::rgba;
-        //data.data = */
-
-        return webgl1es2_texture(decodedData.get(), width, height);
+        data.data = reinterpret_cast<std::byte *>(decodedData.get());
+        
+        return webgl1es2_texture(data);
     }
     
     throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to webgl1es2_texture"));
 }
 
-webgl1es2_texture::webgl1es2_texture(GLubyte *const pDecodedImageData, 
+webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_type &textureData2d,
+    /*GLubyte *const pDecodedImageData, 
     const long width, 
     const long height, 
-    const webgl1es2_texture::format format,
+    const webgl1es2_texture::format format,*/
     const minification_filter minFilter,
     const magnification_filter magFilter,
     const wrap_mode wrapMode)
 : m_BindTarget(bind_target_to_glenum(bind_target::texture_2d))    
 , m_Handle([&]()
 {
-    if (!isPowerOfTwo(width) || !isPowerOfTwo(height)) 
+    if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height)) 
         throw std::invalid_argument(std::string(TAG).append(": webgl1es2_texture dimensions must be power of 2"));
 
     GLuint handle;
@@ -188,13 +194,13 @@ webgl1es2_texture::webgl1es2_texture(GLubyte *const pDecodedImageData,
 
     glTexImage2D(m_BindTarget, 
         0, 
-        textureFormatToGLint(format), 
-        width, 
-        height, 
+        textureFormatToGLint(textureData2d.format), 
+        textureData2d.width, 
+        textureData2d.height, 
         0, 
-        textureFormatToGLint(format), 
+        textureFormatToGLint(textureData2d.format), 
         GL_UNSIGNED_BYTE, 
-        pDecodedImageData);
+        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&textureData2d.data[0]))); //pDecodedImageData
 
     //Select webgl1es2_texture filter functions
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnification_filter_to_glint(magFilter));
