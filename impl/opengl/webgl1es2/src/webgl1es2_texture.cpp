@@ -98,7 +98,7 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetTestTexture(
             0x00, 0xff, 0xff, 0xff,
         });
        
-        webgl1es2_texture_2d_data_type data;
+        webgl1es2_texture_2d_data_view_type data;
         data.width = 2;
         data.height = 2;
         data.format = format::rgba;
@@ -118,7 +118,7 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboard
 
     std::call_once(initFlag, []()
     {
-        std::vector<GLubyte> webgl1es2_textureData( //TODO think about replacing this with much less data. This data repeats; its redundant
+        std::vector<GLubyte> webgl1es2_textureData( //TODO think about replacing this with much less data. This data repeats; its redundant //TODO replace this with a generated raw image. Move this png to a test.
         {
             0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
             0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x08,
@@ -157,7 +157,7 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<GLub
             stbi_image_free(p);
         }); decodedData)
     {
-        webgl1es2_texture_2d_data_type data;
+        webgl1es2_texture_2d_data_view_type data;
         data.width = width;
         data.height = height;
         data.format = format::rgba;
@@ -169,11 +169,7 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<GLub
     throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to webgl1es2_texture"));
 }
 
-webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_type &textureData2d,
-    /*GLubyte *const pDecodedImageData, 
-    const long width, 
-    const long height, 
-    const webgl1es2_texture::format format,*/
+webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &textureData2d,
     const minification_filter minFilter,
     const magnification_filter magFilter,
     const wrap_mode wrapMode)
@@ -185,7 +181,6 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_type &textu
 
     GLuint handle;
 
-    //Copy the webgl1es2_texture data to video memory
     glGenTextures(1, &handle);
 
     glActiveTexture(GL_TEXTURE0);

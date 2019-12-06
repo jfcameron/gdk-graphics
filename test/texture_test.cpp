@@ -43,6 +43,30 @@ TEST_CASE("gdk::webgl1es2_texture", "[gdk::webgl1es2_texture]")
         webgl1es2_texture tex(webgl1es2_texture::make_from_png_rgba32(textureDataPNGRGBA32));
 
         webgl1es2_texture b = std::move(tex);
+        
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("construction by image view works")
+    {
+        //
+        gdk::webgl1es2_texture::webgl1es2_texture_2d_data_view_type view;
+        view.width = 2;
+        view.height = 2;
+        view.format = webgl1es2_texture::format::rgba;
+
+        std::vector<std::underlying_type<std::byte>::type> imageData({
+            0x00, 0xff, 0xff, 0xff,
+            0xff, 0xff, 0xff, 0xff,
+            0xff, 0xff, 0xff, 0xff,
+            0x00, 0x00, 0x00, 0xff,
+        });
+
+        view.data = reinterpret_cast<std::byte *>(&imageData.front()); 
+
+        webgl1es2_texture tex(view);
+        
+        REQUIRE(!jfc::glGetError());
     }
 }
 

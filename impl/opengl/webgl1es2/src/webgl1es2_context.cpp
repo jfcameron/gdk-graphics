@@ -21,11 +21,21 @@ graphics::context::camera_ptr_type webgl1es2_context::make_camera() const
 {
     return graphics::context::entity_ptr_type(new webgl1es2_entity());
 }*/
-
-/*graphics::context::material_ptr_type webgl1es2_context::make_material() const 
+graphics::context::entity_ptr_type webgl1es2_context::make_entity(gdk::graphics::context::model_shared_ptr_type pModel, gdk::graphics::context::material_shared_ptr_type pMaterial) const
 {
-    return std::make_unique<material>(webgl1es2_material());
-}*/
+    return graphics::context::entity_ptr_type(
+        new webgl1es2_entity(
+            std::static_pointer_cast<webgl1es2_model>(pModel),
+            std::static_pointer_cast<webgl1es2_material>(pMaterial)));
+}
+
+
+graphics::context::material_ptr_type webgl1es2_context::make_material(gdk::graphics::context::shader_program_shared_ptr_type pShader) const 
+{
+    return graphics::context::material_ptr_type(
+        new webgl1es2_material(
+            std::static_pointer_cast<webgl1es2_shader_program>(pShader)));
+}
 
 /*graphics::context::model_ptr_type webgl1es2_context::make_model() const 
 {
@@ -54,5 +64,25 @@ graphics::context::built_in_model_ptr_type webgl1es2_context::get_cube_model() c
 {
     return std::static_pointer_cast<model>(
         std::shared_ptr<webgl1es2_model>(webgl1es2_model::Cube));
+}
+
+graphics::context::texture_ptr_type webgl1es2_context::make_texture(const texture::image_data_2d_view &imageView) const
+{
+    webgl1es2_texture::webgl1es2_texture_2d_data_view_type data;
+    data.width = imageView.width;
+    data.height = imageView.height;
+
+    switch(imageView.format)
+    {
+        case texture::data_format::rgb: data.format = webgl1es2_texture::format::rgb; break;
+
+        case texture::data_format::rgba: data.format = webgl1es2_texture::format::rgba; break;
+
+        default: throw std::invalid_argument("webgl1es2 context does not support provided image format");
+    }
+
+    data.data = imageView.data;
+    
+    return graphics::context::texture_ptr_type(new webgl1es2_texture(data));
 }
 

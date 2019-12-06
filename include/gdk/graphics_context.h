@@ -10,6 +10,7 @@
 #include <gdk/material.h>
 #include <gdk/model.h>
 #include <gdk/shader_program.h>
+#include <gdk/texture.h>
 
 namespace gdk::graphics
 {
@@ -46,23 +47,35 @@ namespace gdk::graphics
         using model_ptr_type = std::unique_ptr<model>;
         //! material factory return type
         using material_ptr_type = std::unique_ptr<material>;
+        //! texture factory return type
+        using texture_ptr_type = std::unique_ptr<texture>;
 
         //! ptr type for built in models provided by the implementation
         using built_in_model_ptr_type = std::shared_ptr<model>;
         //! ptr type for built in shaders provided by the implementation
         using built_in_shader_ptr_type = std::shared_ptr<shader_program>;
 
+        using shader_program_shared_ptr_type = std::shared_ptr<shader_program>;
+        using material_shared_ptr_type = std::shared_ptr<material>;
+        using model_shared_ptr_type = std::shared_ptr<model>;
+
         //! makes a camera
         virtual camera_ptr_type make_camera() const = 0;
-        //virtual entity_ptr_type make_entity() const = 0;
-        //virtual material_ptr_type make_material(pShader?) const = 0;
+        
+        virtual entity_ptr_type make_entity(model_shared_ptr_type pModel, material_shared_ptr_type pMaterial) const = 0;
+
+        //! creates a material. 
+        virtual material_ptr_type make_material(
+            shader_program_shared_ptr_type pShader //!< defines the pipeline's programmable stage behaviours, can be shared among multiple materials
+        ) const = 0;
         //virtual model_ptr_type make_model(bytes..) const = 0;
         //virtual shader_program_ptr_type make_shader(string aVertexGLSL, string aFragGLSL) = const 0;
-        //virtual texture make_texture(std::vector<std::byte>> 
-        
-        //! create a special implementation-provided shader program -> NAH
-        //virtual shader_program_ptr_type make_shader_program(const build_in_shader_program) const = 0;
 
+        //! make a texture using a 2d image view
+        virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;
+        //make texture from a 2d image
+        //virtual texture make_texture(std::vector<std::byte>> )
+        
         //! gets a lazily instantiated shader provided by the context implementation
         virtual built_in_shader_ptr_type get_alpha_cutoff_shader() const = 0;
         //! gets a lazily instantiated shader provided by the context implementation

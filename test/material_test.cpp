@@ -17,7 +17,7 @@ TEST_CASE("gdk::webgl1es2_material", "[gdk::webgl1es2_material]")
 {
     webgl1es2_material mat(static_cast<std::shared_ptr<webgl1es2_shader_program>>(webgl1es2_shader_program::AlphaCutOff));
 
-    SECTION("blar")
+    SECTION("set a texture uniform, activate the material")
     {
         mat.setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
         

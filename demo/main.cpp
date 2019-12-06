@@ -29,18 +29,34 @@ int main(int argc, char **argv)
     //TODO: continue expanding context methods. eventually remove static_casts, virtualize minimum methods required
     auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
 
-    auto pCamera = std::dynamic_pointer_cast<webgl1es2_camera>(std::shared_ptr<gdk::camera>(std::move(pContext->make_camera())));
+    auto pCamera = std::static_pointer_cast<webgl1es2_camera>(std::shared_ptr<gdk::camera>(std::move(pContext->make_camera())));
     pCamera->setProjection(90, 0.01, 20, 1);
     
     auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_alpha_cutoff_shader());
 
     auto pCube = std::static_pointer_cast<webgl1es2_model>(pContext->get_cube_model());
 
-    auto pMaterial2 = std::make_shared<webgl1es2_material>(pAlpha);
+    auto pMaterial2 = std::static_pointer_cast<webgl1es2_material>(std::shared_ptr<material>(std::move(pContext->make_material(pAlpha))));
     pMaterial2->setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
 
-    auto pMaterial = std::make_shared<webgl1es2_material>(pAlpha);
-    pMaterial->setTexture("_Texture", webgl1es2_texture::GetTestTexture());
+    texture::image_data_2d_view view;
+    view.width = 2;
+    view.height = 2;
+    view.format = texture::data_format::rgba;
+
+    std::vector<std::underlying_type<std::byte>::type> imageData({
+        0x00, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff,
+        0x00, 0x00, 0x00, 0xff,
+    });
+
+    view.data = reinterpret_cast<std::byte *>(&imageData.front());
+
+    auto pTexture = std::static_pointer_cast<webgl1es2_texture>(std::shared_ptr<gdk::texture>(std::move(pContext->make_texture(view))));
+
+    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(std::shared_ptr<material>(std::move(pContext->make_material(pAlpha))));
+    pMaterial->setTexture("_Texture", pTexture);
 
     std::vector<std::shared_ptr<gdk::webgl1es2_entity>> entities;
 

@@ -15,7 +15,7 @@
 namespace gdk
 {
     /// \brief a texture generally represents the color of a surface
-    class webgl1es2_texture final : texture
+    class webgl1es2_texture final : public texture
     {
     public:
         /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture data within the gl
@@ -92,12 +92,15 @@ namespace gdk
             cube_map //!< 6 2d images, generally used for coloring a skybox, reflection map etc.
         };
 
-        //! decoded image data + metadata that describes a 2d image
-        //TODO make use of this
-        struct webgl1es2_texture_2d_data_type
+        //! pod struct representing decoded image data + metadata that describes a 2d image
+        /// primary purpose is used in construction of a texture object.
+        /// \warn a view does not own its data. The user must ensure the data observed by the view
+        /// is cleaned up sometime after it has been used. By used, generally I mean sometime after it has been
+        /// passed to a texture ctor
+        struct webgl1es2_texture_2d_data_view_type
         {
-            long width; //!< pix width of data
-            long height; //!< pix height of data
+            size_t width; //!< pix width of data
+            size_t height; //!< pix height of data
 
             webgl1es2_texture::format format; //!< format of the image data.
 
@@ -108,14 +111,17 @@ namespace gdk
 
         //! description of a cubic image
         //TODO make use of this
-        struct webgl1es2_texture_cubic_data_type
+        /// \warn a view does not own its data.
+        struct webgl1es2_texture_cubic_data_view_type
         {
-            long width; //!< width of a single image in the cube (all must be same)
-            long height; //!< height of a single image in the cube (all must be same)
+            size_t width; //!< width of a single image in the cube (all must be same)
+            size_t height; //!< height of a single image in the cube (all must be same)
 
             webgl1es2_texture::format format; //!< format of the image data. must be same for all surfaces
 
-            std::array<std::byte, 6> data; //!< image data for the 6 surfaces of the cube
+            //! image data for the 6 surfaces of the cube
+            /// \warwning non-owning pointer
+            std::array<std::byte *, 6> data; 
         };
 
     private:
@@ -146,7 +152,7 @@ namespace gdk
         /// \brief creates a 2d webgl1es2_texture from decoded image data.
         /// \exception length, width of the webgl1es2_texture must be power of 2
         webgl1es2_texture(
-            const webgl1es2_texture_2d_data_type &textureData2d,
+            const webgl1es2_texture_2d_data_view_type &textureData2d,
             //GLubyte *const pDecodedImageData, const long width, //TODO why is image data all separate params? 
             //const long height,                                      // ptr, w, h, format should be a 2d_image_data pod struct 
             //const format = format::rgba,
