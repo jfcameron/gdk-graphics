@@ -46,6 +46,7 @@ namespace gdk
         /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
         /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity 
         /// via a camera.
+        //TODO throw if drwa is called and the currently bound model is not m_model?
         void draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const;
 
         /// \brief sets this entity's model.
