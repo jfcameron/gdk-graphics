@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">086eb525719101a66d9e80f5a6635dc17cae72d4</span>
+   &#160;<span id="projectnumber">f3a5e491fb4fed41fab66e9fa92a88bae6079a1c</span>
    </div>
   </td>
  </tr>
@@ -66,6 +66,9 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classgdk_1_1texture-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">gdk::texture Class Reference</div>  </div>
@@ -88,13 +91,66 @@ Inheritance diagram for gdk::texture:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1texture_1_1image__data__2d.html">image_data_2d</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">pod struct for 2d texture data  <a href="structgdk_1_1texture_1_1image__data__2d.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1texture_1_1image__data__2d__view.html">image_data_2d_view</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">pod struct for 2d texture data  a view does not own its data.  <a href="structgdk_1_1texture_1_1image__data__2d__view.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a8ed7a4ed80dc971f7a98a4bf71707185"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185">data_format</a> { <a class="el" href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185aef70a6546536ccd835479f6cddc0188e">data_format::rgb</a>, 
+<a class="el" href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185a7082a31b8759c9d59795876351ec63aa">data_format::rgba</a>
+ }<tr class="memdesc:a8ed7a4ed80dc971f7a98a4bf71707185"><td class="mdescLeft">&#160;</td><td class="mdescRight">&lt; format of data in the byte array  <a href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a8ed7a4ed80dc971f7a98a4bf71707185"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a9c6c44a37899bf318f83d64b1b7d9270"><td class="memItemLeft" align="right" valign="top"><a id="a9c6c44a37899bf318f83d64b1b7d9270"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1texture.html#a9c6c44a37899bf318f83d64b1b7d9270">~texture</a> ()=default</td></tr>
+<tr class="memdesc:a9c6c44a37899bf318f83d64b1b7d9270"><td class="mdescLeft">&#160;</td><td class="mdescRight">trivial destructor <br /></td></tr>
+<tr class="separator:a9c6c44a37899bf318f83d64b1b7d9270"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ae6d05f721b7f90d3c989dea707110165"><td class="memItemLeft" align="right" valign="top"><a id="ae6d05f721b7f90d3c989dea707110165"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1texture.html#ae6d05f721b7f90d3c989dea707110165">texture</a> ()=default</td></tr>
+<tr class="memdesc:ae6d05f721b7f90d3c989dea707110165"><td class="mdescLeft">&#160;</td><td class="mdescRight">interface type cannot be instantiated <br /></td></tr>
+<tr class="separator:ae6d05f721b7f90d3c989dea707110165"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>2d data generally used to color primitive surfaces </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a8ed7a4ed80dc971f7a98a4bf71707185"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ed7a4ed80dc971f7a98a4bf71707185">&#9670;&nbsp;</a></span>data_format</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185">gdk::texture::data_format</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>&lt; format of data in the byte array </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a8ed7a4ed80dc971f7a98a4bf71707185aef70a6546536ccd835479f6cddc0188e"></a>rgb&#160;</td><td class="fielddoc"><p>data is a sequence of bytes representing red, green, blue, ... </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a8ed7a4ed80dc971f7a98a4bf71707185a7082a31b8759c9d59795876351ec63aa"></a>rgba&#160;</td><td class="fielddoc"><p>data is a sequence of bytes representing red, green, blue, alpha, ... </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/include/gdk/<a class="el" href="texture_8h_source.html">texture.h</a></li>
 </ul>
 </div><!-- contents -->

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">086eb525719101a66d9e80f5a6635dc17cae72d4</span>
+   &#160;<span id="projectnumber">f3a5e491fb4fed41fab66e9fa92a88bae6079a1c</span>
    </div>
   </td>
  </tr>
@@ -91,11 +91,10 @@ Inheritance diagram for gdk::webgl1es2_texture:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__2d__data__type.html">webgl1es2_texture_2d_data_type</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">decoded image data + metadata that describes a 2d image  <a href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__2d__data__type.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__2d__data__view__type.html">webgl1es2_texture_2d_data_view_type</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__cubic__data__type.html">webgl1es2_texture_cubic_data_type</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">description of a cubic image  <a href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__cubic__data__type.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__cubic__data__view__type.html">webgl1es2_texture_cubic_data_view_type</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">description of a cubic image  <a href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__cubic__data__view__type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -131,6 +130,12 @@ Public Types</h2></td></tr>
  }<tr class="memdesc:a75cc44374a8c61a9b35285b8d6335615"><td class="mdescLeft">&#160;</td><td class="mdescRight">GLES2.0/Web1.0 defines 2 bind targets.  <a href="classgdk_1_1webgl1es2__texture.html#a75cc44374a8c61a9b35285b8d6335615">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:a75cc44374a8c61a9b35285b8d6335615"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_classgdk_1_1texture"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classgdk_1_1texture')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classgdk_1_1texture.html">gdk::texture</a></td></tr>
+<tr class="memitem:a8ed7a4ed80dc971f7a98a4bf71707185 inherit pub_types_classgdk_1_1texture"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185">data_format</a> { <a class="el" href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185aef70a6546536ccd835479f6cddc0188e">data_format::rgb</a>, 
+<a class="el" href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185a7082a31b8759c9d59795876351ec63aa">data_format::rgba</a>
+ }<tr class="memdesc:a8ed7a4ed80dc971f7a98a4bf71707185"><td class="mdescLeft">&#160;</td><td class="mdescRight">&lt; format of data in the byte array  <a href="classgdk_1_1texture.html#a8ed7a4ed80dc971f7a98a4bf71707185">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a8ed7a4ed80dc971f7a98a4bf71707185 inherit pub_types_classgdk_1_1texture"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -154,9 +159,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__texture.html#ad1fe02707fb81dcc629590ece9ec6801">webgl1es2_texture</a> (<a class="el" href="classgdk_1_1webgl1es2__texture.html">webgl1es2_texture</a> &amp;&amp;)=default</td></tr>
 <tr class="memdesc:ad1fe02707fb81dcc629590ece9ec6801"><td class="mdescLeft">&#160;</td><td class="mdescRight">move semantics <br /></td></tr>
 <tr class="separator:ad1fe02707fb81dcc629590ece9ec6801"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea8545a38496cfebda55be94da187b68"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__texture.html#aea8545a38496cfebda55be94da187b68">webgl1es2_texture</a> (const <a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__2d__data__type.html">webgl1es2_texture_2d_data_type</a> &amp;textureData2d, const <a class="el" href="classgdk_1_1webgl1es2__texture.html#a47c3155796a2201630318565c13fb3dc">minification_filter</a> minFilter=<a class="el" href="classgdk_1_1webgl1es2__texture.html#a47c3155796a2201630318565c13fb3dca9a932b3cb396238423eb2f33ec17d6aa">minification_filter::linear</a>, const <a class="el" href="classgdk_1_1webgl1es2__texture.html#a9f2ac21aa5fc33ad97af6cbc298aa4c5">magnification_filter</a> magFilter=<a class="el" href="classgdk_1_1webgl1es2__texture.html#a9f2ac21aa5fc33ad97af6cbc298aa4c5ad879c351426770bc0b13c3628db1e636">magnification_filter::nearest</a>, const <a class="el" href="classgdk_1_1webgl1es2__texture.html#a976fe6eb80753e4d28589a434fcff4a6">wrap_mode</a> wrapMode=<a class="el" href="classgdk_1_1webgl1es2__texture.html#a976fe6eb80753e4d28589a434fcff4a6a32cf6da134a8b268cf4ab6b79a9a5ad9">wrap_mode::repeat</a>)</td></tr>
-<tr class="memdesc:aea8545a38496cfebda55be94da187b68"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a 2d <a class="el" href="classgdk_1_1webgl1es2__texture.html" title="a texture generally represents the color of a surface ">webgl1es2_texture</a> from decoded image data.  <a href="#aea8545a38496cfebda55be94da187b68">More...</a><br /></td></tr>
-<tr class="separator:aea8545a38496cfebda55be94da187b68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac86cae68cdfdf1e5af86e9e2ea922edd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__texture.html#ac86cae68cdfdf1e5af86e9e2ea922edd">webgl1es2_texture</a> (const <a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__2d__data__view__type.html">webgl1es2_texture_2d_data_view_type</a> &amp;textureData2d, const <a class="el" href="classgdk_1_1webgl1es2__texture.html#a47c3155796a2201630318565c13fb3dc">minification_filter</a> minFilter=<a class="el" href="classgdk_1_1webgl1es2__texture.html#a47c3155796a2201630318565c13fb3dca9a932b3cb396238423eb2f33ec17d6aa">minification_filter::linear</a>, const <a class="el" href="classgdk_1_1webgl1es2__texture.html#a9f2ac21aa5fc33ad97af6cbc298aa4c5">magnification_filter</a> magFilter=<a class="el" href="classgdk_1_1webgl1es2__texture.html#a9f2ac21aa5fc33ad97af6cbc298aa4c5ad879c351426770bc0b13c3628db1e636">magnification_filter::nearest</a>, const <a class="el" href="classgdk_1_1webgl1es2__texture.html#a976fe6eb80753e4d28589a434fcff4a6">wrap_mode</a> wrapMode=<a class="el" href="classgdk_1_1webgl1es2__texture.html#a976fe6eb80753e4d28589a434fcff4a6a32cf6da134a8b268cf4ab6b79a9a5ad9">wrap_mode::repeat</a>)</td></tr>
+<tr class="memdesc:ac86cae68cdfdf1e5af86e9e2ea922edd"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a 2d <a class="el" href="classgdk_1_1webgl1es2__texture.html" title="a texture generally represents the color of a surface ">webgl1es2_texture</a> from decoded image data.  <a href="#ac86cae68cdfdf1e5af86e9e2ea922edd">More...</a><br /></td></tr>
+<tr class="separator:ac86cae68cdfdf1e5af86e9e2ea922edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgdk_1_1texture"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgdk_1_1texture')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgdk_1_1texture.html">gdk::texture</a></td></tr>
+<tr class="memitem:a9c6c44a37899bf318f83d64b1b7d9270 inherit pub_methods_classgdk_1_1texture"><td class="memItemLeft" align="right" valign="top"><a id="a9c6c44a37899bf318f83d64b1b7d9270"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1texture.html#a9c6c44a37899bf318f83d64b1b7d9270">~texture</a> ()=default</td></tr>
+<tr class="memdesc:a9c6c44a37899bf318f83d64b1b7d9270 inherit pub_methods_classgdk_1_1texture"><td class="mdescLeft">&#160;</td><td class="mdescRight">trivial destructor <br /></td></tr>
+<tr class="separator:a9c6c44a37899bf318f83d64b1b7d9270 inherit pub_methods_classgdk_1_1texture"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -170,6 +180,14 @@ static const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__text
 <tr class="memitem:a5311c53132651c9f70e3aaa468b347a3"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classgdk_1_1webgl1es2__texture.html">webgl1es2_texture</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__texture.html#a5311c53132651c9f70e3aaa468b347a3">make_from_png_rgba32</a> (const std::vector&lt; GLubyte &gt; aRGBA32PNGData)</td></tr>
 <tr class="memdesc:a5311c53132651c9f70e3aaa468b347a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructs a 2d <a class="el" href="classgdk_1_1webgl1es2__texture.html" title="a texture generally represents the color of a surface ">webgl1es2_texture</a> from png rgba32 encoded file data  <a href="#a5311c53132651c9f70e3aaa468b347a3">More...</a><br /></td></tr>
 <tr class="separator:a5311c53132651c9f70e3aaa468b347a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_methods_classgdk_1_1texture"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classgdk_1_1texture')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classgdk_1_1texture.html">gdk::texture</a></td></tr>
+<tr class="memitem:ae6d05f721b7f90d3c989dea707110165 inherit pro_methods_classgdk_1_1texture"><td class="memItemLeft" align="right" valign="top"><a id="ae6d05f721b7f90d3c989dea707110165"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1texture.html#ae6d05f721b7f90d3c989dea707110165">texture</a> ()=default</td></tr>
+<tr class="memdesc:ae6d05f721b7f90d3c989dea707110165 inherit pro_methods_classgdk_1_1texture"><td class="mdescLeft">&#160;</td><td class="mdescRight">interface type cannot be instantiated <br /></td></tr>
+<tr class="separator:ae6d05f721b7f90d3c989dea707110165 inherit pro_methods_classgdk_1_1texture"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>a texture generally represents the color of a surface </p>
@@ -333,8 +351,8 @@ static const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__text
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aea8545a38496cfebda55be94da187b68"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea8545a38496cfebda55be94da187b68">&#9670;&nbsp;</a></span>webgl1es2_texture()</h2>
+<a id="ac86cae68cdfdf1e5af86e9e2ea922edd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac86cae68cdfdf1e5af86e9e2ea922edd">&#9670;&nbsp;</a></span>webgl1es2_texture()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -342,7 +360,7 @@ static const std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__text
         <tr>
           <td class="memname">gdk::webgl1es2_texture::webgl1es2_texture </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__2d__data__type.html">webgl1es2_texture_2d_data_type</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structgdk_1_1webgl1es2__texture_1_1webgl1es2__texture__2d__data__view__type.html">webgl1es2_texture_2d_data_view_type</a> &amp;&#160;</td>
           <td class="paramname"><em>textureData2d</em>, </td>
         </tr>
         <tr>

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">086eb525719101a66d9e80f5a6635dc17cae72d4</span>
+   &#160;<span id="projectnumber">f3a5e491fb4fed41fab66e9fa92a88bae6079a1c</span>
    </div>
   </td>
  </tr>
@@ -92,8 +92,20 @@ Public Member Functions</h2></td></tr>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a271532fca609657b9fec9310e989e867">graphics::context::camera_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a33ec7ccc10ba64c1ea0a07cce6a94dbd">make_camera</a> () const override</td></tr>
 <tr class="memdesc:a33ec7ccc10ba64c1ea0a07cce6a94dbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera <br /></td></tr>
 <tr class="separator:a33ec7ccc10ba64c1ea0a07cce6a94dbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dfb73ce3ba687f00398fb6c89c0170f"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">graphics::context::built_in_shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a4dfb73ce3ba687f00398fb6c89c0170f">get_alpha_cutoff_shader</a> () const override</td></tr>
-<tr class="memdesc:a4dfb73ce3ba687f00398fb6c89c0170f"><td class="mdescLeft">&#160;</td><td class="mdescRight">create a special implementation-provided shader program -&gt; NAH  <a href="#a4dfb73ce3ba687f00398fb6c89c0170f">More...</a><br /></td></tr>
+<tr class="memitem:aa0818ca2112bcc4481f1cb2913be3c9e"><td class="memItemLeft" align="right" valign="top"><a id="aa0818ca2112bcc4481f1cb2913be3c9e"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a2bb52340da7c01148a31c2f7036b74d2">entity_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>make_entity</b> (model_shared_ptr_type pModel, material_shared_ptr_type pMaterial) const override</td></tr>
+<tr class="separator:aa0818ca2112bcc4481f1cb2913be3c9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d8121194062266ca6bf31b67dba2752"><td class="memItemLeft" align="right" valign="top"><a id="a7d8121194062266ca6bf31b67dba2752"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#af79abe012069d8383881b241f130d04c">graphics::context::material_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a7d8121194062266ca6bf31b67dba2752">make_material</a> (shader_program_shared_ptr_type pShader) const override</td></tr>
+<tr class="memdesc:a7d8121194062266ca6bf31b67dba2752"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a material. <br /></td></tr>
+<tr class="separator:a7d8121194062266ca6bf31b67dba2752"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa5ab01be45495e65f3cda0879c0ae9d"><td class="memItemLeft" align="right" valign="top"><a id="afa5ab01be45495e65f3cda0879c0ae9d"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ade67db9c9d0d9cf81fdb69554a27e6fd">graphics::context::texture_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#afa5ab01be45495e65f3cda0879c0ae9d">make_texture</a> (const <a class="el" href="structgdk_1_1texture_1_1image__data__2d__view.html">texture::image_data_2d_view</a> &amp;imageView) const override</td></tr>
+<tr class="memdesc:afa5ab01be45495e65f3cda0879c0ae9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a texture using a 2d image view <br /></td></tr>
+<tr class="separator:afa5ab01be45495e65f3cda0879c0ae9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dfb73ce3ba687f00398fb6c89c0170f"><td class="memItemLeft" align="right" valign="top"><a id="a4dfb73ce3ba687f00398fb6c89c0170f"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">graphics::context::built_in_shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a4dfb73ce3ba687f00398fb6c89c0170f">get_alpha_cutoff_shader</a> () const override</td></tr>
+<tr class="memdesc:a4dfb73ce3ba687f00398fb6c89c0170f"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets a lazily instantiated shader provided by the context implementation <br /></td></tr>
 <tr class="separator:a4dfb73ce3ba687f00398fb6c89c0170f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d805cd6e46a4f78cccad595cda3e46e"><td class="memItemLeft" align="right" valign="top"><a id="a3d805cd6e46a4f78cccad595cda3e46e"></a>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a3d805cd6e46a4f78cccad595cda3e46e">get_pink_shader_of_death</a> () const override</td></tr>
@@ -143,6 +155,10 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#af79abe012069d8383881b241f130d04c">material_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1material.html">material</a> &gt;</td></tr>
 <tr class="memdesc:af79abe012069d8383881b241f130d04c inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">material factory return type <br /></td></tr>
 <tr class="separator:af79abe012069d8383881b241f130d04c inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade67db9c9d0d9cf81fdb69554a27e6fd inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="ade67db9c9d0d9cf81fdb69554a27e6fd"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ade67db9c9d0d9cf81fdb69554a27e6fd">texture_ptr_type</a> = std::unique_ptr&lt; <a class="el" href="classgdk_1_1texture.html">texture</a> &gt;</td></tr>
+<tr class="memdesc:ade67db9c9d0d9cf81fdb69554a27e6fd inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">texture factory return type <br /></td></tr>
+<tr class="separator:ade67db9c9d0d9cf81fdb69554a27e6fd inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada0051e49d70a63e57517e93906bbc28 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="ada0051e49d70a63e57517e93906bbc28"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1model.html">model</a> &gt;</td></tr>
 <tr class="memdesc:ada0051e49d70a63e57517e93906bbc28 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr type for built in models provided by the implementation <br /></td></tr>
@@ -151,6 +167,15 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &gt;</td></tr>
 <tr class="memdesc:ad4d98b51f6efd84944653fa0c2d97962 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr type for built in shaders provided by the implementation <br /></td></tr>
 <tr class="separator:ad4d98b51f6efd84944653fa0c2d97962 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92fb37e593edcf5c6e3a58b1d7408ceb inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="a92fb37e593edcf5c6e3a58b1d7408ceb"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>shader_program_shared_ptr_type</b> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &gt;</td></tr>
+<tr class="separator:a92fb37e593edcf5c6e3a58b1d7408ceb inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac240feba0ac0995dfb5a2a9eafcc4c22 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="ac240feba0ac0995dfb5a2a9eafcc4c22"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>material_shared_ptr_type</b> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1material.html">material</a> &gt;</td></tr>
+<tr class="separator:ac240feba0ac0995dfb5a2a9eafcc4c22 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a521d37fec7439cfe7f5adcab7442a2b6 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="a521d37fec7439cfe7f5adcab7442a2b6"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>model_shared_ptr_type</b> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1model.html">model</a> &gt;</td></tr>
+<tr class="separator:a521d37fec7439cfe7f5adcab7442a2b6 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_classgdk_1_1graphics_1_1context"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_classgdk_1_1graphics_1_1context')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classgdk_1_1graphics_1_1context.html">gdk::graphics::context</a></td></tr>
 <tr class="memitem:acacaef1324b8d0f5e516a8c1efb928ce inherit pub_static_methods_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="acacaef1324b8d0f5e516a8c1efb928ce"></a>
 static <a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f081bf46fc89727ee224">context_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#acacaef1324b8d0f5e516a8c1efb928ce">make</a> (const <a class="el" href="classgdk_1_1graphics_1_1context.html#a44ec17c92a83487666ee69a2ba5be2d6">implementation</a> &amp;)</td></tr>
@@ -164,38 +189,7 @@ static <a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f08
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>brief webgl1/gles2.0 context implementation </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4dfb73ce3ba687f00398fb6c89c0170f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4dfb73ce3ba687f00398fb6c89c0170f">&#9670;&nbsp;</a></span>get_alpha_cutoff_shader()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">graphics::context::built_in_shader_ptr_type</a> gdk::webgl1es2_context::get_alpha_cutoff_shader </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>create a special implementation-provided shader program -&gt; NAH </p>
-<p>gets a lazily instantiated shader provided by the context implementation </p>
-
-<p>Implements <a class="el" href="classgdk_1_1graphics_1_1context.html#af7b14eec1465d03572a77b598ef928a2">gdk::graphics::context</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/impl/opengl/webgl1es2/include/gdk/<a class="el" href="webgl1es2__context_8h_source.html">webgl1es2_context.h</a></li>
 </ul>
 </div><!-- contents -->
