@@ -53,23 +53,27 @@ int main(int argc, char **argv)
 
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
-    auto pTexture = std::static_pointer_cast<webgl1es2_texture>(std::shared_ptr<gdk::texture>(std::move(pContext->make_texture(view))));
+    auto pTexture = std::static_pointer_cast<webgl1es2_texture>(
+        std::shared_ptr<gdk::texture>(
+            std::move(pContext->make_texture(view))));
 
-    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(std::shared_ptr<material>(std::move(pContext->make_material(pAlpha))));
+    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(
+        std::shared_ptr<material>(
+            std::move(pContext->make_material(pAlpha))));
     pMaterial->setTexture("_Texture", pTexture);
 
     std::vector<std::shared_ptr<gdk::webgl1es2_entity>> entities;
 
-    entities.push_back(std::make_shared<webgl1es2_entity>([&]()
-    {
-        webgl1es2_entity entity(pCube, pMaterial);
+    entities.push_back(
+        std::static_pointer_cast<gdk::webgl1es2_entity>(
+            std::shared_ptr<entity>(
+                std::move(pContext->make_entity(pCube, pMaterial)))));
+    std::static_pointer_cast<gdk::webgl1es2_entity>(entities.back())->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
 
-        entity.set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
-
-        return entity;
-    }()));
-
-    entities.push_back(std::make_shared<webgl1es2_entity>(webgl1es2_entity(*entities.back())));
+    entities.push_back(
+        std::static_pointer_cast<gdk::webgl1es2_entity>(
+            std::shared_ptr<entity>(
+                std::move(pContext->make_entity(*entities.back())))));
 
     float blar = 0;
 

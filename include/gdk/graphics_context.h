@@ -25,18 +25,6 @@ namespace gdk::graphics
     public:
         //! ptr type returned by factory method
         using context_ptr_type = std::unique_ptr<context>;
-
-        //! specifies implementation to use in context construction
-        enum class implementation
-        {
-            //! limited subset of OpenGL API available on a wide variety of desktop, 
-            /// mobile devices and browsers
-            opengl_webgl1_gles2,
-        };
-
-        //! context factory method
-        static context_ptr_type make(const implementation &);
-
         //! camera factory return type
         using camera_ptr_type = std::unique_ptr<camera>;
         //! entity factory return type
@@ -49,43 +37,80 @@ namespace gdk::graphics
         using material_ptr_type = std::unique_ptr<material>;
         //! texture factory return type
         using texture_ptr_type = std::unique_ptr<texture>;
-
+        
         //! ptr type for built in models provided by the implementation
         using built_in_model_ptr_type = std::shared_ptr<model>;
         //! ptr type for built in shaders provided by the implementation
         using built_in_shader_ptr_type = std::shared_ptr<shader_program>;
-
+        
+        //! shared ptr to a shader_program
         using shader_program_shared_ptr_type = std::shared_ptr<shader_program>;
+        //! shared ptr to a material
         using material_shared_ptr_type = std::shared_ptr<material>;
+        //! shared ptr to a model
         using model_shared_ptr_type = std::shared_ptr<model>;
+
+        //! specifies implementation to use in context construction
+        enum class implementation
+        {
+            //! limited subset of OpenGL API available on a wide variety of desktop, 
+            /// mobile devices and browsers
+            opengl_webgl1_gles2,
+        };
+
+        //! context factory method
+        static context_ptr_type make(const implementation &);
 
         //! makes a camera
         virtual camera_ptr_type make_camera() const = 0;
-        
-        virtual entity_ptr_type make_entity(model_shared_ptr_type pModel, material_shared_ptr_type pMaterial) const = 0;
+       
+        //! make an entity
+        virtual entity_ptr_type make_entity(
+            model_shared_ptr_type pModel, //!< vertex data for this entity. describes modelspace data.
+            material_shared_ptr_type pMaterial //!<  decides how the vertex data is ultimately rendered through the pipeline.
+        ) const = 0;
+        //! make an entity by copy
+        virtual entity_ptr_type make_entity(
+            const entity& other //!< entity to copy
+        ) const = 0;
 
-        //! creates a material. 
+        //! make a material. 
         virtual material_ptr_type make_material(
             shader_program_shared_ptr_type pShader //!< defines the pipeline's programmable stage behaviours, can be shared among multiple materials
         ) const = 0;
-        //virtual model_ptr_type make_model(bytes..) const = 0;
-        //virtual shader_program_ptr_type make_shader(string aVertexGLSL, string aFragGLSL) = const 0;
+
+        virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const = 0;
+        
+        //virtual model_ptr_type make_model(vertex_data_view?) const = 0;
 
         //! make a texture using a 2d image view
         virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;
-        //make texture from a 2d image
-        //virtual texture make_texture(std::vector<std::byte>> )
-        
-        //! gets a lazily instantiated shader provided by the context implementation
+
+        /**
+         * @name special resources provided by the implementation, focused on being resource unintensive.
+         */
+        //@{
+        /// \brief A forward renderer shader program with the following properties:
+        /// - required attributes: vec3 pos, vec2 uv
+        /// - vertex shader: mvp mul only
+        /// - fragment shader: colors frags with 2d sampler named "_Texture"
+        /// - If alpha channel is < 1.0, the fragment is discarded
         virtual built_in_shader_ptr_type get_alpha_cutoff_shader() const = 0;
-        //! gets a lazily instantiated shader provided by the context implementation
+
+        /// \brief A forward renderer shader program useful for displaying render errors:
+        /// - required attributes: vec3 pos
+        /// - vertex shader: mvp mul
+        /// - fragment shader: all frags are colored neon pink
         virtual built_in_shader_ptr_type get_pink_shader_of_death() const = 0;
 
-        //! gets a lazily instantiated model provided by the context implementation
+        /// \brief a 1x1x1 cube model
+        /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
         virtual built_in_model_ptr_type get_cube_model() const = 0;
 
-        //! gets a lazily instantiated model provided by the context implementation
-        //virtual built_in_model_ptr_type get_quad_model() const = 0;
+        /// \brief a 1x1 quad model
+        /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
+        virtual built_in_model_ptr_type get_quad_model() const = 0;
+        //@}
 
         //! virtual destructor
         virtual ~context() = default;

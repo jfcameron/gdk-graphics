@@ -12,18 +12,25 @@ namespace gdk
     {
     public:
         virtual graphics::context::camera_ptr_type make_camera() const override;
+
         virtual entity_ptr_type make_entity(model_shared_ptr_type pModel, material_shared_ptr_type pMaterial) const override;
+
+        virtual entity_ptr_type make_entity(const entity& other) const override;
+
         virtual graphics::context::material_ptr_type make_material(shader_program_shared_ptr_type pShader) const override;
         //virtual graphics::context::model_ptr_type make_model() const override;
 
-        //virtual graphics::context::shader_program_ptr_type make_shader_program(const build_in_shader_program aBuildInShader) const override;
+        virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const override;
 
         virtual graphics::context::texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const override;
 
         virtual graphics::context::built_in_shader_ptr_type get_alpha_cutoff_shader() const override;
+
         virtual built_in_shader_ptr_type get_pink_shader_of_death() const override;
 
         virtual built_in_model_ptr_type get_cube_model() const override;
+        
+        virtual built_in_model_ptr_type get_quad_model() const override;
 
         //! default ctor
         webgl1es2_context(); 
