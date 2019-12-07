@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">6007cb1b1bb46f4944ce1bbf616600c91402fe80</span>
+   &#160;<span id="projectnumber">e35c0f53877578bbf132b7aa2f3c08db1effbf0b</span>
    </div>
   </td>
  </tr>
@@ -147,6 +147,9 @@ Public Member Functions</h2></td></tr>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a271532fca609657b9fec9310e989e867">camera_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#aa3ad734b0a7ccefe0e1931cf41daeed2">make_camera</a> () const =0</td></tr>
 <tr class="memdesc:aa3ad734b0a7ccefe0e1931cf41daeed2"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera <br /></td></tr>
 <tr class="separator:aa3ad734b0a7ccefe0e1931cf41daeed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e9eb0a56b757ca7407557cbc7157cef"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a271532fca609657b9fec9310e989e867">camera_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a3e9eb0a56b757ca7407557cbc7157cef">make_camera</a> (const <a class="el" href="classgdk_1_1camera.html">camera</a> &amp;other) const =0</td></tr>
+<tr class="memdesc:a3e9eb0a56b757ca7407557cbc7157cef"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera by copy  <a href="#a3e9eb0a56b757ca7407557cbc7157cef">More...</a><br /></td></tr>
+<tr class="separator:a3e9eb0a56b757ca7407557cbc7157cef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a43ec1a93594199739b100de1b341d7"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a2bb52340da7c01148a31c2f7036b74d2">entity_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a6a43ec1a93594199739b100de1b341d7">make_entity</a> (<a class="el" href="classgdk_1_1graphics_1_1context.html#a521d37fec7439cfe7f5adcab7442a2b6">model_shared_ptr_type</a> pModel, <a class="el" href="classgdk_1_1graphics_1_1context.html#ac240feba0ac0995dfb5a2a9eafcc4c22">material_shared_ptr_type</a> pMaterial) const =0</td></tr>
 <tr class="memdesc:a6a43ec1a93594199739b100de1b341d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">make an entity  <a href="#a6a43ec1a93594199739b100de1b341d7">More...</a><br /></td></tr>
 <tr class="separator:a6a43ec1a93594199739b100de1b341d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,7 +160,8 @@ virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a271532fca60965
 <tr class="memdesc:a0769ab369c2808e5592184a451bac504"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a material.  <a href="#a0769ab369c2808e5592184a451bac504">More...</a><br /></td></tr>
 <tr class="separator:a0769ab369c2808e5592184a451bac504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37043d28834002cff273d3c91c494395"><td class="memItemLeft" align="right" valign="top"><a id="a37043d28834002cff273d3c91c494395"></a>
-virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a6879a831f369a3f8a331be8b96e9a434">shader_program_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>make_shader</b> (const std::string &amp;aVertexGLSL, const std::string &amp;aFragGLSL) const =0</td></tr>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a6879a831f369a3f8a331be8b96e9a434">shader_program_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a37043d28834002cff273d3c91c494395">make_shader</a> (const std::string &amp;aVertexGLSL, const std::string &amp;aFragGLSL) const =0</td></tr>
+<tr class="memdesc:a37043d28834002cff273d3c91c494395"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a shader program containing a user-defined vertex shader stage and fragment shader stage <br /></td></tr>
 <tr class="separator:a37043d28834002cff273d3c91c494395"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e405043cbc2db273328bf5325f220c5"><td class="memItemLeft" align="right" valign="top"><a id="a1e405043cbc2db273328bf5325f220c5"></a>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ade67db9c9d0d9cf81fdb69554a27e6fd">texture_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a1e405043cbc2db273328bf5325f220c5">make_texture</a> (const <a class="el" href="structgdk_1_1texture_1_1image__data__2d__view.html">texture::image_data_2d_view</a> &amp;imageView) const =0</td></tr>
@@ -357,6 +361,42 @@ Protected Member Functions</h2></td></tr>
 </ul>
 
 <p>Implemented in <a class="el" href="classgdk_1_1webgl1es2__context.html#a28e66aeff4a7dea25257ef2844a7db99">gdk::webgl1es2_context</a>.</p>
+
+</div>
+</div>
+<a id="a3e9eb0a56b757ca7407557cbc7157cef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e9eb0a56b757ca7407557cbc7157cef">&#9670;&nbsp;</a></span>make_camera()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a271532fca609657b9fec9310e989e867">camera_ptr_type</a> gdk::graphics::context::make_camera </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classgdk_1_1camera.html">camera</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>makes a camera by copy </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>camera to copy </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classgdk_1_1webgl1es2__context.html#aad29b5da914f283cadca5e34bc795702">gdk::webgl1es2_context</a>.</p>
 
 </div>
 </div>
