@@ -63,6 +63,10 @@ namespace gdk::graphics
 
         //! makes a camera
         virtual camera_ptr_type make_camera() const = 0;
+        //! makes a camera by copy
+        virtual camera_ptr_type make_camera(
+            const camera &other //!< camera to copy
+        ) const = 0;
        
         //! make an entity
         virtual entity_ptr_type make_entity(
@@ -71,7 +75,7 @@ namespace gdk::graphics
         ) const = 0;
         //! make an entity by copy
         virtual entity_ptr_type make_entity(
-            const entity& other //!< entity to copy
+            const entity &other //!< entity to copy
         ) const = 0;
 
         //! make a material. 
@@ -79,6 +83,7 @@ namespace gdk::graphics
             shader_program_shared_ptr_type pShader //!< defines the pipeline's programmable stage behaviours, can be shared among multiple materials
         ) const = 0;
 
+        /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
         virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const = 0;
         
         //virtual model_ptr_type make_model(vertex_data_view?) const = 0;

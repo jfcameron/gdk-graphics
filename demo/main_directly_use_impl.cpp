@@ -21,33 +21,13 @@ using namespace gdk;
 using namespace jfc;
 
 int main(int argc, char **argv)
-{
+{   
     // Separate lib, used to init GL and get a window ready for rendering
     glfw_window window("cool demo");
 
     // specifying the library's implementation to be used
     //TODO: continue expanding context methods. eventually remove static_casts, virtualize minimum methods required
     auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
-
-    /////====================================================================================
-
-    model::attribute_data_view attribData;
-    attribData.component_type = model::attribute_data_view::component_type::byte_type;
-    attribData.components_per_attribute = 3;
-    
-    std::vector<model::attribute_data_view::byte_type> posData({
-        1, 2, 3,
-        4, 5, 6
-    });
-
-    attribData.data = *posData.begin();
-    attribData.dataSize = posData.size();
-
-    /////====================================================================================
-    //vertexData.number_of_attributes;
-
-    //std::variant<byte_type *, unsigned_byte_type *, short_type, unsigned_short_type *, float_type *> data; 
-
 
     auto pCamera = std::static_pointer_cast<webgl1es2_camera>(std::shared_ptr<gdk::camera>(std::move(pContext->make_camera())));
     pCamera->setProjection(90, 0.01, 20, 1);

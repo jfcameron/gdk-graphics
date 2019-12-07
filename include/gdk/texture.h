@@ -8,7 +8,9 @@
 
 namespace gdk
 {
-    /// \brief 2d data generally used to color primitive surfaces
+    /// \brief 2d color data ususally used to color the surfaces of a 3d model.
+    /// more accurately: used to color fragments produced from the rasterization of primitive surfaces.
+    /// ultimately textures are just a uniform type, they can be used in any number of ways and may not contribute to the color of any fragments (e.g: heightmaps).
     class texture
     {
     public:

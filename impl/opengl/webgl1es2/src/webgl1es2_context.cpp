@@ -17,6 +17,13 @@ graphics::context::camera_ptr_type webgl1es2_context::make_camera() const
     return graphics::context::camera_ptr_type(new webgl1es2_camera());
 }
 
+graphics::context::camera_ptr_type webgl1es2_context::make_camera(const camera &other) const
+{
+    return graphics::context::camera_ptr_type(
+        new webgl1es2_camera(
+            static_cast<const webgl1es2_camera &>(other)));
+}
+
 graphics::context::entity_ptr_type webgl1es2_context::make_entity(gdk::graphics::context::model_shared_ptr_type pModel, 
     gdk::graphics::context::material_shared_ptr_type pMaterial) const
 {

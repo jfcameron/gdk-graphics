@@ -10,8 +10,10 @@ namespace gdk
     //! brief webgl1/gles2.0 context implementation
     class webgl1es2_context final : public graphics::context
     {
-    public:
+    public: 
         virtual graphics::context::camera_ptr_type make_camera() const override;
+
+        virtual camera_ptr_type make_camera(const camera &other) const override;
 
         virtual entity_ptr_type make_entity(model_shared_ptr_type pModel, material_shared_ptr_type pMaterial) const override;
 
@@ -35,6 +37,7 @@ namespace gdk
         //! default ctor
         webgl1es2_context(); 
 
+        //! default dtor
         virtual ~webgl1es2_context() override = default;
     };
 }

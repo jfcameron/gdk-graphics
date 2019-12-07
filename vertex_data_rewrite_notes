@@ -1,0 +1,64 @@
+implement model::vertex_data_view
+this will likely affect vertex attribute and format
+-=-=-
+glVertexAttribPointer
+-=
+experiment: what if I specify different types in VertAttribPointer from the same buffer?hmmm
+From GL's perspective:
+an attribute has: 
+a name,   //Name of attribute it binds to in the shaderprogram
+a type,   //GL primitive type
+a size,   //# of components.
+a stride, //size of a single repeat in the buffer
+//ie if only pos3 then 3. if buffer is shared pos3uv2 then 5.
+
+*name isnt true, its an index, but name is trivially mapped at shader ctor time.
+
+From User's perspective:
+an attrib name,
+a type //how abstract? floats, ints etc or stuff like Vec3s?
+
+-=-=-=
+conclusion: im wrong. I dont need many VBOs, can just append to the back of 1 with different types. this is best of both worlds. only 1 vbos worth of API calls, but can tightly pack data by mixing types rather than forcing a one-size-fits all (GLfloat). I finally understand why stride is given in byteize while attrib size is in # of attribs: the type of a component of an attribte is the same (vec3) but can differ between attributes (uv could be fixed)
+
+GLbyte GL_BYTE = 8bits
+GLubyte GL_UNSIGNED_BYTE = 8bits
+GLshort GL_SHORT = 16bits
+GLshort GL_UNSIGNED_SHORT = 16bits
+GLfloat GL_FLOAT = 32bits
+
+//
+passthrough interface to impl layer will likely require a copy, since impl primitive type sizes are not known to the user.
+
+json sketch of attribute data:
+attributes
+{
+    "position": {
+        "component_count": 3,
+        "component_type": GLfloat,
+        "data": [
+            1, 2, 3,
+            4, 5, 6,
+            ...
+        ]
+    },
+
+    "uv": {
+        "component_count": 2,
+        "component_type": GLbyte,
+        "data": [
+            0, 1,
+            0, 1,
+            ...
+        ]
+    }
+}
+in the impl, all this data could be appended to the same vbo
+-=-==
+current impl is
+{ p1, p2, p3, u, v, n1, n2, n3, p1, p2, p3, u, v, n1, n2, n3, ... }
+new impl would be:
+{ p1, p2, p3, p1, p2, p3, u, v, u, v, n1, n2, n3, n1, n2, n3, ... }
+quite a bit like separate vbos for each attrib array, but all concatenated into one. advantage of both: less data to upload, minimal api calls.
+
+

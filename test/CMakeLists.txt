@@ -7,6 +7,7 @@ jfc_add_tests(
     TEST_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/camera_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/color_test.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/context_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/entity_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/material_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/model_test.cpp"

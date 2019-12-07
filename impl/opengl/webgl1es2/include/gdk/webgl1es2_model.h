@@ -18,6 +18,25 @@ namespace gdk
     class webgl1es2_model final : public model
     {
     public:
+        // -=-=-=-=-=-=-=-=-=- WIP -=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-
+        template<class component_type_param> struct attribute
+        {
+            using component_type = component_type_param;
+
+            size_t length; //!< number of components per attribute
+            
+            std::vector<component_type> data; //!< datatype of components
+        };
+
+        using byte_attribute = attribute<GLbyte>;
+        using unsigned_byte_attribute = attribute<GLubyte>;
+        using short_attribute = attribute<GLshort>;
+        using unsigned_short_attribute = attribute<GLushort>;
+        using float_attribute = attribute<GLfloat>;
+
+        //using attributes = std::unordered_map</*attribname*/std::string, attribute>;
+        // -=-=-=-=-=-=-=-=-=- WIP -=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-
+
         /// \brief Hint to the graphics device about how the vertex data will be used.
         enum class Type 
         {
