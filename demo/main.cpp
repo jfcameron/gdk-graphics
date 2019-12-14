@@ -51,9 +51,9 @@ int main(int argc, char **argv)
         4, 5, 6  // Vertex 2
     });
 
-    vertex_data_view verts(
+    /*vertex_data_view verts(
     {}
-    );
+    );*/
 
     /////====================================================================================
     //vertexData.number_of_attributes;
