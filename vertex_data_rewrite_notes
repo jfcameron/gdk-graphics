@@ -1,3 +1,10 @@
+mv jfc-cmake to cmake/jfc-cmake.
+mv everything into graphics namespace.
+--
+vertex data view do it. do it
+
+--- --- --- --- 
+
 implement model::vertex_data_view
 this will likely affect vertex attribute and format
 -=-=-

@@ -14,5 +14,4 @@ Coverage calculated with gcov viewable here: https://coveralls.io/github/jfcamer
 
 CI done using Travis CI. Build scripts cover Windows, Linux, Mac; Clang, GCC, MSVC, MinGW: https://travis-ci.org/jfcameron/gdk-graphics
 
-catch2 unit tests available under `test/`.
-
+catch2 unit tests available under `test/` and can be run with ctest

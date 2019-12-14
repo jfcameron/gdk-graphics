@@ -30,18 +30,30 @@ int main(int argc, char **argv)
     auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
 
     /////====================================================================================
+    struct vertex_data_view
+    {
 
-    model::attribute_data_view attribData;
-    attribData.component_type = model::attribute_data_view::component_type::byte_type;
-    attribData.components_per_attribute = 3;
-    
-    std::vector<model::attribute_data_view::byte_type> posData({
-        1, 2, 3,
-        4, 5, 6
+    };
+
+    // TODO: finish thinking this through
+    std::vector<float> posData({
+        1, 2, 3, // Vertex 1
+        4, 5, 6  // Vertex 2
     });
 
-    attribData.data = *posData.begin();
-    attribData.dataSize = posData.size();
+    std::vector<float> uvData({
+        0, 0, // Vertex 1
+        1, 1, // Vertex 2
+    });
+
+    std::vector<float> normData({
+        1, 2, 3, // Vertex 1
+        4, 5, 6  // Vertex 2
+    });
+
+    vertex_data_view verts(
+    {}
+    );
 
     /////====================================================================================
     //vertexData.number_of_attributes;

@@ -49,6 +49,8 @@ namespace gdk
                 
                 //! ptr to the beginning of the attribute list
                 std::variant<byte_type *, unsigned_byte_type *, short_type, unsigned_short_type *, float_type *> data; 
+
+                //attribute_data_view(const std::vector<
             };
 
             /*using byte_attribute_data_view = attribute_data_view<char>;
