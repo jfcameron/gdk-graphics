@@ -10,9 +10,9 @@
 
 #include <set>
 
-// TODO think about implementation. currently doing a nested datastructure thing. maybe have multiple structures, 
-// to both linearize and nest items. toplevel vec<entity>, then nested maps that.. index? point? into the vec? hm.
-// index. list of deletions? on draw if find deletions != end, remove this, break. ? that works.. however not concurrency friendly
+// TODO implement remove_entity
+// TODO implement remove_camera
+// TODO handle entity material & model changes. -> Will need to implement signals... vec<functor> likely.
 namespace gdk
 {
     //! render scene.
