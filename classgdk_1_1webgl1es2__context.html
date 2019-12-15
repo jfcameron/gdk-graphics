@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">675e7dd2288a92024c262f937ab1548fa2ae5336</span>
+   &#160;<span id="projectnumber">0ff6590644413b017fcdf7ff1f911bc5fc5f8a34</span>
    </div>
   </td>
  </tr>
@@ -108,6 +108,10 @@ virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a2bb52340da7c01
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#af79abe012069d8383881b241f130d04c">graphics::context::material_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a7d8121194062266ca6bf31b67dba2752">make_material</a> (<a class="el" href="classgdk_1_1graphics_1_1context.html#a92fb37e593edcf5c6e3a58b1d7408ceb">shader_program_shared_ptr_type</a> pShader) const override</td></tr>
 <tr class="memdesc:a7d8121194062266ca6bf31b67dba2752"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a material. <br /></td></tr>
 <tr class="separator:a7d8121194062266ca6bf31b67dba2752"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa2aa63273f948fac49a4fe1a93f31ab"><td class="memItemLeft" align="right" valign="top"><a id="afa2aa63273f948fac49a4fe1a93f31ab"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ac5d25ee7bf260de68793238e1bb62b9e">graphics::context::model_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#afa2aa63273f948fac49a4fe1a93f31ab">make_model</a> (const <a class="el" href="classvertex__data__view.html">vertex_data_view</a> &amp;vertexDataView) const override</td></tr>
+<tr class="memdesc:afa2aa63273f948fac49a4fe1a93f31ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">construct model by vertext data view <br /></td></tr>
+<tr class="separator:afa2aa63273f948fac49a4fe1a93f31ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b49ac68b7eae7e19559271456668151"><td class="memItemLeft" align="right" valign="top"><a id="a6b49ac68b7eae7e19559271456668151"></a>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a6879a831f369a3f8a331be8b96e9a434">shader_program_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a6b49ac68b7eae7e19559271456668151">make_shader</a> (const std::string &amp;aVertexGLSL, const std::string &amp;aFragGLSL) const override</td></tr>
 <tr class="memdesc:a6b49ac68b7eae7e19559271456668151"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a shader program containing a user-defined vertex shader stage and fragment shader stage <br /></td></tr>
@@ -122,11 +126,13 @@ virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ade67db9c9d0d9c
 <tr class="memitem:a3d805cd6e46a4f78cccad595cda3e46e"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a3d805cd6e46a4f78cccad595cda3e46e">get_pink_shader_of_death</a> () const override</td></tr>
 <tr class="memdesc:a3d805cd6e46a4f78cccad595cda3e46e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A forward renderer shader program useful for displaying render errors:  <a href="#a3d805cd6e46a4f78cccad595cda3e46e">More...</a><br /></td></tr>
 <tr class="separator:a3d805cd6e46a4f78cccad595cda3e46e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ff1d5915265991aab059ac29861737e"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a9ff1d5915265991aab059ac29861737e">get_cube_model</a> () const override</td></tr>
-<tr class="memdesc:a9ff1d5915265991aab059ac29861737e"><td class="mdescLeft">&#160;</td><td class="mdescRight">a 1x1x1 cube model  <a href="#a9ff1d5915265991aab059ac29861737e">More...</a><br /></td></tr>
+<tr class="memitem:a9ff1d5915265991aab059ac29861737e"><td class="memItemLeft" align="right" valign="top"><a id="a9ff1d5915265991aab059ac29861737e"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a9ff1d5915265991aab059ac29861737e">get_cube_model</a> () const override</td></tr>
+<tr class="memdesc:a9ff1d5915265991aab059ac29861737e"><td class="mdescLeft">&#160;</td><td class="mdescRight">WebGLES2 impl of built in cube model. <br /></td></tr>
 <tr class="separator:a9ff1d5915265991aab059ac29861737e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28e66aeff4a7dea25257ef2844a7db99"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a28e66aeff4a7dea25257ef2844a7db99">get_quad_model</a> () const override</td></tr>
-<tr class="memdesc:a28e66aeff4a7dea25257ef2844a7db99"><td class="mdescLeft">&#160;</td><td class="mdescRight">a 1x1 quad model  <a href="#a28e66aeff4a7dea25257ef2844a7db99">More...</a><br /></td></tr>
+<tr class="memitem:a28e66aeff4a7dea25257ef2844a7db99"><td class="memItemLeft" align="right" valign="top"><a id="a28e66aeff4a7dea25257ef2844a7db99"></a>
+virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a28e66aeff4a7dea25257ef2844a7db99">get_quad_model</a> () const override</td></tr>
+<tr class="memdesc:a28e66aeff4a7dea25257ef2844a7db99"><td class="mdescLeft">&#160;</td><td class="mdescRight">WebGLES2 impl of built in quad model. <br /></td></tr>
 <tr class="separator:a28e66aeff4a7dea25257ef2844a7db99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8b1ee62ce853a3d6ad7d7ed3c6bea68"><td class="memItemLeft" align="right" valign="top"><a id="aa8b1ee62ce853a3d6ad7d7ed3c6bea68"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#aa8b1ee62ce853a3d6ad7d7ed3c6bea68">webgl1es2_context</a> ()</td></tr>
@@ -246,38 +252,6 @@ static <a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f08
 
 </div>
 </div>
-<a id="a9ff1d5915265991aab059ac29861737e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ff1d5915265991aab059ac29861737e">&#9670;&nbsp;</a></span>get_cube_model()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a> gdk::webgl1es2_context::get_cube_model </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>a 1x1x1 cube model </p>
-<ul>
-<li>vertex attributes: vec3 pos, vec2 uv, vec3 normal </li>
-</ul>
-
-<p>Implements <a class="el" href="classgdk_1_1graphics_1_1context.html#ab7a06a583a3b38bd92ca06ed9d3112d2">gdk::graphics::context</a>.</p>
-
-</div>
-</div>
 <a id="a3d805cd6e46a4f78cccad595cda3e46e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3d805cd6e46a4f78cccad595cda3e46e">&#9670;&nbsp;</a></span>get_pink_shader_of_death()</h2>
 
@@ -309,38 +283,6 @@ static <a class="el" href="classgdk_1_1graphics_1_1context.html#af93b7e0f05e7f08
 </ul>
 
 <p>Implements <a class="el" href="classgdk_1_1graphics_1_1context.html#abbf51d9d8bac683b8fccccf8793b5b26">gdk::graphics::context</a>.</p>
-
-</div>
-</div>
-<a id="a28e66aeff4a7dea25257ef2844a7db99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28e66aeff4a7dea25257ef2844a7db99">&#9670;&nbsp;</a></span>get_quad_model()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ada0051e49d70a63e57517e93906bbc28">built_in_model_ptr_type</a> gdk::webgl1es2_context::get_quad_model </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>a 1x1 quad model </p>
-<ul>
-<li>vertex attributes: vec3 pos, vec2 uv, vec3 normal </li>
-</ul>
-
-<p>Implements <a class="el" href="classgdk_1_1graphics_1_1context.html#a3ac0dc5ad69008ce9686de4588f813e6">gdk::graphics::context</a>.</p>
 
 </div>
 </div>
