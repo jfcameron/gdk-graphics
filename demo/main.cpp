@@ -26,14 +26,14 @@ int main(int argc, char **argv)
     // Separate lib, used to init GL and get a window ready for rendering
     glfw_window window("cool demo");
 
-    // specifying the library's implementation to be used
-    //TODO: continue expanding context methods. eventually remove static_casts, virtualize minimum methods required
     auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
     
     auto pScene = pContext->make_scene();
 
     auto pCamera = std::shared_ptr<gdk::camera>(std::move(pContext->make_camera()));
     pCamera->setProjection(90, 0.01, 20, 1);
+
+    pScene->add_camera(pCamera);
     
     auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_alpha_cutoff_shader());
 
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
         0, 1,
         1, 1});
     
-    auto pCube = std::static_pointer_cast<webgl1es2_model>(std::shared_ptr<model>(std::move(
+    auto pUserModel = std::static_pointer_cast<webgl1es2_model>(std::shared_ptr<model>(std::move(
     pContext->make_model({
         vertex_data_view::UsageHint::Static,
         {
@@ -77,8 +77,6 @@ int main(int argc, char **argv)
         }
     }))));
 
-    auto pMaterial2 = std::static_pointer_cast<webgl1es2_material>(std::shared_ptr<material>(std::move(pContext->make_material(pAlpha))));
-
     texture::image_data_2d_view view;
     view.width = 2;
     view.height = 2;
@@ -96,65 +94,66 @@ int main(int argc, char **argv)
     auto pTexture = std::static_pointer_cast<webgl1es2_texture>(
         std::shared_ptr<gdk::texture>(
             std::move(pContext->make_texture(view))));
-
+    
     auto pMaterial = std::static_pointer_cast<webgl1es2_material>(
         std::shared_ptr<material>(
             std::move(pContext->make_material(pAlpha))));
+
     pMaterial->setTexture("_Texture", pTexture);
 
-    std::vector<std::shared_ptr<gdk::webgl1es2_entity>> entities;
+    view.width = 2;
+    view.height = 2;
+    view.format = texture::data_format::rgba;
 
-    entities.push_back(
-        std::static_pointer_cast<gdk::webgl1es2_entity>(
-            std::shared_ptr<entity>(
-                std::move(pContext->make_entity(pCube, pMaterial)))));
+    imageData = decltype(imageData)({
+        0x55, 0xff, 0xff, 0xff,
+        0xff, 0x00, 0xff, 0xff,
+        0xff, 0xff, 0x00, 0xff,
+        0x00, 0x00, 0x44, 0xff,
+    });
 
-    std::static_pointer_cast<gdk::webgl1es2_entity>(entities.back())->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
+    view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
-    entities.push_back(
-        std::static_pointer_cast<gdk::webgl1es2_entity>(
-            std::shared_ptr<entity>(
-                std::move(pContext->make_entity(*entities.back())))));
+    auto pTexture2 = std::static_pointer_cast<webgl1es2_texture>(
+        std::shared_ptr<gdk::texture>(
+            std::move(pContext->make_texture(view))));
 
-    float blar = 0;
+    auto pMaterial2 = std::static_pointer_cast<webgl1es2_material>(
+        std::shared_ptr<material>(
+            std::move(pContext->make_material(pAlpha))));
+
+    pMaterial2->setTexture("_Texture", pTexture2);
+
+    auto pEntity = std::static_pointer_cast<gdk::webgl1es2_entity>(
+        std::shared_ptr<entity>(
+            std::move(pContext->make_entity(pUserModel, pMaterial))));
+    
+    std::static_pointer_cast<gdk::webgl1es2_entity>(pEntity)->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
+
+    pScene->add_entity(pEntity);
+
+    auto pEntity2 = std::static_pointer_cast<gdk::webgl1es2_entity>(
+        std::shared_ptr<entity>(pContext->make_entity(
+            std::shared_ptr<model>(std::move(pContext->get_cube_model())),
+                pMaterial2)));
+    
+    pScene->add_entity(pEntity2);
+
+    float time = 0;
 
     while(!window.shouldClose())
     {
         glfwPollEvents();
-      
-        auto coolEntity = entities.back();
-        coolEntity->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{blar, 2 * (blar / 2), 4}});
         
-        pCamera->set_view_matrix({std::sin(blar), 0, -10}, {});
+        pEntity2->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{time, 2 * (time / 2), 4}});
+        
+        pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
 
-        std::static_pointer_cast<webgl1es2_camera>(pCamera)->activate(window.getWindowSize());
-
-        for(auto &current_entity : entities) 
-        {
-            static bool yepp = false;
-
-            if (yepp)
-            {
-                pMaterial2->activate();
-
-                yepp = false;
-            }
-            else
-            {
-                pMaterial->activate();
-
-                yepp = true;
-            }
-
-            pCube->bind(*pAlpha); //binds vertex data
-
-            current_entity->draw(pCamera->getViewMatrix(), 
-                pCamera->getProjectionMatrix());
-        }
+        pScene->draw(window.getWindowSize());
 
         window.swapBuffer(); 
 
-        blar += 0.001;
+        time += 0.001;
     }
 
     return EXIT_SUCCESS;
