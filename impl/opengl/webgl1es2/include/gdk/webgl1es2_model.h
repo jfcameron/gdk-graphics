@@ -5,7 +5,7 @@
 
 #include <gdk/model.h>
 #include <gdk/webgl1es2_vertex_format.h>
-#include <jfc/lazy_ptr.h>
+#include <jfc/shared_proxy_ptr.h>
 #include <jfc/unique_handle.h>
 
 #include <iosfwd>
@@ -14,28 +14,14 @@
 namespace gdk
 {
     /// \brief Vertex data representing a 3D graphical object
-    // TODO: support multiple VBO objects, to allow using more appropriate Gl types for uvs, normals. Currently only supports interweaved GLBytes
     class webgl1es2_model final : public model
     {
     public:
-        // -=-=-=-=-=-=-=-=-=- WIP -=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-
-        template<class component_type_param> struct attribute
-        {
-            using component_type = component_type_param;
+        //! type that must be used to populate vertex data buffers. All GLES2 attrib types have a float based component type. (float, float vec2, float mat etc)
+        using attribute_component_data_type = GLfloat; 
 
-            size_t length; //!< number of components per attribute
-            
-            std::vector<component_type> data; //!< datatype of components
-        };
-
-        using byte_attribute = attribute<GLbyte>;
-        using unsigned_byte_attribute = attribute<GLubyte>;
-        using short_attribute = attribute<GLshort>;
-        using unsigned_short_attribute = attribute<GLushort>;
-        using float_attribute = attribute<GLfloat>;
-
-        //using attributes = std::unordered_map</*attribname*/std::string, attribute>;
-        // -=-=-=-=-=-=-=-=-=- WIP -=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-
+        //! type that must be used for index buffer data
+        using index_data_type = GLushort; 
 
         /// \brief Hint to the graphics device about how the vertex data will be used.
         enum class Type 
@@ -72,7 +58,7 @@ namespace gdk
             //! Every vertex after the first three define a new triangle
             TriangleStrip, 
 
-            //! Same as Triangle strip except draws in a "fan shape" (???)
+            //! Same as Triangle strip except draws in a "fan shape" (???) TODO: find & document better explanation
             TriangleFan
         };
             
@@ -103,20 +89,20 @@ namespace gdk
         //! invokes pipeline on the data. data must be bound
         void draw() const;
 
-        //! replace current data in the vbo and ibo with new data
-        void updatewebgl1es2_model(const std::vector<GLfloat> &aNewwebgl1es2_model, 
+        /*//! replace current data in the vbo and ibo with new data
+        void updatewebgl1es2_model(const std::vector<attribute_component_data_type> &aNewwebgl1es2_model, 
             const webgl1es2_vertex_format &aNewvertex_format,
             const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
-            const webgl1es2_model::Type &aNewType = Type::Dynamic);
+            const webgl1es2_model::Type &aNewType = Type::Dynamic);*/
       
         //! equality semantics based on handle values
         bool operator==(const webgl1es2_model &);
         //! equality semantics based on handle values
         bool operator!=(const webgl1es2_model &);
 
-        //! move semantics
+        //! support move semantics
         webgl1es2_model &operator=(webgl1es2_model &&) = default;
-        //! move semantics
+        //! support move semantics
         webgl1es2_model(webgl1es2_model &&) = default;
            
         //! disable copy semantics
@@ -126,12 +112,12 @@ namespace gdk
       
         webgl1es2_model(const webgl1es2_model::Type &aType, 
             const webgl1es2_vertex_format &avertex_format, 
-            const std::vector<GLfloat> &awebgl1es2_model,
+            const std::vector<attribute_component_data_type> &awebgl1es2_model,
             const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
             const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
-        
-        static const jfc::lazy_ptr<gdk::webgl1es2_model> Quad; //!< a quad with format pos3uv2
-        static const jfc::lazy_ptr<gdk::webgl1es2_model> Cube; //!< a cube with format ps3uv2norm3
+
+        static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Quad; //!< a quad with format pos3uv2
+        static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Cube; //!< a cube with format ps3uv2norm3
     };
 }
 

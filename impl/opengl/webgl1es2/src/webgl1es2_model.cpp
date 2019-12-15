@@ -10,14 +10,14 @@
 
 using namespace gdk;
 
-static constexpr char TAG[] = "model";
+static constexpr char TAG[] = "webgl1es2_model";
 
-const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
+const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
 {
     float size  = 1.;
     float hsize = size/2.;
 
-    std::vector<GLfloat> data(
+    std::vector<webgl1es2_model::attribute_component_data_type> data(
     {
         //        x,           y,    z,    u,    v,
         size -hsize, size -hsize, 0.0f, 1.0f, 0.0f, // 1--0
@@ -31,12 +31,12 @@ const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
     return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, gdk::webgl1es2_vertex_format::Pos3uv2, data);
 });
 
-const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
+const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
 {
     float size  = 1.;
     float hsize = size/2.;
     
-    std::vector<GLfloat> data(
+    std::vector<webgl1es2_model::attribute_component_data_type> data(
     {
         //        x,           y,      z,   u,   v,  Nx,  Ny,    Nz, North
         size -hsize, size -hsize, -hsize, 0.0, 0.0,  0.0, 0.0, -1.0, // 2--0
@@ -148,7 +148,7 @@ void webgl1es2_model::draw() const
     else glDrawArrays(primitiveMode, 0, m_VertexCount);
 }
 
-void webgl1es2_model::updatewebgl1es2_model(const std::vector<GLfloat> &aNewwebgl1es2_model
+/*void webgl1es2_model::updatewebgl1es2_model(const std::vector<webgl1es2_model::attribute_component_data_type> &aNewwebgl1es2_model
     , const webgl1es2_vertex_format &aNewvertex_format
     , const std::vector<GLushort> &aIndexData
     , const webgl1es2_model::Type &aNewType)
@@ -159,7 +159,7 @@ void webgl1es2_model::updatewebgl1es2_model(const std::vector<GLfloat> &aNewwebg
     GLint type = webgl1es2_modelTypeToOpenGLDrawType(aNewType);
     
     glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
-    glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * aNewwebgl1es2_model.size(), &aNewwebgl1es2_model[0], type);
+    glBufferData (GL_ARRAY_BUFFER, sizeof(webgl1es2_model::attribute_component_data_type) * aNewwebgl1es2_model.size(), &aNewwebgl1es2_model[0], type);
     //glBindBuffer (GL_ARRAY_BUFFER,0);
 
     //IBO    
@@ -174,11 +174,11 @@ void webgl1es2_model::updatewebgl1es2_model(const std::vector<GLfloat> &aNewwebg
         
         if (glh::GetError(&errorCode)) std::runtime_error(std::string(TAG).append(errorCode));
     }
-}
+}*/
 
 webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType, 
     const webgl1es2_vertex_format &avertex_format,
-    const std::vector<GLfloat> &awebgl1es2_model, 
+    const std::vector<webgl1es2_model::attribute_component_data_type> &awebgl1es2_model, 
     const std::vector<GLushort> &aIndexData,
     const PrimitiveMode &aPrimitiveMode)
 : m_IndexBufferHandle([&aIndexData, &aType]()
@@ -218,7 +218,7 @@ webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
     
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * awebgl1es2_model.size(), &awebgl1es2_model[0], webgl1es2_modelTypeToOpenGLDrawType(aType));
+    glBufferData(GL_ARRAY_BUFFER, sizeof(webgl1es2_model::attribute_component_data_type) * awebgl1es2_model.size(), &awebgl1es2_model[0], webgl1es2_modelTypeToOpenGLDrawType(aType));
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     std::string errorCode;

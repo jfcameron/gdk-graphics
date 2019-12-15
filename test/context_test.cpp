@@ -86,5 +86,50 @@ TEST_CASE("graphics_context", "[gdk::graphics_context]")
         REQUIRE(!jfc::glGetError());
         
     }
+
+    SECTION("make a model using a vertex_data_view")
+    {
+        float size = 1;
+        float hsize = size/2.;
+
+        std::vector<float> posData({  //Quad data
+            size -hsize, size -hsize, 0.0f,
+            0.0f -hsize, size -hsize, 0.0f,
+            0.0f -hsize, 0.0f -hsize, 0.0f,
+            size -hsize, size -hsize, 0.0f,
+            0.0f -hsize, 0.0f -hsize, 0.0f,
+            size -hsize, 0.0f -hsize, 0.0f});
+
+        std::vector<float> uvData({
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 0,
+            0, 1,
+            1, 1});
+    
+        auto pModel = std::shared_ptr<model>(std::move(
+        pContext->make_model({
+            vertex_data_view::UsageHint::Static,
+            {
+                { "a_Position",
+                    {
+                        &posData.front(),
+                        posData.size(),
+                        3
+                    }
+                },
+                { "a_UV",
+                    {
+                        &uvData.front(),
+                        uvData.size(),
+                        2
+                    }
+                }
+            }
+        })));
+
+        REQUIRE(pModel);
+    }
 }
 

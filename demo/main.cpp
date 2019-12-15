@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <unordered_map>
 
 #include <jfc/glfw_window.h>
 
@@ -29,47 +30,56 @@ int main(int argc, char **argv)
     //TODO: continue expanding context methods. eventually remove static_casts, virtualize minimum methods required
     auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
 
-    /////====================================================================================
-    struct vertex_data_view
-    {
-
-    };
-
-    // TODO: finish thinking this through
-    std::vector<float> posData({
-        1, 2, 3, // Vertex 1
-        4, 5, 6  // Vertex 2
-    });
-
-    std::vector<float> uvData({
-        0, 0, // Vertex 1
-        1, 1, // Vertex 2
-    });
-
-    std::vector<float> normData({
-        1, 2, 3, // Vertex 1
-        4, 5, 6  // Vertex 2
-    });
-
-    /*vertex_data_view verts(
-    {}
-    );*/
-
-    /////====================================================================================
-    //vertexData.number_of_attributes;
-
-    //std::variant<byte_type *, unsigned_byte_type *, short_type, unsigned_short_type *, float_type *> data; 
-
-
     auto pCamera = std::static_pointer_cast<webgl1es2_camera>(std::shared_ptr<gdk::camera>(std::move(pContext->make_camera())));
     pCamera->setProjection(90, 0.01, 20, 1);
     
     auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_alpha_cutoff_shader());
+    //auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_pink_shader_of_death());
 
-    auto pCube = std::static_pointer_cast<webgl1es2_model>(pContext->get_cube_model());
+    //auto pCube = std::static_pointer_cast<webgl1es2_model>(pContext->get_cube_model());
+
+    float size = 1;
+    float hsize = size/2.;
+
+    std::vector<float> posData({  //Quad data
+        size -hsize, size -hsize, 0.0f,
+        0.0f -hsize, size -hsize, 0.0f,
+        0.0f -hsize, 0.0f -hsize, 0.0f,
+        size -hsize, size -hsize, 0.0f,
+        0.0f -hsize, 0.0f -hsize, 0.0f,
+        size -hsize, 0.0f -hsize, 0.0f});
+
+    std::vector<float> uvData({
+        1, 0,
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1});
+    
+    auto pCube = std::static_pointer_cast<webgl1es2_model>(std::shared_ptr<model>(std::move(
+    pContext->make_model({
+        vertex_data_view::UsageHint::Static,
+        {
+            { "a_Position",
+                {
+                    &posData.front(),
+                    posData.size(),
+                    3
+                }
+            },
+            { "a_UV",
+                {
+                    &uvData.front(),
+                    uvData.size(),
+                    2
+                }
+            }
+        }
+    }))));
 
     auto pMaterial2 = std::static_pointer_cast<webgl1es2_material>(std::shared_ptr<material>(std::move(pContext->make_material(pAlpha))));
-    pMaterial2->setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
+    //pMaterial2->setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
 
     texture::image_data_2d_view view;
     view.width = 2;

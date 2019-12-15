@@ -20,7 +20,8 @@ namespace gdk
         virtual entity_ptr_type make_entity(const entity& other) const override;
 
         virtual graphics::context::material_ptr_type make_material(shader_program_shared_ptr_type pShader) const override;
-        //virtual graphics::context::model_ptr_type make_model() const override;
+
+        virtual graphics::context::model_ptr_type make_model(const vertex_data_view &vertexDataView) const override;
 
         virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const override;
 
@@ -30,8 +31,10 @@ namespace gdk
 
         virtual built_in_shader_ptr_type get_pink_shader_of_death() const override;
 
+        //! WebGLES2 impl of built in cube model
         virtual built_in_model_ptr_type get_cube_model() const override;
         
+        //! WebGLES2 impl of built in quad model
         virtual built_in_model_ptr_type get_quad_model() const override;
 
         //! default ctor

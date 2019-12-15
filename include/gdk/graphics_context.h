@@ -11,6 +11,7 @@
 #include <gdk/model.h>
 #include <gdk/shader_program.h>
 #include <gdk/texture.h>
+#include <gdk/vertex_data_view.h>
 
 namespace gdk::graphics
 {
@@ -77,6 +78,9 @@ namespace gdk::graphics
         virtual entity_ptr_type make_entity(
             const entity &other //!< entity to copy
         ) const = 0;
+       
+        //! construct model by vertext data view
+        virtual model_ptr_type make_model(const vertex_data_view &vertexDataView) const = 0;
 
         //! make a material. 
         virtual material_ptr_type make_material(
@@ -85,8 +89,6 @@ namespace gdk::graphics
 
         /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
         virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const = 0;
-        
-        //virtual model_ptr_type make_model(vertex_data_view?) const = 0;
 
         //! make a texture using a 2d image view
         virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;

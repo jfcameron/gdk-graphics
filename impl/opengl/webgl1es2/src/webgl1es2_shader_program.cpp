@@ -19,7 +19,7 @@ static constexpr char TAG[] = "shader_program";
 //TODO: is address really a good idea? probably not: a ptr could point to a dead instance & crash. a ptr could point to a different shader starting at the same address after a deletion. is handle a good idea? No crashes but again could point to new shader in reclaimed handle. Im not sure how to enforce. weak_handle may be the solution, since it safely nulls after the owner of the handle falls out of scope.
 static std::atomic<GLint> s_CurrentShaderProgramHandle(-1);
 
-const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]()
+const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]()
 {
     const std::string vertexShaderSource(R"V0G0N(    
         //Uniforms
@@ -56,7 +56,7 @@ const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::Pin
     return new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
 });
 
-const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::AlphaCutOff([]()
+const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::AlphaCutOff([]()
 {
     const std::string vertexShaderSource(R"V0G0N(
         //Uniforms
