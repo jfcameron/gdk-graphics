@@ -69,16 +69,22 @@ namespace gdk
         void setViewportSize(const float x, const float y);
 
         /// \brief rebuilds the view matrix from a 3d position and rotation
-        void set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation);
+        virtual void set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation) override;
 
         /// \brief sets projection matrix via copy
         void setProjection(const graphics_mat4x4_type &matrix);
 
         /// \brief sets the projection matrix to a perspective projection
-        void setProjection(const float aFieldOfView, 
+        virtual void setProjection(const float aFieldOfView, 
             const float aNearClippingPlane, 
             const float aFarClippingPlane, 
-            const float aViewportAspectRatio);
+            const float aViewportAspectRatio) override;
+       
+        //! gets the view matrix
+        virtual graphics_mat4x4_type getViewMatrix() const override;
+       
+        //! gets the projection matrix
+        virtual graphics_mat4x4_type getProjectionMatrix() const override;
 
         /// \brief set projection matrix from orthographic bounds
         //void setProject(height, width, depth);

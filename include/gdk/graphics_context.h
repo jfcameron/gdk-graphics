@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include <gdk/scene.h>
 #include <gdk/camera.h>
 #include <gdk/entity.h>
 #include <gdk/material.h>
@@ -26,6 +27,8 @@ namespace gdk::graphics
     public:
         //! ptr type returned by factory method
         using context_ptr_type = std::unique_ptr<context>;
+        //! scene factory return type
+        using scene_ptr_type = std::unique_ptr<scene>;
         //! camera factory return type
         using camera_ptr_type = std::unique_ptr<camera>;
         //! entity factory return type
@@ -61,6 +64,9 @@ namespace gdk::graphics
 
         //! context factory method
         static context_ptr_type make(const implementation &);
+
+        //! makes a scene
+        virtual scene_ptr_type make_scene() const = 0;
 
         //! makes a camera
         virtual camera_ptr_type make_camera() const = 0;

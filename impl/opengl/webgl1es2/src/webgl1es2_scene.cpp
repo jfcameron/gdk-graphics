@@ -17,9 +17,9 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
 {
     for (auto &current_camera : m_cameras)
     {
-        current_camera->activate(aFrameBufferSize); //set up screen & framebuff state
+        static_cast<webgl1es2_camera *>(current_camera.get())->activate(aFrameBufferSize); //set up screen & framebuff state
 
-        for (auto &[current_material, current_model_to_entity_collection] : m_MaterialToModelToEntityCollectionCollection)
+        /*for (auto &[current_material, current_model_to_entity_collection] : m_MaterialToModelToEntityCollectionCollection)
         {
            //sets up the current shader, much of the pipeline state and material-wide uniform values
            current_material->activate(); 
@@ -33,7 +33,7 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
                    current_entity->draw(current_camera->m_ViewMatrix, current_camera->m_ProjectionMatrix);
                }
            }
-        }
+        }*/
 
         //for (transparent_materals....) //TODO handle blended materials.
     }

@@ -7,6 +7,7 @@
 #include <gdk/webgl1es2_entity.h>
 #include <gdk/webgl1es2_material.h>
 #include <gdk/webgl1es2_model.h>
+#include <gdk/webgl1es2_scene.h>
 #include <gdk/webgl1es2_shader_program.h>
 
 using namespace gdk;
@@ -171,3 +172,9 @@ graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_dat
         data));
 }
 
+graphics::context::scene_ptr_type webgl1es2_context::make_scene() const
+{
+    return graphics::context::scene_ptr_type(
+        new gdk::webgl1es2_scene()
+    );
+}

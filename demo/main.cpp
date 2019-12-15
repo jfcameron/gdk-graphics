@@ -7,14 +7,14 @@
 
 #include <jfc/glfw_window.h>
 
+#include <gdk/graphics_context.h>
+#include <gdk/scene.h>
+
 #include <gdk/webgl1es2_camera.h>
 #include <gdk/webgl1es2_entity.h>
-#include <gdk/webgl1es2_shader_program.h> 
-#include <gdk/webgl1es2_model.h>
 #include <gdk/webgl1es2_material.h>
-
-//abstraction work...
-#include <gdk/graphics_context.h>
+#include <gdk/webgl1es2_model.h>
+#include <gdk/webgl1es2_shader_program.h> 
 
 #include <GLFW/glfw3.h>
 
@@ -29,14 +29,13 @@ int main(int argc, char **argv)
     // specifying the library's implementation to be used
     //TODO: continue expanding context methods. eventually remove static_casts, virtualize minimum methods required
     auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
+    
+    auto pScene = pContext->make_scene();
 
-    auto pCamera = std::static_pointer_cast<webgl1es2_camera>(std::shared_ptr<gdk::camera>(std::move(pContext->make_camera())));
+    auto pCamera = std::shared_ptr<gdk::camera>(std::move(pContext->make_camera()));
     pCamera->setProjection(90, 0.01, 20, 1);
     
     auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_alpha_cutoff_shader());
-    //auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_pink_shader_of_death());
-
-    //auto pCube = std::static_pointer_cast<webgl1es2_model>(pContext->get_cube_model());
 
     float size = 1;
     float hsize = size/2.;
@@ -79,7 +78,6 @@ int main(int argc, char **argv)
     }))));
 
     auto pMaterial2 = std::static_pointer_cast<webgl1es2_material>(std::shared_ptr<material>(std::move(pContext->make_material(pAlpha))));
-    //pMaterial2->setTexture("_Texture", webgl1es2_texture::GetCheckerboardOfDeath());
 
     texture::image_data_2d_view view;
     view.width = 2;
@@ -110,6 +108,7 @@ int main(int argc, char **argv)
         std::static_pointer_cast<gdk::webgl1es2_entity>(
             std::shared_ptr<entity>(
                 std::move(pContext->make_entity(pCube, pMaterial)))));
+
     std::static_pointer_cast<gdk::webgl1es2_entity>(entities.back())->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
 
     entities.push_back(
@@ -128,9 +127,9 @@ int main(int argc, char **argv)
         
         pCamera->set_view_matrix({std::sin(blar), 0, -10}, {});
 
-        pCamera->activate(window.getWindowSize());
+        std::static_pointer_cast<webgl1es2_camera>(pCamera)->activate(window.getWindowSize());
 
-        for(auto &current_entities : entities) 
+        for(auto &current_entity : entities) 
         {
             static bool yepp = false;
 
@@ -149,7 +148,8 @@ int main(int argc, char **argv)
 
             pCube->bind(*pAlpha); //binds vertex data
 
-            current_entities->draw(pCamera->m_ViewMatrix, pCamera->m_ProjectionMatrix); //draws the data
+            current_entity->draw(pCamera->getViewMatrix(), 
+                pCamera->getProjectionMatrix());
         }
 
         window.swapBuffer(); 

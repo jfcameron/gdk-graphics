@@ -108,3 +108,13 @@ void webgl1es2_camera::setProjection(const float aFieldOfView,
     m_ProjectionMatrix.setToPerspective(aFieldOfView, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
 }
 
+graphics_mat4x4_type webgl1es2_camera::getViewMatrix() const
+{
+    return m_ViewMatrix;
+}
+
+graphics_mat4x4_type webgl1es2_camera::getProjectionMatrix() const
+{
+    return m_ProjectionMatrix;
+}
+

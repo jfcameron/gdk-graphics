@@ -11,6 +11,8 @@ namespace gdk
     class webgl1es2_context final : public graphics::context
     {
     public: 
+        virtual scene_ptr_type make_scene() const override;
+
         virtual graphics::context::camera_ptr_type make_camera() const override;
 
         virtual camera_ptr_type make_camera(const camera &other) const override;

@@ -1,11 +1,12 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GFX_SCENE_H
-#define GDK_GFX_SCENE_H
+#ifndef GDK_GFX_WEBGL1ES2_SCENE
+#define GDK_GFX_WEBGL1ES2_SCENE
 
+#include <gdk/scene.h>
 #include <gdk/webgl1es2_camera.h>
-#include <gdk/webgl1es2_model.h>
 #include <gdk/webgl1es2_material.h>
+#include <gdk/webgl1es2_model.h>
 
 #include <set>
 
@@ -15,17 +16,18 @@
 namespace gdk
 {
     //! render scene.
-    class webgl1es2_scene
+    class webgl1es2_scene final : public scene
     {
     public:
         //! cameras can be shared across webgl1es2_scenes
-        using camera_ptr_type = std::shared_ptr<webgl1es2_camera>;
+        //using camera_ptr_type = std::shared_ptr<webgl1es2_camera>;
         //! entities can be shared across webgl1es2_scenes
         using entity_ptr_type = std::shared_ptr<webgl1es2_entity>;
         //! materials can be shared across webgl1es2_scenes
         using material_ptr_type = std::shared_ptr<webgl1es2_material>;
         //! models can be shared across webgl1es2_scenes
         using model_ptr_type = std::shared_ptr<webgl1es2_model>;
+
         //! a camera instance can only appear once in a given webgl1es2_scene
         using camera_collection_type = std::set<camera_ptr_type>;
         //! associative collection: Models to collections of Entities - Used to optimize GL calls
@@ -42,7 +44,7 @@ namespace gdk
 
     public:
         //! add a camera to the webgl1es2_scene
-        void add_camera(camera_ptr_type pCamera);
+        virtual void add_camera(camera_ptr_type pCamera) override;
 
         //! add an entity to the webgl1es2_scene. 
         /// \warn Quite time complex! Inserts the entity into a nested collection, in order to optimize opengl interactions
