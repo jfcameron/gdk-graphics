@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">6dde88dc347b0aafa33a354c7c9637cfe4f31108</span>
+   &#160;<span id="projectnumber">ce31e28246aeee989b74becd50f4002125087d5d</span>
    </div>
   </td>
  </tr>
@@ -66,31 +66,43 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classgdk_1_1scene-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gdk::scene Class Reference</div>  </div>
+<div class="title">gdk::scene Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>render scene.  
+<p>a 3d environment within which cameras rasterize entities  
  <a href="classgdk_1_1scene.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="scene_8h_source.html">scene.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for gdk::scene:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classgdk_1_1scene.png" usemap="#gdk::scene_map" alt=""/>
+  <map id="gdk::scene_map" name="gdk::scene_map">
+<area href="classgdk_1_1webgl1es2__scene.html" title="render scene. " alt="gdk::webgl1es2_scene" shape="rect" coords="0,56,139,80"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:acc38216193bc1d0e0cf39b89269c94b4"><td class="memItemLeft" align="right" valign="top"><a id="acc38216193bc1d0e0cf39b89269c94b4"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_ptr_type</b> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1entity.html">entity</a> &gt;</td></tr>
-<tr class="separator:acc38216193bc1d0e0cf39b89269c94b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a0800f3fa5a9b4842eb0036bf509442"><td class="memItemLeft" align="right" valign="top"><a id="a2a0800f3fa5a9b4842eb0036bf509442"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>camera_ptr_type</b> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1camera.html">camera</a> &gt;</td></tr>
 <tr class="separator:a2a0800f3fa5a9b4842eb0036bf509442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42fd0b0cf415e0da101ea93bc67060d7"><td class="memItemLeft" align="right" valign="top"><a id="a42fd0b0cf415e0da101ea93bc67060d7"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>camera_collection_type</b> = std::set&lt; camera_ptr_type &gt;</td></tr>
-<tr class="separator:a42fd0b0cf415e0da101ea93bc67060d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a0bc0626c71c9785b406772a5e546a239"><td class="memItemLeft" align="right" valign="top"><a id="a0bc0626c71c9785b406772a5e546a239"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1scene.html#a0bc0626c71c9785b406772a5e546a239">add_camera</a> (camera_ptr_type pCamera)=0</td></tr>
+<tr class="memdesc:a0bc0626c71c9785b406772a5e546a239"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a camera to the <a class="el" href="classgdk_1_1webgl1es2__scene.html" title="render scene. ">webgl1es2_scene</a> <br /></td></tr>
+<tr class="separator:a0bc0626c71c9785b406772a5e546a239"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>render scene. </p>
+<div class="textblock"><p>a 3d environment within which cameras rasterize entities </p>
+<p>manages api calls to render a scene </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/include/gdk/<a class="el" href="scene_8h_source.html">scene.h</a></li>
 </ul>

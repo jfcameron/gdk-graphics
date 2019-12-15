@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">0ff6590644413b017fcdf7ff1f911bc5fc5f8a34</span>
+   &#160;<span id="projectnumber">ce31e28246aeee989b74becd50f4002125087d5d</span>
    </div>
   </td>
  </tr>
@@ -65,9 +65,10 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classgdk_1_1camera-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gdk::camera Class Reference</div>  </div>
+<div class="title">gdk::camera Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -84,6 +85,26 @@ Inheritance diagram for gdk::camera:</div>
 <area href="classgdk_1_1webgl1es2__camera.html" title="webgl1es2_camera implementation of camera " alt="gdk::webgl1es2_camera" shape="rect" coords="0,56,147,80"/>
 </map>
  </div></div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:aff1dd15ad56f663a9d200fb77fdf62c8"><td class="memItemLeft" align="right" valign="top"><a id="aff1dd15ad56f663a9d200fb77fdf62c8"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#aff1dd15ad56f663a9d200fb77fdf62c8">setProjection</a> (const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)=0</td></tr>
+<tr class="memdesc:aff1dd15ad56f663a9d200fb77fdf62c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to a perspective projection <br /></td></tr>
+<tr class="separator:aff1dd15ad56f663a9d200fb77fdf62c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7ce1363b049c95386ab3b495dbbe250"><td class="memItemLeft" align="right" valign="top"><a id="af7ce1363b049c95386ab3b495dbbe250"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#af7ce1363b049c95386ab3b495dbbe250">set_view_matrix</a> (const gdk::graphics_vector3_type &amp;aWorldPos, const gdk::graphics_quaternion_type &amp;aRotation)=0</td></tr>
+<tr class="memdesc:af7ce1363b049c95386ab3b495dbbe250"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebuilds the view matrix from a 3d position and rotation <br /></td></tr>
+<tr class="separator:af7ce1363b049c95386ab3b495dbbe250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4733c1a2e759d950917a419964ea3c59"><td class="memItemLeft" align="right" valign="top"><a id="a4733c1a2e759d950917a419964ea3c59"></a>
+virtual graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a4733c1a2e759d950917a419964ea3c59">getViewMatrix</a> () const =0</td></tr>
+<tr class="memdesc:a4733c1a2e759d950917a419964ea3c59"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets view matrix <br /></td></tr>
+<tr class="separator:a4733c1a2e759d950917a419964ea3c59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7757bdbc8c8fc2c61a1ff7a235ae164"><td class="memItemLeft" align="right" valign="top"><a id="af7757bdbc8c8fc2c61a1ff7a235ae164"></a>
+virtual graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#af7757bdbc8c8fc2c61a1ff7a235ae164">getProjectionMatrix</a> () const =0</td></tr>
+<tr class="memdesc:af7757bdbc8c8fc2c61a1ff7a235ae164"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets the projection matrix <br /></td></tr>
+<tr class="separator:af7757bdbc8c8fc2c61a1ff7a235ae164"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Position, orientation and perspective from which entity(s) are drawn. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
