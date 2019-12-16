@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
     pScene->add_camera(pCamera);
     
-    auto pAlpha = std::static_pointer_cast<webgl1es2_shader_program>(pContext->get_alpha_cutoff_shader());
+    auto pAlpha = pContext->get_alpha_cutoff_shader();
 
     float size = 1;
     float hsize = size/2.;
@@ -56,26 +56,26 @@ int main(int argc, char **argv)
         0, 1,
         1, 1});
     
-    auto pUserModel = std::static_pointer_cast<webgl1es2_model>(std::shared_ptr<model>(std::move(
-    pContext->make_model({
-        vertex_data_view::UsageHint::Static,
+    auto pUserModel = std::shared_ptr<model>(std::move(
+        pContext->make_model({vertex_data_view::UsageHint::Static,
         {
-            { "a_Position",
+            { 
+                "a_Position",
                 {
                     &posData.front(),
                     posData.size(),
                     3
                 }
             },
-            { "a_UV",
+            { 
+                "a_UV",
                 {
                     &uvData.front(),
                     uvData.size(),
                     2
                 }
             }
-        }
-    }))));
+        }})));
 
     texture::image_data_2d_view view;
     view.width = 2;
@@ -91,13 +91,9 @@ int main(int argc, char **argv)
 
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
-    auto pTexture = std::static_pointer_cast<webgl1es2_texture>(
-        std::shared_ptr<gdk::texture>(
-            std::move(pContext->make_texture(view))));
+    auto pTexture = std::shared_ptr<texture>(std::move(pContext->make_texture(view)));
     
-    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(
-        std::shared_ptr<material>(
-            std::move(pContext->make_material(pAlpha))));
+    auto pMaterial = std::shared_ptr<material>(std::move(pContext->make_material(pAlpha)));
 
     pMaterial->setTexture("_Texture", pTexture);
 
@@ -114,29 +110,20 @@ int main(int argc, char **argv)
 
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
-    auto pTexture2 = std::static_pointer_cast<webgl1es2_texture>(
-        std::shared_ptr<gdk::texture>(
-            std::move(pContext->make_texture(view))));
+    auto pTexture2 = std::shared_ptr<gdk::texture>(std::move(pContext->make_texture(view)));
 
-    auto pMaterial2 = std::static_pointer_cast<webgl1es2_material>(
-        std::shared_ptr<material>(
-            std::move(pContext->make_material(pAlpha))));
+    auto pMaterial2 = std::shared_ptr<material>(std::move(pContext->make_material(pAlpha)));
 
     pMaterial2->setTexture("_Texture", pTexture2);
 
-    auto pEntity = std::static_pointer_cast<gdk::webgl1es2_entity>(
-        std::shared_ptr<entity>(
-            std::move(pContext->make_entity(pUserModel, pMaterial))));
+    auto pEntity = std::shared_ptr<entity>(std::move(pContext->make_entity(pUserModel, pMaterial)));
     
-    std::static_pointer_cast<gdk::webgl1es2_entity>(pEntity)->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
+    pEntity->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
 
     pScene->add_entity(pEntity);
 
-    auto pEntity2 = std::static_pointer_cast<gdk::webgl1es2_entity>(
-        std::shared_ptr<entity>(pContext->make_entity(
-            std::shared_ptr<model>(std::move(pContext->get_cube_model())),
-                pMaterial2)));
-    
+    auto pEntity2 = std::shared_ptr<entity>(pContext->make_entity(std::shared_ptr<model>(std::move(pContext->get_cube_model())), pMaterial2));
+
     pScene->add_entity(pEntity2);
 
     float time = 0;

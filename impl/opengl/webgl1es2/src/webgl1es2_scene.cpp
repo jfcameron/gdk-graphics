@@ -8,13 +8,29 @@ void webgl1es2_scene::add_camera(camera_ptr_type pCamera)
     m_cameras.insert(pCamera);
 }
 
+bool webgl1es2_scene::contains_camera(camera_ptr_type pCamera) const
+{
+    auto search = m_cameras.find(pCamera);
+
+    return search != m_cameras.end();
+}
+
+void webgl1es2_scene::remove_camera(camera_ptr_type pCamera)
+{
+    auto search = m_cameras.find(pCamera);
+    
+    if (search != m_cameras.end())
+    {
+        m_cameras.erase(search);
+    }
+}
+
 void webgl1es2_scene::add_entity(entity_ptr_type pEntityInterface)
 {
-    //todo... find the place
     auto pEntity = static_cast<webgl1es2_entity *>(pEntityInterface.get());
 
-    auto pModel = pEntity->m_model;
-    auto pMaterial = pEntity->m_Material;
+    auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
+    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
 
     auto modelToEntityCollectionSearch = m_MaterialToModelToEntityCollection.find(pMaterial);
 
@@ -33,24 +49,32 @@ void webgl1es2_scene::add_entity(entity_ptr_type pEntityInterface)
     m_MaterialToModelToEntityCollection[pMaterial][pModel].insert(pEntityInterface);
 }
 
+void webgl1es2_scene::remove_entity(entity_ptr_type pEntity)
+{
+    // How naive? iterate all entity sets, remove instances of pEntity.
+    //TODO: implement fast? Need a second datastrcture. linear one. a set? A single entity set makes good sense.
+    // nested sets replace with sets of size_t? or perhaps iters to the global set. yes. rewrite. indicies.?
+}
+
 void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize) const
 {
     for (auto &current_camera : m_cameras)
     {
-        static_cast<webgl1es2_camera *>(current_camera.get())->activate(aFrameBufferSize); //set up screen & framebuff state
+        static_cast<webgl1es2_camera *>(current_camera.get())->activate(aFrameBufferSize);
 
         for (auto &[current_material, current_model_to_entity_collection] : m_MaterialToModelToEntityCollection)
         {
-            //sets up the current shader, much of the pipeline state and material-wide uniform values
             current_material->activate(); 
 
             for (auto &[current_model, current_entity_collection] : current_model_to_entity_collection)
             {
-                current_model->bind(*current_material->m_pShaderProgram); //sets up the current vertex data
+                current_model->bind(*current_material->getShaderProgram());
 
                 for (auto &current_entity : current_entity_collection) 
                 {
-                    static_cast<webgl1es2_entity *>(current_entity.get())->draw(
+                    auto current_entity_impl = static_cast<webgl1es2_entity *>(current_entity.get());
+                    
+                    current_entity_impl->draw(
                         current_camera->getViewMatrix(), 
                         current_camera->getProjectionMatrix());
                 }

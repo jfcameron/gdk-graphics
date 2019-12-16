@@ -27,12 +27,9 @@ namespace gdk
     ///
     /// \todo the shaderprogram and uniform data (textures etc.)  Should probably
     /// be broken out into a new abstraction. This work would be a good match for the "material" class seen in many engines.
-    ///
-    /// \TODO break up all the uniform binding! Simplify!. Model is a dumping ground.. badly defined abstraction, too much responsibility.
-    /// TODO replace entity with objects that are more sympathetic to opengl: batch, pipeline, entity.
     class webgl1es2_entity final : public entity
     {
-    public: //TODO switch to private
+    private:
         //! model used when rendering the entity
         std::shared_ptr<webgl1es2_model> m_model;
        
@@ -42,7 +39,25 @@ namespace gdk
         //! Position in the world
         graphics_mat4x4_type m_ModelMatrix;
 
+        //! Whether or not to respect draw calls
+        bool m_IsHidden = false;
+
     public:
+        //! do not allow this entity to be drawn
+        virtual void hide() override;
+
+        //! allow this entity to be drawn
+        virtual void show() override;
+
+        //! check if the entity is hidden
+        virtual bool isHidden() const override;
+
+        //! impl
+        virtual std::shared_ptr<model> getModel() const override;
+
+        //! impl
+        virtual std::shared_ptr<material> getMaterial() const override;
+
         /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
         /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity 
         /// via a camera.
@@ -53,9 +68,9 @@ namespace gdk
         void set_model(const std::shared_ptr<webgl1es2_model> a);
 
         /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
-        void set_model_matrix(const graphics_vector3_type &aWorldPos, 
+        virtual void set_model_matrix(const graphics_vector3_type &aWorldPos, 
             const graphics_quaternion_type &aRotation, 
-            const graphics_vector3_type &aScale = graphics_vector3_type::One);
+            const graphics_vector3_type &aScale = graphics_vector3_type::One) override;
 
         /// \brief returns a const ref to the model matrix
         const graphics_mat4x4_type &getModelMatrix() const;

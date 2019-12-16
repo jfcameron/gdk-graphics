@@ -8,11 +8,9 @@
 #include <gdk/webgl1es2_material.h>
 #include <gdk/webgl1es2_model.h>
 
-#include <set>
+#include <unordered_set>
 
-// TODO implement remove_entity
-// TODO implement remove_camera
-// TODO handle entity material & model changes. -> Will need to implement signals... vec<functor> likely.
+// TODO handle entity material & model changes. -> Will need to implement signals... vec<functor> likely. Maybe. This adds bookkeeping complexity, runtime complexity. it may be preferrable for the user to "change" an entities properties by removing the one you no longer want and inserting a new one with new properties.
 namespace gdk
 {
     //! render scene.
@@ -25,9 +23,9 @@ namespace gdk
         using model_ptr_type = std::shared_ptr<webgl1es2_model>;
 
         //! a camera instance can only appear once in a given webgl1es2_scene
-        using camera_collection_type = std::set<camera_ptr_type>;
+        using camera_collection_type = std::unordered_set<camera_ptr_type>;
         //! associative collection: Models to collections of Entities - Used to optimize GL calls
-        using model_to_entity_collection = std::unordered_map<model_ptr_type, std::set<entity_ptr_type>>;
+        using model_to_entity_collection = std::unordered_map<model_ptr_type, std::unordered_set<entity_ptr_type>>;
         //! associative collection: Materials to {Models to collections of Entities} - Used to optimize GL calls
         using material_to_model_to_entity_collection_collection = std::unordered_map<material_ptr_type, model_to_entity_collection>;
 
@@ -35,10 +33,16 @@ namespace gdk
         //! cameras used to render this webgl1es2_scene.
         camera_collection_type m_cameras;
 
-        //! Associates Materials used in webgl1es2_scene with associations of Models to Entities
+        //! Nested associative array, used to optimize gl calls.
         material_to_model_to_entity_collection_collection m_MaterialToModelToEntityCollection;
 
     public:
+        //! impl
+        virtual bool contains_camera(camera_ptr_type pCamera) const override;
+        
+        //! impl
+        virtual void remove_camera(camera_ptr_type pCamera) override;
+
         //! add a camera to the webgl1es2_scene
         virtual void add_camera(camera_ptr_type pCamera) override;
 
@@ -47,8 +51,7 @@ namespace gdk
         virtual void add_entity(entity_ptr_type pEntity) override;
 
         //! remove an entity from the webgl1es2_scene.
-        /// \warn unimplemented.
-        void remove_entity(entity_ptr_type pEntity) {} //hmmmmm
+        virtual void remove_entity(entity_ptr_type pEntity) override;
 
         //! draws the webgl1es2_scene
         virtual void draw(const gdk::graphics_intvector2_type &aFrameBufferSize) const override;

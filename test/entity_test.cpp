@@ -17,6 +17,22 @@ using namespace gdk;
 TEST_CASE("gdk::webgl1es2_entity", "[gdk::webgl1es2_entity]")
 {
     initGL();
+    
+    auto pModel = std::shared_ptr<webgl1es2_model>(webgl1es2_model::Quad);
+    auto pMaterial = std::shared_ptr<webgl1es2_material>(new webgl1es2_material(webgl1es2_shader_program::AlphaCutOff));
+
+    SECTION("hide/show methods work")
+    {
+        webgl1es2_entity a(pModel, pMaterial);
+        
+        a.hide();
+        
+        REQUIRE(a.isHidden());
+
+        a.show();
+
+        REQUIRE(!a.isHidden());
+    }
 
     /*{auto blar2 = std::shared_ptr<webgl1es2_shader_program>(webgl1es2_shader_program::AlphaCutOff);}
     auto blar = std::shared_ptr<webgl1es2_shader_program>(webgl1es2_shader_program::AlphaCutOff);

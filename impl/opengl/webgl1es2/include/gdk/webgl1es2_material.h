@@ -12,20 +12,19 @@ namespace gdk
 {
     //! Decides how a model is rendered. Specifies shader effects, textures, etc.
     /// From the perspective of opengl: a collection of uniform values, opengl pipeline state, and the shader program to be used when rendering a model that uses this material
-    //TODO think about how to model blend functionality.
+    //TODO think about how to model blend functionality. -> subclass that provides blend func related state , in opaque case force opaque options.
     class webgl1es2_material : public material
     {
     public:
+        using texture_ptr_impl_type = std::shared_ptr<webgl1es2_texture>;
+
         //! shaders can be shared among many webgl1es2_materials, therefore shared_ptr
         using shader_ptr_type = std::shared_ptr<gdk::webgl1es2_shader_program>;
 
-        //! textures can be shared among many webgl1es2_materials.
-        using texture_ptr_type = std::shared_ptr<gdk::webgl1es2_texture>;
-
         //! associative collection: uniform name to texture data
-        using texture_uniform_collection_type = std::unordered_map<std::string, texture_ptr_type>;
+        using texture_uniform_collection_type = std::unordered_map<std::string, texture_ptr_impl_type>;
 
-    public: //private: //TODO: private, add getters if appropriate
+    private:
         //! the shader used by the webgl1es2_material
         shader_ptr_type m_pShaderProgram;
 
@@ -34,7 +33,9 @@ namespace gdk
 
     public:
         //! tries to assign a texture value to a texture uniform of the given name. fails silently
-        void setTexture(const std::string &aTextureName, texture_ptr_type aTexture);
+        virtual void setTexture(const std::string &aTextureName, texture_ptr_type aTexture) override;
+
+        shader_ptr_type getShaderProgram();
 
         //! modifies the opengl state, assigning the program, assigning values to the program's uniforms etc.
         void activate();

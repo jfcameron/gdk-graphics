@@ -20,44 +20,19 @@ webgl1es2_entity::webgl1es2_entity(const std::shared_ptr<webgl1es2_model> amodel
 
 void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const
 {
-    // TODO: refactor upwards, then propegate the handle down so MVP can be bound       
-    // program should be installed to the pipeline in the "pipeline" abstraction
-    //const GLuint programHandle = m_ShaderProgram->useProgram();
-    
-    //TODO Refactor to .. scene? batch?
-    // these uniforms belong to a higherlevel abstraction. Higher than webgl1es2_entityor camera. should be "scene".
-    //bind standard uniforms
-    /*const float time = aTimeSinceStart;
-    const float deltaTime = aDeltaTime;
+    if (m_IsHidden) return;
 
-    glh::Bind1FloatUniform(programHandle, "_DeltaTime",  deltaTime);
-    glh::Bind1FloatUniform(programHandle, "_Time",       time     );*/
-
-    // Refactor to material
-    //bind this webgl1es2_entity's uniforms
-    /*m_textures.bind(programHandle);
-    m_Floats.bind(programHandle);
-    m_Vector2Uniforms.bind(programHandle);
-    m_Vector3Uniforms.bind(programHandle);
-    m_Vector4Uniforms.bind(programHandle);
-    m_Mat4x4Uniforms.bind(programHandle);*/
-    
-    // Acceptable!
     const graphics_mat4x4_type p = aProjectionMatrix;
     const graphics_mat4x4_type v = aViewMatrix;
     const graphics_mat4x4_type m = getModelMatrix();
 
     const auto mvp = p * v * m;
 
-    m_Material->m_pShaderProgram->setUniform("_Model", mvp); // HMMMMM. Incorrect. should be m_pMaterial->m_ShaderProgram->setUniform(...) or even better m_pMaterial->setUniform(...). or hm. ahh not sure
-    m_Material->m_pShaderProgram->setUniform("_View", mvp);
-    m_Material->m_pShaderProgram->setUniform("_Projection", mvp);
-    m_Material->m_pShaderProgram->setUniform("_MVP", mvp);
+    m_Material->getShaderProgram()->setUniform("_Model", mvp); 
+    m_Material->getShaderProgram()->setUniform("_View", mvp);
+    m_Material->getShaderProgram()->setUniform("_Projection", mvp);
+    m_Material->getShaderProgram()->setUniform("_MVP", mvp);
 
-    // TODO Refactor this to "batch" abstraction
-    //m_model->bind(*m_ShaderProgram);
-
-    // Acceptable!
     m_model->draw();
 }
 
@@ -79,3 +54,27 @@ void webgl1es2_entity::set_model(const std::shared_ptr<webgl1es2_model> a)
     m_model = a;
 }
 
+std::shared_ptr<model> webgl1es2_entity::getModel() const
+{
+    return m_model;
+}
+
+std::shared_ptr<material> webgl1es2_entity::getMaterial() const 
+{
+    return m_Material;
+}
+
+void webgl1es2_entity::hide()
+{
+    m_IsHidden = true;
+}
+
+void webgl1es2_entity::show()
+{
+    m_IsHidden = false;
+}
+
+bool webgl1es2_entity::isHidden() const
+{
+    return m_IsHidden;
+}

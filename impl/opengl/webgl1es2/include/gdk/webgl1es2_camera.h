@@ -41,19 +41,16 @@ namespace gdk
         /// \brief Determines which buffers in the FBO to clear before drawing
         ClearMode m_ClearMode = ClearMode::ColorAndDepth;
 
-        /// \brief The color to replace all data in the color buffer with 
-        /// (if color buffer is to be cleared)
+        /// \brief The color to replace all data in the color buffer with on clear
         gdk::color m_ClearColor = color::CornflowerBlue;
 
         //TODO: support render texture
         //Rendertexture m_Rendertexture;
 
     public:
-        //TODO implement this? A way to throw away entitys that will not contribute frags (ie behind the camera) before they are uploaded. Also a way to sort the scene for e.g: proper blending... ah but transpparency batches must always come after opaques. hnnh. need yet a higher level absrraction I think. A batch? Batch would be a good abstractoin for blend funcs/transparency ordering. Good abstraction for "geometry batching" as well (merging vertex data within glcontext)
-        // the transparency sort does need to be done on a percamera basis.. but transparency groups must come after opaque groups.
-        // These are two separate ideas..
-        //void setSortFunctor(ModelPtr a, ModelPtr b)
-        //void setCullFunctor(ModelPtr a, FustrumPos, FRot, FNearClip, FFarClip)
+        //TODO: implement a user-defined way to throw away entities that will not contribute frags (ie behind the camera) before they are uploaded.
+        // Would save the pipeline a great deal of unnecessary work.
+        //void setCullFunctor(std::function<bool(pModel, ... ?, pUserData?)> cullFunc)
 
         /// \brief set clear color
         void setClearcolor(const gdk::color &acolor);

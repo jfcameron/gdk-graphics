@@ -16,17 +16,29 @@ namespace gdk
     class scene
     {
     public:
+        //! cameras can be shared across scenes, therefore shared
         using camera_ptr_type = std::shared_ptr<camera>;
         
-        //! entities can be shared across webgl1es2_scenes
+        //! entities can be shared across scenes, therefore shared
         using entity_ptr_type = std::shared_ptr<entity>;
 
-        //! add a camera to the webgl1es2_scene
+    public:
+        //! add a camera to the scene
         virtual void add_camera(camera_ptr_type pCamera) = 0;
+
+        //! remove a camera from the scene
+        virtual void remove_camera(camera_ptr_type pCamera) = 0;
         
+        //! check whether or not this scene contains the camera
+        virtual bool contains_camera(camera_ptr_type pCamera) const = 0;
+        
+        //! add an entity to the scene
         virtual void add_entity(entity_ptr_type pEntity) = 0;
         
-        //! draws the webgl1es2_scene
+        //! remove an entity to the scene
+        virtual void remove_entity(entity_ptr_type pEntity) = 0;
+        
+        //! draws the scene
         virtual void draw(const gdk::graphics_intvector2_type &aFrameBufferSize) const = 0;
     };
 }
