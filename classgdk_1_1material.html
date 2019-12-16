@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">1096f35aae5ec4e0b74e822cd356d891d246101d</span>
+   &#160;<span id="projectnumber">276b92d5634b0a5e743cc3d77218cee128415f23</span>
    </div>
   </td>
  </tr>
@@ -65,9 +65,12 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classgdk_1_1material-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gdk::material Class Reference</div>  </div>
+<div class="title">gdk::material Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -84,6 +87,32 @@ Inheritance diagram for gdk::material:</div>
 <area href="classgdk_1_1webgl1es2__material.html" alt="gdk::webgl1es2_material" shape="rect" coords="0,56,149,80"/>
 </map>
  </div></div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a4ab88d7de51b5d8d607455c7da912c25"><td class="memItemLeft" align="right" valign="top"><a id="a4ab88d7de51b5d8d607455c7da912c25"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture.html">gdk::texture</a> &gt;</td></tr>
+<tr class="memdesc:a4ab88d7de51b5d8d607455c7da912c25"><td class="mdescLeft">&#160;</td><td class="mdescRight">textures can be shared among many webgl1es2_materials. <br /></td></tr>
+<tr class="separator:a4ab88d7de51b5d8d607455c7da912c25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a840adbdaad6fe5d0797eba87542a809c"><td class="memItemLeft" align="right" valign="top"><a id="a840adbdaad6fe5d0797eba87542a809c"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a840adbdaad6fe5d0797eba87542a809c">setTexture</a> (const std::string &amp;aTextureName, <a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> aTexture)=0</td></tr>
+<tr class="memdesc:a840adbdaad6fe5d0797eba87542a809c"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a texture to the material. <br /></td></tr>
+<tr class="separator:a840adbdaad6fe5d0797eba87542a809c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2db8713eda9db948be8cea7af205bf26"><td class="memItemLeft" align="right" valign="top"><a id="a2db8713eda9db948be8cea7af205bf26"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a2db8713eda9db948be8cea7af205bf26">~material</a> ()=default</td></tr>
+<tr class="memdesc:a2db8713eda9db948be8cea7af205bf26"><td class="mdescLeft">&#160;</td><td class="mdescRight">dtor <br /></td></tr>
+<tr class="separator:a2db8713eda9db948be8cea7af205bf26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a09c9ca59374266e56d28f9f88ba93396"><td class="memItemLeft" align="right" valign="top"><a id="a09c9ca59374266e56d28f9f88ba93396"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a09c9ca59374266e56d28f9f88ba93396">material</a> ()=default</td></tr>
+<tr class="memdesc:a09c9ca59374266e56d28f9f88ba93396"><td class="mdescLeft">&#160;</td><td class="mdescRight">interface type cannot be directly instantiated <br /></td></tr>
+<tr class="separator:a09c9ca59374266e56d28f9f88ba93396"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>decides how models using the material should be drawn This includes expected effects, such as texture colors, lightning, but can also include unexpected effects, like vertex displacements, transformations. Material is really pipeline state and persistent uniform values </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>

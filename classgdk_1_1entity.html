@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">1096f35aae5ec4e0b74e822cd356d891d246101d</span>
+   &#160;<span id="projectnumber">276b92d5634b0a5e743cc3d77218cee128415f23</span>
    </div>
   </td>
  </tr>
@@ -65,9 +65,11 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classgdk_1_1entity-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gdk::entity Class Reference</div>  </div>
+<div class="title">gdk::entity Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -84,6 +86,45 @@ Inheritance diagram for gdk::entity:</div>
 <area href="classgdk_1_1webgl1es2__entity.html" title="Represents an observable 3D object. " alt="gdk::webgl1es2_entity" shape="rect" coords="0,56,135,80"/>
 </map>
  </div></div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:aca04f311600fef9642e3f4e8c331ed0d"><td class="memItemLeft" align="right" valign="top"><a id="aca04f311600fef9642e3f4e8c331ed0d"></a>
+virtual std::shared_ptr&lt; <a class="el" href="classgdk_1_1model.html">model</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#aca04f311600fef9642e3f4e8c331ed0d">getModel</a> () const =0</td></tr>
+<tr class="memdesc:aca04f311600fef9642e3f4e8c331ed0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get ptr to the model <br /></td></tr>
+<tr class="separator:aca04f311600fef9642e3f4e8c331ed0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad084107ae2dd637fbae063cb2258c303"><td class="memItemLeft" align="right" valign="top"><a id="ad084107ae2dd637fbae063cb2258c303"></a>
+virtual std::shared_ptr&lt; <a class="el" href="classgdk_1_1material.html">material</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#ad084107ae2dd637fbae063cb2258c303">getMaterial</a> () const =0</td></tr>
+<tr class="memdesc:ad084107ae2dd637fbae063cb2258c303"><td class="mdescLeft">&#160;</td><td class="mdescRight">get ptr to the material <br /></td></tr>
+<tr class="separator:ad084107ae2dd637fbae063cb2258c303"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ca172b4cf8bed2a2ffbe5d3b852ebec"><td class="memItemLeft" align="right" valign="top"><a id="a8ca172b4cf8bed2a2ffbe5d3b852ebec"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a8ca172b4cf8bed2a2ffbe5d3b852ebec">hide</a> ()=0</td></tr>
+<tr class="memdesc:a8ca172b4cf8bed2a2ffbe5d3b852ebec"><td class="mdescLeft">&#160;</td><td class="mdescRight">do not allow this entity to be drawn <br /></td></tr>
+<tr class="separator:a8ca172b4cf8bed2a2ffbe5d3b852ebec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbd2c00b867f9582b3ab95c9877f3130"><td class="memItemLeft" align="right" valign="top"><a id="adbd2c00b867f9582b3ab95c9877f3130"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#adbd2c00b867f9582b3ab95c9877f3130">show</a> ()=0</td></tr>
+<tr class="memdesc:adbd2c00b867f9582b3ab95c9877f3130"><td class="mdescLeft">&#160;</td><td class="mdescRight">allow this entity to be drawn <br /></td></tr>
+<tr class="separator:adbd2c00b867f9582b3ab95c9877f3130"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a126f94de4cc9e25240dce39755855d"><td class="memItemLeft" align="right" valign="top"><a id="a3a126f94de4cc9e25240dce39755855d"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a3a126f94de4cc9e25240dce39755855d">isHidden</a> () const =0</td></tr>
+<tr class="memdesc:a3a126f94de4cc9e25240dce39755855d"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if the entity is hidden <br /></td></tr>
+<tr class="separator:a3a126f94de4cc9e25240dce39755855d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a917ecd15d077cf1cbb3ffbfcaa6eef07"><td class="memItemLeft" align="right" valign="top"><a id="a917ecd15d077cf1cbb3ffbfcaa6eef07"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a917ecd15d077cf1cbb3ffbfcaa6eef07">set_model_matrix</a> (const graphics_vector3_type &amp;aWorldPos, const graphics_quaternion_type &amp;aRotation, const graphics_vector3_type &amp;aScale=graphics_vector3_type::One)=0</td></tr>
+<tr class="memdesc:a917ecd15d077cf1cbb3ffbfcaa6eef07"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the model matrix using a vec3 position, quat rotation, vec3 scale <br /></td></tr>
+<tr class="separator:a917ecd15d077cf1cbb3ffbfcaa6eef07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19d1a344df26b6cf2fdc9a72da479b95"><td class="memItemLeft" align="right" valign="top"><a id="a19d1a344df26b6cf2fdc9a72da479b95"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#a19d1a344df26b6cf2fdc9a72da479b95">~entity</a> ()=default</td></tr>
+<tr class="memdesc:a19d1a344df26b6cf2fdc9a72da479b95"><td class="mdescLeft">&#160;</td><td class="mdescRight">dtor <br /></td></tr>
+<tr class="separator:a19d1a344df26b6cf2fdc9a72da479b95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ae9dc8724108ff4349486e8399663f1e2"><td class="memItemLeft" align="right" valign="top"><a id="ae9dc8724108ff4349486e8399663f1e2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1entity.html#ae9dc8724108ff4349486e8399663f1e2">entity</a> ()=default</td></tr>
+<tr class="memdesc:ae9dc8724108ff4349486e8399663f1e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor <br /></td></tr>
+<tr class="separator:ae9dc8724108ff4349486e8399663f1e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>represents an observable 3d object. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
