@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">e30b4dbd5c63093cadce6e943c76fcb265644b59</span>
+   &#160;<span id="projectnumber">7ea8181e946c7c03462da724f22865d51e4e6e2b</span>
    </div>
   </td>
  </tr>
@@ -99,8 +99,14 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:adb9fb42245b98ba0d146cb70f2a9f5b3"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3">format</a> { <a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3aef70a6546536ccd835479f6cddc0188e">format::rgb</a>, 
-<a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3a7082a31b8759c9d59795876351ec63aa">format::rgba</a>
+<tr class="memitem:adb9fb42245b98ba0d146cb70f2a9f5b3"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3">format</a> { <br />
+&#160;&#160;<a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3a7082a31b8759c9d59795876351ec63aa">format::rgba</a>, 
+<a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3aef70a6546536ccd835479f6cddc0188e">format::rgb</a>, 
+<a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3af830a594d0c607a2ab67eb730ada5b4b">format::luminance_alpha</a>, 
+<a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3af211946e6417f327f86f921b2845d54e">format::luminance</a>, 
+<br />
+&#160;&#160;<a class="el" href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3a0cc175b9c0f1b6a831c399e269772661">format::a</a>
+<br />
  }<tr class="memdesc:adb9fb42245b98ba0d146cb70f2a9f5b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">format of uncompressed image data provided to the ctor &amp; format of the <a class="el" href="classgdk_1_1webgl1es2__texture.html" title="a texture generally represents the color of a surface ">webgl1es2_texture</a> data within the gl  <a href="classgdk_1_1webgl1es2__texture.html#adb9fb42245b98ba0d146cb70f2a9f5b3">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:adb9fb42245b98ba0d146cb70f2a9f5b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -243,10 +249,17 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>format of uncompressed image data provided to the ctor &amp; format of the <a class="el" href="classgdk_1_1webgl1es2__texture.html" title="a texture generally represents the color of a surface ">webgl1es2_texture</a> data within the gl </p>
+<p>from the perspective of shaders, texel data always appears to be 4channel (rgba). </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="adb9fb42245b98ba0d146cb70f2a9f5b3aef70a6546536ccd835479f6cddc0188e"></a>rgb&#160;</td><td class="fielddoc"><p>red, green, blue channels only </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="adb9fb42245b98ba0d146cb70f2a9f5b3a7082a31b8759c9d59795876351ec63aa"></a>rgba&#160;</td><td class="fielddoc"><p>4channel input: red, green, blue, alpha channels </p>
 </td></tr>
-<tr><td class="fieldname"><a id="adb9fb42245b98ba0d146cb70f2a9f5b3a7082a31b8759c9d59795876351ec63aa"></a>rgba&#160;</td><td class="fielddoc"><p>red, green, blue, alpha channels </p>
+<tr><td class="fieldname"><a id="adb9fb42245b98ba0d146cb70f2a9f5b3aef70a6546536ccd835479f6cddc0188e"></a>rgb&#160;</td><td class="fielddoc"><p>3 channel input: red, green, blue channels only, alpha is set to 1 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adb9fb42245b98ba0d146cb70f2a9f5b3af830a594d0c607a2ab67eb730ada5b4b"></a>luminance_alpha&#160;</td><td class="fielddoc"><p>2 channel input: rgb = luminance, a = alpha </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adb9fb42245b98ba0d146cb70f2a9f5b3af211946e6417f327f86f921b2845d54e"></a>luminance&#160;</td><td class="fielddoc"><p>1 channel input: rgb = luminance, a = 1 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adb9fb42245b98ba0d146cb70f2a9f5b3a0cc175b9c0f1b6a831c399e269772661"></a>a&#160;</td><td class="fielddoc"><p>1 channel input: rgb=0, a=alpha </p>
 </td></tr>
 </table>
 
