@@ -26,8 +26,11 @@ static inline GLint textureFormatToGLint(const webgl1es2_texture::format a)
 {
     switch(a)
     {
-        case webgl1es2_texture::format::rgb:  return GL_RGB;
         case webgl1es2_texture::format::rgba: return GL_RGBA;
+        case webgl1es2_texture::format::rgb: return GL_RGB;
+        case webgl1es2_texture::format::luminance_alpha: return GL_LUMINANCE_ALPHA;
+        case webgl1es2_texture::format::luminance: return GL_LUMINANCE;
+        case webgl1es2_texture::format::a: return GL_ALPHA;
     }
     
     throw std::runtime_error("unhandled format type");
@@ -176,8 +179,12 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &
 : m_BindTarget(bind_target_to_glenum(bind_target::texture_2d))    
 , m_Handle([&]()
 {
-    if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height)) 
-        throw std::invalid_argument(std::string(TAG).append(": webgl1es2_texture dimensions must be power of 2"));
+    // TODO Should reenable this
+    /*if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height)) 
+        throw std::invalid_argument(std::string(TAG).append(": webgl1es2_texture dimensions must be power of 2"));*/
+
+    //TODO
+    //get max texture size, assert we are less than that.
 
     GLuint handle;
 

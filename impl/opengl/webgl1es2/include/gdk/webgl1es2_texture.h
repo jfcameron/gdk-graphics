@@ -19,10 +19,15 @@ namespace gdk
     {
     public:
         /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture data within the gl
+        ///
+        /// from the perspective of shaders, texel data always appears to be 4channel (rgba).
         enum class format
         {
-            rgb, //!< red, green, blue channels only
-            rgba //!< red, green, blue, alpha channels
+            rgba, //!< 4channel input: red, green, blue, alpha channels
+            rgb, //!< 3 channel input: red, green, blue channels only, alpha is set to 1
+            luminance_alpha, //!< 2 channel input: rgb = luminance, a = alpha
+            luminance, //!< 1 channel input: rgb = luminance, a = 1
+            a, //!< 1 channel input: rgb=0, a=alpha
         };
 
         //! The webgl1es2_texture minifying function is used whenever the pixel being webgl1es2_textured maps to an area greater than one 
