@@ -77,8 +77,6 @@ int main(int argc, char **argv)
         }
     );
 
-    static constexpr auto GLYPH_RASTER_SIZE(32); // Magic num (for now) deciding how large a (monospaced) char will be.
-
     jfc::unique_handle<FT_Face> hFace([argv, &hLibrary]()
         {
             char *filename = argv[1];
@@ -93,7 +91,7 @@ int main(int argc, char **argv)
             }
 
             if (auto error = FT_Set_Char_Size(face, 
-                GLYPH_RASTER_SIZE * 64, //char width. 64 converst from fixed-point subpixel val
+                30 * 64, //char width. 64 converst from fixed-point subpixel val
                 0, //char height  (zero defaults to w size)
                 0, //horizontal res
                 0)) //vertical res
@@ -113,73 +111,27 @@ int main(int argc, char **argv)
     /* for simplicity we assume that the font contains a Unicode cmap */
     FT_GlyphSlot slot = hFace.get()->glyph;
 
+    /* set up matrix */
     FT_Matrix matrix;
 
-    matrix.xx = 1 * 0x10000L; //Transforms are possible before rasterization
-    matrix.xy = 0 * 0x10000L; //but I just want an identity mat
-    matrix.yx = 0 * 0x10000L;
-    matrix.yy = 1 * 0x10000L;
+    const double angle(0);
 
-    FT_Vector pen;
+    matrix.xx = (FT_Fixed)( cos( angle ) * 0x10000L );
+    matrix.xy = (FT_Fixed)(-sin( angle ) * 0x10000L );
+    matrix.yx = (FT_Fixed)( sin( angle ) * 0x10000L );
+    matrix.yy = (FT_Fixed)( cos( angle ) * 0x10000L );
+
+    /* the pen position in 26.6 cartesian space coordinates; */
+    FT_Vector pen; /* untransformed origin  */
 
     int target_height;
     target_height = HEIGHT;
 
-    pen.x = 64 * GLYPH_RASTER_SIZE * 0; //perfect alginment
-    pen.y = 64 * GLYPH_RASTER_SIZE * 0; //seems to write over the edge of the texture a bit :/
-
-    // ======================================================================================================
-    //! glyph rasters can fit together in a single atlas texture.
-    ///
-    /// entire atlas is rendered once in ctor; no bookkeeping required
-    struct static_texture_atlas
-    {
-
-    };
-
-    //! glyph raster cannot fit within a single atlas texture
-    struct dynamic_texture_atlas
-    {
-
-    };
-
-    ///// messing around with glyphs. Foundation of the atlas ctor code.
-    // calc expected tex req, if < provided, do dynamic atlas, else do static atlas.
-    [](const std::vector<FT_Face> &fontFaces)
-    {
-        static constexpr auto ATLAS_TEXTURE_MAX_PIXEL_SIZE(1024);
-
-        const auto atlasMaxGlyphCapacity = std::pow((ATLAS_TEXTURE_MAX_PIXEL_SIZE / GLYPH_RASTER_SIZE), 2);
-
-        auto glyphCount([&fontFaces]()
-        {
-            size_t count(0);
-
-            for (const auto &current_face : fontFaces) count += current_face->num_glyphs; 
-
-            return count;
-        }());
-
-        std::cout << "atlastCapacity: " << atlasMaxGlyphCapacity << ", glyph count: " << glyphCount << ", font pix size: " << GLYPH_RASTER_SIZE << "\n";
-        
-        if (glyphCount > atlasMaxGlyphCapacity)
-        {
-            std::cout << "All Glyph rasters cannot fit in the atlas; The atlas will be dynamic\n";
-
-            //throw std::invalid_argument("dynamic atlas unimplemented.");
-        }
-        else
-        {
-            std::cout << "All Glyph rasters can fit in the atlas; The atlas will be static\n";
-
-            //iterate glyphs. render to texture atlas.
-        }
-    }({hFace.get()});
-
-    // ======================================================================================================
+    pen.x = 0;
+    pen.y = (target_height - 30) * 64;
 
     // u8 data and conversion
-    std::string narrowJapanese(/*"世界お早うございます"*/"Good morning world"); //u8 data
+    std::string narrowJapanese("世界お早うございます"); //u8 data
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> convertWindows;
     std::wstring text = convertWindows.from_bytes(narrowJapanese);  //u16, needed by the library.
 
@@ -208,13 +160,19 @@ int main(int argc, char **argv)
     gdk::webgl1es2_texture::webgl1es2_texture_2d_data_view_type view;
     view.width = WIDTH;
     view.height = HEIGHT;
-    view.format = webgl1es2_texture::format::luminance;
+    view.format = webgl1es2_texture::format::rgba;
 
     std::vector<std::underlying_type<std::byte>::type> imageData({});
     
-    for (int i(0); i < HEIGHT; ++i) for (int j(0); j < WIDTH; ++j)
+    for (int i = 0; i < HEIGHT; i++ )
     {
-        imageData.push_back(image[i][j]);
+        for (int j = 0; j < WIDTH; j++ )
+        {
+            imageData.push_back(image[i][j]);
+            imageData.push_back(image[i][j]);
+            imageData.push_back(image[i][j]);
+            imageData.push_back(0xff);
+        }
     }
 
     view.data = reinterpret_cast<std::byte *>(&imageData.front()); 
@@ -243,7 +201,9 @@ int main(int argc, char **argv)
     {
         glfwPollEvents();
 
-        pEntity->set_model_matrix(Vector3<float>{-0.25, -0.25, -0.5}, Quaternion<float>{});
+        pEntity->set_model_matrix(Vector3<float>{-0.3, -0.5, -0.5}, Quaternion<float>{});
+
+        /*pCamera->set_view_matrix({std::sin(time), 0, -10}, {});*/
 
         pScene->draw(window.getWindowSize());
 
@@ -252,4 +212,6 @@ int main(int argc, char **argv)
 
     return 0;
 }
+
+/* EOF */
 

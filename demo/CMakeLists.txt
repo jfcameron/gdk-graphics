@@ -19,3 +19,4 @@ jfc_project(executable
     DEPENDENCIES
         "gdkgraphics"
 )
+

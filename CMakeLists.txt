@@ -27,23 +27,26 @@ jfc_project(library
         ${jfc-smart_handles_INCLUDE_DIRECTORIES}
         ${simpleglfw_INCLUDE_DIRECTORIES}
 
+        ${freetype_INCLUDE_DIRECTORIES}
+
     PRIVATE_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/include
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/include
 
-        ${stb_INCLUDE_DIR}
+        ${stb_INCLUDE_DIRECTORIES}
 
     LIBRARIES
+        ${freetype_LIBRARIES}
         ${gdkmath_LIBRARIES}
-        ${stb_LIBRARIES}
-        
         ${simpleglfw_LIBRARIES} # TODO: wrong. Split this up. gfx depend on OpenGL headers, not on glfw 
+        ${stb_LIBRARIES}
 
     DEPENDENCIES
         "stb"
         "gdkmath"
         "simpleglfw"
+        "freetype"
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
