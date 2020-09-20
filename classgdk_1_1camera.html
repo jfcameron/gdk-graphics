@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">7ea8181e946c7c03462da724f22865d51e4e6e2b</span>
+   &#160;<span id="projectnumber">fafd4b60eceeb236f00c29ef78c4428185ed17f4</span>
    </div>
   </td>
  </tr>
@@ -88,14 +88,21 @@ Inheritance diagram for gdk::camera:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aff1dd15ad56f663a9d200fb77fdf62c8"><td class="memItemLeft" align="right" valign="top"><a id="aff1dd15ad56f663a9d200fb77fdf62c8"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#aff1dd15ad56f663a9d200fb77fdf62c8">setProjection</a> (const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)=0</td></tr>
-<tr class="memdesc:aff1dd15ad56f663a9d200fb77fdf62c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to a perspective projection <br /></td></tr>
-<tr class="separator:aff1dd15ad56f663a9d200fb77fdf62c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a199d259af52395774b7c793aa2dc2e68"><td class="memItemLeft" align="right" valign="top"><a id="a199d259af52395774b7c793aa2dc2e68"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a199d259af52395774b7c793aa2dc2e68">set_projection</a> (const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)=0</td></tr>
+<tr class="memdesc:a199d259af52395774b7c793aa2dc2e68"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to a perspective projection <br /></td></tr>
+<tr class="separator:a199d259af52395774b7c793aa2dc2e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a524841ae2892ba55b89cc2ea8765f40b"><td class="memItemLeft" align="right" valign="top"><a id="a524841ae2892ba55b89cc2ea8765f40b"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a524841ae2892ba55b89cc2ea8765f40b">set_viewport</a> (const float aX, const float aY, const float aWidth, const float aHeight)=0</td></tr>
+<tr class="memdesc:a524841ae2892ba55b89cc2ea8765f40b"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the normalized size and position of the viewport within of the window <br /></td></tr>
+<tr class="separator:a524841ae2892ba55b89cc2ea8765f40b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7ce1363b049c95386ab3b495dbbe250"><td class="memItemLeft" align="right" valign="top"><a id="af7ce1363b049c95386ab3b495dbbe250"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#af7ce1363b049c95386ab3b495dbbe250">set_view_matrix</a> (const gdk::graphics_vector3_type &amp;aWorldPos, const gdk::graphics_quaternion_type &amp;aRotation)=0</td></tr>
 <tr class="memdesc:af7ce1363b049c95386ab3b495dbbe250"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebuilds the view matrix from a 3d position and rotation <br /></td></tr>
 <tr class="separator:af7ce1363b049c95386ab3b495dbbe250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba63892449d4efb0c4f7bec710238884"><td class="memItemLeft" align="right" valign="top"><a id="aba63892449d4efb0c4f7bec710238884"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>set_clear_color</b> (const <a class="el" href="structgdk_1_1color.html">gdk::color</a> &amp;acolor)=0</td></tr>
+<tr class="separator:aba63892449d4efb0c4f7bec710238884"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4733c1a2e759d950917a419964ea3c59"><td class="memItemLeft" align="right" valign="top"><a id="a4733c1a2e759d950917a419964ea3c59"></a>
 virtual graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a4733c1a2e759d950917a419964ea3c59">getViewMatrix</a> () const =0</td></tr>
 <tr class="memdesc:a4733c1a2e759d950917a419964ea3c59"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets view matrix <br /></td></tr>
