@@ -53,6 +53,20 @@ void webgl1es2_camera::setViewportSize(const float x, const float y)
     m_ViewportSize.y = y;
 }
 
+void webgl1es2_camera::set_viewport(const float aX,
+	const float aY,
+	const float aWidth,
+	const float aHeight)
+{
+	setViewportPosition(aX, aY);
+	setViewportSize(aWidth, aHeight);
+}
+
+void webgl1es2_camera::set_clear_color(const gdk::color& acolor)
+{
+	m_ClearColor = acolor;
+}
+
 void webgl1es2_camera::set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
 {
     m_ViewMatrix.setToIdentity();
@@ -100,7 +114,7 @@ void webgl1es2_camera::activate(const gdk::graphics_intvector2_type &aFrameBuffe
     }
 }
 
-void webgl1es2_camera::setProjection(const float aFieldOfView, 
+void webgl1es2_camera::set_projection(const float aFieldOfView, 
     const float aNearClippingPlane, 
     const float aFarClippingPlane, 
     const float aViewportAspectRatio)

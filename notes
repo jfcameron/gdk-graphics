@@ -1,3 +1,32 @@
+gdk-graphics' scope is approaching completion. Very barebones, no nonsense, textures are provided byte data, vertex data is provided as fp attrib arrays. How to deal with things that are complex enough and not required by all projects requiring a renderer? ie animation system, text rendering system? Projects that depend on gdk-grahpics.
+examples:
+
+gdk-graphics-text (ttf renderer subproject)
+gdk-graphics-animation (bone anim subpojec)
+
+early text work is on a separate branch on this project. need to refactor that and then continue work.
+
+some extremely early animation work is in an old renderer project from 5 years ago. the lib i used to load 3dsmax/blender scenes was wayyyyyyy too heavy. smarter solutions: 
+    1 find a file format that i like, preferably an open format, then find a load/save lib for it.
+    2 create a format based on CBORS, write a conversion tool that depends on the heavy lib to convert a specialized blender scene to the cbors format. 
+    format would probably be:
+        list of attribute data, 
+        list of EITHER texture data written right into the bin file OR relative file path to texture file
+        list of bones, 
+        list of animations
+
+
+
+
+
+
+
+
+
+
+
+
+
 scene
     draw()
 

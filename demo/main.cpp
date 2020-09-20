@@ -23,24 +23,31 @@ using namespace jfc;
 
 int main(int argc, char **argv)
 {
-    // Separate lib, used to init GL and get a window ready for rendering
-    glfw_window window("cool demo");
+    // Separate lib, used to init GL and get a window ready for rendering on Linux/Mac/Windows
+    glfw_window window("basic rendering demo");
 
     auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
     
-    auto pScene = pContext->make_scene();
+	auto pScene = pContext->make_scene();
 
-    auto pCamera = std::shared_ptr<gdk::camera>(std::move(pContext->make_camera()));
-    pCamera->setProjection(90, 0.01, 20, 1);
-
+	auto pCamera = std::shared_ptr<gdk::camera>(std::move(pContext->make_camera()));
+	pCamera->set_viewport(0, 0, 0.5, 0.5);
     pScene->add_camera(pCamera);
-    
+
+	auto pCamera2 = std::shared_ptr<gdk::camera>(std::move(pContext->make_camera()));
+	pCamera2->set_viewport(0.5, 0.5, 0.5, 0.5);
+	pCamera2->set_clear_color(color::DarkGreen);
+	pScene->add_camera(pCamera2);
+
     auto pAlpha = pContext->get_alpha_cutoff_shader();
 
-    float size = 1;
-    float hsize = size/2.;
+	using vertex_attribute_type = float;
+	using vertex_attribute_array_type = std::vector<vertex_attribute_type>;
 
-    std::vector<float> posData({  //Quad data
+	vertex_attribute_type size = 1;
+	decltype(size) hsize = size/2.;
+
+	vertex_attribute_array_type posData({ //Quad data: vertex positon  
         size -hsize, size -hsize, 0.0f,
         0.0f -hsize, size -hsize, 0.0f,
         0.0f -hsize, 0.0f -hsize, 0.0f,
@@ -48,7 +55,7 @@ int main(int argc, char **argv)
         0.0f -hsize, 0.0f -hsize, 0.0f,
         size -hsize, 0.0f -hsize, 0.0f});
 
-    std::vector<float> uvData({
+	vertex_attribute_array_type uvData({ //Quad data: uvs
         1, 0,
         0, 0,
         0, 1,
@@ -75,16 +82,16 @@ int main(int argc, char **argv)
                     2
                 }
             }
-        }})));
+		}})));
 
     texture::image_data_2d_view view;
     view.width = 2;
     view.height = 2;
     view.format = texture::data_format::rgba;
 
-    std::vector<std::underlying_type<std::byte>::type> imageData({
-        0x00, 0xff, 0xff, 0xff,
-        0xff, 0xff, 0xff, 0xff,
+    std::vector<std::underlying_type<std::byte>::type> imageData({ // raw rgba data
+        0x00, 0xff, 0xff, 0xff,                                    
+        0xff, 0xff, 0xff, 0xff,                                    
         0xff, 0xff, 0xff, 0xff,
         0x00, 0x00, 0x00, 0xff});
 
@@ -120,7 +127,8 @@ int main(int argc, char **argv)
 
     pScene->add_entity(pEntity);
 
-    auto pEntity2 = std::shared_ptr<entity>(pContext->make_entity(std::shared_ptr<model>(std::move(pContext->get_cube_model())), pMaterial2));
+    auto pEntity2 = std::shared_ptr<entity>(
+		pContext->make_entity(std::shared_ptr<model>(std::move(pContext->get_cube_model())), pMaterial2));
 
     pScene->add_entity(pEntity2);
 
@@ -129,16 +137,23 @@ int main(int argc, char **argv)
     while(!window.shouldClose())
     {
         glfwPollEvents();
-        
+
+		pEntity->set_model_matrix(Vector3<float>{std::cos(time), -1., -11.}, Quaternion<float>{ {time, 4 * (time / 2), 4}});
+
         pEntity2->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{time, 2 * (time / 2), 4}});
         
+		pCamera->set_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
+
+		pCamera2->set_projection(90, 0.01, 20, window.getAspectRatio());
+		pCamera2->set_view_matrix({ std::sin(time), 0, -10 }, {});
+
 
         pScene->draw(window.getWindowSize());
 
         window.swapBuffer(); 
 
-        time += 0.001;
+        time += 0.01;
     }
 
     return EXIT_SUCCESS;
