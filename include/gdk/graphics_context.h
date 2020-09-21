@@ -47,6 +47,8 @@ namespace gdk::graphics
         //! ptr type for built in shaders provided by the implementation
         using built_in_shader_ptr_type = std::shared_ptr<shader_program>;
         
+		//! shared ptr to a context
+		using context_shared_ptr_type = std::shared_ptr<context>;
         //! shared ptr to a shader_program
         using shader_program_shared_ptr_type = std::shared_ptr<shader_program>;
         //! shared ptr to a material

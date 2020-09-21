@@ -54,6 +54,13 @@ namespace gdk
 			const float aFarClippingPlane,
 			const float aViewportAspectRatio) override;
 
+		/// \brief sets the projection matrix to an orthographic projection
+		virtual void set_orthographic_projection(const float aWidth,
+			const float aHeight,
+			const float aNearClippingPlane,
+			const float aFarClippingPlane,
+			const float aViewportAspectRatio) override;
+
 		/// \brief sets the normalized size and position of the viewport within of the window
 		virtual void set_viewport(const float aX,
 			const float aY,

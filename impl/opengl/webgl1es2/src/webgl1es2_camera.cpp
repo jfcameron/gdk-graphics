@@ -122,6 +122,15 @@ void webgl1es2_camera::set_projection(const float aFieldOfView,
     m_ProjectionMatrix.setToPerspective(aFieldOfView, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
 }
 
+void webgl1es2_camera::set_orthographic_projection(const float aWidth,
+	const float aHeight,
+	const float aNearClippingPlane,
+	const float aFarClippingPlane,
+	const float aViewportAspectRatio)
+{
+	m_ProjectionMatrix.setToOrthographic({ aWidth, aHeight }, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
+}
+
 graphics_mat4x4_type webgl1es2_camera::getViewMatrix() const
 {
     return m_ViewMatrix;
