@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">aeff2f1200323c3287902ceb83e6f320bb20e781</span>
+   &#160;<span id="projectnumber">3220c1314d83d563ccdfdd9585d873723d34b2d3</span>
    </div>
   </td>
  </tr>
@@ -118,7 +118,7 @@ virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ac5d25ee7bf260d
 <tr class="separator:afa2aa63273f948fac49a4fe1a93f31ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b49ac68b7eae7e19559271456668151"><td class="memItemLeft" align="right" valign="top"><a id="a6b49ac68b7eae7e19559271456668151"></a>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a6879a831f369a3f8a331be8b96e9a434">shader_program_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a6b49ac68b7eae7e19559271456668151">make_shader</a> (const std::string &amp;aVertexGLSL, const std::string &amp;aFragGLSL) const override</td></tr>
-<tr class="memdesc:a6b49ac68b7eae7e19559271456668151"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a shader program containing a user-defined vertex shader stage and fragment shader stage <br /></td></tr>
+<tr class="memdesc:a6b49ac68b7eae7e19559271456668151"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a shader program containing a user-defined vertex shader stage and fragment shader stage TODO: consider returning a shared pointer. The reality is shaders are used by materials and expected to be shared. unique doesnt really add value here. <br /></td></tr>
 <tr class="separator:a6b49ac68b7eae7e19559271456668151"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa5ab01be45495e65f3cda0879c0ae9d"><td class="memItemLeft" align="right" valign="top"><a id="afa5ab01be45495e65f3cda0879c0ae9d"></a>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#ade67db9c9d0d9cf81fdb69554a27e6fd">graphics::context::texture_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#afa5ab01be45495e65f3cda0879c0ae9d">make_texture</a> (const <a class="el" href="structgdk_1_1texture_1_1image__data__2d__view.html">texture::image_data_2d_view</a> &amp;imageView) const override</td></tr>
@@ -203,6 +203,10 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#ad4d98b51f6efd84944653fa0c2d97962">built_in_shader_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &gt;</td></tr>
 <tr class="memdesc:ad4d98b51f6efd84944653fa0c2d97962 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">ptr type for built in shaders provided by the implementation <br /></td></tr>
 <tr class="separator:ad4d98b51f6efd84944653fa0c2d97962 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01b348605a717bbe3efb2c48211b3fe9 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="a01b348605a717bbe3efb2c48211b3fe9"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a01b348605a717bbe3efb2c48211b3fe9">context_shared_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1graphics_1_1context.html">context</a> &gt;</td></tr>
+<tr class="memdesc:a01b348605a717bbe3efb2c48211b3fe9 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">shared ptr to a context <br /></td></tr>
+<tr class="separator:a01b348605a717bbe3efb2c48211b3fe9 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92fb37e593edcf5c6e3a58b1d7408ceb inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="a92fb37e593edcf5c6e3a58b1d7408ceb"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a92fb37e593edcf5c6e3a58b1d7408ceb">shader_program_shared_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1shader__program.html">shader_program</a> &gt;</td></tr>
 <tr class="memdesc:a92fb37e593edcf5c6e3a58b1d7408ceb inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">shared ptr to a <a class="el" href="classgdk_1_1shader__program.html" title="Specifies drawing behaviours at the programmable stages in the graphics pipeline. ...">shader_program</a> <br /></td></tr>
