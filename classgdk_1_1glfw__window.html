@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">simple-glfw
-   &#160;<span id="projectnumber">c0874c87e1b8714b872f7d9c76caf694c77bbb46</span>
+   &#160;<span id="projectnumber">4564fe2e78845220b62fd1e86241af1911958403</span>
    </div>
   </td>
  </tr>
@@ -74,7 +74,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>RAII wrapper for GLFW Window. GLFW functions that operate on glfwWindow pointers are wrapped as methods. TODO add support for a OnWindowSizeChanged callback TODO wrap remaining functions here: <a href="https://www.glfw.org/docs/latest/window_guide.html">https://www.glfw.org/docs/latest/window_guide.html</a>.  
+<p>RAII wrapper for GLFW Window. GLFW functions that operate on glfwWindow pointers are wrapped as methods. TODO add support for a OnWindowSizeChanged callback! TODO wrap remaining functions here: <a href="https://www.glfw.org/docs/latest/window_guide.html">https://www.glfw.org/docs/latest/window_guide.html</a>.  
  <a href="classgdk_1_1glfw__window.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="glfw__window_8h_source.html">glfw_window.h</a>&gt;</code></p>
@@ -103,6 +103,10 @@ Public Types</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1glfw__window.html#ad592ef739fd289465c2ec30c57e4e79e">window_size_type</a> = std::pair&lt; int, int &gt;</td></tr>
 <tr class="memdesc:ad592ef739fd289465c2ec30c57e4e79e"><td class="mdescLeft">&#160;</td><td class="mdescRight">type alias for window size <br /></td></tr>
 <tr class="separator:ad592ef739fd289465c2ec30c57e4e79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d25a4d51badf29a3c94e7aca48d2f5c"><td class="memItemLeft" align="right" valign="top"><a id="a1d25a4d51badf29a3c94e7aca48d2f5c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1glfw__window.html#a1d25a4d51badf29a3c94e7aca48d2f5c">window_aspect_ratio_type</a> = double</td></tr>
+<tr class="memdesc:a1d25a4d51badf29a3c94e7aca48d2f5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">precision type of aspect ratio <br /></td></tr>
+<tr class="separator:a1d25a4d51badf29a3c94e7aca48d2f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6a1b2de72064aeae81665caa7aa8b33"><td class="memItemLeft" align="right" valign="top"><a id="ab6a1b2de72064aeae81665caa7aa8b33"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1glfw__window.html#ab6a1b2de72064aeae81665caa7aa8b33">cursor_position_type</a> = std::pair&lt; double, double &gt;</td></tr>
 <tr class="memdesc:ab6a1b2de72064aeae81665caa7aa8b33"><td class="mdescLeft">&#160;</td><td class="mdescRight">alias for cursor position <br /></td></tr>
@@ -148,6 +152,10 @@ std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <a class="el" href="classgdk_1_1glfw__window.html#ad592ef739fd289465c2ec30c57e4e79e">window_size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1glfw__window.html#acd0aee895816286cee5afe2d41480b40">getWindowSize</a> () const</td></tr>
 <tr class="memdesc:acd0aee895816286cee5afe2d41480b40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get size in pixels of the window. <br /></td></tr>
 <tr class="separator:acd0aee895816286cee5afe2d41480b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d3bcd92e22f4007b6e920fdd16620bb"><td class="memItemLeft" align="right" valign="top"><a id="a1d3bcd92e22f4007b6e920fdd16620bb"></a>
+<a class="el" href="classgdk_1_1glfw__window.html#a1d25a4d51badf29a3c94e7aca48d2f5c">window_aspect_ratio_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1glfw__window.html#a1d3bcd92e22f4007b6e920fdd16620bb">getAspectRatio</a> () const</td></tr>
+<tr class="memdesc:a1d3bcd92e22f4007b6e920fdd16620bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the aspect ratio of the window. <br /></td></tr>
+<tr class="separator:a1d3bcd92e22f4007b6e920fdd16620bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac70e5254089a98f1f5bb5325979c99a5"><td class="memItemLeft" align="right" valign="top"><a id="ac70e5254089a98f1f5bb5325979c99a5"></a>
 <a class="el" href="classgdk_1_1glfw__window.html#ab6a1b2de72064aeae81665caa7aa8b33">cursor_position_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1glfw__window.html#ac70e5254089a98f1f5bb5325979c99a5">getCursorPos</a> () const</td></tr>
 <tr class="memdesc:ac70e5254089a98f1f5bb5325979c99a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get position of the mouse cursor. <br /></td></tr>
@@ -194,7 +202,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a49f431b330edbd9ba44d041fc9966489"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>RAII wrapper for GLFW Window. GLFW functions that operate on glfwWindow pointers are wrapped as methods. TODO add support for a OnWindowSizeChanged callback TODO wrap remaining functions here: <a href="https://www.glfw.org/docs/latest/window_guide.html">https://www.glfw.org/docs/latest/window_guide.html</a>. </p>
+<div class="textblock"><p>RAII wrapper for GLFW Window. GLFW functions that operate on glfwWindow pointers are wrapped as methods. TODO add support for a OnWindowSizeChanged callback! TODO wrap remaining functions here: <a href="https://www.glfw.org/docs/latest/window_guide.html">https://www.glfw.org/docs/latest/window_guide.html</a>. </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a8d7db5f1b26f59b3d5945d961cebd999"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8d7db5f1b26f59b3d5945d961cebd999">&#9670;&nbsp;</a></span>standard_cursor_graphic</h2>
