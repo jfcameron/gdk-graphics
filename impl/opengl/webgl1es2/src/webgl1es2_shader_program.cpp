@@ -87,7 +87,7 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
             v_UV = a_UV;
         }
 )V0G0N");
-    //TODO: Add UV scaling and offsetting, add THRESHOLD uniform instead of < 1.0 for discard. very common and useful
+    //TODO: add THRESHOLD uniform instead of < 1.0 for discard?
     const std::string fragmentShaderSource(R"V0G0N(
     #if defined Emscripten
         precision mediump float;

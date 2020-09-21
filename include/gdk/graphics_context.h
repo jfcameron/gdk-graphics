@@ -94,7 +94,8 @@ namespace gdk::graphics
         ) const = 0;
 
         /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
-        virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const = 0;
+		/// TODO: consider returning a shared pointer. The reality is shaders are used by materials and expected to be shared. unique doesnt really add value here.
+        virtual shader_program_ptr_type make_shader(const std::string &aVertexStageSource, const std::string &aFragmentStageSource) const = 0;
 
         //! make a texture using a 2d image view
         virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;

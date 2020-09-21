@@ -158,9 +158,6 @@ namespace gdk
         /// \exception length, width of the webgl1es2_texture must be power of 2
         webgl1es2_texture(
             const webgl1es2_texture_2d_data_view_type &textureData2d,
-            //GLubyte *const pDecodedImageData, const long width, //TODO why is image data all separate params? 
-            //const long height,                                      // ptr, w, h, format should be a 2d_image_data pod struct 
-            //const format = format::rgba,
             const minification_filter minFilter = minification_filter::linear,
             const magnification_filter magFilter = magnification_filter::nearest,
             const wrap_mode wrapMode = wrap_mode::repeat);
