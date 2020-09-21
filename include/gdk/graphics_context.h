@@ -49,6 +49,8 @@ namespace gdk::graphics
         
 		//! shared ptr to a context
 		using context_shared_ptr_type = std::shared_ptr<context>;
+		//! shared ptr for scene
+		using scene_shared_ptr_type = std::shared_ptr<scene>;
         //! shared ptr to a shader_program
         using shader_program_shared_ptr_type = std::shared_ptr<shader_program>;
         //! shared ptr to a material
