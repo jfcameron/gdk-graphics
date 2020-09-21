@@ -99,6 +99,9 @@ namespace gdk::graphics
         //! make a texture using a 2d image view
         virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;
 
+		//! make a texture from an in-memory RGBA32 PNG
+		virtual texture_ptr_type make_texture(const std::vector<std::underlying_type<std::byte>::type> &aRGBA32PNGData) const = 0;
+
         /**
          * @name special resources provided by the implementation, focused on being resource unintensive.
          */

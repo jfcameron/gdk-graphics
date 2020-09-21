@@ -6,6 +6,8 @@
 #include <string>
 #include <memory>
 
+#include <gdk/graphics_types.h>
+
 namespace gdk
 {
     class texture;
@@ -21,6 +23,9 @@ namespace gdk
 
         //! assigns a texture to the material.
         virtual void setTexture(const std::string &aTextureName, texture_ptr_type aTexture) = 0;
+
+		//! assigns a vector2
+		virtual void setVector2(const std::string &aVector2Name, graphics_vector2_type aVector2) = 0;
 
         virtual ~material() = default; //!< dtor
 

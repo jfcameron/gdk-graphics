@@ -143,7 +143,7 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboard
     return ptr;
 };
 
-webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<GLubyte> awebgl1es2_textureData)
+webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<std::underlying_type<std::byte>::type> awebgl1es2_textureData)
 {
     //decode the png rgba32 data
     int width, height, components;

@@ -107,6 +107,18 @@ graphics::context::texture_ptr_type webgl1es2_context::make_texture(const textur
     return graphics::context::texture_ptr_type(new webgl1es2_texture(data));
 }
 
+graphics::context::texture_ptr_type webgl1es2_context::make_texture(const std::vector<std::underlying_type<std::byte>::type>& aRGBA32PNGData) const
+{
+	//std::make_shared<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(webgl1es2_textureData));
+
+	//auto ptr = 
+	return std::make_unique<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
+
+	//return ptr;// graphics::context::texture_ptr_type();
+		//graphics::context::texture_ptr_type(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
+		//graphics::context::texture_ptr_type(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
+}
+
 static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::UsageHint usageHint)
 {
     switch(usageHint)

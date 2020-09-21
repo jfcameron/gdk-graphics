@@ -95,6 +95,10 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
 
         //Uniforms
         uniform sampler2D _Texture;
+		uniform vec2 _UVOffset;
+		uniform vec2 _UVScale; // Pay attention: this is zero inited, so if you make a 
+							   // custom material with this shader and do not provide a non zero value, 
+							   // it will appear the UV data is bad
 
     #if defined Emscripten
         //FragIn
@@ -107,6 +111,9 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
 
         void main()
         {
+			v_UV += _UVOffset;
+			v_UV *= _UVScale;
+
             vec4 frag = texture2D(_Texture, v_UV);
 
             if (frag[3] < 1.0) discard;
@@ -115,7 +122,9 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
         }
     )V0G0N");
 
-    return new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
+	auto p = new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
+
+	return p;
 });
 
 static inline void setUpFaceCullingMode(webgl1es2_shader_program::FaceCullingMode a)

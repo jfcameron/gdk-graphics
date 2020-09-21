@@ -24,6 +24,9 @@ namespace gdk
         //! associative collection: uniform name to texture data
         using texture_uniform_collection_type = std::unordered_map<std::string, texture_ptr_impl_type>;
 
+		//! uniform name to vector2 data
+		using vector2_uniform_collection_type = std::unordered_map<std::string, graphics_vector2_type>;
+
     private:
         //! the shader used by the webgl1es2_material
         shader_ptr_type m_pShaderProgram;
@@ -31,9 +34,15 @@ namespace gdk
         //! texture data provided to the shader stages
         texture_uniform_collection_type m_Textures;
 
+		//! vector2 data provided to the shader stages
+		vector2_uniform_collection_type m_Vector2s;
+
     public:
         //! tries to assign a texture value to a texture uniform of the given name. fails silently
         virtual void setTexture(const std::string &aTextureName, texture_ptr_type aTexture) override;
+
+		//! tries to assign a vector2 value to a vector2 uniform of the given name. fails silently
+		virtual void setVector2(const std::string& aVector2Name, graphics_vector2_type aVector2) override;
 
         shader_ptr_type getShaderProgram();
 

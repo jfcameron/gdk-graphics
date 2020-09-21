@@ -181,7 +181,7 @@ namespace gdk
         /// \brief constructs a 2d webgl1es2_texture from png rgba32 encoded file data
         /// \throws invalid_argument if the image could not be decoded 
         /// (badly formed or not a PNG with component format RGBA32.)
-        static webgl1es2_texture make_from_png_rgba32(const std::vector<GLubyte> aRGBA32PNGData);
+        static webgl1es2_texture make_from_png_rgba32(const std::vector<std::underlying_type<std::byte>::type> aRGBA32PNGData);
     };
 }
 

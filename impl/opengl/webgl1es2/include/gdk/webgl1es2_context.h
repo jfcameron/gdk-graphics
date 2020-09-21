@@ -29,6 +29,8 @@ namespace gdk
 
         virtual graphics::context::texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const override;
 
+		virtual graphics::context::texture_ptr_type make_texture(const std::vector<std::underlying_type<std::byte>::type> &aRGBA32PNGData) const override;
+
         virtual graphics::context::built_in_shader_ptr_type get_alpha_cutoff_shader() const override;
 
         virtual built_in_shader_ptr_type get_pink_shader_of_death() const override;
