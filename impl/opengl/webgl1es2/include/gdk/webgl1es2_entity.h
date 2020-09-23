@@ -62,7 +62,8 @@ namespace gdk
         void draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const;
 
         /// \brief sets this entity's model.
-        void set_model(const std::shared_ptr<webgl1es2_model> a);
+		virtual void set_model(const std::shared_ptr<model> a) override;
+        //void set_model(const std::shared_ptr<webgl1es2_model> a);
 
         /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
         virtual void set_model_matrix(const graphics_vector3_type &aWorldPos, 

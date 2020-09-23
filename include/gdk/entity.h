@@ -37,6 +37,8 @@ namespace gdk
 		/// \brief set the model matrix using a matrix
 		virtual void set_model_matrix(const graphics_mat4x4_type& a) = 0;
 
+		virtual void set_model(const std::shared_ptr<model> a) = 0;
+
         //! dtor
         virtual ~entity() = default;
 
