@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">7c169eccb7468c8bdf9af59276bd9f889187d3ab</span>
+   &#160;<span id="projectnumber">a5867baefb048edd2d566bf9b0532df02c18551f</span>
    </div>
   </td>
  </tr>
@@ -120,6 +120,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a7c67fa5f9451dcc2c256b4c207d63f23">set_model_matrix</a> (const graphics_vector3_type &amp;aWorldPos, const graphics_quaternion_type &amp;aRotation, const graphics_vector3_type &amp;aScale=graphics_vector3_type::One) override</td></tr>
 <tr class="memdesc:a7c67fa5f9451dcc2c256b4c207d63f23"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the model matrix using a vec3 position, quat rotation, vec3 scale <br /></td></tr>
 <tr class="separator:a7c67fa5f9451dcc2c256b4c207d63f23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6059376c8ac2b0fb7efc3dd11b9e55b"><td class="memItemLeft" align="right" valign="top"><a id="ac6059376c8ac2b0fb7efc3dd11b9e55b"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#ac6059376c8ac2b0fb7efc3dd11b9e55b">set_model_matrix</a> (const graphics_mat4x4_type &amp;a) override</td></tr>
+<tr class="memdesc:ac6059376c8ac2b0fb7efc3dd11b9e55b"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the model matrix using a matrix <br /></td></tr>
+<tr class="separator:ac6059376c8ac2b0fb7efc3dd11b9e55b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31ce06c4785d633a505c3f9fa6c0c34e"><td class="memItemLeft" align="right" valign="top"><a id="a31ce06c4785d633a505c3f9fa6c0c34e"></a>
 const graphics_mat4x4_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__entity.html#a31ce06c4785d633a505c3f9fa6c0c34e">getModelMatrix</a> () const</td></tr>
 <tr class="memdesc:a31ce06c4785d633a505c3f9fa6c0c34e"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a const ref to the model matrix <br /></td></tr>
@@ -164,9 +168,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents an observable 3D object. </p>
-<p>Contains a model, a set of uniform collections, a shader, animations, a skeleton.</p>
-<dl class="section warning"><dt>Warning</dt><dd>I think this class contains a bit too much implementation. (see draw method). It seems weird that "entity" is responsible for binding and clearing all uniform data for the shader.</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>the shaderprogram and uniform data (textures etc.) Should probably be broken out into a new abstraction. This work would be a good match for the "material" class seen in many engines. </dd></dl>
+<p>Contains a model, a material (shader, uniform data) a shader</p>
+<p>TODO: animations, skeletons. These may be more appropriate in a separate animation library </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/impl/opengl/webgl1es2/include/gdk/<a class="el" href="webgl1es2__entity_8h_source.html">webgl1es2_entity.h</a></li>
 </ul>

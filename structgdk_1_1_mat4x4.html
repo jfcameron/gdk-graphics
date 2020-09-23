@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-math
-   &#160;<span id="projectnumber">00a6d56ed1595b22ec6ca27c09324e883cfbd2b9</span>
+   &#160;<span id="projectnumber">b2c2603cac116e8c7da78b4830e1120efcd212eb</span>
    </div>
   </td>
  </tr>
@@ -118,8 +118,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="stru
 <tr class="separator:ace4701dd4c3d5ad3f01690eaf275c56c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a648713a07b1be8b2772472e88fd478d4"><td class="memItemLeft" align="right" valign="top"><a id="a648713a07b1be8b2772472e88fd478d4"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1_mat4x4.html#a648713a07b1be8b2772472e88fd478d4">transpose</a> ()</td></tr>
-<tr class="memdesc:a648713a07b1be8b2772472e88fd478d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">transpose the matrix <br /></td></tr>
+<tr class="memdesc:a648713a07b1be8b2772472e88fd478d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">transpose the matrix in place <br /></td></tr>
 <tr class="separator:a648713a07b1be8b2772472e88fd478d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7f4dda92f961e2934aeca502b9d8272"><td class="memItemLeft" align="right" valign="top"><a id="ac7f4dda92f961e2934aeca502b9d8272"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1_mat4x4.html#ac7f4dda92f961e2934aeca502b9d8272">inverse</a> ()</td></tr>
+<tr class="memdesc:ac7f4dda92f961e2934aeca502b9d8272"><td class="mdescLeft">&#160;</td><td class="mdescRight">inverse the matrix in place <br /></td></tr>
+<tr class="separator:ac7f4dda92f961e2934aeca502b9d8272"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a516ea6ece6b0fde0057e7598898c885c"><td class="memItemLeft" align="right" valign="top"><a id="a516ea6ece6b0fde0057e7598898c885c"></a>
 <a class="el" href="structgdk_1_1_mat4x4.html">Mat4x4</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1_mat4x4.html#a516ea6ece6b0fde0057e7598898c885c">set</a> (const component_type m00, const component_type m01, const component_type m02, const component_type m03, const component_type m10, const component_type m11, const component_type m12, const component_type m13, const component_type m20, const component_type m21, const component_type m22, const component_type m23, const component_type m30, const component_type m31, const component_type m32, const component_type m33)</td></tr>
 <tr class="memdesc:a516ea6ece6b0fde0057e7598898c885c"><td class="mdescLeft">&#160;</td><td class="mdescRight">assign values to all 16 elements of the matrix <br /></td></tr>
@@ -155,7 +159,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ad75be5382c66a35c54991634a7dd1be3"><td class="memItemLeft" align="right" valign="top">component_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgdk_1_1_mat4x4.html#ad75be5382c66a35c54991634a7dd1be3">m</a> [RowOrColumnCount][RowOrColumnCount]</td></tr>
-<tr class="memdesc:ad75be5382c66a35c54991634a7dd1be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">the 16 Ts of data, arranged in 2d grid  <a href="#ad75be5382c66a35c54991634a7dd1be3">More...</a><br /></td></tr>
+<tr class="memdesc:ad75be5382c66a35c54991634a7dd1be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">the 16 Ts of data, arranged in 2d grid //TODO: switch to std::array&lt;std::array ...?  <a href="#ad75be5382c66a35c54991634a7dd1be3">More...</a><br /></td></tr>
 <tr class="separator:ad75be5382c66a35c54991634a7dd1be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
@@ -188,7 +192,7 @@ template&lt;typename component_type_param = float&gt; </div>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=  </div><div class="line">        {</div><div class="line">            {1.,0.,0.,0.},</div><div class="line">            {0.,1.,0.,0.},</div><div class="line">            {0.,0.,1.,0.},</div><div class="line">            {0.,0.,0.,1.},</div><div class="line">        }</div></div><!-- fragment -->
-<p>the 16 Ts of data, arranged in 2d grid </p>
+<p>the 16 Ts of data, arranged in 2d grid //TODO: switch to std::array&lt;std::array ...? </p>
 
 </div>
 </div>
