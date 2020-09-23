@@ -20,13 +20,10 @@ namespace gdk
     
     /// \brief Represents an observable 3D object. 
     ///
-    /// \detailed Contains a model, a set of uniform collections, a shader, animations, a skeleton.
-    ///
-    /// \warning I think this class contains a bit too much implementation. (see draw method). It seems weird that "entity"
-    /// is responsible for binding and clearing all uniform data for the shader.
-    ///
-    /// \todo the shaderprogram and uniform data (textures etc.)  Should probably
-    /// be broken out into a new abstraction. This work would be a good match for the "material" class seen in many engines.
+    /// \detailed Contains a model, a material (shader, uniform data) a shader
+	///
+	/// TODO: animations, skeletons. These may be more appropriate in a separate animation library
+	///
     class webgl1es2_entity final : public entity
     {
     private:
@@ -72,6 +69,8 @@ namespace gdk
             const graphics_quaternion_type &aRotation, 
             const graphics_vector3_type &aScale = graphics_vector3_type::One) override;
 
+		virtual void set_model_matrix(const graphics_mat4x4_type& a) override;
+		
         /// \brief returns a const ref to the model matrix
         const graphics_mat4x4_type &getModelMatrix() const;
 

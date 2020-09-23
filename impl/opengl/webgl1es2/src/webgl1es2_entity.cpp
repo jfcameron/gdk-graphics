@@ -49,6 +49,11 @@ void webgl1es2_entity::set_model_matrix(const graphics_vector3_type &aWorldPos, 
     m_ModelMatrix.scale(aScale);
 }
 
+void webgl1es2_entity::set_model_matrix(const graphics_mat4x4_type& a)
+{
+	m_ModelMatrix = a;
+}
+
 void webgl1es2_entity::set_model(const std::shared_ptr<webgl1es2_model> a)
 {
     m_model = a;
