@@ -21,7 +21,8 @@ namespace gdk::graphics
     /// implementation chooses what Graphics API/API Standard to use
     /// \warn the context is not responsible for establishing a context on the graphical hardware,
     /// \warn The context does not know about the windowing system (or lack thereof)
-    /// \warn Initializing OpenGL etc. to the correct standard, managing & swapping buffers etc., creating and managing X11 windows, etc. must be done independently
+    /// \warn Initializing OpenGL etc. to the correct standard, managing & swapping buffers etc., 
+	/// creating and managing X11 windows, etc. must be done independently
     class context
     {
     public:
@@ -57,6 +58,8 @@ namespace gdk::graphics
         using material_shared_ptr_type = std::shared_ptr<material>;
         //! shared ptr to a model
         using model_shared_ptr_type = std::shared_ptr<model>;
+		//! shared ptr to a texture
+		using texture_shared_ptr_type = std::shared_ptr<texture>;
 
         //! specifies implementation to use in context construction
         enum class implementation

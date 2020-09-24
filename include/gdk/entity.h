@@ -14,12 +14,6 @@ namespace gdk
     class entity
     {
     public:
-        //! get ptr to the model
-        virtual std::shared_ptr<model> getModel() const = 0;
-
-        //! get ptr to the material
-        virtual std::shared_ptr<material> getMaterial() const = 0;
-
         //! do not allow this entity to be drawn
         virtual void hide() = 0;
 

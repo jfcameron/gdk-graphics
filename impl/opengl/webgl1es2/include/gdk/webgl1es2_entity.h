@@ -49,11 +49,11 @@ namespace gdk
         //! check if the entity is hidden
         virtual bool isHidden() const override;
 
-        //! impl
-        virtual std::shared_ptr<model> getModel() const override;
+        //! get the model
+		virtual std::shared_ptr<model> getModel() const;
 
-        //! impl
-        virtual std::shared_ptr<material> getMaterial() const override;
+        //! get the material
+		virtual std::shared_ptr<material> getMaterial() const;
 
         /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
         /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity 

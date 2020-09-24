@@ -131,10 +131,15 @@ static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::Usa
     throw std::invalid_argument("unhandled usageHint");
 }
 
-//TODO remove copy. This is a memory wasteful adapter between public context api and webgles model ctor. How? mody ctor then in ctor do not interleave, instead append to back of vertexbuffer data. additional advantage of removing format and attribute abstraction from web1gles2 impl. this work needs to be moved into the initing functor for m_VertexHandle or whatver within the model impl, then simplify this method, passthrough params of this method to the ctor
+//TODO remove copy. This is a memory wasteful adapter between public context api and webgles model ctor. 
+//How? mody ctor then in ctor do not interleave, instead append to back of vertexbuffer data. 
+//additional advantage of removing format and attribute abstraction from web1gles2 impl. 
+//this work needs to be moved into the initing functor for m_VertexHandle or whatver within the model impl, 
+//then simplify this method, passthrough params of this method to the ctor
 graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_data_view &vertexDataView) const
 {
-    if (!vertexDataView.m_AttributeData.size()) throw std::invalid_argument("vertex data view must contain at least one attribute data view");
+    if (!vertexDataView.m_AttributeData.size()) 
+		throw std::invalid_argument("vertex data view must contain at least one attribute data view");
 
     auto usageType = VertexDataViewUsageHintToType(vertexDataView.m_Usage);
 
@@ -155,7 +160,8 @@ graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_dat
         auto currentVertexCount = current_attribute_data_view.m_DataLength /
             current_attribute_data_view.m_ComponentCount;
 
-        if (currentVertexCount != vertexCount) throw std::invalid_argument("attribute data arrays must contribute to the same number of vertexes");
+        if (currentVertexCount != vertexCount) 
+			throw std::invalid_argument("attribute data arrays must contribute to the same number of vertexes");
     }
 
     std::vector<attribute_data_view::attribute_component_type> data;
@@ -164,7 +170,7 @@ graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_dat
         vertexDataView.m_AttributeData.begin()->second.m_DataLength / 
         vertexDataView.m_AttributeData.begin()->second.m_ComponentCount;
 
-    //Interleaver. Adapter required to deal with diff between make_model and model ctor. Remvoe this asap.
+    //Interleaver. Adapter required to deal with diff between make_model and model ctor. Replace this
     for (size_t vertexcounter(0); vertexcounter < vertexcount; ++vertexcounter) 
     {
         for (const auto &[current_name, current_attribute_data_view] : vertexDataView.m_AttributeData)
@@ -179,7 +185,7 @@ graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_dat
     webgl1es2_vertex_format vertexFormat(attributeFormats);
 
     return graphics::context::model_ptr_type(new gdk::webgl1es2_model(
-        gdk::webgl1es2_model::Type::Static, 
+        gdk::webgl1es2_model::Type::Static, //Why constant?
         vertexFormat,
         data));
 }

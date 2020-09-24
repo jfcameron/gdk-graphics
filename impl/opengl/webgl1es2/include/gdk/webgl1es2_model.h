@@ -89,11 +89,9 @@ namespace gdk
         //! invokes pipeline on the data. data must be bound
         void draw() const;
 
-        /*//! replace current data in the vbo and ibo with new data
-        void updatewebgl1es2_model(const std::vector<attribute_component_data_type> &aNewwebgl1es2_model, 
-            const webgl1es2_vertex_format &aNewvertex_format,
-            const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
-            const webgl1es2_model::Type &aNewType = Type::Dynamic);*/
+        //! replace current data in the vbo and ibo with new data
+		/// \todo: needs unit test
+		virtual void update_vertex_data(const vertex_data_view& vertexDataView) override;
       
         //! equality semantics based on handle values
         bool operator==(const webgl1es2_model &);
@@ -117,7 +115,7 @@ namespace gdk
             const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
 
         static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Quad; //!< a quad with format pos3uv2
-        static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Cube; //!< a cube with format ps3uv2norm3
+        static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Cube; //!< a cube with format pos3uv2norm3
     };
 }
 
