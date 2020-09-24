@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">095cf1c11d0e274f5f50bcb7f23326461ac83351</span>
+   &#160;<span id="projectnumber">cbf8e91c864958e87e696faffe87b9da8031100c</span>
    </div>
   </td>
  </tr>
@@ -127,6 +127,8 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#a8ec72681ef3c3467a9eb7b3eacd30828">draw</a> () const</td></tr>
 <tr class="memdesc:a8ec72681ef3c3467a9eb7b3eacd30828"><td class="mdescLeft">&#160;</td><td class="mdescRight">invokes pipeline on the data. data must be bound <br /></td></tr>
 <tr class="separator:a8ec72681ef3c3467a9eb7b3eacd30828"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a619b0c2c9bd414f6bfadfd2e35883b4b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#a619b0c2c9bd414f6bfadfd2e35883b4b">update_vertex_data</a> (const <a class="el" href="classvertex__data__view.html">vertex_data_view</a> &amp;vertexDataView) override</td></tr>
+<tr class="separator:a619b0c2c9bd414f6bfadfd2e35883b4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9821df214d6973b740f9b4c67d24a114"><td class="memItemLeft" align="right" valign="top"><a id="a9821df214d6973b740f9b4c67d24a114"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#a9821df214d6973b740f9b4c67d24a114">operator==</a> (const <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &amp;)</td></tr>
 <tr class="memdesc:a9821df214d6973b740f9b4c67d24a114"><td class="mdescLeft">&#160;</td><td class="mdescRight">equality semantics based on handle values <br /></td></tr>
@@ -163,7 +165,7 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 <tr class="separator:aa5733720ee724d15f33a2d1c5f7bbaf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe2b264ef146d7fee319c29532205810"><td class="memItemLeft" align="right" valign="top"><a id="abe2b264ef146d7fee319c29532205810"></a>
 static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__model.html">gdk::webgl1es2_model</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#abe2b264ef146d7fee319c29532205810">Cube</a></td></tr>
-<tr class="memdesc:abe2b264ef146d7fee319c29532205810"><td class="mdescLeft">&#160;</td><td class="mdescRight">a cube with format ps3uv2norm3 <br /></td></tr>
+<tr class="memdesc:abe2b264ef146d7fee319c29532205810"><td class="mdescLeft">&#160;</td><td class="mdescRight">a cube with format pos3uv2norm3 <br /></td></tr>
 <tr class="separator:abe2b264ef146d7fee319c29532205810"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -260,6 +262,35 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 
 <p>strong association with draw. If draw is on this instance is not called after <a class="el" href="classgdk_1_1webgl1es2__model.html#a3b5bbb5a5244c6fadc4bbd9af80bb2e2" title="strong association with draw. If draw is on this instance is not called after bind() has not been cal...">bind()</a> has not been called before draw, the behaviour will be unintended </p>
 <p>Binds this vertex data to the pipeline, enables attributes on the currently used shaderprogram </p>
+
+</div>
+</div>
+<a id="a619b0c2c9bd414f6bfadfd2e35883b4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a619b0c2c9bd414f6bfadfd2e35883b4b">&#9670;&nbsp;</a></span>update_vertex_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void gdk::webgl1es2_model::update_vertex_data </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classvertex__data__view.html">vertex_data_view</a> &amp;&#160;</td>
+          <td class="paramname"><em>vertexDataView</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>replace current data in the vbo and ibo with new data </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>: needs unit test </dd></dl>
+
+<p>Implements <a class="el" href="classgdk_1_1model.html#a2897270f3ccd77792d5b81088688bad6">gdk::model</a>.</p>
 
 </div>
 </div>
