@@ -4,8 +4,6 @@
 
 3D graphics rendering library. Current implementation supports GLES2.0 & WebGL 1.0
 
-Emphasizes platform support over high fidelity graphics.
-
 ## CI & Documentation
 
 Documentation generated with doxygen ca be viewed online here: https://jfcameron.github.io/gdk-graphics/
