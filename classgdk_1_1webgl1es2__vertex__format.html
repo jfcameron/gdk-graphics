@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">ecd96bdf5285d4b9121f33de272b97b80e377dce</span>
+   &#160;<span id="projectnumber">10e77490db30d93f993c3a65a1b9452d8fb218be</span>
    </div>
   </td>
  </tr>
@@ -111,19 +111,22 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a492ed016a81dd321affdba04eea6ec86"><td class="memItemLeft" align="right" valign="top"><a id="a492ed016a81dd321affdba04eea6ec86"></a>
-static const <a class="el" href="classgdk_1_1webgl1es2__vertex__format.html">webgl1es2_vertex_format</a>&#160;</td><td class="memItemRight" valign="bottom"><b>Pos3uv2Norm3</b></td></tr>
-<tr class="separator:a492ed016a81dd321affdba04eea6ec86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55ce20559ecc9ff03d9f298a6bfa4be0"><td class="memItemLeft" align="right" valign="top"><a id="a55ce20559ecc9ff03d9f298a6bfa4be0"></a>
-static const <a class="el" href="classgdk_1_1webgl1es2__vertex__format.html">webgl1es2_vertex_format</a>&#160;</td><td class="memItemRight" valign="bottom"><b>Pos3uv2</b></td></tr>
-<tr class="separator:a55ce20559ecc9ff03d9f298a6bfa4be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab586c9f737fb4bb2c6ec6a506a44715b"><td class="memItemLeft" align="right" valign="top"><a id="ab586c9f737fb4bb2c6ec6a506a44715b"></a>
-static const <a class="el" href="classgdk_1_1webgl1es2__vertex__format.html">webgl1es2_vertex_format</a>&#160;</td><td class="memItemRight" valign="bottom"><b>Pos3</b></td></tr>
+static const <a class="el" href="classgdk_1_1webgl1es2__vertex__format.html">webgl1es2_vertex_format</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__vertex__format.html#ab586c9f737fb4bb2c6ec6a506a44715b">Pos3</a></td></tr>
+<tr class="memdesc:ab586c9f737fb4bb2c6ec6a506a44715b"><td class="mdescLeft">&#160;</td><td class="mdescRight">{3 position} format <br /></td></tr>
 <tr class="separator:ab586c9f737fb4bb2c6ec6a506a44715b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55ce20559ecc9ff03d9f298a6bfa4be0"><td class="memItemLeft" align="right" valign="top"><a id="a55ce20559ecc9ff03d9f298a6bfa4be0"></a>
+static const <a class="el" href="classgdk_1_1webgl1es2__vertex__format.html">webgl1es2_vertex_format</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__vertex__format.html#a55ce20559ecc9ff03d9f298a6bfa4be0">Pos3uv2</a></td></tr>
+<tr class="memdesc:a55ce20559ecc9ff03d9f298a6bfa4be0"><td class="mdescLeft">&#160;</td><td class="mdescRight">{3 position, 2 uv} format <br /></td></tr>
+<tr class="separator:a55ce20559ecc9ff03d9f298a6bfa4be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a492ed016a81dd321affdba04eea6ec86"><td class="memItemLeft" align="right" valign="top"><a id="a492ed016a81dd321affdba04eea6ec86"></a>
+static const <a class="el" href="classgdk_1_1webgl1es2__vertex__format.html">webgl1es2_vertex_format</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__vertex__format.html#a492ed016a81dd321affdba04eea6ec86">Pos3uv2Norm3</a></td></tr>
+<tr class="memdesc:a492ed016a81dd321affdba04eea6ec86"><td class="mdescLeft">&#160;</td><td class="mdescRight">{3 position, 2 uv, 3 normal} format <br /></td></tr>
+<tr class="separator:a492ed016a81dd321affdba04eea6ec86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>informs the gl context how to interpret the currently bound vertex data. </p>
-<p>Vertex data [in the context of OpenGL] is reprented as an array of floating-point values. The data and the format of that data is completely arbitrary and user defined and the GL context therefore has to be informed how to interpret it. An example of a typical format would be something like this: {Position3, UV2, Normal3, Tangent3}. In the above example, the context would need to know to interpret your vertex data (array of floats) like this: floats 0..2 will be uploaded to the position attribute, 3 &amp; 4 to the UV attribute, 5..7 to Normal, 8..10 Tangent, then repeat (11-13 goes to Position etc...). Attributes, within the context of the graphics pipeline represents instanced data. In the context of the Vertex Shader stage, you will be able to access a set of attributes, representing a single full vertex. TODO: need to support different GL types. forcing float is esay to think about but wasteful in the case of many attribs (uv, color, normal). TODO: need to support multiple vbos instead of just 1. then allow user to type and use as theyd like, potentially interleaving attribs in 1 vbo and not another. e.g vbo1: float, position; vbo2: short, normal, uv interleaved. </p>
+<p>Vertex data [in the context of OpenGL] is reprented as an array of floating-point values. The data and the format of that data is completely arbitrary and user defined and the GL context therefore has to be informed how to interpret it. An example of a typical format would be something like this: {Position3, UV2, Normal3, Tangent3}. In the above example, the context would need to know to interpret your vertex data (array of floats) like this: floats 0..2 will be uploaded to the position attribute, 3 &amp; 4 to the UV attribute, 5..7 to Normal, 8..10 Tangent, then repeat (11-13 goes to Position etc...). Attributes, within the context of the graphics pipeline represents instanced data. In the context of the Vertex Shader stage, you will be able to access a set of attributes, representing a single full vertex. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/impl/opengl/webgl1es2/include/gdk/<a class="el" href="webgl1es2__vertex__format_8h_source.html">webgl1es2_vertex_format.h</a></li>
 </ul>
