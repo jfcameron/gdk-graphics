@@ -21,6 +21,9 @@ namespace gdk
         //! textures can be shared among many webgl1es2_materials.
         using texture_ptr_type = std::shared_ptr<gdk::texture>;
 
+		//! assigns a float to the material.
+		virtual void setFloat(const std::string& aTextureName, float aTexture) = 0;
+
         //! assigns a texture to the material.
         virtual void setTexture(const std::string &aTextureName, texture_ptr_type aTexture) = 0;
 

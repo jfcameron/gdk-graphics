@@ -121,7 +121,7 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboard
 
     std::call_once(initFlag, []()
     {
-        std::vector<GLubyte> webgl1es2_textureData( //TODO think about replacing this with much less data. This data repeats; its redundant //TODO replace this with a generated raw image. Move this png to a test.
+        std::vector<GLubyte> webgl1es2_textureData(
         {
             0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
             0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x08,
@@ -179,12 +179,20 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &
 : m_BindTarget(bind_target_to_glenum(bind_target::texture_2d))    
 , m_Handle([&]()
 {
-    // TODO Should reenable this
-    /*if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height)) 
-        throw std::invalid_argument(std::string(TAG).append(": webgl1es2_texture dimensions must be power of 2"));*/
+	if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height))
+		throw std::invalid_argument(std::string(TAG).append(": webgl1es2_texture dimensions must be power of 2"));
 
-    //TODO
-    //get max texture size, assert we are less than that.
+	static std::once_flag once;
+	static GLint max_texture_2d_size;
+
+	std::call_once(once, []()
+	{
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_2d_size);
+	});
+
+	if (textureData2d.width > max_texture_2d_size || textureData2d.height > max_texture_2d_size)
+		throw std::invalid_argument(std::string(TAG).append(
+			": webgl1es2_texture too large for this platform. max: " + max_texture_2d_size));
 
     GLuint handle;
 
@@ -212,6 +220,9 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(wrapMode));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(wrapMode));
 
+	//Generate mip maps
+	glGenerateMipmap(GL_TEXTURE_2D);
+
     return handle;
 }(),
 [](const GLuint handle)
@@ -230,4 +241,3 @@ bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const
     return m_Handle == b.m_Handle;
 }
 bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }
-

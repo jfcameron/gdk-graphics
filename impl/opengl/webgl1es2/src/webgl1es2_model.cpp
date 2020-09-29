@@ -14,19 +14,23 @@ static constexpr char TAG[] = "webgl1es2_model";
 
 const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
 {
-    float size  = 1.f;
-    float hsize = size/2.f;
-
     std::vector<webgl1es2_model::attribute_component_data_type> data(
     {
-        //        x,           y,    z,    u,    v,
-        size -hsize, size -hsize, 0.0f, 1.0f, 0.0f, // 1--0
-        0.0f -hsize, size -hsize, 0.0f, 0.0f, 0.0f, // | /
-        0.0f -hsize, 0.0f -hsize, 0.0f, 0.0f, 1.0f, // 2
-        size -hsize, size -hsize, 0.0f, 1.0f, 0.0f, //    0
-        0.0f -hsize, 0.0f -hsize, 0.0f, 0.0f, 1.0f, //  / |
-        size -hsize, 0.0f -hsize, 0.0f, 1.0f, 1.0f, // 1--2
+        // x,    y,    z,    u,    v,
+        1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 1--0
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // | /
+        0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // 2
+        1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //    0
+        0.0f, 0.0f, 0.0f, 0.0f, 1.0f, //  / |
+        1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 1--2
     });
+
+	// Center the quad
+	for (size_t i(0); i < (data.size()); i += 5)
+	{
+		data[i + 0] -= 0.5f;
+		data[i + 1] -= 0.5f;
+	}
 
     return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, 
 		gdk::webgl1es2_vertex_format::Pos3uv2, 
@@ -35,8 +39,8 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
 
 const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
 {
-    float size  = 1.f;
-    float hsize = size/2.f;
+    float size(1.f);
+    float hsize(size/2.f);
     
     std::vector<webgl1es2_model::attribute_component_data_type> data(
     {

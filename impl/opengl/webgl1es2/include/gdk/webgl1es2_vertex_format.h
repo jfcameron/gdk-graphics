@@ -23,8 +23,6 @@ namespace gdk
     /// 8..10 Tangent, then repeat (11-13 goes to Position etc...). Attributes, within the context of the graphics pipeline
     /// represents instanced data. In the context of the Vertex Shader stage, you will be able to access a set of attributes,
     /// representing a single full vertex.
-    /// TODO: need to support different GL types. forcing float is esay to think about but wasteful in the case of many attribs (uv, color, normal).
-    /// TODO: need to support multiple vbos instead of just 1. then allow user to type and use as theyd like, potentially interleaving attribs in 1 vbo and not another. e.g vbo1: float, position; vbo2: short, normal, uv interleaved.
     class webgl1es2_vertex_format final
     {
         //! name and # of floats of each attribute in the format
@@ -52,10 +50,15 @@ namespace gdk
      
         //! construct a format using supplied attributes.
         webgl1es2_vertex_format(const std::vector<webgl1es2_vertex_attribute> &aAttributes);
-            
+        
+		//! {3 position} format
+		static const webgl1es2_vertex_format Pos3;
+
+		//! {3 position, 2 uv} format
+		static const webgl1es2_vertex_format Pos3uv2;
+
+		//! {3 position, 2 uv, 3 normal} format
         static const webgl1es2_vertex_format Pos3uv2Norm3;
-        static const webgl1es2_vertex_format Pos3uv2;
-        static const webgl1es2_vertex_format Pos3;
     };
 }
 

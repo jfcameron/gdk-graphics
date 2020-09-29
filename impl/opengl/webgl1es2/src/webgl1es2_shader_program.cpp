@@ -15,6 +15,11 @@ using namespace gdk;
 
 static constexpr char TAG[] = "shader_program";
 
+//! map of active textures. Allows to overwrite textures with the same names to the same units, since units are very limited.
+static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
+
+static short s_ActiveTextureUnitCounter(0);
+
 //TODO: use this to throw is uniform data is being assigned to an unused shdaer program
 //TODO: is address really a good idea? probably not: a ptr could point to a dead instance & crash. a ptr could point to a different shader starting at the same address after a deletion. is handle a good idea? No crashes but again could point to new shader in reclaimed handle. Im not sure how to enforce. weak_handle may be the solution, since it safely nulls after the owner of the handle falls out of scope.
 static std::atomic<GLint> s_CurrentShaderProgramHandle(-1);
@@ -206,11 +211,18 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
     {
         std::ostringstream message;
         
-        message 
-            << "The shader has failed to compile!\n" 
-            << "program compilation log: " << glh::GetProgramInfoLog(programHandle) << "\n"
-            << "vertex shader compilation log:\n=-=-==-=-=--=\n" << glh::GetShaderInfoLog(vs) << "\n=-=-==-=-=--=\n" 
-            << "fragment shader compilation log:\n=-=-==-=-=--=\n" << glh::GetShaderInfoLog(fs) << "\n=-=-==-=-=--=\n";
+		message << "A shader coud not be linked!\n";
+		
+		static const auto decorator = [](std::ostringstream& ss, std::string log_header, 
+			std::string &log_msg)
+		{
+			ss  << log_header << "\n"
+				<< (log_msg.size() ? log_msg : "clear") << "\n\n";
+		};
+
+		decorator(message, "program log", glh::GetProgramInfoLog(programHandle));
+		decorator(message, "vertex log", glh::GetShaderInfoLog(vs));
+		decorator(message, "fragment log", glh::GetShaderInfoLog(fs));
 
         throw std::runtime_error(std::string(TAG).append(message.str()));
     }
@@ -247,7 +259,7 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
                 i, 
                 attrib_name_buffer.size(),    // (c string bookkeeping) max size the gl can safely write into my buffer
                 &currentNameLength,           // (c string bookkeeping) actual char count for the current attribute's name 
-                &component_count,             // e.g: 3 //TODO This isnt what I tohught it was. Size is the number of gltypes.. so vec2 would == 1 as in 1 vec 2, not 2 floats, being the components... need to rename all this stuff...
+                &component_count,             // e.g: 3 //TODO: RENAME! This isnt what I tohught it was. Size is the number of gltypes.. so vec2 would == 1 as in 1 vec 2, not 2 floats, being the components... need to rename all this stuff...
                 &component_type,              // e.g: float
                 &attrib_name_buffer.front()); // e.g: "a_Position"
 
@@ -256,15 +268,17 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
             info.type = component_type;
             info.count = component_count;
 
-            m_ActiveAttributes[std::string(attrib_name_buffer.begin(), attrib_name_buffer.begin() + currentNameLength)] = std::move(info);
+            m_ActiveAttributes[std::string(attrib_name_buffer.begin(), 
+				attrib_name_buffer.begin() + currentNameLength)] = std::move(info);
         }
     }
 
     // poll active uniforms, record their names and locations for uniform value assignments
     {
         // (c string bookkeeping) create a buffer likely big enough to contain the longest active attrib's name
-        // There is a GL_ACTIVE_UNIFORM_MAX_LENGTH (equivalent of above attrib code), but found a few posts on SO that point to
-        // drivers returning incorrect values.. so just making a very large buffer instead.
+        // There is a GL_ACTIVE_UNIFORM_MAX_LENGTH (equivalent of above attrib code), but I have found recent posts online
+		// (2010s) of programmers complaining that it is fairly common for drivers to return incorrect values,
+		// so I am allocating a large buffer instead.
         std::vector<GLchar> uniform_name_buffer(256); 
 
         glGetProgramiv(programHandle, GL_ACTIVE_UNIFORMS, &count);
@@ -292,15 +306,9 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
     }
 }
 
-//! map of active textures. Allows to overwrite textures with the same names to the same units, since units are very limited.
-// TODO: i think this can be local to tranlsation unit
-static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
-
-static short s_ActiveTextureUnitCounter(0);
-
 GLuint webgl1es2_shader_program::useProgram() const
 {
-    const auto handle = m_ProgramHandle.get();
+    const auto handle(m_ProgramHandle.get());
 
     if (s_CurrentShaderProgramHandle != handle)
     {
@@ -557,9 +565,9 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
 
 void webgl1es2_shader_program::setUniform(const std::string &aName, const graphics_mat4x4_type &a) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
-
-    if (search != m_ActiveUniforms.end()) glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &a.m[0][0]);
+  
+    if (const auto& search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+		glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &a.m[0][0]);
 } 
 
 void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<graphics_mat4x4_type> &a) const 
@@ -621,7 +629,8 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const gdk::w
 
             glUniform1i(activeUniformSearch->second.location, unit);
         }
-        else throw std::invalid_argument(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context: ") + std::to_string(s_ActiveTextureUnitCounter));
+        else throw std::invalid_argument(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; "
+			"you are trying to bind too many simultaneous textures to the context: ") + std::to_string(s_ActiveTextureUnitCounter));
     }
 }
 
@@ -631,4 +640,3 @@ std::optional<webgl1es2_shader_program::active_attribute_info> webgl1es2_shader_
 
     return {};
 }
-

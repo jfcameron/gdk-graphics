@@ -30,7 +30,7 @@ namespace gdk
         color& operator=(color &&acolor) = default;
 
         /// \brief constructs a color as opaque black
-        color();
+        color() = default;
 
         /// \brief constructs a color with provided channel values. Alpha has a default opaque value
         color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA = 1);

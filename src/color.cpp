@@ -47,10 +47,6 @@ bool color::operator!=(const color &that) const
     return !(*this == that);
 }
 
-color::color() 
-: color(Black)
-{}
-
 color::color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA)
 : r(aR)
 , g(aG)

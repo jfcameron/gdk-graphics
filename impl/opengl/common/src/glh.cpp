@@ -12,17 +12,16 @@ namespace glh
         glClearColor(acolor.r, acolor.g, acolor.b, acolor.a);
     }
 
-    /// TODO: Hugely wasetful! Stop attrib location polling! ahh!!
-    void Enablevertex_attribute(const GLint attributeLocation, const int aAttributeSize, const int aAttributeOffset, const int aTotalNumberOfvertex_attributeComponents)
+    void Enablevertex_attribute(const GLint attributeLocation, const int aAttributeSize, const int aAttributeOffset, 
+		const int aTotalNumberOfvertex_attributeComponents)
     {
         glEnableVertexAttribArray(attributeLocation);
     
-        //Create vertex attribute pointers..
         glVertexAttribPointer(
             attributeLocation, //Position attribute index
             aAttributeSize,    //Pos size
-            GL_FLOAT,          //data type of each member of the format (must be uniform, look at glbindbufferdata, it takes an array or ptr to an array, so no suprise) TODO: support different types.
-            GL_FALSE,
+            GL_FLOAT,          //data type of each member of the format (must be uniform, look at glbindbufferdata, 
+            GL_FALSE,		   //it takes an array or ptr to an array, so no suprise) TODO: support different types.
             sizeof(GLfloat) * aTotalNumberOfvertex_attributeComponents,
             reinterpret_cast<void *>(sizeof(GLfloat) * aAttributeOffset));
     }
@@ -37,7 +36,6 @@ namespace glh
         glScissor(aPos.x, aPos.y, aSize.x, aSize.y);
     }
 
-    /// TODO: Constantly calling glGetUniformLocation is hugely wasetful! ahh
     void Bind1FloatUniform(GLint uniformHandle, const float aValue)
     {
         glUniform1f(uniformHandle, aValue);
@@ -55,7 +53,8 @@ namespace glh
 
     void Bind4FloatUniform(const GLint uniformHandle, const gdk::graphics_vector4_type &agraphics_vector4_type)
     {
-        glUniform4f(uniformHandle, agraphics_vector4_type.x, agraphics_vector4_type.y, agraphics_vector4_type.z, agraphics_vector4_type.w);
+        glUniform4f(uniformHandle, agraphics_vector4_type.x, agraphics_vector4_type.y, agraphics_vector4_type.z, 
+			agraphics_vector4_type.w);
     }
 
     void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_mat4x4_type &aMatrix4x4)
@@ -63,10 +62,9 @@ namespace glh
         glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.m[0][0]);
     }
 
-    // TODO: think about hiding atextureUnit. It would be cool to auto increment. but that state would have to reset whenever a new shader program is used.
     void BindtextureUniform(const GLuint aUniformHandle, const GLuint atextureHandle, const int atextureUnit)
     {
-        int thetextureType = GL_TEXTURE_2D; //TODO: parameterize! Improve texture as well to support non2ds
+        decltype(GL_TEXTURE_2D) thetextureType(GL_TEXTURE_2D); //TODO: parameterize! Improve texture as well to support non2ds
         
         switch (atextureUnit)
         {
@@ -79,16 +77,19 @@ namespace glh
             case 6: glActiveTexture(GL_TEXTURE6); break;
             case 7: glActiveTexture(GL_TEXTURE7); break;
 
-            default: throw std::invalid_argument("GLES2.0/WebGL1.0 only provide 8 texture units; you are trying to bind too many simultaneous textures to the context");
+            default: throw std::invalid_argument(
+				"GLES2.0/WebGL1.0 only guarantee 8 texture units; "
+				"you are trying to bind too many textures simultaneously to the context");
         }
         
         glBindTexture(thetextureType, atextureHandle);
+
         glUniform1i(aUniformHandle, atextureUnit);
     }
 
     std::string GetShaderInfoLog(const GLuint aShaderStageHandle)
     {
-        GLint bufflen = 0;
+        GLint bufflen(0);
         glGetShaderiv(aShaderStageHandle, GL_INFO_LOG_LENGTH, &bufflen);
         
         if (bufflen > 1)
@@ -99,18 +100,23 @@ namespace glh
             return std::string(infoLog.begin(),infoLog.end());
         }
         
-        return "clear";
+		return {};
     }
 
     std::string GetProgramInfoLog(const GLuint ashader_programHandle)
     {
-        GLint maxLength = 0;
+        GLint maxLength(0);
         glGetProgramiv(ashader_programHandle, GL_INFO_LOG_LENGTH, &maxLength);
         
-        std::vector<GLchar> infoLog(maxLength);
-        glGetProgramInfoLog(ashader_programHandle, maxLength, &maxLength, &infoLog[0]);
-        
-        return std::string(infoLog.begin(),infoLog.end());
+		if (maxLength)
+		{
+			std::vector<GLchar> infoLog(maxLength);
+			glGetProgramInfoLog(ashader_programHandle, maxLength, &maxLength, &infoLog[0]);
+
+			return std::string(infoLog.begin(), infoLog.end());
+		}
+
+		return {};
     }
 }
 
@@ -141,14 +147,12 @@ bool glh::GetError(std::string *aErrorCode)
         
         default:
             errorcodebuffer = "gdk_UNHANDLED_GL_ERROR_CODE";
-        
     }
     
     if (aErrorCode != nullptr)
     {
-        *aErrorCode = errorcodebuffer;
+        *aErrorCode = std::move(errorcodebuffer);
     }
     
     return true;
 }
-

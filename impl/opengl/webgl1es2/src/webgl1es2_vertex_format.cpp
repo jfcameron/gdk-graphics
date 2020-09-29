@@ -51,14 +51,10 @@ void webgl1es2_vertex_format::enableAttributes(const webgl1es2_shader_program &a
 
         if (auto activeAttribute = aShaderProgram.tryGetActiveAttribute(attributeName); activeAttribute)
         {
-            //if (attributeType == found->type && //TODO: support types, so not forced to use floats for small range datatypes
-                //attributeSize == found->second.count) //TODO: count is not component count, its number of e.g vector2s
-            //{
-                glh::Enablevertex_attribute(activeAttribute->location, 
-                    attributeSize, 
-                    attributeOffset,
-                    m_SumOfAttributeComponents);
-            //}
+			glh::Enablevertex_attribute(activeAttribute->location, 
+				attributeSize, 
+                attributeOffset,
+                m_SumOfAttributeComponents);
         }
         
         attributeOffset += attributeSize;
@@ -69,4 +65,3 @@ int webgl1es2_vertex_format::getSumOfAttributeComponents() const
 {
     return m_SumOfAttributeComponents;
 }
-

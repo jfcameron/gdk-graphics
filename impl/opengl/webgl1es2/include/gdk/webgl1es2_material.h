@@ -27,6 +27,9 @@ namespace gdk
 		//! uniform name to vector2 data
 		using vector2_uniform_collection_type = std::unordered_map<std::string, graphics_vector2_type>;
 
+		//! uniform name to float data
+		using float_uniform_collection_type = std::unordered_map<std::string, float>;
+
     private:
         //! the shader used by the webgl1es2_material
         shader_ptr_type m_pShaderProgram;
@@ -37,7 +40,13 @@ namespace gdk
 		//! vector2 data provided to the shader stages
 		vector2_uniform_collection_type m_Vector2s;
 
+		//! float data provided to the shader stages
+		float_uniform_collection_type m_Floats;
+
     public:
+		//! assigns a float to the material. fails silently
+		virtual void setFloat(const std::string& aTextureName, float aTexture) override;
+
         //! tries to assign a texture value to a texture uniform of the given name. fails silently
         virtual void setTexture(const std::string &aTextureName, texture_ptr_type aTexture) override;
 

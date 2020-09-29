@@ -28,9 +28,6 @@ namespace glh
     std::string GetShaderInfoLog(const GLuint aShaderStageHandle);
     std::string GetProgramInfoLog(const GLuint ashader_programHandle);
     bool GetError(std::string *aErrorCode = nullptr);
-/*    //std::vector<std::string> GetErrors();
-    //void LogErrors(const bool &aDoNotLogIfNoErrors = false);
-    void ClearErrors();*/
 
     //! Prepares the vertex data for drawing: enables the attribute array, sets up the attribute pointers for
     /// the used shader program
