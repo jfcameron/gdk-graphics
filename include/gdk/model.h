@@ -21,8 +21,7 @@ namespace gdk
         virtual ~model() = default;
 
     protected:
-        //TODO: delete
-        model() = default;// delete;//default;
+        model() = default;
     };
 }
 
