@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">098f421f213a7b14102ce08ca1084d7f26b1817b</span>
+   &#160;<span id="projectnumber">eaaf7806f95323a880ce04a90ca0582b6c650aee</span>
    </div>
   </td>
  </tr>
@@ -67,14 +67,13 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classgdk_1_1material-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">gdk::material Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>decides how models using the material should be drawn This includes expected effects, such as texture colors, lightning, but can also include unexpected effects, like vertex displacements, transformations. Material is really pipeline state and persistent uniform values  
+<p>decides how models using the material should be drawn.  
  <a href="classgdk_1_1material.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="material_8h_source.html">material.h</a>&gt;</code></p>
@@ -97,32 +96,22 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac1219238cccaf7236badc683138f8f18"><td class="memItemLeft" align="right" valign="top"><a id="ac1219238cccaf7236badc683138f8f18"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#ac1219238cccaf7236badc683138f8f18">setFloat</a> (const std::string &amp;aTextureName, float aTexture)=0</td></tr>
-<tr class="memdesc:ac1219238cccaf7236badc683138f8f18"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a float to the material. <br /></td></tr>
-<tr class="separator:ac1219238cccaf7236badc683138f8f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a840adbdaad6fe5d0797eba87542a809c"><td class="memItemLeft" align="right" valign="top"><a id="a840adbdaad6fe5d0797eba87542a809c"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a840adbdaad6fe5d0797eba87542a809c">setTexture</a> (const std::string &amp;aTextureName, <a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> aTexture)=0</td></tr>
-<tr class="memdesc:a840adbdaad6fe5d0797eba87542a809c"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a texture to the material. <br /></td></tr>
-<tr class="separator:a840adbdaad6fe5d0797eba87542a809c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6039429f689b6d794466a242f0d7ee54"><td class="memItemLeft" align="right" valign="top"><a id="a6039429f689b6d794466a242f0d7ee54"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a6039429f689b6d794466a242f0d7ee54">element::setFloat</a> (const std::string &amp;aTextureName, float aTexture)=0</td></tr>
+<tr class="memdesc:a6039429f689b6d794466a242f0d7ee54"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a float to the material. <br /></td></tr>
+<tr class="separator:a6039429f689b6d794466a242f0d7ee54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38cfa650d4e3889dc2538706fe3a3391"><td class="memItemLeft" align="right" valign="top"><a id="a38cfa650d4e3889dc2538706fe3a3391"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a38cfa650d4e3889dc2538706fe3a3391">element::setTexture</a> (const std::string &amp;aTextureName, <a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> aTexture)=0</td></tr>
+<tr class="memdesc:a38cfa650d4e3889dc2538706fe3a3391"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a texture to the material. <br /></td></tr>
+<tr class="separator:a38cfa650d4e3889dc2538706fe3a3391"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cef424dd79028cf21254be292f97b97"><td class="memItemLeft" align="right" valign="top"><a id="a9cef424dd79028cf21254be292f97b97"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a9cef424dd79028cf21254be292f97b97">setVector2</a> (const std::string &amp;aVector2Name, graphics_vector2_type aVector2)=0</td></tr>
 <tr class="memdesc:a9cef424dd79028cf21254be292f97b97"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a vector2 <br /></td></tr>
 <tr class="separator:a9cef424dd79028cf21254be292f97b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2db8713eda9db948be8cea7af205bf26"><td class="memItemLeft" align="right" valign="top"><a id="a2db8713eda9db948be8cea7af205bf26"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a2db8713eda9db948be8cea7af205bf26">~material</a> ()=default</td></tr>
-<tr class="memdesc:a2db8713eda9db948be8cea7af205bf26"><td class="mdescLeft">&#160;</td><td class="mdescRight">dtor <br /></td></tr>
-<tr class="separator:a2db8713eda9db948be8cea7af205bf26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a09c9ca59374266e56d28f9f88ba93396"><td class="memItemLeft" align="right" valign="top"><a id="a09c9ca59374266e56d28f9f88ba93396"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a09c9ca59374266e56d28f9f88ba93396">material</a> ()=default</td></tr>
-<tr class="memdesc:a09c9ca59374266e56d28f9f88ba93396"><td class="mdescLeft">&#160;</td><td class="mdescRight">interface type cannot be directly instantiated <br /></td></tr>
-<tr class="separator:a09c9ca59374266e56d28f9f88ba93396"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>decides how models using the material should be drawn This includes expected effects, such as texture colors, lightning, but can also include unexpected effects, like vertex displacements, transformations. Material is really pipeline state and persistent uniform values </p>
+<div class="textblock"><p>decides how models using the material should be drawn. </p>
+<p>This includes expected effects, such as texture colors, lightning, but can also include unexpected effects, like vertex displacements, transformations. Material is really pipeline state and persistent uniform values </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/include/gdk/<a class="el" href="material_8h_source.html">material.h</a></li>
 </ul>

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">098f421f213a7b14102ce08ca1084d7f26b1817b</span>
+   &#160;<span id="projectnumber">eaaf7806f95323a880ce04a90ca0582b6c650aee</span>
    </div>
   </td>
  </tr>
@@ -80,7 +80,7 @@ Inheritance diagram for gdk::webgl1es2_material:</div>
  <div class="center">
   <img src="classgdk_1_1webgl1es2__material.png" usemap="#gdk::webgl1es2_5Fmaterial_map" alt=""/>
   <map id="gdk::webgl1es2_5Fmaterial_map" name="gdk::webgl1es2_5Fmaterial_map">
-<area href="classgdk_1_1material.html" title="decides how models using the material should be drawn This includes expected effects, such as texture colors, lightning, but can also include unexpected effects, like vertex displacements, transformations. Material is really pipeline state and persistent uniform values " alt="gdk::material" shape="rect" coords="0,0,149,24"/>
+<area href="classgdk_1_1material.html" title="decides how models using the material should be drawn. " alt="gdk::material" shape="rect" coords="0,0,149,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -155,18 +155,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a610f1bc17b6338e7cb4836d9da10ff19"><td class="mdescLeft">&#160;</td><td class="mdescRight">trivial destructor <br /></td></tr>
 <tr class="separator:a610f1bc17b6338e7cb4836d9da10ff19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgdk_1_1material"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgdk_1_1material')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgdk_1_1material.html">gdk::material</a></td></tr>
-<tr class="memitem:a2db8713eda9db948be8cea7af205bf26 inherit pub_methods_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top"><a id="a2db8713eda9db948be8cea7af205bf26"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a2db8713eda9db948be8cea7af205bf26">~material</a> ()=default</td></tr>
-<tr class="memdesc:a2db8713eda9db948be8cea7af205bf26 inherit pub_methods_classgdk_1_1material"><td class="mdescLeft">&#160;</td><td class="mdescRight">dtor <br /></td></tr>
-<tr class="separator:a2db8713eda9db948be8cea7af205bf26 inherit pub_methods_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_classgdk_1_1material"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classgdk_1_1material')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classgdk_1_1material.html">gdk::material</a></td></tr>
-<tr class="memitem:a09c9ca59374266e56d28f9f88ba93396 inherit pro_methods_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top"><a id="a09c9ca59374266e56d28f9f88ba93396"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a09c9ca59374266e56d28f9f88ba93396">material</a> ()=default</td></tr>
-<tr class="memdesc:a09c9ca59374266e56d28f9f88ba93396 inherit pro_methods_classgdk_1_1material"><td class="mdescLeft">&#160;</td><td class="mdescRight">interface type cannot be directly instantiated <br /></td></tr>
-<tr class="separator:a09c9ca59374266e56d28f9f88ba93396 inherit pro_methods_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6039429f689b6d794466a242f0d7ee54 inherit pub_methods_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top"><a id="a6039429f689b6d794466a242f0d7ee54"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a6039429f689b6d794466a242f0d7ee54">element::setFloat</a> (const std::string &amp;aTextureName, float aTexture)=0</td></tr>
+<tr class="memdesc:a6039429f689b6d794466a242f0d7ee54 inherit pub_methods_classgdk_1_1material"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a float to the material. <br /></td></tr>
+<tr class="separator:a6039429f689b6d794466a242f0d7ee54 inherit pub_methods_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38cfa650d4e3889dc2538706fe3a3391 inherit pub_methods_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top"><a id="a38cfa650d4e3889dc2538706fe3a3391"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a38cfa650d4e3889dc2538706fe3a3391">element::setTexture</a> (const std::string &amp;aTextureName, <a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> aTexture)=0</td></tr>
+<tr class="memdesc:a38cfa650d4e3889dc2538706fe3a3391 inherit pub_methods_classgdk_1_1material"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a texture to the material. <br /></td></tr>
+<tr class="separator:a38cfa650d4e3889dc2538706fe3a3391 inherit pub_methods_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Decides how a model is rendered. Specifies shader effects, textures, etc. From the perspective of opengl: a collection of uniform values, opengl pipeline state, and the shader program to be used when rendering a model that uses this material </p>
