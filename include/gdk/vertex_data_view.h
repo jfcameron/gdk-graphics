@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-class attribute_data_view
+class attribute_data_view final
 {
 public:
     //! all vertex components must be of this type.
@@ -38,7 +38,7 @@ public:
 
 //! used to construct a model
 //\warn a view does not own its data. The user must guarantee the data is valid for the lifetime of the view.
-class vertex_data_view
+class vertex_data_view final
 {
 public:
     enum class UsageHint

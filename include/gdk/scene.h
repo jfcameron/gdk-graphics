@@ -40,6 +40,8 @@ namespace gdk
         
         //! draws the scene
         virtual void draw(const gdk::graphics_intvector2_type &aFrameBufferSize) const = 0;
+
+        virtual ~scene() = default;
     };
 }
 
