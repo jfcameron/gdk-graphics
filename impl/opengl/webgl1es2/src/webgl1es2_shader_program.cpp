@@ -214,11 +214,13 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
 		message << "A shader coud not be linked!\n";
 		
 		static const auto decorator = [](std::ostringstream& ss, std::string log_header, 
-			std::string &log_msg)
+			std::string &&log_msg)
 		{
 			ss  << log_header << "\n"
 				<< (log_msg.size() ? log_msg : "clear") << "\n\n";
 		};
+
+
 
 		decorator(message, "program log", glh::GetProgramInfoLog(programHandle));
 		decorator(message, "vertex log", glh::GetShaderInfoLog(vs));
