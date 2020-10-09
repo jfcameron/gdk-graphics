@@ -70,45 +70,45 @@ namespace gdk::graphics
         };
 
         //! context factory method
-        static context_ptr_type make(const implementation &);
+        [[nodiscard]] static context_ptr_type make(const implementation &);
 
         //! makes a scene
-        virtual scene_ptr_type make_scene() const = 0;
+		[[nodiscard]] virtual scene_ptr_type make_scene() const = 0;
 
         //! makes a camera
-        virtual camera_ptr_type make_camera() const = 0;
+		[[nodiscard]] virtual camera_ptr_type make_camera() const = 0;
         //! makes a camera by copy
-        virtual camera_ptr_type make_camera(
+		[[nodiscard]] virtual camera_ptr_type make_camera(
             const camera &other //!< camera to copy
         ) const = 0;
        
         //! make an entity
-        virtual entity_ptr_type make_entity(
+		[[nodiscard]] virtual entity_ptr_type make_entity(
             model_shared_ptr_type pModel, //!< vertex data for this entity. describes modelspace data.
             material_shared_ptr_type pMaterial //!<  decides how the vertex data is ultimately rendered through the pipeline.
         ) const = 0;
         //! make an entity by copy
-        virtual entity_ptr_type make_entity(
+		[[nodiscard]] virtual entity_ptr_type make_entity(
             const entity &other //!< entity to copy
         ) const = 0;
        
         //! construct model by vertext data view
-        virtual model_ptr_type make_model(const vertex_data_view &vertexDataView) const = 0;
+		[[nodiscard]] virtual model_ptr_type make_model(const vertex_data_view &vertexDataView) const = 0;
 
         //! make a material. 
-        virtual material_ptr_type make_material(
+		[[nodiscard]] virtual material_ptr_type make_material(
             shader_program_shared_ptr_type pShader //!< defines the pipeline's programmable stage behaviours, can be shared among multiple materials
         ) const = 0;
 
         /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
 		/// TODO: consider returning a shared pointer. The reality is shaders are used by materials and expected to be shared. unique doesnt really add value here.
-        virtual shader_program_ptr_type make_shader(const std::string &aVertexStageSource, const std::string &aFragmentStageSource) const = 0;
+		[[nodiscard]] virtual shader_program_ptr_type make_shader(const std::string &aVertexStageSource, const std::string &aFragmentStageSource) const = 0;
 
         //! make a texture using a 2d image view
-        virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;
+		[[nodiscard]] virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;
 
 		//! make a texture from an in-memory RGBA32 PNG
-		virtual texture_ptr_type make_texture(const std::vector<std::underlying_type<std::byte>::type> &aRGBA32PNGData) const = 0;
+		[[nodiscard]] virtual texture_ptr_type make_texture(const std::vector<std::underlying_type<std::byte>::type> &aRGBA32PNGData) const = 0;
 
         /**
          * @name special resources provided by the implementation, focused on being resource unintensive.
@@ -119,21 +119,21 @@ namespace gdk::graphics
         /// - vertex shader: mvp mul only
         /// - fragment shader: colors frags with 2d sampler named "_Texture"
         /// - If alpha channel is < 1.0, the fragment is discarded
-        virtual built_in_shader_ptr_type get_alpha_cutoff_shader() const = 0;
+		[[nodiscard]] virtual built_in_shader_ptr_type get_alpha_cutoff_shader() const = 0;
 
         /// \brief A forward renderer shader program useful for displaying render errors:
         /// - required attributes: vec3 pos
         /// - vertex shader: mvp mul
         /// - fragment shader: all frags are colored neon pink
-        virtual built_in_shader_ptr_type get_pink_shader_of_death() const = 0;
+		[[nodiscard]] virtual built_in_shader_ptr_type get_pink_shader_of_death() const = 0;
 
         /// \brief a 1x1x1 cube model
         /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
-        virtual built_in_model_ptr_type get_cube_model() const = 0;
+		[[nodiscard]] virtual built_in_model_ptr_type get_cube_model() const = 0;
 
         /// \brief a 1x1 quad model
         /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
-        virtual built_in_model_ptr_type get_quad_model() const = 0;
+		[[nodiscard]] virtual built_in_model_ptr_type get_quad_model() const = 0;
         //@}
 
         //! virtual destructor
