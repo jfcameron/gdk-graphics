@@ -5,6 +5,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <stdexcept>
 
 class attribute_data_view final
 {

@@ -101,7 +101,10 @@ int main(int argc, char **argv)
     
     auto pMaterial = std::shared_ptr<material>(std::move(pContext->make_material(pAlpha)));
 
+    // Uniforms must be explicitly set; all defaults are zero
     pMaterial->setTexture("_Texture", pTexture);
+    pMaterial->setVector2("_UVScale", { 1, 1 });
+    pMaterial->setVector2("_UVOffset", { 0, 0 });
 
     view.width = 2;
     view.height = 2;

@@ -31,7 +31,7 @@ TEST_CASE("camera", "[camera]")
 
     a.set_view_matrix(graphics_vector3_type(0, 0, 0), graphics_quaternion_type());
 
-    a.setProjection(90, 0.001, 20, 1);
+    //a.setProjection(90, 0.001, 20, 1);
 
     SECTION("activate worked")
     {

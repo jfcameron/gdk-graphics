@@ -108,18 +108,21 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
     #if defined Emscripten
         //FragIn
         varying lowp vec2 v_UV;
+	lowp vec2 uv;
 
     #elif defined Darwin || defined Windows || defined Linux
         //FragIn
         varying vec2 v_UV;
+	vec2 uv;
     #endif
 
         void main()
         {
-			v_UV += _UVOffset;
-			v_UV *= _UVScale;
+			uv = v_UV;  
+			uv += _UVOffset;
+			uv *= _UVScale;
 
-            vec4 frag = texture2D(_Texture, v_UV);
+            vec4 frag = texture2D(_Texture, uv);
 
             if (frag[3] < 1.0) discard;
 
@@ -211,7 +214,7 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
     {
         std::ostringstream message;
         
-		message << "A shader coud not be linked!\n";
+		message << "A shader could not be linked!\n";
 		
 		static const auto decorator = [](std::ostringstream& ss, std::string log_header, 
 			std::string &&log_msg)
@@ -220,11 +223,9 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
 				<< (log_msg.size() ? log_msg : "clear") << "\n\n";
 		};
 
-
-
-		decorator(message, "program log", glh::GetProgramInfoLog(programHandle));
 		decorator(message, "vertex log", glh::GetShaderInfoLog(vs));
 		decorator(message, "fragment log", glh::GetShaderInfoLog(fs));
+		decorator(message, "program log", glh::GetProgramInfoLog(programHandle));
 
         throw std::runtime_error(std::string(TAG).append(message.str()));
     }
