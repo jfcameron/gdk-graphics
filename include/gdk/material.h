@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_MATERIAL_H
 #define GDK_GFX_MATERIAL_H
@@ -14,8 +14,11 @@ namespace gdk
 
     /// \brief decides how models using the material should be drawn.
     ///
-    /// This includes expected effects, such as texture colors, lightning, but can also include unexpected effects, like vertex displacements, transformations.
+    /// This includes expected effects, such as texture colors, lightning, 
+    /// but can also include unexpected effects, like vertex displacements, transformations.
     /// Material is really pipeline state and persistent uniform values
+    /// 
+    /// \todo add setters for remaining uniform types
     class material
     {
     public:
@@ -32,9 +35,6 @@ namespace gdk
 		virtual void setVector2(const std::string &aVector2Name, graphics_vector2_type aVector2) = 0;
 
         virtual ~material() = default;
-
-    protected:
-        material() = default;
     };
 }
 

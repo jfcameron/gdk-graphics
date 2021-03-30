@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jfcameron/gdk-graphics.svg?branch=master)](https://travis-ci.org/jfcameron/gdk-graphics) [![Coverage Status](https://coveralls.io/repos/github/jfcameron/gdk-graphics/badge.svg?branch=master)](https://coveralls.io/github/jfcameron/gdk-graphics?branch=master) [![Documentation](https://img.shields.io/badge/documentation-doxygen-blue.svg)](https://jfcameron.github.io/gdk-graphics/)
+[![Build Status](https://travis-ci.org/jfcameron/gdk-graphics.svg?branch=master)](https://travis-ci.org/jfcameron/gdk-graphics) [![Documentation](https://img.shields.io/badge/documentation-doxygen-blue.svg)](https://jfcameron.github.io/gdk-graphics/)
 
 ## gdk-graphics
 

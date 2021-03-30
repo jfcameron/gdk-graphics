@@ -13,8 +13,8 @@ void webgl1es2_material::activate()
 	m_pShaderProgram->useProgram();
 
 	for (const auto& [name, a] : m_Textures) m_pShaderProgram->setUniform(name, *a);
-
 	for (const auto& [name, a] : m_Vector2s) m_pShaderProgram->setUniform(name, a);
+	for (const auto& [name, a] : m_Floats)   m_pShaderProgram->setUniform(name, a);
 
 	//TODO: activate the rest of this webgl1es2_material's uniforms...
 }

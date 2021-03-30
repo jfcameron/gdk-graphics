@@ -607,18 +607,15 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const gdk::w
     {   
         const auto &activeTextureSearch = s_ActiveTextureUniformNameToUnit.find(aName);
         
-        GLint unit;
+        const GLint unit = activeTextureSearch == s_ActiveTextureUniformNameToUnit.end()
+            ? [&aName]() {
+                decltype(unit) next_unit = s_ActiveTextureUnitCounter++;
 
-        if (activeTextureSearch == s_ActiveTextureUniformNameToUnit.end())
-        {
-            unit = s_ActiveTextureUnitCounter++;
+                s_ActiveTextureUniformNameToUnit[aName] = next_unit;
 
-            s_ActiveTextureUniformNameToUnit[aName] = unit;
-        }
-        else
-        {
-            unit = activeTextureSearch->second;
-        }
+                return next_unit;
+            }()
+            : activeTextureSearch->second;
 
         if (s_ActiveTextureUnitCounter < webgl1es2_shader_program::MAX_TEXTURE_UNITS) 
         {

@@ -5,24 +5,21 @@ using namespace gdk;
 
 void webgl1es2_scene::add_camera(camera_ptr_type pCamera)
 {
-    m_cameras.insert(pCamera);
+    m_cameras.insert(std::static_pointer_cast<camera_impl_ptr_type::element_type>(pCamera));
 }
 
 bool webgl1es2_scene::contains_camera(camera_ptr_type pCamera) const
 {
-    auto search = m_cameras.find(pCamera);
+    auto search = m_cameras.find(std::static_pointer_cast<camera_impl_ptr_type::element_type>(pCamera));
 
     return search != m_cameras.end();
 }
 
 void webgl1es2_scene::remove_camera(camera_ptr_type pCamera)
 {
-    auto search = m_cameras.find(pCamera);
+    auto search = m_cameras.find(std::static_pointer_cast<camera_impl_ptr_type::element_type>(pCamera));
     
-    if (search != m_cameras.end())
-    {
-        m_cameras.erase(search);
-    }
+    if (search != m_cameras.end()) m_cameras.erase(search);
 }
 
 void webgl1es2_scene::add_entity(entity_ptr_type pEntityInterface)
@@ -75,8 +72,8 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
                     auto current_entity_impl = static_cast<webgl1es2_entity *>(current_entity.get());
                     
                     current_entity_impl->draw(
-                        current_camera->getViewMatrix(), 
-                        current_camera->getProjectionMatrix());
+                        current_camera->get_view_matrix(), 
+                        current_camera->get_projection_matrix());
                 }
             }
         }

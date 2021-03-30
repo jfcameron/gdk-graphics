@@ -8,7 +8,7 @@ project(null)
 
 option(JFC_BUILD_DEMO "Build the demo" ON)
 option(JFC_BUILD_DOCS "Build documentation" ON)
-option(JFC_BUILD_TESTS "Build unit tests" ON)
+option(JFC_BUILD_TESTS "Build unit tests" OFF)
 
 add_subdirectory(thirdparty)
 

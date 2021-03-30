@@ -49,7 +49,7 @@ void webgl1es2_vertex_format::enableAttributes(const webgl1es2_shader_program &a
         std::string attributeName = attribute.name;
         int attributeSize = attribute.size;
 
-        if (auto activeAttribute = aShaderProgram.tryGetActiveAttribute(attributeName); activeAttribute)
+        if (auto activeAttribute = aShaderProgram.tryGetActiveAttribute(attributeName); activeAttribute.has_value())
         {
 			glh::Enablevertex_attribute(activeAttribute->location, 
 				attributeSize, 

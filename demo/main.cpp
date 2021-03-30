@@ -144,6 +144,7 @@ int main(int argc, char **argv)
     auto pBackgroundCamera = std::shared_ptr<gdk::camera>(std::move(pContext->make_camera()));
     pBackgroundCamera->set_viewport(0, 0, 1, 1);
     pBackgroundCamera->set_clear_color({});
+    pBackgroundCamera->set_clear_mode(camera::clear_mode::depth_only);
     pScene->add_camera(pBackgroundCamera);
 
     // Main loop
@@ -161,24 +162,23 @@ int main(int argc, char **argv)
 
         pEntity2->set_model_matrix(Vector3<float>{0., 0., -11.}, Quaternion<float>{{time, 2 * (time / 2), 4}});
 
-        pCamera->set_projection(90, 0.01, 20, window.getAspectRatio());
+        pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
 
-        pCamera2->set_projection(90, 0.01, 20, window.getAspectRatio());
+        pCamera2->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera2->set_view_matrix({ std::sin(time), 0, -10 }, {});
 
+        pBackgroundScene->draw(window.getWindowSize());
 
         pScene->draw(window.getWindowSize());
         
-        pBackgroundScene->draw(window.getWindowSize());
-
         window.swapBuffer(); 
 
         time += 0.01;
 
         while (true)
         {
-            std::this_thread::sleep_for(500us);
+            //std::this_thread::sleep_for(500us);
     
             steady_clock::time_point t2(steady_clock::now());
 
@@ -190,4 +190,3 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
-

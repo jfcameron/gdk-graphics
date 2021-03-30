@@ -22,14 +22,17 @@ namespace gdk
         //! models can be shared across webgl1es2_scenes
         using model_ptr_type = std::shared_ptr<webgl1es2_model>;
 
-        //! a camera instance can only appear once in a given webgl1es2_scene
-        using camera_collection_type = std::unordered_set<camera_ptr_type>;
         //! associative collection: Models to collections of Entities - Used to optimize GL calls
         using model_to_entity_collection = std::unordered_map<model_ptr_type, std::unordered_set<entity_ptr_type>>;
         //! associative collection: Materials to {Models to collections of Entities} - Used to optimize GL calls
         using material_to_model_to_entity_collection_collection = std::unordered_map<material_ptr_type, model_to_entity_collection>;
 
     private:
+        using camera_impl_ptr_type = std::shared_ptr<webgl1es2_camera>;
+
+        //! a camera instance can only appear once in a given webgl1es2_scene
+        using camera_collection_type = std::unordered_set<camera_impl_ptr_type>;
+
         //! cameras used to render this webgl1es2_scene.
         camera_collection_type m_cameras;
 

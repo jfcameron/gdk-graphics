@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_CAMERA_H
 #define GDK_GFX_CAMERA_H
@@ -9,12 +9,22 @@
 namespace gdk
 {
     /// \brief Position, orientation and perspective from which entity(s) are drawn
+    /// \todo cull functor
+    /// \todo set_projection from matrix
+    /// \todo project vector from viewport coord into world
     class camera
     {
-        //TODO: implement.
     public:
+        /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
+        enum class clear_mode
+        {
+            nothing, //!< Do not clear any buffers
+            color_and_depth, //!< Clear the color and depth buffers
+            depth_only //!< Clear the Depth buffer
+        };
+
         /// \brief sets the projection matrix to a perspective projection
-        virtual void set_projection(const float aFieldOfView,
+        virtual void set_perspective_projection(const float aFieldOfView,
             const float aNearClippingPlane, 
             const float aFarClippingPlane, 
             const float aViewportAspectRatio) = 0;
@@ -36,18 +46,13 @@ namespace gdk
         virtual void set_view_matrix(const gdk::graphics_vector3_type &aWorldPos,
             const gdk::graphics_quaternion_type &aRotation) = 0;
 
+        /// \brief sets the clear color, used to fill color buffer after it is cleared.
 		virtual void set_clear_color(const gdk::color &acolor) = 0;
 
-        /// \brief gets view matrix
-        virtual graphics_mat4x4_type getViewMatrix() const = 0;
-        
-        //! gets the projection matrix
-        virtual graphics_mat4x4_type getProjectionMatrix() const = 0;
+        /// \brief clear mode decides which buffers to clear. see enum
+        virtual void set_clear_mode(const clear_mode aClearMode) = 0;
 
         virtual ~camera() = default;
-
-    protected:
-        camera() = default;
     };
 }
 
