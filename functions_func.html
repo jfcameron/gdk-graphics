@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">bc81784c61b3dd2436421d4d98ce2a04a2412c67</span>
+   &#160;<span id="projectnumber">1a6d8498a1369a71ccc14c35c3ca77a16a9b42b4</span>
    </div>
   </td>
  </tr>
@@ -132,9 +132,15 @@ $(function() {
 : <a class="el" href="classgdk_1_1graphics_1_1context.html#abbf51d9d8bac683b8fccccf8793b5b26">gdk::graphics::context</a>
 , <a class="el" href="classgdk_1_1webgl1es2__context.html#a3d805cd6e46a4f78cccad595cda3e46e">gdk::webgl1es2_context</a>
 </li>
+<li>get_projection_matrix()
+: <a class="el" href="classgdk_1_1webgl1es2__camera.html#aa518e4a4455437e2200dbc528d4e1334">gdk::webgl1es2_camera</a>
+</li>
 <li>get_quad_model()
 : <a class="el" href="classgdk_1_1graphics_1_1context.html#a3ac0dc5ad69008ce9686de4588f813e6">gdk::graphics::context</a>
 , <a class="el" href="classgdk_1_1webgl1es2__context.html#a28e66aeff4a7dea25257ef2844a7db99">gdk::webgl1es2_context</a>
+</li>
+<li>get_view_matrix()
+: <a class="el" href="classgdk_1_1webgl1es2__camera.html#a136bbd96e6eafa2659fae690d03f388e">gdk::webgl1es2_camera</a>
 </li>
 <li>GetCheckerboardOfDeath()
 : <a class="el" href="classgdk_1_1webgl1es2__texture.html#ad520ff4a2f49485f9dafdf46e430e224">gdk::webgl1es2_texture</a>
@@ -151,19 +157,11 @@ $(function() {
 <li>getModelMatrix()
 : <a class="el" href="classgdk_1_1webgl1es2__entity.html#a31ce06c4785d633a505c3f9fa6c0c34e">gdk::webgl1es2_entity</a>
 </li>
-<li>getProjectionMatrix()
-: <a class="el" href="classgdk_1_1camera.html#af7757bdbc8c8fc2c61a1ff7a235ae164">gdk::camera</a>
-, <a class="el" href="classgdk_1_1webgl1es2__camera.html#a9e2efd4529e5817cf3c78b9a84625857">gdk::webgl1es2_camera</a>
-</li>
 <li>getSumOfAttributeComponents()
 : <a class="el" href="classgdk_1_1webgl1es2__vertex__format.html#ab8726de8e372e3f1e738f6ce4f98f006">gdk::webgl1es2_vertex_format</a>
 </li>
 <li>GetTestTexture()
 : <a class="el" href="classgdk_1_1webgl1es2__texture.html#a4545383fc1edfbba98dc6906945e03be">gdk::webgl1es2_texture</a>
-</li>
-<li>getViewMatrix()
-: <a class="el" href="classgdk_1_1camera.html#a4733c1a2e759d950917a419964ea3c59">gdk::camera</a>
-, <a class="el" href="classgdk_1_1webgl1es2__camera.html#a37e2f9ddac8735538f5ba37ddeaad307">gdk::webgl1es2_camera</a>
 </li>
 </ul>
 
@@ -264,6 +262,13 @@ $(function() {
 
 
 <h3><a id="index_s"></a>- s -</h3><ul>
+<li>set_clear_color()
+: <a class="el" href="classgdk_1_1camera.html#aba63892449d4efb0c4f7bec710238884">gdk::camera</a>
+, <a class="el" href="classgdk_1_1webgl1es2__camera.html#ad9ac9b148f2d442d36845601256ffa86">gdk::webgl1es2_camera</a>
+</li>
+<li>set_clear_mode()
+: <a class="el" href="classgdk_1_1camera.html#a1cf0d9e3fcf1630e23583a815ab35b27">gdk::camera</a>
+</li>
 <li>set_model()
 : <a class="el" href="classgdk_1_1webgl1es2__entity.html#aa0b9e7861335df1bef20524f9ff50dd2">gdk::webgl1es2_entity</a>
 </li>
@@ -275,9 +280,9 @@ $(function() {
 : <a class="el" href="classgdk_1_1camera.html#a00895ba7c516c6a496ab4c34799850e9">gdk::camera</a>
 , <a class="el" href="classgdk_1_1webgl1es2__camera.html#a4f6a801e8fc85ce99651f25bcf7ae1bb">gdk::webgl1es2_camera</a>
 </li>
-<li>set_projection()
-: <a class="el" href="classgdk_1_1camera.html#a199d259af52395774b7c793aa2dc2e68">gdk::camera</a>
-, <a class="el" href="classgdk_1_1webgl1es2__camera.html#a8ae0999d18f470ade75a27b02df4c318">gdk::webgl1es2_camera</a>
+<li>set_perspective_projection()
+: <a class="el" href="classgdk_1_1camera.html#a901b8cdeed25e180e993c53e62b50f37">gdk::camera</a>
+, <a class="el" href="classgdk_1_1webgl1es2__camera.html#aa2c5b6ea1894bfdbaf0a77dce56ac4b8">gdk::webgl1es2_camera</a>
 </li>
 <li>set_view_matrix()
 : <a class="el" href="classgdk_1_1camera.html#af7ce1363b049c95386ab3b495dbbe250">gdk::camera</a>
@@ -287,32 +292,20 @@ $(function() {
 : <a class="el" href="classgdk_1_1camera.html#a524841ae2892ba55b89cc2ea8765f40b">gdk::camera</a>
 , <a class="el" href="classgdk_1_1webgl1es2__camera.html#a8897d105a80f91cc29b7190f45e0165b">gdk::webgl1es2_camera</a>
 </li>
-<li>setClearcolor()
-: <a class="el" href="classgdk_1_1webgl1es2__camera.html#a7a1cffb99507a4c7de65d90f04dabc18">gdk::webgl1es2_camera</a>
-</li>
 <li>setFloat()
 : <a class="el" href="classgdk_1_1material.html#ac1219238cccaf7236badc683138f8f18">gdk::material</a>
 , <a class="el" href="classgdk_1_1webgl1es2__material.html#aa02e1aad8df9b8e9b363a1a9f3692022">gdk::webgl1es2_material</a>
-</li>
-<li>setProjection()
-: <a class="el" href="classgdk_1_1webgl1es2__camera.html#a05c3cad4058c133df24162faf39e6c26">gdk::webgl1es2_camera</a>
 </li>
 <li>setTexture()
 : <a class="el" href="classgdk_1_1material.html#a840adbdaad6fe5d0797eba87542a809c">gdk::material</a>
 , <a class="el" href="classgdk_1_1webgl1es2__material.html#a1e2862b2922ed7ba6f28d5c8e22899a1">gdk::webgl1es2_material</a>
 </li>
 <li>setUniform()
-: <a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a8b603b6e395d80fd22873d16f4479863">gdk::webgl1es2_shader_program</a>
+: <a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a44680f4254e98fa717b883df8bc49928">gdk::webgl1es2_shader_program</a>
 </li>
 <li>setVector2()
 : <a class="el" href="classgdk_1_1material.html#a9cef424dd79028cf21254be292f97b97">gdk::material</a>
 , <a class="el" href="classgdk_1_1webgl1es2__material.html#a845e419c283cf7adec10c5e3a41a2ba5">gdk::webgl1es2_material</a>
-</li>
-<li>setViewportPosition()
-: <a class="el" href="classgdk_1_1webgl1es2__camera.html#a955034ffa3517a8fbf0cee419c973eda">gdk::webgl1es2_camera</a>
-</li>
-<li>setViewportSize()
-: <a class="el" href="classgdk_1_1webgl1es2__camera.html#a33904279d254240eb28540891ba90e76">gdk::webgl1es2_camera</a>
 </li>
 <li>show()
 : <a class="el" href="classgdk_1_1entity.html#adbd2c00b867f9582b3ab95c9877f3130">gdk::entity</a>

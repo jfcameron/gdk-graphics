@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">bc81784c61b3dd2436421d4d98ce2a04a2412c67</span>
+   &#160;<span id="projectnumber">1a6d8498a1369a71ccc14c35c3ca77a16a9b42b4</span>
    </div>
   </td>
  </tr>
@@ -65,8 +65,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classgdk_1_1webgl1es2__material-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">gdk::webgl1es2_material Class Reference</div>  </div>
@@ -84,47 +82,28 @@ Inheritance diagram for gdk::webgl1es2_material:</div>
 </map>
  </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:aca13a467bea5a99c44ed5a1c8196be46"><td class="memItemLeft" align="right" valign="top"><a id="aca13a467bea5a99c44ed5a1c8196be46"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>texture_ptr_impl_type</b> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__texture.html">webgl1es2_texture</a> &gt;</td></tr>
-<tr class="separator:aca13a467bea5a99c44ed5a1c8196be46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6426eb858a8c70d834521710295808ce"><td class="memItemLeft" align="right" valign="top"><a id="a6426eb858a8c70d834521710295808ce"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__shader__program.html">gdk::webgl1es2_shader_program</a> &gt;</td></tr>
-<tr class="memdesc:a6426eb858a8c70d834521710295808ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">shaders can be shared among many webgl1es2_materials, therefore shared_ptr <br /></td></tr>
-<tr class="separator:a6426eb858a8c70d834521710295808ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab29ad18586de395a8191512e2b7d2edf"><td class="memItemLeft" align="right" valign="top"><a id="ab29ad18586de395a8191512e2b7d2edf"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#ab29ad18586de395a8191512e2b7d2edf">texture_uniform_collection_type</a> = std::unordered_map&lt; std::string, texture_ptr_impl_type &gt;</td></tr>
-<tr class="memdesc:ab29ad18586de395a8191512e2b7d2edf"><td class="mdescLeft">&#160;</td><td class="mdescRight">associative collection: uniform name to texture data <br /></td></tr>
-<tr class="separator:ab29ad18586de395a8191512e2b7d2edf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad503d5049c335464e4f0b854f6c8dd15"><td class="memItemLeft" align="right" valign="top"><a id="ad503d5049c335464e4f0b854f6c8dd15"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#ad503d5049c335464e4f0b854f6c8dd15">vector2_uniform_collection_type</a> = std::unordered_map&lt; std::string, graphics_vector2_type &gt;</td></tr>
-<tr class="memdesc:ad503d5049c335464e4f0b854f6c8dd15"><td class="mdescLeft">&#160;</td><td class="mdescRight">uniform name to vector2 data <br /></td></tr>
-<tr class="separator:ad503d5049c335464e4f0b854f6c8dd15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a965850dfe43b3910e1b2a0ab5d265afd"><td class="memItemLeft" align="right" valign="top"><a id="a965850dfe43b3910e1b2a0ab5d265afd"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a965850dfe43b3910e1b2a0ab5d265afd">float_uniform_collection_type</a> = std::unordered_map&lt; std::string, float &gt;</td></tr>
-<tr class="memdesc:a965850dfe43b3910e1b2a0ab5d265afd"><td class="mdescLeft">&#160;</td><td class="mdescRight">uniform name to float data <br /></td></tr>
-<tr class="separator:a965850dfe43b3910e1b2a0ab5d265afd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_types_classgdk_1_1material"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classgdk_1_1material')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classgdk_1_1material.html">gdk::material</a></td></tr>
-<tr class="memitem:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top"><a id="a4ab88d7de51b5d8d607455c7da912c25"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture.html">gdk::texture</a> &gt;</td></tr>
-<tr class="memdesc:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="mdescLeft">&#160;</td><td class="mdescRight">textures can be shared among many webgl1es2_materials. <br /></td></tr>
-<tr class="separator:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">external interface</div></td></tr>
 <tr class="memitem:aa02e1aad8df9b8e9b363a1a9f3692022"><td class="memItemLeft" align="right" valign="top"><a id="aa02e1aad8df9b8e9b363a1a9f3692022"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#aa02e1aad8df9b8e9b363a1a9f3692022">setFloat</a> (const std::string &amp;aTextureName, float aTexture) override</td></tr>
-<tr class="memdesc:aa02e1aad8df9b8e9b363a1a9f3692022"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a float to the material. fails silently <br /></td></tr>
+<tr class="memdesc:aa02e1aad8df9b8e9b363a1a9f3692022"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a float to the material. <br /></td></tr>
 <tr class="separator:aa02e1aad8df9b8e9b363a1a9f3692022"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e2862b2922ed7ba6f28d5c8e22899a1"><td class="memItemLeft" align="right" valign="top"><a id="a1e2862b2922ed7ba6f28d5c8e22899a1"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a1e2862b2922ed7ba6f28d5c8e22899a1">setTexture</a> (const std::string &amp;aTextureName, <a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> aTexture) override</td></tr>
-<tr class="memdesc:a1e2862b2922ed7ba6f28d5c8e22899a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">tries to assign a texture value to a texture uniform of the given name. fails silently <br /></td></tr>
+<tr class="memdesc:a1e2862b2922ed7ba6f28d5c8e22899a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a texture to the material. <br /></td></tr>
 <tr class="separator:a1e2862b2922ed7ba6f28d5c8e22899a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a845e419c283cf7adec10c5e3a41a2ba5"><td class="memItemLeft" align="right" valign="top"><a id="a845e419c283cf7adec10c5e3a41a2ba5"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a845e419c283cf7adec10c5e3a41a2ba5">setVector2</a> (const std::string &amp;aVector2Name, graphics_vector2_type aVector2) override</td></tr>
-<tr class="memdesc:a845e419c283cf7adec10c5e3a41a2ba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">tries to assign a vector2 value to a vector2 uniform of the given name. fails silently <br /></td></tr>
+<tr class="memdesc:a845e419c283cf7adec10c5e3a41a2ba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a vector2 <br /></td></tr>
 <tr class="separator:a845e419c283cf7adec10c5e3a41a2ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="member-group"></a>
+internal interface</h2></td></tr>
+<tr class="memitem:a6426eb858a8c70d834521710295808ce"><td class="memItemLeft" align="right" valign="top"><a id="a6426eb858a8c70d834521710295808ce"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2__shader__program.html">gdk::webgl1es2_shader_program</a> &gt;</td></tr>
+<tr class="memdesc:a6426eb858a8c70d834521710295808ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">shaders can be shared among many webgl1es2_materials <br /></td></tr>
+<tr class="separator:a6426eb858a8c70d834521710295808ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17f9b3415165f489ab46c6b4830628fb"><td class="memItemLeft" align="right" valign="top"><a id="a17f9b3415165f489ab46c6b4830628fb"></a>
 <a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getShaderProgram</b> ()</td></tr>
 <tr class="separator:a17f9b3415165f489ab46c6b4830628fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,9 +133,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a610f1bc17b6338e7cb4836d9da10ff19">~webgl1es2_material</a> ()=default</td></tr>
 <tr class="memdesc:a610f1bc17b6338e7cb4836d9da10ff19"><td class="mdescLeft">&#160;</td><td class="mdescRight">trivial destructor <br /></td></tr>
 <tr class="separator:a610f1bc17b6338e7cb4836d9da10ff19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_types_classgdk_1_1material"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classgdk_1_1material')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classgdk_1_1material.html">gdk::material</a></td></tr>
+<tr class="memitem:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top"><a id="a4ab88d7de51b5d8d607455c7da912c25"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture.html">gdk::texture</a> &gt;</td></tr>
+<tr class="memdesc:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="mdescLeft">&#160;</td><td class="mdescRight">textures can be shared among many webgl1es2_materials. <br /></td></tr>
+<tr class="separator:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Decides how a model is rendered. Specifies shader effects, textures, etc. From the perspective of opengl: a collection of uniform values, opengl pipeline state, and the shader program to be used when rendering a model that uses this material </p>
+<div class="textblock"><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>think about how to model blend functionality. -&gt; subclass that provides blend func related state , in opaque case force opaque options? </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af4cbe1f1d92ba5e0f286d8e9039d34ac"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af4cbe1f1d92ba5e0f286d8e9039d34ac">&#9670;&nbsp;</a></span>webgl1es2_material()</h2>
