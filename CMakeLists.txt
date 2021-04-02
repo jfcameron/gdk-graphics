@@ -41,6 +41,7 @@ jfc_project(library
         ${stb_LIBRARIES}
         
         ${simpleglfw_LIBRARIES} # TODO: wrong. Split this up. gfx depend on OpenGL headers, not on glfw 
+        # ^ need to move the demo into a separate repo. gdk-graphics knows nothing about windowing systems
 
     DEPENDENCIES
         "stb"

@@ -322,6 +322,20 @@ GLuint webgl1es2_shader_program::useProgram() const
 
         setUpFaceCullingMode(m_FaceCullingMode);
 
+        /*if (development_context) OR #if define GDK_GRAPHICS_DEVELOPMENT_BUILD
+        {
+            glValidateProgram(m_ProgramHandle.get());
+            
+            GLint result;
+            glGetProgramiv(m_ProgramHandle.get(), GL_VALIDATE_STATUS, result);
+            
+            if (result != GL_TRUE)
+            {
+                LOGGER("Shader failed validation with log:");
+                PinkShaderOfDeath
+            }
+        } OR #endif*/
+
         glUseProgram(handle);
     }
 

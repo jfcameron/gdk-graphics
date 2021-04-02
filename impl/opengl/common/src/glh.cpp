@@ -21,7 +21,7 @@ namespace glh
             attributeLocation, //Position attribute index
             aAttributeSize,    //Pos size
             GL_FLOAT,          //data type of each member of the format (must be uniform, look at glbindbufferdata, 
-            GL_FALSE,		   //it takes an array or ptr to an array, so no suprise) TODO: support different types.
+            GL_FALSE,          //it takes an array or ptr to an array, so no suprise) TODO: support different types.
             sizeof(GLfloat) * aTotalNumberOfvertex_attributeComponents,
             reinterpret_cast<void *>(sizeof(GLfloat) * aAttributeOffset));
     }
