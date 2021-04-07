@@ -20,42 +20,32 @@ static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
 
 static short s_ActiveTextureUnitCounter(0);
 
-//TODO: use this to throw is uniform data is being assigned to an unused shdaer program
-//TODO: is address really a good idea? probably not: a ptr could point to a dead instance & crash. a ptr could point to a different shader starting at the same address after a deletion. is handle a good idea? No crashes but again could point to new shader in reclaimed handle. Im not sure how to enforce. weak_handle may be the solution, since it safely nulls after the owner of the handle falls out of scope.
+//TODO: Consider moving this to the context. Context is the correct OO solution, but what is the meaning of two separate GL
+// contexts? they will affect eachother's state.
 static std::atomic<GLint> s_CurrentShaderProgramHandle(-1);
 
 const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]()
 {
     const std::string vertexShaderSource(R"V0G0N(    
-        //Uniforms
-        uniform mat4 _MVP;
+    //Uniforms
+    uniform mat4 _MVP;
 
-    #if defined Emscripten
-        //VertIn
-        attribute highp vec3 a_Position;
+    //VertexIn
+    attribute highp vec3 a_Position;
 
-    #elif defined Darwin || defined Windows || defined Linux
-        //VertIn
-        attribute vec3 a_Position;
-    #endif
-
-        void main ()
-        {
-            gl_Position = _MVP * vec4(a_Position,1.0);
-        }
+    void main()
+    {
+        gl_Position = _MVP * vec4(a_Position,1.0);
+    }
     )V0G0N");
 
     const std::string fragmentShaderSource(R"V0G0N(
-    #if defined Emscripten
-        precision mediump float;
-    #endif
+    const vec4 DEATHLY_PINK = vec4(1,0.2,0.8,1);
 
-        const vec4 DEATHLY_PINK = vec4(1,0.2,0.8,1);
-
-        void main()
-        {
-            gl_FragColor = DEATHLY_PINK;
-        }
+    void main()
+    {
+        gl_FragColor = DEATHLY_PINK;
+    }
     )V0G0N");
 
     return new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
@@ -64,75 +54,54 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
 const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::AlphaCutOff([]()
 {
     const std::string vertexShaderSource(R"V0G0N(
-        //Uniforms
-        uniform mat4 _MVP;
-        uniform mat4 _Model;
-        uniform mat4 _View;
-        uniform mat4 _Projection;
+    //Uniforms
+    uniform mat4 _MVP;
+    uniform mat4 _Model;
+    uniform mat4 _View;
+    uniform mat4 _Projection;
 
-    #if defined Emscripten
-        //VertIn
-        attribute highp   vec3 a_Position;
-        attribute mediump vec2 a_UV;
-        //FragIn
-        varying mediump vec2 v_UV;
+    //VertexIn
+    attribute highp vec3 a_Position;
+    attribute mediump vec2 a_UV;
+    
+    //FragmentIn
+    varying mediump vec2 v_UV;
 
-    #elif defined Darwin || defined Windows || defined Linux
-        //VertIn
-        attribute vec3 a_Position;
-        attribute vec2 a_UV;
-        //FragIn
-        varying vec2 v_UV;
-    #endif
+    void main ()
+    {
+        gl_Position = _MVP * vec4(a_Position,1.0);
 
-        void main ()
-        {
-            gl_Position = _MVP * vec4(a_Position,1.0);
-
-            v_UV = a_UV;
-        }
-)V0G0N");
-    //TODO: add THRESHOLD uniform instead of < 1.0 for discard?
-    const std::string fragmentShaderSource(R"V0G0N(
-    #if defined Emscripten
-        precision mediump float;
-    #endif
-
-        //Uniforms
-        uniform sampler2D _Texture;
-		uniform vec2 _UVOffset;
-		uniform vec2 _UVScale; // Pay attention: this is zero inited, so if you make a 
-							   // custom material with this shader and do not provide a non zero value, 
-							   // it will appear the UV data is bad
-
-    #if defined Emscripten
-        //FragIn
-        varying lowp vec2 v_UV;
-	lowp vec2 uv;
-
-    #elif defined Darwin || defined Windows || defined Linux
-        //FragIn
-        varying vec2 v_UV;
-	vec2 uv;
-    #endif
-
-        void main()
-        {
-			uv = v_UV;  
-			uv += _UVOffset;
-			uv *= _UVScale;
-
-            vec4 frag = texture2D(_Texture, uv);
-
-            if (frag[3] < 1.0) discard;
-
-            gl_FragColor = frag;                        
-        }
+        v_UV = a_UV;
+    }
     )V0G0N");
 
-	auto p = new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
+    const std::string fragmentShaderSource(R"V0G0N(
+    //Uniforms
+    uniform sampler2D _Texture;
+    uniform vec2 _UVOffset;
+    uniform vec2 _UVScale; 
 
-	return p;
+    //FragmentIn
+    varying lowp vec2 v_UV;
+    lowp vec2 uv;
+
+    void main()
+    {
+        uv = v_UV;  
+        uv += _UVOffset;
+        uv *= _UVScale;
+
+        vec4 frag = texture2D(_Texture, uv);
+
+        if (frag[3] < 1.0) discard;
+
+        gl_FragColor = frag;                        
+    }
+    )V0G0N");
+
+    auto p = new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
+
+    return p;
 });
 
 static inline void setUpFaceCullingMode(webgl1es2_shader_program::FaceCullingMode a)
@@ -156,14 +125,32 @@ static inline void setUpFaceCullingMode(webgl1es2_shader_program::FaceCullingMod
     }
 }
 
+static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(std::string &aSource)
+{
+    aSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
+#if defined JFC_TARGET_PLATFORM_Emscripten 
+    // version must be the first line in source. version must be present for WebGL platforms
+    aSource.insert(0, std::string("#version 100\n"));
+#else
+   // remove precison prefixes (required by wasm)
+   aSource.insert(0, std::string("#define highp\n"));
+   aSource.insert(0, std::string("#define mediump\n"));
+   aSource.insert(0, std::string("#define lowp\n"));
+#endif
+}
+
+static void perform_shader_code_preprocessing_done_to_only_fragment_stages(std::string &aSource)
+{
+#if defined JFC_TARGET_PLATFORM_Emscripten 
+    // sets float precision, required by webgl
+    aSource.insert(0, std::string("precision mediump float;\n"));
+#endif
+}
+
 webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, std::string aFragmentSource)
 : m_VertexShaderHandle([&aVertexSource]()
 {
-    aVertexSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
-
-#if defined JFC_TARGET_PLATFORM_Emscripten // version must be the first line in source. version must be present for WebGL platforms, one of the small differences between EmbeddedSystems 2 and Web 1
-    aVertexSource.insert(0, std::string("#version 100\n"));
-#endif
+    perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(aVertexSource);
 
     // Compile vertex stage
     const GLuint vs = glCreateShader(GL_VERTEX_SHADER);
@@ -178,11 +165,8 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
 }())
 , m_FragmentShaderHandle([&aFragmentSource]()
 {
-    aFragmentSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
-
-#if defined JFC_TARGET_PLATFORM_Emscripten // version must be the first line in source. version must be present for WebGL platforms, one of the small differences between EmbeddedSystems 2 and Web 1
-    aFragmentSource.insert(0, std::string("#version 100\n"));
-#endif
+    perform_shader_code_preprocessing_done_to_only_fragment_stages(aFragmentSource);
+    perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(aFragmentSource);
     
     // Compile fragment stage
     const char *const fragment_shader = aFragmentSource.c_str();
@@ -214,20 +198,19 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
     {
         std::ostringstream message;
         
-		message << "A shader could not be linked!\n";
-		
-		static const auto decorator = [](std::ostringstream& ss, std::string log_header, 
-			std::string &&log_msg)
-		{
-			ss  << log_header << "\n"
-				<< (log_msg.size() ? log_msg : "clear") << "\n\n";
-		};
+        message << "A shader could not be linked!\n";
+        
+        static const auto decorator = [](std::ostringstream& ss, std::string log_header, 
+            std::string &&log_msg)
+        {
+            ss  << log_header << "\n" << (log_msg.size() ? log_msg : "clear") << "\n\n";
+        };
 
-		decorator(message, "vertex log", glh::GetShaderInfoLog(vs));
-		decorator(message, "fragment log", glh::GetShaderInfoLog(fs));
-		decorator(message, "program log", glh::GetProgramInfoLog(programHandle));
+        decorator(message, "vertex log", glh::GetShaderInfoLog(vs));
+        decorator(message, "fragment log", glh::GetShaderInfoLog(fs));
+        decorator(message, "program log", glh::GetProgramInfoLog(programHandle));
 
-        throw std::runtime_error(std::string(TAG).append(message.str()));
+        throw std::runtime_error(std::string(TAG).append(": ").append(message.str()));
     }
 
     return jfc::unique_handle<GLuint>(programHandle,
@@ -262,7 +245,9 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
                 i, 
                 attrib_name_buffer.size(),    // (c string bookkeeping) max size the gl can safely write into my buffer
                 &currentNameLength,           // (c string bookkeeping) actual char count for the current attribute's name 
-                &component_count,             // e.g: 3 //TODO: RENAME! This isnt what I tohught it was. Size is the number of gltypes.. so vec2 would == 1 as in 1 vec 2, not 2 floats, being the components... need to rename all this stuff...
+                &component_count,             // e.g: 3 //TODO: RENAME! This isnt what I tohught it was. 
+                                              // Size is the number of gltypes.. so vec2 would == 1 as in 1 vec 2, not 2 floats,
+                                              // being the components... need to rename all this stuff...
                 &component_type,              // e.g: float
                 &attrib_name_buffer.front()); // e.g: "a_Position"
 
@@ -272,7 +257,7 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
             info.count = component_count;
 
             m_ActiveAttributes[std::string(attrib_name_buffer.begin(), 
-				attrib_name_buffer.begin() + currentNameLength)] = std::move(info);
+                attrib_name_buffer.begin() + currentNameLength)] = std::move(info);
         }
     }
 
@@ -280,8 +265,8 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
     {
         // (c string bookkeeping) create a buffer likely big enough to contain the longest active attrib's name
         // There is a GL_ACTIVE_UNIFORM_MAX_LENGTH (equivalent of above attrib code), but I have found recent posts online
-		// (2010s) of programmers complaining that it is fairly common for drivers to return incorrect values,
-		// so I am allocating a large buffer instead.
+        // (2010s) of programmers complaining that it is fairly common for drivers to return incorrect values,
+        // so I am allocating a large buffer instead.
         std::vector<GLchar> uniform_name_buffer(256); 
 
         glGetProgramiv(programHandle, GL_ACTIVE_UNIFORMS, &count);
@@ -304,7 +289,8 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
             info.type = attribute_type;
             info.size = attribute_size;
 
-            m_ActiveUniforms[std::string(uniform_name_buffer.begin(), uniform_name_buffer.begin() + currentNameLength)] = std::move(info);
+            m_ActiveUniforms[std::string(uniform_name_buffer.begin(), uniform_name_buffer.begin() + currentNameLength)] 
+                = std::move(info);
         }
     }
 }
@@ -321,20 +307,6 @@ GLuint webgl1es2_shader_program::useProgram() const
         s_ActiveTextureUnitCounter = 0;
 
         setUpFaceCullingMode(m_FaceCullingMode);
-
-        /*if (development_context) OR #if define GDK_GRAPHICS_DEVELOPMENT_BUILD
-        {
-            glValidateProgram(m_ProgramHandle.get());
-            
-            GLint result;
-            glGetProgramiv(m_ProgramHandle.get(), GL_VALIDATE_STATUS, result);
-            
-            if (result != GL_TRUE)
-            {
-                LOGGER("Shader failed validation with log:");
-                PinkShaderOfDeath
-            }
-        } OR #endif*/
 
         glUseProgram(handle);
     }
@@ -644,13 +616,16 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const gdk::w
             glUniform1i(activeUniformSearch->second.location, unit);
         }
         else throw std::invalid_argument(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; "
-			"you are trying to bind too many simultaneous textures to the context: ") + std::to_string(s_ActiveTextureUnitCounter));
+            "you are trying to bind too many simultaneous textures to the context: ") + 
+            std::to_string(s_ActiveTextureUnitCounter));
     }
 }
 
 std::optional<webgl1es2_shader_program::active_attribute_info> webgl1es2_shader_program::tryGetActiveAttribute(const std::string &aAttributeName) const
 {
-    if (auto found = m_ActiveAttributes.find(aAttributeName); found != m_ActiveAttributes.end()) return found->second;
+    if (auto found = m_ActiveAttributes.find(aAttributeName); found != m_ActiveAttributes.end()) 
+        return found->second;
 
     return {};
 }
+

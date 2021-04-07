@@ -7,7 +7,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/jfc-cmake/jfclib.cmake")
 project(null)
 
 option(JFC_BUILD_DEMO "Build the demo" ON)
-option(JFC_BUILD_DOCS "Build documentation" ON)
+option(JFC_BUILD_DOCS "Build documentation" OFF)
 option(JFC_BUILD_TESTS "Build unit tests" OFF)
 
 add_subdirectory(thirdparty)
@@ -52,7 +52,7 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/graphics_context.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data_view.cpp
-        
+                
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp

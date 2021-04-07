@@ -166,3 +166,4 @@ before_script:
     CURRENT_COMMIT_HASH="$(git rev-parse HEAD)"
     cd workspace
     git submodule update --init --recursive
+
