@@ -1,3 +1,5 @@
+// © Joseph Cameron - All Rights Reserved
+
 #include <gdk/webgl1es2_material.h>
 
 #include <iostream>
@@ -5,7 +7,7 @@
 using namespace gdk;
 
 webgl1es2_material::webgl1es2_material(shader_ptr_type pShader)
-	: m_pShaderProgram(pShader)
+    : m_pShaderProgram(pShader)
 {}
 
 void webgl1es2_material::activate()
@@ -14,14 +16,14 @@ void webgl1es2_material::activate()
 
 	for (const auto& [name, a] : m_Textures) m_pShaderProgram->try_set_uniform(name, *a);
 	for (const auto& [name, a] : m_Vector2s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Floats)   m_pShaderProgram->try_set_uniform(name, a);
+	for (const auto& [name, a] : m_Floats) m_pShaderProgram->try_set_uniform(name, a);
 
 	//TODO: activate the rest of this webgl1es2_material's uniforms...
 }
 
 webgl1es2_material::shader_ptr_type webgl1es2_material::getShaderProgram()
 {
-	return m_pShaderProgram;
+    return m_pShaderProgram;
 }
 
 void webgl1es2_material::setTexture(const std::string & aName, texture_ptr_type aValue)
@@ -31,10 +33,11 @@ void webgl1es2_material::setTexture(const std::string & aName, texture_ptr_type 
 
 void webgl1es2_material::setVector2(const std::string & aName, graphics_vector2_type aValue)
 {
-	m_Vector2s[aName] = aValue;
+    m_Vector2s[aName] = aValue;
 }
 
 void webgl1es2_material::setFloat(const std::string& aName, float aValue)
 {
-	m_Floats[aName] = aValue;
+    m_Floats[aName] = aValue;
 }
+

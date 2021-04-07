@@ -340,7 +340,6 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const g
         glUniform2f(search->second.location, aValue.x, aValue.y);
 
         return true;
-
     }
 
     return false;
