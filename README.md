@@ -8,9 +8,7 @@
 
 Documentation generated with doxygen ca be viewed online here: https://jfcameron.github.io/gdk-graphics/
 
-Coverage calculated with gcov viewable here: https://coveralls.io/github/jfcameron/gdk-graphics
-
-CI done using Travis CI. Build scripts cover Windows, Linux, Mac; Clang, GCC, MSVC, MinGW: https://travis-ci.org/jfcameron/gdk-graphics
+CI done using Travis CI. Build scripts cover Windows, Linux, Mac; Clang, GCC, MSVC: https://travis-ci.org/jfcameron/gdk-graphics
 
 catch2 unit tests available under `test/` and can be run with ctest
 
