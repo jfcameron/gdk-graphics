@@ -320,50 +320,75 @@ bool webgl1es2_shader_program::operator==(const webgl1es2_shader_program &b) con
 }
 bool webgl1es2_shader_program::operator!=(const webgl1es2_shader_program &b) const {return !(*this == b);}
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const GLfloat aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const GLfloat aValue) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform1f(search->second.location, aValue);
+        
+        return true;
+    }
 
-    if (search != m_ActiveUniforms.end()) glUniform1f(search->second.location, aValue);
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const graphics_vector2_type &aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector2_type &aValue) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
 
-    if (search != m_ActiveUniforms.end()) glUniform2f(search->second.location, aValue.x, aValue.y);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform2f(search->second.location, aValue.x, aValue.y);
+
+        return true;
+
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const graphics_vector3_type &aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector3_type &aValue) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform3f(search->second.location, aValue.x, aValue.y, aValue.z);
 
-    if (search != m_ActiveUniforms.end()) glUniform3f(search->second.location, aValue.x, aValue.y, aValue.z);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const graphics_vector4_type &aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector4_type &aValue) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform4f(search->second.location, aValue.x, aValue.y, aValue.z, aValue.w);
 
-    if (search != m_ActiveUniforms.end()) glUniform4f(search->second.location, aValue.x, aValue.y, aValue.z, aValue.w);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<GLfloat> &avalue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLfloat> &avalue) const 
 {
-    if (!avalue.size()) return;
+    if (!avalue.size()) return false;
 
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform1fv(search->second.location, avalue.size(), &avalue[0]);
 
-    if (search != m_ActiveUniforms.end()) glUniform1fv(search->second.location, avalue.size(), &avalue[0]);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<graphics_vector2_type> &avalue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector2_type> &avalue) const 
 {
-    if (!avalue.size()) return;
-
-    const auto &search = m_ActiveUniforms.find(aName);
-
-    if (search != m_ActiveUniforms.end()) 
+    if (!avalue.size()) return false;
+    
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
         std::vector<graphics_vector2_type::component_type> data;
 
@@ -376,16 +401,18 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
         }
 
         glUniform2fv(search->second.location, avalue.size(), &data[0]);
+
+        return true;
     }
+
+    return false;
 } 
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<graphics_vector3_type> &avalue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector3_type> &avalue) const 
 {
-    if (!avalue.size()) return;
-
-    const auto &search = m_ActiveUniforms.find(aName);
-
-    if (search != m_ActiveUniforms.end()) 
+    if (!avalue.size()) return false;
+    
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
         std::vector<graphics_vector3_type::component_type> data;
 
@@ -399,16 +426,18 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
         }
 
         glUniform3fv(search->second.location, avalue.size(), &data[0]);
+
+        return true;
     }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<graphics_vector4_type> &avalue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector4_type> &avalue) const 
 {
-    if (!avalue.size()) return;
+    if (!avalue.size()) return false;
 
-    const auto &search = m_ActiveUniforms.find(aName);
-
-    if (search != m_ActiveUniforms.end()) 
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
         std::vector<graphics_vector4_type::component_type> data;
 
@@ -423,53 +452,80 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
         }
 
         glUniform4fv(search->second.location, avalue.size(), &data[0]);
+
+        return true;
     }
+
+    return false;
 } 
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const GLint aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const GLint aValue) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform1i(search->second.location, aValue);
 
-    if (search != m_ActiveUniforms.end()) glUniform1i(search->second.location, aValue);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string aName, const integer2_uniform_type &a) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer2_uniform_type &a) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform2i(search->second.location, a[0], a[1]);
 
-    if (search != m_ActiveUniforms.end()) glUniform2i(search->second.location, a[0], a[1]);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string aName, const integer3_uniform_type &a) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer3_uniform_type &a) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform3i(search->second.location, a[0], a[1], a[2]);
 
-    if (search != m_ActiveUniforms.end()) glUniform3i(search->second.location, a[0], a[1], a[2]);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string aName, const integer4_uniform_type &a) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer4_uniform_type &a) const 
 {
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform4i(search->second.location, a[0], a[1], a[2], a[3]);
 
-    if (search != m_ActiveUniforms.end()) glUniform4i(search->second.location, a[0], a[1], a[2], a[3]);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<GLint> &aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLint> &aValue) const 
 {
-    if (!aValue.size()) return;
+    if (!aValue.size()) return false;
 
-    const auto &search = m_ActiveUniforms.find(aName);
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
+    {
+        glUniform1iv(search->second.location, aValue.size(), &aValue[0]);
 
-    if (search != m_ActiveUniforms.end()) glUniform1iv(search->second.location, aValue.size(), &aValue[0]);
+        return true;
+    }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<integer2_uniform_type> &aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer2_uniform_type> &aValue) const 
 {
-    if (!aValue.size()) return;
+    if (!aValue.size()) return false;
 
-    const auto &search = m_ActiveUniforms.find(aName);
-
-    if (search != m_ActiveUniforms.end()) 
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
         std::vector<integer2_uniform_type::value_type> data;
 
@@ -482,16 +538,19 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
         }
 
         glUniform2iv(search->second.location, aValue.size(), &data[0]);
+
+        return true;
     }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<integer3_uniform_type> &aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer3_uniform_type> &aValue) const 
 {
-    if (!aValue.size()) return;
+    if (!aValue.size()) return false;
 
-    const auto &search = m_ActiveUniforms.find(aName);
 
-    if (search != m_ActiveUniforms.end()) 
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
         std::vector<integer3_uniform_type::value_type> data;
 
@@ -505,16 +564,18 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
         }
 
         glUniform3iv(search->second.location, aValue.size(), &data[0]);
+
+        return true;
     }
+
+    return false;
 }
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<integer4_uniform_type> &aValue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer4_uniform_type> &aValue) const 
 {
-    if (!aValue.size()) return;
+    if (!aValue.size()) return false;
 
-    const auto &search = m_ActiveUniforms.find(aName);
-
-    if (search != m_ActiveUniforms.end()) 
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
         std::vector<integer4_uniform_type::value_type> data;
 
@@ -529,46 +590,53 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
         }
 
         glUniform3iv(search->second.location, aValue.size(), &data[0]);
+
+        return true;
     }
+
+    return false;
 }
 
-/*void webgl1es2_shader_program::setUniform(const std::string &aName, const graphics_mat2x2_type &avalue) const 
+/*bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat2x2_type &avalue) const 
 {
 
 } 
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<graphics_mat2x2_type> &avalue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat2x2_type> &avalue) const 
 {
 
 } 
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const graphics_mat3x3_type &avalue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat3x3_type &avalue) const 
 {
 
 } 
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<graphics_mat3x3_type> &avalue) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat3x3_type> &avalue) const 
 {
 
 }*/
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const graphics_mat4x4_type &a) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat4x4_type &a) const 
 {
-  
     if (const auto& search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-		glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &a.m[0][0]);
+    {
+        glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &a.m[0][0]);
+
+        return true;
+    }
+
+    return false;
 } 
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const std::vector<graphics_mat4x4_type> &a) const 
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat4x4_type> &a) const 
 {
-    if (!a.size()) return;
+    if (!a.size()) return false;
 
-    const auto &search = m_ActiveUniforms.find(aName);
-
-    static constexpr auto magnitude(graphics_mat4x4_type::RowOrColumnCount);
-
-    if (search != m_ActiveUniforms.end()) 
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
+        static constexpr auto magnitude(graphics_mat4x4_type::RowOrColumnCount);
+
         std::vector<graphics_mat4x4_type::component_type> data;
 
         data.reserve(a.size() * magnitude * magnitude);
@@ -582,14 +650,16 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const std::v
         }
 
         glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &data[0]);
+
+        return true;
     }
+
+    return false;
 } 
 
-void webgl1es2_shader_program::setUniform(const std::string &aName, const gdk::webgl1es2_texture &aTexture) const
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const gdk::webgl1es2_texture &aTexture) const
 {
-    const auto &activeUniformSearch = m_ActiveUniforms.find(aName);
-
-    if (activeUniformSearch != m_ActiveUniforms.end())
+    if (const auto &activeUniformSearch = m_ActiveUniforms.find(aName); activeUniformSearch != m_ActiveUniforms.end())
     {   
         const auto &activeTextureSearch = s_ActiveTextureUniformNameToUnit.find(aName);
         
@@ -618,7 +688,11 @@ void webgl1es2_shader_program::setUniform(const std::string &aName, const gdk::w
         else throw std::invalid_argument(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; "
             "you are trying to bind too many simultaneous textures to the context: ") + 
             std::to_string(s_ActiveTextureUnitCounter));
+
+        return true;
     }
+
+    return false;
 }
 
 std::optional<webgl1es2_shader_program::active_attribute_info> webgl1es2_shader_program::tryGetActiveAttribute(const std::string &aAttributeName) const

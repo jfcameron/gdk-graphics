@@ -28,10 +28,10 @@ void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graph
 
     const auto mvp = p * v * m;
 
-    m_Material->getShaderProgram()->setUniform("_Model", mvp); 
-    m_Material->getShaderProgram()->setUniform("_View", mvp);
-    m_Material->getShaderProgram()->setUniform("_Projection", mvp);
-    m_Material->getShaderProgram()->setUniform("_MVP", mvp);
+    m_Material->getShaderProgram()->try_set_uniform("_Model", mvp); 
+    m_Material->getShaderProgram()->try_set_uniform("_View", mvp);
+    m_Material->getShaderProgram()->try_set_uniform("_Projection", mvp);
+    m_Material->getShaderProgram()->try_set_uniform("_MVP", mvp);
 
     m_model->draw();
 }
