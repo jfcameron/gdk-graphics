@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">96b157fae19585eac04727896cd4c8530bfb706d</span>
+   &#160;<span id="projectnumber">73956868cddd107637f241d7f01236e5701ccc79</span>
    </div>
   </td>
  </tr>
@@ -107,13 +107,9 @@ Public Types</h2></td></tr>
  }<tr class="memdesc:aea572d604aa15116798413f0f64cac56"><td class="mdescLeft">&#160;</td><td class="mdescRight">specify whether front- or back-facing polygons can be culled  <a href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:aea572d604aa15116798413f0f64cac56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88f3716dffb113cf4a5527c5d19dd6a2"><td class="memItemLeft" align="right" valign="top"><a id="a88f3716dffb113cf4a5527c5d19dd6a2"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a88f3716dffb113cf4a5527c5d19dd6a2">active_attribute_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__attribute__info.html">active_attribute_info</a> &gt;</td></tr>
-<tr class="memdesc:a88f3716dffb113cf4a5527c5d19dd6a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">associative collection which maps an active attribute by its name to its index in the program. used in memoization strategy to reduce opengl api calls <br /></td></tr>
+<tr class="memitem:a88f3716dffb113cf4a5527c5d19dd6a2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a88f3716dffb113cf4a5527c5d19dd6a2">active_attribute_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__attribute__info.html">active_attribute_info</a> &gt;</td></tr>
 <tr class="separator:a88f3716dffb113cf4a5527c5d19dd6a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a043b0e872c3aa8396880e5f9fd480b78"><td class="memItemLeft" align="right" valign="top"><a id="a043b0e872c3aa8396880e5f9fd480b78"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a043b0e872c3aa8396880e5f9fd480b78">active_uniform_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__uniform__info.html">active_uniform_info</a> &gt;</td></tr>
-<tr class="memdesc:a043b0e872c3aa8396880e5f9fd480b78"><td class="mdescLeft">&#160;</td><td class="mdescRight">associative collection which maps an active uniform by its name to its index in the program. used in memoization strategy to reduce opengl api calls <br /></td></tr>
+<tr class="memitem:a043b0e872c3aa8396880e5f9fd480b78"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a043b0e872c3aa8396880e5f9fd480b78">active_uniform_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__uniform__info.html">active_uniform_info</a> &gt;</td></tr>
 <tr class="separator:a043b0e872c3aa8396880e5f9fd480b78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c169055c250be856eb3999a778bd267"><td class="memItemLeft" align="right" valign="top"><a id="a6c169055c250be856eb3999a778bd267"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a6c169055c250be856eb3999a778bd267">integer2_uniform_type</a> = std::array&lt; GLint, 2 &gt;</td></tr>
@@ -246,7 +242,38 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Specifies drawing behaviours at the two programmable stages in the OpenGL ES 2.0/WebGL 1.0 pipeline (the vertex shader stage and fragment shader stage) </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a88f3716dffb113cf4a5527c5d19dd6a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88f3716dffb113cf4a5527c5d19dd6a2">&#9670;&nbsp;</a></span>active_attribute_collection_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a88f3716dffb113cf4a5527c5d19dd6a2">gdk::webgl1es2_shader_program::active_attribute_collection_type</a> =  std::unordered_map&lt;std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__attribute__info.html">active_attribute_info</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>associative collection which maps an active attribute by its name to its index in the program. used in memoization strategy to reduce opengl api calls </p>
+
+</div>
+</div>
+<a id="a043b0e872c3aa8396880e5f9fd480b78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a043b0e872c3aa8396880e5f9fd480b78">&#9670;&nbsp;</a></span>active_uniform_collection_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a043b0e872c3aa8396880e5f9fd480b78">gdk::webgl1es2_shader_program::active_uniform_collection_type</a> =  std::unordered_map&lt;std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__uniform__info.html">active_uniform_info</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>associative collection which maps an active uniform by its name to its index in the program. used in memoization strategy to reduce opengl api calls </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="aea572d604aa15116798413f0f64cac56"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aea572d604aa15116798413f0f64cac56">&#9670;&nbsp;</a></span>FaceCullingMode</h2>
 
