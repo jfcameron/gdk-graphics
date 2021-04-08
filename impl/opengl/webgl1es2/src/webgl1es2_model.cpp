@@ -25,16 +25,16 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
         1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 1--2
     });
 
-	// Center the quad
-	for (size_t i(0); i < (data.size()); i += 5)
-	{
-		data[i + 0] -= 0.5f;
-		data[i + 1] -= 0.5f;
-	}
+    // Center the quad
+    for (size_t i(0); i < (data.size()); i += 5)
+    {
+        data[i + 0] -= 0.5f;
+        data[i + 1] -= 0.5f;
+    }
 
     return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, 
-		gdk::webgl1es2_vertex_format::Pos3uv2, 
-		data);
+        gdk::webgl1es2_vertex_format::Pos3uv2, 
+        data);
 });
 
 const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
@@ -89,8 +89,8 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
     });
 
     return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, 
-		gdk::webgl1es2_vertex_format::Pos3uv2Norm3, 
-		data);
+        gdk::webgl1es2_vertex_format::Pos3uv2Norm3, 
+        data);
 });
 
 static inline GLenum webgl1es2_modelTypeToOpenGLDrawType(const webgl1es2_model::Type aType)
@@ -225,41 +225,42 @@ void webgl1es2_model::update_vertex_data(const vertex_data_view& vertexDataView)
 
     //VBO
     m_vertex_format = aNewvertex_format;
-    m_VertexCount  = static_cast<GLsizei>(aNewwebgl1es2_model.size() / aNewvertex_format.getSumOfAttributeComponents());
+    m_VertexCount  = static_cast<GLsizei>(
+        aNewwebgl1es2_model.size() / aNewvertex_format.getSumOfAttributeComponents());
     GLint type = webgl1es2_modelTypeToOpenGLDrawType(aNewType);
     
     glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
 
     glBufferData (GL_ARRAY_BUFFER, 
-		sizeof(webgl1es2_model::attribute_component_data_type) * aNewwebgl1es2_model.size(), 
-		&aNewwebgl1es2_model[0], 
-		type);
+        sizeof(webgl1es2_model::attribute_component_data_type) * aNewwebgl1es2_model.size(), 
+        &aNewwebgl1es2_model[0], 
+        type);
 
-    glBindBuffer (GL_ARRAY_BUFFER,0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	m_PrimitiveMode = aPrimitiveMode;
+    m_PrimitiveMode = aPrimitiveMode;
 
     //IBO    
     if (m_IndexCount = (GLsizei)aIndexData.size(); m_IndexCount > 0)
     {
-		if (!m_IndexBufferHandle.get())
-		{
-			auto handle = m_IndexBufferHandle.get();
+        if (!m_IndexBufferHandle.get())
+        {
+            auto handle = m_IndexBufferHandle.get();
 
-			glGenBuffers(1, &handle);
-		}
+            glGenBuffers(1, &handle);
+        }
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.get());
         
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-			sizeof(GLushort) * aIndexData.size(), 
-			&aIndexData[0], 
-			webgl1es2_modelTypeToOpenGLDrawType(aNewType));
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
+            sizeof(GLushort) * aIndexData.size(), 
+            &aIndexData[0], 
+            webgl1es2_modelTypeToOpenGLDrawType(aNewType));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
         if (std::string errorCode; glh::GetError(&errorCode)) 
-			throw std::runtime_error(std::string(TAG).append(errorCode));
+            throw std::runtime_error(std::string(TAG).append(errorCode));
     }
 }
 
@@ -286,7 +287,7 @@ webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
         if (std::string errorCode; glh::GetError(&errorCode)) 
-			throw std::runtime_error(std::string(TAG).append(errorCode));
+            throw std::runtime_error(std::string(TAG).append(errorCode));
     }
     
     return ibo;
@@ -299,20 +300,21 @@ webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
 , m_VertexBufferHandle([&awebgl1es2_model, &aType]()
 {
     if (!awebgl1es2_model.size()) 
-		throw std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
+        throw std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
     
     GLuint vbo(0);
     
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, 
-		sizeof(webgl1es2_model::attribute_component_data_type) * awebgl1es2_model.size(), 
-		&awebgl1es2_model[0], 
-		webgl1es2_modelTypeToOpenGLDrawType(aType));
+        sizeof(webgl1es2_model::attribute_component_data_type) * awebgl1es2_model.size(), 
+        &awebgl1es2_model[0], 
+        webgl1es2_modelTypeToOpenGLDrawType(aType));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
-    if (std::string errorCode; glh::GetError(&errorCode)) throw std::runtime_error(std::string(TAG).append(errorCode));
+    if (std::string errorCode; glh::GetError(&errorCode)) 
+        throw std::runtime_error(std::string(TAG).append(errorCode));
     
     return vbo;
 }(),
@@ -320,7 +322,9 @@ webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
 {
     glDeleteBuffers(1, &handle);
 })
-, m_VertexCount(static_cast<GLsizei>(awebgl1es2_model.size()) / avertex_format.getSumOfAttributeComponents())
+, m_VertexCount(static_cast<GLsizei>(
+    awebgl1es2_model.size()) / avertex_format.getSumOfAttributeComponents())
 , m_vertex_format(avertex_format)
 , m_PrimitiveMode(aPrimitiveMode)
 {}
+

@@ -29,7 +29,8 @@ int main(int argc, char **argv)
     glfw_window window("basic rendering demo");
 
     // Init a gles2/webgl1 context
-    auto pContext = graphics::context::make(graphics::context::implementation::opengl_webgl1_gles2);
+    auto pContext = graphics::context::make(
+        graphics::context::implementation::opengl_webgl1_gles2);
 
     // Setting up the main scene
     auto pScene = pContext->make_scene();
@@ -106,8 +107,8 @@ int main(int argc, char **argv)
 
     // Uniforms must be explicitly set; all defaults are zero
     pMaterial->setTexture("_Texture", pTexture);
-    pMaterial->setVector2("_UVScale", { 1, 1 });
-    pMaterial->setVector2("_UVOffset", { 0, 0 });
+    pMaterial->setVector2("_UVScale", {1, 1});
+    pMaterial->setVector2("_UVOffset", {0, 0});
 
     view.width = 2;
     view.height = 2;
@@ -142,8 +143,7 @@ int main(int argc, char **argv)
     auto pBackgroundScene = pContext->make_scene();
     auto pBackgroundCamera = pContext->make_camera();
     pBackgroundCamera->set_viewport(0, 0, 1, 1);
-    pBackgroundCamera->set_clear_color({});
-    pBackgroundCamera->set_clear_mode(camera::clear_mode::depth_only);
+    pBackgroundCamera->set_clear_color({1,0,0,1});
     pScene->add_camera(pBackgroundCamera);
 
     // Main loop

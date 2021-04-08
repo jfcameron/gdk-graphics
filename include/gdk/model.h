@@ -15,8 +15,8 @@ namespace gdk
     class model
     {
     public:
-		/// \brief replace vertex data held by this model
-		virtual void update_vertex_data(const vertex_data_view &vertexDataView) = 0;
+        /// \brief replace vertex data held by this model
+        virtual void update_vertex_data(const vertex_data_view &vertexDataView) = 0;
 
         virtual ~model() = default;
 
@@ -26,3 +26,4 @@ namespace gdk
 }
 
 #endif
+
