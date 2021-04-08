@@ -15,7 +15,8 @@ namespace gdk
     class camera
     {
     public:
-        /// \brief Describes camera clear behaviour: which buffers in the current FBO should be cleared?
+        /// \brief Describes camera clear behaviour: which buffers in the current 
+        /// FBO should be cleared?
         enum class clear_mode
         {
             nothing, //!< Do not clear any buffers
@@ -57,3 +58,4 @@ namespace gdk
 }
 
 #endif
+

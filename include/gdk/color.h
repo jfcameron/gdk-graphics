@@ -32,10 +32,14 @@ namespace gdk
         /// \brief constructs a color as opaque black
         color() = default;
 
-        /// \brief constructs a color with provided channel values. Alpha has a default opaque value
-        color(const channel_type aR, const channel_type aG, const channel_type aB, const channel_type aA = 1);
+        /// \brief constructs a color with provided channel values. 
+        /// Alpha has a default opaque value
+        color(const channel_type aR, 
+            const channel_type aG, 
+            const channel_type aB, 
+            const channel_type aA = 1);
 
-    /// \name external interface
+    /// \name special values
     ///@{
     //
         //! opaque black color
@@ -50,7 +54,8 @@ namespace gdk
         static const color DarkGreen;
         //! opaque blue color
         static const color Blue;
-        //! opaque bright pink color, useful for indicating color-related errors (stands out against most palettes)
+        //! opaque bright pink color, useful for indicating 
+        /// color-related errors (stands out against most palettes)
         static const color DeathlyPink;
         //! an opaque pastel blue color
         static const color CornflowerBlue;
@@ -61,3 +66,4 @@ namespace gdk
 }
 
 #endif
+

@@ -22,8 +22,8 @@ namespace gdk::graphics
     /// \warn the context is not responsible for establishing a context on the 
     /// graphical hardware,
     /// \warn The context does not know about the windowing system (or lack thereof)
-    /// \warn Initializing OpenGL etc. to the correct standard, managing & swapping buffers etc., 
-    /// creating and managing X11 windows, etc. must be done independently
+    /// \warn Initializing OpenGL etc. to the correct standard, managing & swapping 
+    /// buffers etc., creating and managing X11 windows, etc. must be done independently
     class context
     {
     public:
@@ -69,11 +69,13 @@ namespace gdk::graphics
             null
         };
 
-    /// \name external interface
+    /// \name factory methods
     ///@{
     //
         //! context factory method
-        [[nodiscard]] static context_ptr_type make(const implementation &);
+        [[nodiscard]] static context_ptr_type make(
+            const implementation &
+        );
 
         //! makes a scene
         [[nodiscard]] virtual scene_ptr_type make_scene() const = 0;
@@ -87,8 +89,10 @@ namespace gdk::graphics
        
         //! make an entity
         [[nodiscard]] virtual entity_ptr_type make_entity(
-            model_shared_ptr_type pModel, //!< vertex data for this entity. describes modelspace data.
-            material_shared_ptr_type pMaterial //!<  decides how the vertex data is ultimately rendered through the pipeline.
+            //! vertex data for this entity. describes modelspace data.
+            model_shared_ptr_type pModel, 
+            //! decides how the vertex data is ultimately rendered through the pipeline.
+            material_shared_ptr_type pMaterial 
         ) const = 0;
         //! make an entity by copy
         [[nodiscard]] virtual entity_ptr_type make_entity(
@@ -96,7 +100,9 @@ namespace gdk::graphics
         ) const = 0;
        
         //! construct model by vertext data view
-        [[nodiscard]] virtual model_ptr_type make_model(const vertex_data_view &vertexDataView) const = 0;
+        [[nodiscard]] virtual model_ptr_type make_model(
+            const vertex_data_view &vertexDataView
+        ) const = 0;
 
         //! make a material. 
         [[nodiscard]] virtual material_ptr_type make_material(
@@ -106,15 +112,20 @@ namespace gdk::graphics
         ) const = 0;
 
         /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
-        [[nodiscard]] virtual shader_program_ptr_type make_shader(const std::string &aVertexStageSource, 
-            const std::string &aFragmentStageSource) const = 0;
+        [[nodiscard]] virtual shader_program_ptr_type make_shader(
+            const std::string &aVertexStageSource, 
+            const std::string &aFragmentStageSource
+        ) const = 0;
 
         //! make a texture using a 2d image view
-        [[nodiscard]] virtual texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const = 0;
+        [[nodiscard]] virtual texture_ptr_type make_texture(
+            const texture::image_data_2d_view &imageView
+        ) const = 0;
 
         //! make a texture from an in-memory RGBA32 PNG
         [[nodiscard]] virtual texture_ptr_type make_texture(
-            const std::vector<std::underlying_type<std::byte>::type> &aRGBA32PNGData) const = 0;
+            const std::vector<std::underlying_type<std::byte>::type> &aRGBA32PNGData
+        ) const = 0;
     ///@}
 
     /// \name special resources provided by the implementation
