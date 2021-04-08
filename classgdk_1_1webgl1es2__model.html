@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">73956868cddd107637f241d7f01236e5701ccc79</span>
+   &#160;<span id="projectnumber">1b901cbb8c63651801f0a7b4b3424b19d5a50284</span>
    </div>
   </td>
  </tr>
@@ -109,9 +109,7 @@ Public Types</h2></td></tr>
  }<tr class="memdesc:aa93c7c89298c9c45f16e68c9162d38ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the primitive type used at the primitive assembly stage.  <a href="classgdk_1_1webgl1es2__model.html#aa93c7c89298c9c45f16e68c9162d38ab">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:aa93c7c89298c9c45f16e68c9162d38ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd00c7b58ec2eb87b20e2737703bde0e"><td class="memItemLeft" align="right" valign="top"><a id="abd00c7b58ec2eb87b20e2737703bde0e"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#abd00c7b58ec2eb87b20e2737703bde0e">attribute_component_data_type</a> = GLfloat</td></tr>
-<tr class="memdesc:abd00c7b58ec2eb87b20e2737703bde0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">type that must be used to populate vertex data buffers. All GLES2 attrib types have a float based component type. (float, float vec2, float mat etc) <br /></td></tr>
+<tr class="memitem:abd00c7b58ec2eb87b20e2737703bde0e"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#abd00c7b58ec2eb87b20e2737703bde0e">attribute_component_data_type</a> = GLfloat</td></tr>
 <tr class="separator:abd00c7b58ec2eb87b20e2737703bde0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacf473cb4dc7d1ab6cc383331c020e21"><td class="memItemLeft" align="right" valign="top"><a id="aacf473cb4dc7d1ab6cc383331c020e21"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#aacf473cb4dc7d1ab6cc383331c020e21">index_data_type</a> = GLushort</td></tr>
@@ -127,7 +125,9 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#a8ec72681ef3c3467a9eb7b3eacd30828">draw</a> () const</td></tr>
 <tr class="memdesc:a8ec72681ef3c3467a9eb7b3eacd30828"><td class="mdescLeft">&#160;</td><td class="mdescRight">invokes pipeline on the data. data must be bound <br /></td></tr>
 <tr class="separator:a8ec72681ef3c3467a9eb7b3eacd30828"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a619b0c2c9bd414f6bfadfd2e35883b4b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#a619b0c2c9bd414f6bfadfd2e35883b4b">update_vertex_data</a> (const <a class="el" href="classvertex__data__view.html">vertex_data_view</a> &amp;vertexDataView) override</td></tr>
+<tr class="memitem:a619b0c2c9bd414f6bfadfd2e35883b4b"><td class="memItemLeft" align="right" valign="top"><a id="a619b0c2c9bd414f6bfadfd2e35883b4b"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#a619b0c2c9bd414f6bfadfd2e35883b4b">update_vertex_data</a> (const <a class="el" href="classvertex__data__view.html">vertex_data_view</a> &amp;vertexDataView) override</td></tr>
+<tr class="memdesc:a619b0c2c9bd414f6bfadfd2e35883b4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">replace current data in the vbo and ibo with new data <br /></td></tr>
 <tr class="separator:a619b0c2c9bd414f6bfadfd2e35883b4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9821df214d6973b740f9b4c67d24a114"><td class="memItemLeft" align="right" valign="top"><a id="a9821df214d6973b740f9b4c67d24a114"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__model.html#a9821df214d6973b740f9b4c67d24a114">operator==</a> (const <a class="el" href="classgdk_1_1webgl1es2__model.html">webgl1es2_model</a> &amp;)</td></tr>
@@ -170,7 +170,23 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Vertex data representing a 3D graphical object. </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="abd00c7b58ec2eb87b20e2737703bde0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd00c7b58ec2eb87b20e2737703bde0e">&#9670;&nbsp;</a></span>attribute_component_data_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classgdk_1_1webgl1es2__model.html#abd00c7b58ec2eb87b20e2737703bde0e">gdk::webgl1es2_model::attribute_component_data_type</a> =  GLfloat</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>type that must be used to populate vertex data buffers. All GLES2 attrib types have a float based component type. (float, float vec2, float mat etc) </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="aa93c7c89298c9c45f16e68c9162d38ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa93c7c89298c9c45f16e68c9162d38ab">&#9670;&nbsp;</a></span>PrimitiveMode</h2>
 
@@ -205,7 +221,7 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 </td></tr>
 <tr><td class="fieldname"><a id="aa93c7c89298c9c45f16e68c9162d38aba1da0b9ead8b051940a89214bae22831c"></a>TriangleStrip&#160;</td><td class="fielddoc"><p>Every vertex after the first three define a new triangle. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="aa93c7c89298c9c45f16e68c9162d38aba18d58fde618e4a30e2dfdc122e693047"></a>TriangleFan&#160;</td><td class="fielddoc"><p>Same as Triangle strip except draws in a "fan shape" (???) TODO: find &amp; document better explanation. </p>
+<tr><td class="fieldname"><a id="aa93c7c89298c9c45f16e68c9162d38aba18d58fde618e4a30e2dfdc122e693047"></a>TriangleFan&#160;</td><td class="fielddoc"><p>Same as Triangle strip except draws in a "fan shape" (???) TODO: find &amp; document better explanation </p>
 </td></tr>
 </table>
 
@@ -262,35 +278,6 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 
 <p>strong association with draw. If draw is on this instance is not called after <a class="el" href="classgdk_1_1webgl1es2__model.html#a3b5bbb5a5244c6fadc4bbd9af80bb2e2" title="strong association with draw. If draw is on this instance is not called after bind() has not been cal...">bind()</a> has not been called before draw, the behaviour will be unintended </p>
 <p>Binds this vertex data to the pipeline, enables attributes on the currently used shaderprogram </p>
-
-</div>
-</div>
-<a id="a619b0c2c9bd414f6bfadfd2e35883b4b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a619b0c2c9bd414f6bfadfd2e35883b4b">&#9670;&nbsp;</a></span>update_vertex_data()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void gdk::webgl1es2_model::update_vertex_data </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classvertex__data__view.html">vertex_data_view</a> &amp;&#160;</td>
-          <td class="paramname"><em>vertexDataView</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>replace current data in the vbo and ibo with new data </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>: needs unit test </dd></dl>
-
-<p>Implements <a class="el" href="classgdk_1_1model.html#a2897270f3ccd77792d5b81088688bad6">gdk::model</a>.</p>
 
 </div>
 </div>
