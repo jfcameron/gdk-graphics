@@ -6,6 +6,7 @@
 #include <memory>
 
 #include <gdk/camera.h>
+#include <gdk/texture_camera.h>
 #include <gdk/entity.h>
 #include <gdk/material.h>
 #include <gdk/model.h>
@@ -86,6 +87,9 @@ namespace gdk::graphics
         [[nodiscard]] virtual camera_ptr_type make_camera(
             const camera &other //!< camera to copy
         ) const = 0;
+        
+        //! makes a texture_camera
+        [[nodiscard]] virtual std::shared_ptr<texture_camera> make_texture_camera() const = 0;
        
         //! make an entity
         [[nodiscard]] virtual entity_ptr_type make_entity(

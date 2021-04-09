@@ -5,6 +5,7 @@
 
 //! OpenGL header for gdk
 /// includes gl functions from glew and declares C++ friendly helpers in the GLH namespace
+/// This should be expanded to be a general gl wrapper.
 
 #include <gdk/opengl.h>
 #include <gdk/graphics_types.h>
@@ -57,3 +58,4 @@ namespace glh
 }
 
 #endif
+

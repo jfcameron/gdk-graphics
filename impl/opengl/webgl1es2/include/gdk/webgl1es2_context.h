@@ -17,7 +17,10 @@ namespace gdk
 
         virtual camera_ptr_type make_camera(const camera &other) const override;
 
-        virtual entity_ptr_type make_entity(model_shared_ptr_type pModel, material_shared_ptr_type pMaterial) const override;
+        virtual std::shared_ptr<texture_camera> make_texture_camera() const override;
+
+        virtual entity_ptr_type make_entity(model_shared_ptr_type pModel, 
+            material_shared_ptr_type pMaterial) const override;
 
         virtual entity_ptr_type make_entity(const entity& other) const override;
 

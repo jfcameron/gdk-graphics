@@ -246,3 +246,4 @@ bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const
     return m_Handle == b.m_Handle;
 }
 bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }
+

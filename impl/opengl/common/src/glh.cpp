@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include <cmath>
+
 namespace glh
 {
     void Clearcolor(const gdk::color &acolor)
@@ -156,3 +158,4 @@ bool glh::GetError(std::string *aErrorCode)
     
     return true;
 }
+

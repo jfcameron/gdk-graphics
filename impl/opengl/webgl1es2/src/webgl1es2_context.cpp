@@ -9,6 +9,7 @@
 #include <gdk/webgl1es2_model.h>
 #include <gdk/webgl1es2_scene.h>
 #include <gdk/webgl1es2_shader_program.h>
+#include <gdk/webgl1es2_texture_camera.h>
 
 using namespace gdk;
 
@@ -25,6 +26,11 @@ graphics::context::camera_ptr_type webgl1es2_context::make_camera(const camera &
     return graphics::context::camera_ptr_type(
         new webgl1es2_camera(
             static_cast<const webgl1es2_camera &>(other)));
+}
+
+std::shared_ptr<texture_camera> webgl1es2_context::make_texture_camera() const
+{
+    return std::shared_ptr<texture_camera>(new webgl1es2_texture_camera());
 }
 
 graphics::context::entity_ptr_type webgl1es2_context::make_entity(gdk::graphics::context::model_shared_ptr_type pModel, 

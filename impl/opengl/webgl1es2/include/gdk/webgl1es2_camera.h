@@ -7,6 +7,7 @@
 #include <gdk/color.h>
 #include <gdk/graphics_types.h>
 #include <gdk/webgl1es2_texture.h>
+
 #include <jfc/unique_handle.h>
 
 #include <memory>
@@ -17,7 +18,7 @@ namespace gdk
     class entity;
 
     /// \brief webgl1es2_camera implementation of camera
-    class webgl1es2_camera final : public camera
+    class webgl1es2_camera : public camera
     {
     public:
     /// \name external interface
@@ -73,7 +74,7 @@ namespace gdk
         /// \brief constructs with reasonable default values
         webgl1es2_camera();
 
-        ~webgl1es2_camera() = default;
+        virtual ~webgl1es2_camera() = default;
     ///@}
 
     private:
