@@ -1,7 +1,8 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <gdk/webgl1es2_camera.h>
 #include <gdk/glh.h>
+#include <gdk/webgl1es2_camera.h>
+#include <gdk/webgl1es2_texture.h>
 
 #include <iostream>
 #include <mutex>
@@ -85,12 +86,12 @@ void webgl1es2_camera::set_perspective_projection(const float aFieldOfView,
 }
 
 void webgl1es2_camera::set_orthographic_projection(const float aWidth,
-	const float aHeight,
-	const float aNearClippingPlane,
-	const float aFarClippingPlane,
-	const float aViewportAspectRatio)
+    const float aHeight,
+    const float aNearClippingPlane,
+    const float aFarClippingPlane,
+    const float aViewportAspectRatio)
 {
-	m_ProjectionMatrix.setToOrthographic({ aWidth, aHeight }, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
+    m_ProjectionMatrix.setToOrthographic({ aWidth, aHeight }, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
 }
 
 graphics_mat4x4_type webgl1es2_camera::get_view_matrix() const 
@@ -102,3 +103,4 @@ graphics_mat4x4_type webgl1es2_camera::get_projection_matrix() const
 { 
     return m_ProjectionMatrix; 
 }
+

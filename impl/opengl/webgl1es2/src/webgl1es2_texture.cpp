@@ -179,20 +179,22 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &
 : m_BindTarget(bind_target_to_glenum(bind_target::texture_2d))    
 , m_Handle([&]()
 {
-	if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height))
-		throw std::invalid_argument(std::string(TAG).append(": webgl1es2_texture dimensions must be power of 2"));
+    if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height))
+            throw std::invalid_argument(std::string(TAG).append(
+                ": webgl1es2_texture dimensions must be power of 2"));
 
-	static std::once_flag once;
-	static GLint max_texture_2d_size;
+    static std::once_flag once;
+    static GLint max_texture_2d_size;
 
-	std::call_once(once, []()
-	{
-		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_2d_size);
-	});
+    std::call_once(once, []()
+    {
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_2d_size);
+    });
 
-	if (textureData2d.width > max_texture_2d_size || textureData2d.height > max_texture_2d_size)
-		throw std::invalid_argument(std::string(TAG).append(
-			": webgl1es2_texture too large for this platform. max: " + max_texture_2d_size));
+    if (textureData2d.width > max_texture_2d_size || 
+        textureData2d.height > max_texture_2d_size)
+        throw std::invalid_argument(std::string(TAG).append(
+            ": webgl1es2_texture too large for this platform. max: " + max_texture_2d_size));
 
     GLuint handle;
 
@@ -213,15 +215,18 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &
         const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&textureData2d.data[0])));
 
     //Select webgl1es2_texture filter functions
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnification_filter_to_glint(magFilter));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minification_filter_to_glint(minFilter));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
+        magnification_filter_to_glint(magFilter));
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+        minification_filter_to_glint(minFilter));
    
     //Set wrap modes
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(wrapMode));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(wrapMode));
 
-	//Generate mip maps
-	glGenerateMipmap(GL_TEXTURE_2D);
+    //Generate mip maps
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     return handle;
 }(),

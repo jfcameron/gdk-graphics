@@ -59,17 +59,20 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
     {
         static_cast<webgl1es2_camera *>(current_camera.get())->activate(aFrameBufferSize);
 
-        for (auto &[current_material, current_model_to_entity_collection] : m_MaterialToModelToEntityCollection)
+        for (auto &[current_material, current_model_to_entity_collection] : 
+            m_MaterialToModelToEntityCollection)
         {
             current_material->activate(); 
 
-            for (auto &[current_model, current_entity_collection] : current_model_to_entity_collection)
+            for (auto &[current_model, current_entity_collection] 
+                : current_model_to_entity_collection)
             {
                 current_model->bind(*current_material->getShaderProgram());
 
                 for (auto &current_entity : current_entity_collection) 
                 {
-                    auto current_entity_impl = static_cast<webgl1es2_entity *>(current_entity.get());
+                    auto current_entity_impl = static_cast<webgl1es2_entity *>(
+                        current_entity.get());
                     
                     current_entity_impl->draw(
                         current_camera->get_view_matrix(), 

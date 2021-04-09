@@ -6,6 +6,8 @@
 #include <gdk/camera.h>
 #include <gdk/color.h>
 #include <gdk/graphics_types.h>
+#include <gdk/webgl1es2_texture.h>
+#include <jfc/unique_handle.h>
 
 #include <memory>
 #include <vector>
@@ -41,7 +43,8 @@ namespace gdk
 
         virtual void set_clear_mode(const clear_mode aClearMode) override;
 
-        virtual void set_view_matrix(const gdk::graphics_vector3_type& aWorldPos, const gdk::graphics_quaternion_type& aRotation) override;
+        virtual void set_view_matrix(const gdk::graphics_vector3_type& aWorldPos, 
+            const gdk::graphics_quaternion_type& aRotation) override;
 
     ///@}
 
