@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">e9a53abb176d42ebce3ead7186462f589b5edb93</span>
+   &#160;<span id="projectnumber">22864c4ada931415252b12ed7f15002eda03a709</span>
    </div>
   </td>
  </tr>
@@ -67,7 +67,7 @@ $(function() {
   <div class="summary">
 <a href="classgdk_1_1webgl1es2__camera-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gdk::webgl1es2_camera Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
+<div class="title">gdk::webgl1es2_camera Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -81,41 +81,14 @@ Inheritance diagram for gdk::webgl1es2_camera:</div>
  <div class="center">
   <img src="classgdk_1_1webgl1es2__camera.png" usemap="#gdk::webgl1es2_5Fcamera_map" alt=""/>
   <map id="gdk::webgl1es2_5Fcamera_map" name="gdk::webgl1es2_5Fcamera_map">
-<area href="classgdk_1_1camera.html" title="Position, orientation and perspective from which entity(s) are drawn. " alt="gdk::camera" shape="rect" coords="0,0,147,24"/>
+<area href="classgdk_1_1webgl1es2__screen__camera.html" title="webgl1es2_screen_camera implementation of camera " alt="gdk::webgl1es2_screen_camera" shape="rect" coords="0,56,193,80"/>
+<area href="classgdk_1_1webgl1es2__texture__camera.html" title="webgl1es2_camera implementation of texture_camera " alt="gdk::webgl1es2_texture_camera" shape="rect" coords="203,56,396,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td colspan="2"><div class="groupHeader">external interface</div></td></tr>
-<tr class="memitem:aa2c5b6ea1894bfdbaf0a77dce56ac4b8"><td class="memItemLeft" align="right" valign="top"><a id="aa2c5b6ea1894bfdbaf0a77dce56ac4b8"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#aa2c5b6ea1894bfdbaf0a77dce56ac4b8">set_perspective_projection</a> (const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio) override</td></tr>
-<tr class="memdesc:aa2c5b6ea1894bfdbaf0a77dce56ac4b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to a perspective projection <br /></td></tr>
-<tr class="separator:aa2c5b6ea1894bfdbaf0a77dce56ac4b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f6a801e8fc85ce99651f25bcf7ae1bb"><td class="memItemLeft" align="right" valign="top"><a id="a4f6a801e8fc85ce99651f25bcf7ae1bb"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#a4f6a801e8fc85ce99651f25bcf7ae1bb">set_orthographic_projection</a> (const float aWidth, const float aHeight, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio) override</td></tr>
-<tr class="memdesc:a4f6a801e8fc85ce99651f25bcf7ae1bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to an orthographic projection <br /></td></tr>
-<tr class="separator:a4f6a801e8fc85ce99651f25bcf7ae1bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8897d105a80f91cc29b7190f45e0165b"><td class="memItemLeft" align="right" valign="top"><a id="a8897d105a80f91cc29b7190f45e0165b"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#a8897d105a80f91cc29b7190f45e0165b">set_viewport</a> (const float aX, const float aY, const float aWidth, const float aHeight) override</td></tr>
-<tr class="memdesc:a8897d105a80f91cc29b7190f45e0165b"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the normalized size and position of the viewport within of the window <br /></td></tr>
-<tr class="separator:a8897d105a80f91cc29b7190f45e0165b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9ac9b148f2d442d36845601256ffa86"><td class="memItemLeft" align="right" valign="top"><a id="ad9ac9b148f2d442d36845601256ffa86"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#ad9ac9b148f2d442d36845601256ffa86">set_clear_color</a> (const <a class="el" href="structgdk_1_1color.html">gdk::color</a> &amp;acolor) override</td></tr>
-<tr class="memdesc:ad9ac9b148f2d442d36845601256ffa86"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the clear color, used to fill color buffer after it is cleared. <br /></td></tr>
-<tr class="separator:ad9ac9b148f2d442d36845601256ffa86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a924c1c3acbefedbefc1de87f8117d603"><td class="memItemLeft" align="right" valign="top"><a id="a924c1c3acbefedbefc1de87f8117d603"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>set_clear_mode</b> (const <a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053">clear_mode</a> aClearMode) override</td></tr>
-<tr class="separator:a924c1c3acbefedbefc1de87f8117d603"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88b1f29b2b9d5a7c24c75214e71de62e"><td class="memItemLeft" align="right" valign="top"><a id="a88b1f29b2b9d5a7c24c75214e71de62e"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#a88b1f29b2b9d5a7c24c75214e71de62e">set_view_matrix</a> (const gdk::graphics_vector3_type &amp;aWorldPos, const gdk::graphics_quaternion_type &amp;aRotation) override</td></tr>
-<tr class="memdesc:a88b1f29b2b9d5a7c24c75214e71de62e"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebuilds the view matrix from a 3d position and rotation <br /></td></tr>
-<tr class="separator:a88b1f29b2b9d5a7c24c75214e71de62e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">internal interface</div></td></tr>
-<tr class="memitem:a5f2b45885406ba750ff85b647fed6192"><td class="memItemLeft" align="right" valign="top"><a id="a5f2b45885406ba750ff85b647fed6192"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#a5f2b45885406ba750ff85b647fed6192">activate</a> (const gdk::graphics_intvector2_type &amp;aFrameBufferSize) const</td></tr>
-<tr class="memdesc:a5f2b45885406ba750ff85b647fed6192"><td class="mdescLeft">&#160;</td><td class="mdescRight">activates this camera; mutates gl according to this camera's state <br /></td></tr>
-<tr class="separator:a5f2b45885406ba750ff85b647fed6192"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a136bbd96e6eafa2659fae690d03f388e"><td class="memItemLeft" align="right" valign="top"><a id="a136bbd96e6eafa2659fae690d03f388e"></a>
 graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#a136bbd96e6eafa2659fae690d03f388e">get_view_matrix</a> () const</td></tr>
 <tr class="memdesc:a136bbd96e6eafa2659fae690d03f388e"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets the view matrix <br /></td></tr>
@@ -144,24 +117,34 @@ graphics_mat4x4_type&#160;</td><td class="memItemRight" valign="bottom"><a class
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__camera.html#a56c8992fbe660736edbe40be8261e1d4">webgl1es2_camera</a> ()</td></tr>
 <tr class="memdesc:a56c8992fbe660736edbe40be8261e1d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructs with reasonable default values <br /></td></tr>
 <tr class="separator:a56c8992fbe660736edbe40be8261e1d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08474d8a781970691ce1cabbb544da98"><td class="memItemLeft" align="right" valign="top"><a id="a08474d8a781970691ce1cabbb544da98"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>~webgl1es2_camera</b> ()=default</td></tr>
-<tr class="separator:a08474d8a781970691ce1cabbb544da98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classgdk_1_1camera"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgdk_1_1camera')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgdk_1_1camera.html">gdk::camera</a></td></tr>
-<tr class="memitem:a1cf0d9e3fcf1630e23583a815ab35b27 inherit pub_methods_classgdk_1_1camera"><td class="memItemLeft" align="right" valign="top"><a id="a1cf0d9e3fcf1630e23583a815ab35b27"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a1cf0d9e3fcf1630e23583a815ab35b27">set_clear_mode</a> (const <a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053">clear_mode</a> aClearMode)=0</td></tr>
-<tr class="memdesc:a1cf0d9e3fcf1630e23583a815ab35b27 inherit pub_methods_classgdk_1_1camera"><td class="mdescLeft">&#160;</td><td class="mdescRight">clear mode decides which buffers to clear. see enum <br /></td></tr>
-<tr class="separator:a1cf0d9e3fcf1630e23583a815ab35b27 inherit pub_methods_classgdk_1_1camera"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_types_classgdk_1_1camera"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classgdk_1_1camera')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classgdk_1_1camera.html">gdk::camera</a></td></tr>
-<tr class="memitem:a77bfee62bcd5dc016e74412b52bac053 inherit pub_types_classgdk_1_1camera"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053">clear_mode</a> { <a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053a3e47b75000b0924b6c9ba5759a7cf15d">clear_mode::nothing</a>, 
-<a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053a8f240ec33574c3cccdedb0451902f62c">clear_mode::color_and_depth</a>, 
-<a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053a240843e60ccdec84f58e1a908f2d237d">clear_mode::depth_only</a>
- }<tr class="memdesc:a77bfee62bcd5dc016e74412b52bac053"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describes camera clear behaviour: which buffers in the current FBO should be cleared?  <a href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053">More...</a><br /></td></tr>
-</td></tr>
-<tr class="separator:a77bfee62bcd5dc016e74412b52bac053 inherit pub_types_classgdk_1_1camera"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">descendant's interface</div></td></tr>
+<tr class="memitem:aab939c85c2cbd762388a76235cec26c6"><td class="memItemLeft" align="right" valign="top"><a id="aab939c85c2cbd762388a76235cec26c6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_perspective_projection</b> (const float aFieldOfView, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)</td></tr>
+<tr class="separator:aab939c85c2cbd762388a76235cec26c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d82c4925d9f1df41980e1bdf2fbfda9"><td class="memItemLeft" align="right" valign="top"><a id="a7d82c4925d9f1df41980e1bdf2fbfda9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_orthographic_projection</b> (const float aWidth, const float aHeight, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)</td></tr>
+<tr class="separator:a7d82c4925d9f1df41980e1bdf2fbfda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeed47e986a1e86e9aab29ba2a13feed1"><td class="memItemLeft" align="right" valign="top"><a id="aeed47e986a1e86e9aab29ba2a13feed1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_clear_color</b> (const <a class="el" href="structgdk_1_1color.html">gdk::color</a> &amp;acolor)</td></tr>
+<tr class="separator:aeed47e986a1e86e9aab29ba2a13feed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3245b4f28ada8220a2c2fbf34eb8041f"><td class="memItemLeft" align="right" valign="top"><a id="a3245b4f28ada8220a2c2fbf34eb8041f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_clear_mode</b> (const <a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053">gdk::camera::clear_mode</a> aClearMode)</td></tr>
+<tr class="separator:a3245b4f28ada8220a2c2fbf34eb8041f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6790e6254162e0ee74d3e4a5b68167b4"><td class="memItemLeft" align="right" valign="top"><a id="a6790e6254162e0ee74d3e4a5b68167b4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_view_matrix</b> (const gdk::graphics_vector3_type &amp;aWorldPos, const gdk::graphics_quaternion_type &amp;aRotation)</td></tr>
+<tr class="separator:a6790e6254162e0ee74d3e4a5b68167b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc1e3b7bf0f49b1152c246954e61c856"><td class="memItemLeft" align="right" valign="top"><a id="afc1e3b7bf0f49b1152c246954e61c856"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>activate_clear_mode</b> () const</td></tr>
+<tr class="separator:afc1e3b7bf0f49b1152c246954e61c856"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70eb2770c30e51e30e1b95a09182afb9"><td class="memItemLeft" align="right" valign="top"><a id="a70eb2770c30e51e30e1b95a09182afb9"></a>
+<a class="el" href="classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053">camera::clear_mode</a>&#160;</td><td class="memItemRight" valign="bottom"><b>get_clearmode</b> () const</td></tr>
+<tr class="separator:a70eb2770c30e51e30e1b95a09182afb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a946dd591b8f7faaa067a2257106b900a"><td class="memItemLeft" align="right" valign="top"><a id="a946dd591b8f7faaa067a2257106b900a"></a>
+<a class="el" href="structgdk_1_1color.html">gdk::color</a>&#160;</td><td class="memItemRight" valign="bottom"><b>get_clearcolor</b> () const</td></tr>
+<tr class="separator:a946dd591b8f7faaa067a2257106b900a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classgdk_1_1webgl1es2__camera.html" title="webgl1es2_camera implementation of camera ">webgl1es2_camera</a> implementation of camera </p>

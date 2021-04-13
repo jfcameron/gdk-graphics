@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">e9a53abb176d42ebce3ead7186462f589b5edb93</span>
+   &#160;<span id="projectnumber">22864c4ada931415252b12ed7f15002eda03a709</span>
    </div>
   </td>
  </tr>
@@ -92,7 +92,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 <tr class="separator:af02499872af3014f822e5a45f19408d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>pod struct representing decoded image data + metadata that describes a 2d image primary purpose is used in construction of a texture object.  a view does not own its data. The user must ensure the data observed by the view is cleaned up sometime after it has been used. By used, generally I mean sometime after it has been passed to a texture ctor </p>
+<div class="textblock"><p>pod struct representing decoded image data + metadata that describes a 2d image primary purpose is used in construction of a texture object.  a view does not own its data. The user must ensure the data observed by the view is cleaned up sometime after it has been used. By used, generally I mean sometime after it has been passed to a texture ctor </p><dl class="section note"><dt>Note</dt><dd>: it is valid to provide width + height and a nullptr for data, opengl will allocate an uninitialized texture buffer of the specified size and format. </dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="af02499872af3014f822e5a45f19408d0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af02499872af3014f822e5a45f19408d0">&#9670;&nbsp;</a></span>data</h2>

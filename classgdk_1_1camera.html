@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">e9a53abb176d42ebce3ead7186462f589b5edb93</span>
+   &#160;<span id="projectnumber">22864c4ada931415252b12ed7f15002eda03a709</span>
    </div>
   </td>
  </tr>
@@ -72,18 +72,16 @@ $(function() {
 <div class="title">gdk::camera Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>Position, orientation and perspective from which entity(s) are drawn.  
- <a href="classgdk_1_1camera.html#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="camera_8h_source.html">camera.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for gdk::camera:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classgdk_1_1camera.png" usemap="#gdk::camera_map" alt=""/>
   <map id="gdk::camera_map" name="gdk::camera_map">
-<area href="classgdk_1_1webgl1es2__camera.html" title="webgl1es2_camera implementation of camera " alt="gdk::webgl1es2_camera" shape="rect" coords="0,56,147,80"/>
+<area href="classgdk_1_1screen__camera.html" title="Position, orientation and perspective from which entity(s) are drawn. " alt="gdk::screen_camera" shape="rect" coords="0,56,193,80"/>
+<area href="classgdk_1_1texture__camera.html" title="texture camera renders to textures instead of the screen " alt="gdk::texture_camera" shape="rect" coords="203,56,396,80"/>
+<area href="classgdk_1_1webgl1es2__screen__camera.html" title="webgl1es2_screen_camera implementation of camera " alt="gdk::webgl1es2_screen_camera" shape="rect" coords="0,112,193,136"/>
+<area href="classgdk_1_1webgl1es2__texture__camera.html" title="webgl1es2_camera implementation of texture_camera " alt="gdk::webgl1es2_texture_camera" shape="rect" coords="203,112,396,136"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -106,10 +104,6 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a00895ba7c516c6a496ab4c34799850e9">set_orthographic_projection</a> (const float aWidth, const float aHeight, const float aNearClippingPlane, const float aFarClippingPlane, const float aViewportAspectRatio)=0</td></tr>
 <tr class="memdesc:a00895ba7c516c6a496ab4c34799850e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the projection matrix to an orthographic projection <br /></td></tr>
 <tr class="separator:a00895ba7c516c6a496ab4c34799850e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a524841ae2892ba55b89cc2ea8765f40b"><td class="memItemLeft" align="right" valign="top"><a id="a524841ae2892ba55b89cc2ea8765f40b"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#a524841ae2892ba55b89cc2ea8765f40b">set_viewport</a> (const float aX, const float aY, const float aWidth, const float aHeight)=0</td></tr>
-<tr class="memdesc:a524841ae2892ba55b89cc2ea8765f40b"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the normalized size and position of the viewport within of the window <br /></td></tr>
-<tr class="separator:a524841ae2892ba55b89cc2ea8765f40b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7ce1363b049c95386ab3b495dbbe250"><td class="memItemLeft" align="right" valign="top"><a id="af7ce1363b049c95386ab3b495dbbe250"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1camera.html#af7ce1363b049c95386ab3b495dbbe250">set_view_matrix</a> (const gdk::graphics_vector3_type &amp;aWorldPos, const gdk::graphics_quaternion_type &amp;aRotation)=0</td></tr>
 <tr class="memdesc:af7ce1363b049c95386ab3b495dbbe250"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebuilds the view matrix from a 3d position and rotation <br /></td></tr>
@@ -123,13 +117,7 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memdesc:a1cf0d9e3fcf1630e23583a815ab35b27"><td class="mdescLeft">&#160;</td><td class="mdescRight">clear mode decides which buffers to clear. see enum <br /></td></tr>
 <tr class="separator:a1cf0d9e3fcf1630e23583a815ab35b27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Position, orientation and perspective from which entity(s) are drawn. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd><p class="startdd">cull functor </p>
-<p>set_projection from matrix </p>
-<p class="enddd">project vector from viewport coord into world </p>
-</dd></dl>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a77bfee62bcd5dc016e74412b52bac053"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a77bfee62bcd5dc016e74412b52bac053">&#9670;&nbsp;</a></span>clear_mode</h2>
 

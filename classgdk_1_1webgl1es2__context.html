@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">e9a53abb176d42ebce3ead7186462f589b5edb93</span>
+   &#160;<span id="projectnumber">22864c4ada931415252b12ed7f15002eda03a709</span>
    </div>
   </td>
  </tr>
@@ -92,14 +92,18 @@ Public Member Functions</h2></td></tr>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a2fec9d51b372abd80e86a9d03d641faa">scene_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#aabfb7d200fd47334486e43551421c451">make_scene</a> () const override</td></tr>
 <tr class="memdesc:aabfb7d200fd47334486e43551421c451"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a scene <br /></td></tr>
 <tr class="separator:aabfb7d200fd47334486e43551421c451"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33ec7ccc10ba64c1ea0a07cce6a94dbd"><td class="memItemLeft" align="right" valign="top"><a id="a33ec7ccc10ba64c1ea0a07cce6a94dbd"></a>
-virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a7075a6078084b1704af42d24a3238a3d">graphics::context::camera_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a33ec7ccc10ba64c1ea0a07cce6a94dbd">make_camera</a> () const override</td></tr>
-<tr class="memdesc:a33ec7ccc10ba64c1ea0a07cce6a94dbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera <br /></td></tr>
-<tr class="separator:a33ec7ccc10ba64c1ea0a07cce6a94dbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad29b5da914f283cadca5e34bc795702"><td class="memItemLeft" align="right" valign="top"><a id="aad29b5da914f283cadca5e34bc795702"></a>
-virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a7075a6078084b1704af42d24a3238a3d">camera_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#aad29b5da914f283cadca5e34bc795702">make_camera</a> (const <a class="el" href="classgdk_1_1camera.html">camera</a> &amp;other) const override</td></tr>
-<tr class="memdesc:aad29b5da914f283cadca5e34bc795702"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera by copy <br /></td></tr>
-<tr class="separator:aad29b5da914f283cadca5e34bc795702"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeee1eb779d69119e89c2b442b145fd30"><td class="memItemLeft" align="right" valign="top"><a id="aeee1eb779d69119e89c2b442b145fd30"></a>
+virtual std::shared_ptr&lt; <a class="el" href="classgdk_1_1screen__camera.html">screen_camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#aeee1eb779d69119e89c2b442b145fd30">make_camera</a> () const override</td></tr>
+<tr class="memdesc:aeee1eb779d69119e89c2b442b145fd30"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera TODO: rename to make_screen_camera probably <br /></td></tr>
+<tr class="separator:aeee1eb779d69119e89c2b442b145fd30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91a8ad0d96e6383224683def148f4144"><td class="memItemLeft" align="right" valign="top"><a id="a91a8ad0d96e6383224683def148f4144"></a>
+virtual std::shared_ptr&lt; <a class="el" href="classgdk_1_1screen__camera.html">screen_camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a91a8ad0d96e6383224683def148f4144">make_camera</a> (const <a class="el" href="classgdk_1_1camera.html">camera</a> &amp;other) const override</td></tr>
+<tr class="memdesc:a91a8ad0d96e6383224683def148f4144"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a camera by copy <br /></td></tr>
+<tr class="separator:a91a8ad0d96e6383224683def148f4144"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7604da4c02324be39807faa07305a376"><td class="memItemLeft" align="right" valign="top"><a id="a7604da4c02324be39807faa07305a376"></a>
+virtual std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture__camera.html">texture_camera</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#a7604da4c02324be39807faa07305a376">make_texture_camera</a> () const override</td></tr>
+<tr class="memdesc:a7604da4c02324be39807faa07305a376"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a <a class="el" href="classgdk_1_1texture__camera.html" title="texture camera renders to textures instead of the screen ">texture_camera</a> <br /></td></tr>
+<tr class="separator:a7604da4c02324be39807faa07305a376"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0818ca2112bcc4481f1cb2913be3c9e"><td class="memItemLeft" align="right" valign="top"><a id="aa0818ca2112bcc4481f1cb2913be3c9e"></a>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#acd10f62d3f514748c9339d416237e6a2">entity_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__context.html#aa0818ca2112bcc4481f1cb2913be3c9e">make_entity</a> (<a class="el" href="classgdk_1_1graphics_1_1context.html#a521d37fec7439cfe7f5adcab7442a2b6">model_shared_ptr_type</a> pModel, <a class="el" href="classgdk_1_1graphics_1_1context.html#ac240feba0ac0995dfb5a2a9eafcc4c22">material_shared_ptr_type</a> pMaterial) const override</td></tr>
 <tr class="memdesc:aa0818ca2112bcc4481f1cb2913be3c9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">make an entity <br /></td></tr>
@@ -172,10 +176,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a2fec9d51b372abd80e86a9d03d641faa">scene_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1scene.html">scene</a> &gt;</td></tr>
 <tr class="memdesc:a2fec9d51b372abd80e86a9d03d641faa inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">scene factory return type <br /></td></tr>
 <tr class="separator:a2fec9d51b372abd80e86a9d03d641faa inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7075a6078084b1704af42d24a3238a3d inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="a7075a6078084b1704af42d24a3238a3d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a7075a6078084b1704af42d24a3238a3d">camera_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1camera.html">camera</a> &gt;</td></tr>
-<tr class="memdesc:a7075a6078084b1704af42d24a3238a3d inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">camera factory return type <br /></td></tr>
-<tr class="separator:a7075a6078084b1704af42d24a3238a3d inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd10f62d3f514748c9339d416237e6a2 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="memItemLeft" align="right" valign="top"><a id="acd10f62d3f514748c9339d416237e6a2"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#acd10f62d3f514748c9339d416237e6a2">entity_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1entity.html">entity</a> &gt;</td></tr>
 <tr class="memdesc:acd10f62d3f514748c9339d416237e6a2 inherit pub_types_classgdk_1_1graphics_1_1context"><td class="mdescLeft">&#160;</td><td class="mdescRight">entity factory return type <br /></td></tr>
