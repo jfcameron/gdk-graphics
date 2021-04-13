@@ -139,7 +139,7 @@ int main(int argc, char **argv)
     pScene->add_entity(pEntity);
 
     auto pEntity2 = std::shared_ptr<entity>(
-            pContext->make_entity(pContext->get_cube_model(), pMaterial2));
+        pContext->make_entity(pContext->get_cube_model(), pMaterial2));
 
     pScene->add_entity(pEntity2);
 

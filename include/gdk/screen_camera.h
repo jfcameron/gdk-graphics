@@ -18,9 +18,9 @@ namespace gdk
     public:
         /// \brief sets the normalized size and position of the viewport within of the window
         virtual void set_viewport(const float aX, 
-                const float aY,
-                const float aWidth, 
-                const float aHeight) = 0;
+            const float aY,
+            const float aWidth, 
+            const float aHeight) = 0;
 
         virtual ~screen_camera() = default;
     };

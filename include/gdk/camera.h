@@ -28,10 +28,10 @@ namespace gdk
 
         /// \brief sets the projection matrix to an orthographic projection
         virtual void set_orthographic_projection(const float aWidth,
-                const float aHeight,
-                const float aNearClippingPlane,
-                const float aFarClippingPlane,
-                const float aViewportAspectRatio) = 0;
+            const float aHeight,
+            const float aNearClippingPlane,
+            const float aFarClippingPlane,
+            const float aViewportAspectRatio) = 0;
 
         /// \brief rebuilds the view matrix from a 3d position and rotation
         virtual void set_view_matrix(const gdk::graphics_vector3_type &aWorldPos,
