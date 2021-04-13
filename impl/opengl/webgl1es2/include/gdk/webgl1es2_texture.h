@@ -28,6 +28,10 @@ namespace gdk
             luminance_alpha, //!< 2 channel input: rgb = luminance, a = alpha
             luminance, //!< 1 channel input: rgb = luminance, a = 1
             a, //!< 1 channel input: rgb=0, a=alpha
+            
+            //! Used to attach a texture to one of an FBO's buffers
+            /// WARN: Not part of ES2 or Web1: requires a (widely available) extension!
+            depth_component, 
         };
 
         //! The webgl1es2_texture minifying function is used whenever the pixel being webgl1es2_textured maps to an area greater than one 
@@ -102,6 +106,8 @@ namespace gdk
         /// \warn a view does not own its data. The user must ensure the data observed by the view
         /// is cleaned up sometime after it has been used. By used, generally I mean sometime after it has been
         /// passed to a texture ctor
+        /// \note: it is valid to provide width + height and a nullptr for data, opengl will allocate an
+        /// uninitialized texture buffer of the specified size and format.
         struct webgl1es2_texture_2d_data_view_type
         {
             size_t width; //!< pix width of data
@@ -157,10 +163,12 @@ namespace gdk
         /// \brief creates a 2d webgl1es2_texture from decoded image data.
         /// \exception length, width of the webgl1es2_texture must be power of 2
         webgl1es2_texture(
-            const webgl1es2_texture_2d_data_view_type &textureData2d,
+            const webgl1es2_texture_2d_data_view_type textureData2d,
             const minification_filter minFilter = minification_filter::linear,
             const magnification_filter magFilter = magnification_filter::nearest,
             const wrap_mode wrapMode = wrap_mode::repeat);
+
+        //webgl1es2_texture(
 
         //TODO cubic ctor
         /// \brief creates a cubic webgl1es2_texture from decoded image data.

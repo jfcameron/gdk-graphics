@@ -35,12 +35,16 @@ int main(int argc, char **argv)
     // Setting up the main scene
     auto pScene = pContext->make_scene();
 
+    auto pTextureCamera = pContext->make_texture_camera();
+    pTextureCamera->set_clear_color({1,0.1,0.1,1});
+    pScene->add_camera(pTextureCamera);
+
     auto pCamera = pContext->make_camera();
-    pCamera->set_viewport(0, 0, 0.5, 0.5);
+    //pCamera->set_viewport(0, 0, 0.5, 0.5);
     pScene->add_camera(pCamera);
 
     auto pCamera2 = pContext->make_camera();
-    pCamera2->set_viewport(0.5, 0.5, 0.5, 0.5);
+    //pCamera2->set_viewport(0.5, 0.5, 0.5, 0.5);
     pCamera2->set_clear_color(color::DarkGreen);
     pScene->add_camera(pCamera2);
 
@@ -106,7 +110,7 @@ int main(int argc, char **argv)
     auto pMaterial = pContext->make_material(pAlpha);
 
     // Uniforms must be explicitly set; all defaults are zero
-    pMaterial->setTexture("_Texture", pTexture);
+    pMaterial->setTexture("_Texture", pTextureCamera->get_depth_texture());
     pMaterial->setVector2("_UVScale", {1, 1});
     pMaterial->setVector2("_UVOffset", {0, 0});
 
@@ -140,11 +144,11 @@ int main(int argc, char **argv)
     pScene->add_entity(pEntity2);
 
     // Set up a background scene
-    auto pBackgroundScene = pContext->make_scene();
+    /*auto pBackgroundScene = pContext->make_scene();
     auto pBackgroundCamera = pContext->make_camera();
     pBackgroundCamera->set_viewport(0, 0, 1, 1);
     pBackgroundCamera->set_clear_color({1,0,0,1});
-    pScene->add_camera(pBackgroundCamera);
+    pScene->add_camera(pBackgroundCamera);*/
 
     // Main loop
     float time = 0;
@@ -163,11 +167,14 @@ int main(int argc, char **argv)
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
+        
+        pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+        pTextureCamera->set_view_matrix({std::sin(time), 0, -10}, {});
 
         pCamera2->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera2->set_view_matrix({ std::sin(time), 0, -10 }, {});
 
-        pBackgroundScene->draw(window.getWindowSize());
+        //pBackgroundScene->draw(window.getWindowSize());
 
         pScene->draw(window.getWindowSize());
         

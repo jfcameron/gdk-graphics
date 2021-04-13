@@ -1,4 +1,4 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #include <gdk/glh.h>
 #include <gdk/webgl1es2_texture.h>
@@ -31,6 +31,19 @@ static inline GLint textureFormatToGLint(const webgl1es2_texture::format a)
         case webgl1es2_texture::format::luminance_alpha: return GL_LUMINANCE_ALPHA;
         case webgl1es2_texture::format::luminance: return GL_LUMINANCE;
         case webgl1es2_texture::format::a: return GL_ALPHA;
+        
+        case webgl1es2_texture::format::depth_component: 
+        {
+//TODO: deal with extensions on not glew platforms. Move this into a header.
+#if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
+            if (!GLEW_ARB_depth_texture) throw std::runtime_error(
+                "webgl1es2_texture: use of depth textures requires the "
+                "availability of the depth_texture extention, which is "
+                "not available on the current platform");
+#endif
+
+            return GL_DEPTH_COMPONENT;
+        }
     }
     
     throw std::runtime_error("unhandled format type");
@@ -172,7 +185,7 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<std:
     throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to webgl1es2_texture"));
 }
 
-webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &textureData2d,
+webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type textureData2d,
     const minification_filter minFilter,
     const magnification_filter magFilter,
     const wrap_mode wrapMode)
@@ -204,13 +217,15 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type &
 
     glBindTexture(m_BindTarget, handle);
 
+    auto format = textureFormatToGLint(textureData2d.format);
+
     glTexImage2D(m_BindTarget, 
         0, 
-        textureFormatToGLint(textureData2d.format), 
+        format,
         textureData2d.width, 
         textureData2d.height, 
         0, 
-        textureFormatToGLint(textureData2d.format), 
+        format,
         GL_UNSIGNED_BYTE, 
         const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&textureData2d.data[0])));
 

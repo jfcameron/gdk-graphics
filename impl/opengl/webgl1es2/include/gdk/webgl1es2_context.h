@@ -13,9 +13,9 @@ namespace gdk
     public: 
         virtual scene_ptr_type make_scene() const override;
 
-        virtual graphics::context::camera_ptr_type make_camera() const override;
+        virtual std::shared_ptr<screen_camera> make_camera() const override;
 
-        virtual camera_ptr_type make_camera(const camera &other) const override;
+        virtual std::shared_ptr<screen_camera> make_camera(const camera &other) const override;
 
         virtual std::shared_ptr<texture_camera> make_texture_camera() const override;
 

@@ -18,43 +18,12 @@ namespace gdk
     class entity;
 
     /// \brief webgl1es2_camera implementation of camera
-    class webgl1es2_camera : public camera
+    class webgl1es2_camera
     {
     public:
-    /// \name external interface
-    ///@{
-    //
-        virtual void set_perspective_projection(const float aFieldOfView,
-            const float aNearClippingPlane,
-            const float aFarClippingPlane,
-            const float aViewportAspectRatio) override;
-
-        virtual void set_orthographic_projection(const float aWidth,
-            const float aHeight,
-            const float aNearClippingPlane,
-            const float aFarClippingPlane,
-            const float aViewportAspectRatio) override;
-
-        virtual void set_viewport(const float aX,
-            const float aY,
-            const float aWidth,
-            const float aHeight) override;
-
-        virtual void set_clear_color(const gdk::color& acolor) override;
-
-        virtual void set_clear_mode(const clear_mode aClearMode) override;
-
-        virtual void set_view_matrix(const gdk::graphics_vector3_type& aWorldPos, 
-            const gdk::graphics_quaternion_type& aRotation) override;
-
-    ///@}
-
     /// \name internal interface
     ///@{
     //
-        /// \brief activates this camera; mutates gl according to this camera's state
-        void activate(const gdk::graphics_intvector2_type& aFrameBufferSize) const;
-
         /// \brief gets the view matrix
         graphics_mat4x4_type get_view_matrix() const;
 
@@ -74,19 +43,46 @@ namespace gdk
         /// \brief constructs with reasonable default values
         webgl1es2_camera();
 
+    ///@}
+
         virtual ~webgl1es2_camera() = default;
+
+    protected:
+    /// \name descendant's interface
+    ///@{
+    //
+        void set_perspective_projection(const float aFieldOfView,
+            const float aNearClippingPlane,
+            const float aFarClippingPlane,
+            const float aViewportAspectRatio);
+
+        void set_orthographic_projection(const float aWidth,
+            const float aHeight,
+            const float aNearClippingPlane,
+            const float aFarClippingPlane,
+            const float aViewportAspectRatio);
+
+        void set_clear_color(const gdk::color& acolor);
+
+        void set_clear_mode(const gdk::camera::clear_mode aClearMode);
+
+        void set_view_matrix(const gdk::graphics_vector3_type& aWorldPos, 
+            const gdk::graphics_quaternion_type& aRotation);
+   
+        void activate_clear_mode() const;
+
+        camera::clear_mode get_clearmode() const;
+        gdk::color get_clearcolor() const;
     ///@}
 
     private:
-        graphics_vector2_type m_ViewportPosition = graphics_vector2_type::Zero;
-        graphics_vector2_type m_ViewportSize = graphics_vector2_type(1, 1); 
-        
         graphics_mat4x4_type m_ViewMatrix = graphics_mat4x4_type::Identity; 
         graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::Identity; 
 
-        clear_mode m_ClearMode = clear_mode::color_and_depth;
+        gdk::camera::clear_mode m_ClearMode = gdk::camera::clear_mode::color_and_depth;
         gdk::color m_ClearColor = color::CornflowerBlue;
     };
 }
 
 #endif
+

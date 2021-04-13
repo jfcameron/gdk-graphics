@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include <gdk/webgl1es2_camera.h>
+#include <gdk/webgl1es2_screen_camera.h>
 #include <gdk/webgl1es2_context.h>
 #include <gdk/webgl1es2_entity.h>
 #include <gdk/webgl1es2_material.h>
@@ -16,16 +16,15 @@ using namespace gdk;
 webgl1es2_context::webgl1es2_context()
 {}
 
-graphics::context::camera_ptr_type webgl1es2_context::make_camera() const 
+std::shared_ptr<screen_camera> webgl1es2_context::make_camera() const 
 {
-    return graphics::context::camera_ptr_type(new webgl1es2_camera());
+    return std::shared_ptr<screen_camera>(new webgl1es2_screen_camera());
 }
 
-graphics::context::camera_ptr_type webgl1es2_context::make_camera(const camera &other) const
+std::shared_ptr<screen_camera> webgl1es2_context::make_camera(const camera &other) const
 {
-    return graphics::context::camera_ptr_type(
-        new webgl1es2_camera(
-            static_cast<const webgl1es2_camera &>(other)));
+    return std::shared_ptr<screen_camera>(
+        new webgl1es2_screen_camera(static_cast<const webgl1es2_screen_camera &>(other)));
 }
 
 std::shared_ptr<texture_camera> webgl1es2_context::make_texture_camera() const
@@ -187,6 +186,5 @@ graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_dat
 graphics::context::scene_ptr_type webgl1es2_context::make_scene() const
 {
     return graphics::context::scene_ptr_type(
-        new gdk::webgl1es2_scene()
-    );
+        new gdk::webgl1es2_scene());
 }
