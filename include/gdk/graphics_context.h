@@ -5,13 +5,14 @@
 
 #include <memory>
 
-#include <gdk/camera.h>
 #include <gdk/entity.h>
 #include <gdk/material.h>
 #include <gdk/model.h>
 #include <gdk/scene.h>
+#include <gdk/screen_camera.h>
 #include <gdk/shader_program.h>
 #include <gdk/texture.h>
+#include <gdk/texture_camera.h>
 #include <gdk/vertex_data_view.h>
 
 namespace gdk::graphics
@@ -31,8 +32,6 @@ namespace gdk::graphics
         using context_ptr_type = std::shared_ptr<context>;
         //! scene factory return type
         using scene_ptr_type = std::shared_ptr<scene>;
-        //! camera factory return type
-        using camera_ptr_type = std::shared_ptr<camera>;
         //! entity factory return type
         using entity_ptr_type = std::shared_ptr<entity>;
         //! shader_program factory return type
@@ -80,12 +79,15 @@ namespace gdk::graphics
         //! makes a scene
         [[nodiscard]] virtual scene_ptr_type make_scene() const = 0;
 
-        //! makes a camera
-        [[nodiscard]] virtual camera_ptr_type make_camera() const = 0;
+        //! makes a camera TODO: rename to make_screen_camera probably
+        [[nodiscard]] virtual std::shared_ptr<screen_camera> make_camera() const = 0;
         //! makes a camera by copy
-        [[nodiscard]] virtual camera_ptr_type make_camera(
+        [[nodiscard]] virtual std::shared_ptr<screen_camera> make_camera(
             const camera &other //!< camera to copy
         ) const = 0;
+        
+        //! makes a texture_camera
+        [[nodiscard]] virtual std::shared_ptr<texture_camera> make_texture_camera() const = 0;
        
         //! make an entity
         [[nodiscard]] virtual entity_ptr_type make_entity(

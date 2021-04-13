@@ -3,23 +3,44 @@
 
 using namespace gdk;
 
-void webgl1es2_scene::add_camera(camera_ptr_type pCamera)
+void webgl1es2_scene::add_camera(std::shared_ptr<screen_camera> pCamera)
 {
-    m_cameras.insert(std::static_pointer_cast<camera_impl_ptr_type::element_type>(pCamera));
+    m_screen_cameras.insert(
+        std::static_pointer_cast<webgl1es2_screen_camera>(pCamera));
 }
 
-bool webgl1es2_scene::contains_camera(camera_ptr_type pCamera) const
+void webgl1es2_scene::add_camera(std::shared_ptr<texture_camera> pCamera)
 {
-    auto search = m_cameras.find(std::static_pointer_cast<camera_impl_ptr_type::element_type>(pCamera));
-
-    return search != m_cameras.end();
+    m_texture_cameras.insert(
+        std::static_pointer_cast<webgl1es2_texture_camera>(pCamera));
 }
 
-void webgl1es2_scene::remove_camera(camera_ptr_type pCamera)
+bool webgl1es2_scene::contains_camera(std::shared_ptr<screen_camera> pCamera) const
 {
-    auto search = m_cameras.find(std::static_pointer_cast<camera_impl_ptr_type::element_type>(pCamera));
+    auto search = m_screen_cameras.find(std::static_pointer_cast<webgl1es2_screen_camera>(pCamera));
+
+    return search != m_screen_cameras.end();
+}
+
+bool webgl1es2_scene::contains_camera(std::shared_ptr<texture_camera> pCamera) const
+{
+    auto search = m_texture_cameras.find(std::static_pointer_cast<webgl1es2_texture_camera>(pCamera));
+
+    return search != m_texture_cameras.end();
+}
+
+void webgl1es2_scene::remove_camera(std::shared_ptr<screen_camera> pCamera)
+{
+    auto search = m_screen_cameras.find(std::static_pointer_cast<webgl1es2_screen_camera>(pCamera));
     
-    if (search != m_cameras.end()) m_cameras.erase(search);
+    if (search != m_screen_cameras.end()) m_screen_cameras.erase(search);
+}
+
+void webgl1es2_scene::remove_camera(std::shared_ptr<texture_camera> pCamera)
+{
+    auto search = m_texture_cameras.find(std::static_pointer_cast<webgl1es2_texture_camera>(pCamera));
+    
+    if (search != m_texture_cameras.end()) m_texture_cameras.erase(search);
 }
 
 void webgl1es2_scene::add_entity(entity_ptr_type pEntityInterface)
@@ -51,14 +72,16 @@ void webgl1es2_scene::remove_entity(entity_ptr_type pEntity)
     // How naive? iterate all entity sets, remove instances of pEntity.
     //TODO: implement fast? Need a second datastrcture. linear one. a set? A single entity set makes good sense.
     // nested sets replace with sets of size_t? or perhaps iters to the global set. yes. rewrite. indicies.?
+    //TODO: could use an unordered_set to track unique entitys. tricky part is thinking of how to link
+    // the unordered set entry to the correct location in nested structure so can remove that item at constant time
 }
 
 void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize) const
 {
-    for (auto &current_camera : m_cameras)
+    //TODO: consider moving this into a "pipeline" or "queue" abstraction. 
+    // i think thats what this is becoming
+    auto draw_entities = [&](webgl1es2_camera *pCamera)
     {
-        static_cast<webgl1es2_camera *>(current_camera.get())->activate(aFrameBufferSize);
-
         for (auto &[current_material, current_model_to_entity_collection] : 
             m_MaterialToModelToEntityCollection)
         {
@@ -75,13 +98,27 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
                         current_entity.get());
                     
                     current_entity_impl->draw(
-                        current_camera->get_view_matrix(), 
-                        current_camera->get_projection_matrix());
+                        pCamera->get_view_matrix(), 
+                        pCamera->get_projection_matrix());
                 }
             }
         }
 
         //for (transparent_materals....) //TODO handle blended materials.
+    };
+
+    for (auto &current_texture_camera : m_texture_cameras)
+    {
+        static_cast<webgl1es2_texture_camera *>(current_texture_camera.get())->activate();
+
+        draw_entities(current_texture_camera.get());
+    }
+
+    for (auto &current_screen_camera : m_screen_cameras)
+    {
+        static_cast<webgl1es2_screen_camera *>(current_screen_camera.get())->activate(aFrameBufferSize);
+
+        draw_entities(current_screen_camera.get());
     }
 }
 
