@@ -137,7 +137,7 @@ static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::Usa
 graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_data_view &vertexDataView) const
 {
     if (!vertexDataView.m_AttributeData.size()) 
-		throw std::invalid_argument("vertex data view must contain at least one attribute data view");
+        throw std::invalid_argument("vertex data view must contain at least one attribute data view");
 
     auto usageType = VertexDataViewUsageHintToType(vertexDataView.m_Usage);
 
@@ -159,7 +159,7 @@ graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_dat
             current_attribute_data_view.m_ComponentCount;
 
         if (currentVertexCount != vertexCount) 
-			throw std::invalid_argument("attribute data arrays must contribute to the same number of vertexes");
+            throw std::invalid_argument("attribute data arrays must contribute to the same number of vertexes");
     }
 
     std::vector<attribute_data_view::attribute_component_type> data;

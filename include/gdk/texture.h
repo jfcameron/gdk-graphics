@@ -35,7 +35,11 @@ namespace gdk
             std::byte *data;
         };
 
-        //TODO image_data_2d. owns data. vec<byte>
+        //! update texture data
+        virtual void update_data(const image_data_2d_view &) = 0;
+
+        //! update a section of texture data
+        virtual void update_data(const image_data_2d_view &) = 0;
 
         //! trivial destructor
         virtual ~texture() = default;

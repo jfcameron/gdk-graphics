@@ -133,6 +133,17 @@ int main(int argc, char **argv)
         pContext->make_entity(pContext->get_cube_model(), pMaterial2));
     pScene->add_entity(pEntity2);
 
+    auto pMaterial3 = pContext->make_material(pAlpha);
+    pMaterial3->setTexture("_Texture", pTexture);
+    pMaterial3->setVector2("_UVScale", {1, 1});
+    pMaterial3->setVector2("_UVOffset", {0, 0});
+    auto pEntity3 = std::shared_ptr<entity>(
+        pContext->make_entity(pContext->get_cube_model(), pMaterial3));
+    pScene->add_entity(pEntity3);
+    pEntity3->set_model_matrix(Vector3<float>{2., 0., -14.5}, 
+        Quaternion<float>{{0, 2, 0.6}},
+        {6.5, 0.5, 3});
+
     // Main loop
     float time = 0;
 

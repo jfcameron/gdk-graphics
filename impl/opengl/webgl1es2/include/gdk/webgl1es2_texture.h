@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_WEBGL1ES2_TEXTURE_H
 #define GDK_GFX_WEBGL1ES2_TEXTURE_H
@@ -18,7 +18,14 @@ namespace gdk
     class webgl1es2_texture final : public texture
     {
     public:
-        /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture data within the gl
+    /// \name external interface
+    ///@{
+    //
+        virtual void update_data(const image_data_2d_view &) override;
+    ///@}
+
+        /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture 
+        /// data within the gl
         ///
         /// from the perspective of shaders, texel data always appears to be 4channel (rgba).
         enum class format
@@ -28,69 +35,72 @@ namespace gdk
             luminance_alpha, //!< 2 channel input: rgb = luminance, a = alpha
             luminance, //!< 1 channel input: rgb = luminance, a = 1
             a, //!< 1 channel input: rgb=0, a=alpha
-            
-            //! Used to attach a texture to one of an FBO's buffers
-            /// WARN: Not part of ES2 or Web1: requires a (widely available) extension!
-            depth_component, 
+            depth_component, //!< Used to attach a texture to one of an FBO's buffers
         };
 
-        //! The webgl1es2_texture minifying function is used whenever the pixel being webgl1es2_textured maps to an area greater than one 
-        /// webgl1es2_texture element.
+        //! The webgl1es2_texture minifying function is used whenever the pixel being 
+        /// webgl1es2_textured maps to an area greater than one webgl1es2_texture element.
         enum class minification_filter
         {
-            //! Returns the value of the webgl1es2_texture element that is nearest (in Manhattan distance) to the 
-            /// center of the pixel being webgl1es2_textured.
+            //! Returns the value of the webgl1es2_texture element that is nearest 
+            /// (in Manhattan distance) to the center of the pixel being webgl1es2_textured.
             linear,
             
-            //! Returns the weighted average of the four webgl1es2_texture elements that are closest to the center of 
-            /// the pixel being webgl1es2_textured.
+            //! Returns the weighted average of the four webgl1es2_texture elements that are 
+            /// closest to the center of the pixel being webgl1es2_textured.
             nearest,
             
-            //! Chooses the mipmap that most closely matches the size of the pixel being webgl1es2_textured and uses the 
-            /// GL_NEAREST criterion (the webgl1es2_texture element nearest to the center of the pixel) to produce a webgl1es2_texture value.
+            //! Chooses the mipmap that most closely matches the size of the pixel being 
+            /// webgl1es2_textured and uses the GL_NEAREST criterion (the webgl1es2_texture 
+            /// element nearest to the center of the pixel) to produce a webgl1es2_texture value.
             nearest_mipmap_nearest,
 
-            //! Chooses the mipmap that most closely matches the size of the pixel being webgl1es2_textured and uses the GL_LINEAR 
-            /// criterion (a weighted average of the four webgl1es2_texture elements that are closest to the center of the pixel) 
-            /// to produce a webgl1es2_texture value.
+            //! Chooses the mipmap that most closely matches the size of the pixel being webgl1es2_textured 
+            /// and uses the GL_LINEAR criterion (a weighted average of the four webgl1es2_texture elements 
+            /// that are closest to the center of the pixel) to produce a webgl1es2_texture value.
             linear_mipmap_nearest,
 
-            //! Chooses the two mipmaps that most closely match the size of the pixel being webgl1es2_textured and uses the GL_NEAREST 
-            /// criterion (the webgl1es2_texture element nearest to the center of the pixel) to produce a webgl1es2_texture value from each mipmap.  
-            /// The final webgl1es2_texture value is a weighted average of those two values.
+            //! Chooses the two mipmaps that most closely match the size of the pixel being webgl1es2_textured 
+            /// and uses the GL_NEAREST criterion 
+            /// (the webgl1es2_texture element nearest to the center of the pixel) to produce a 
+            /// webgl1es2_texture value from each mipmap. The final webgl1es2_texture value is a weighted 
+            /// average of those two values.
             nearest_mipmap_linear,
 
-            //! Chooses the two mipmaps that most closely match the size of the pixel being webgl1es2_textured and uses the GL_LINEAR 
-            /// criterion (a weighted average of the four webgl1es2_texture elements that are closest to the center of the pixel) 
-            /// to produce a webgl1es2_texture value from each mipmap.  The final webgl1es2_texture value is a weighted average of those two values.  
+            //! Chooses the two mipmaps that most closely match the size of the pixel being webgl1es2_textured 
+            /// and uses the GL_LINEAR criterion (a weighted average of the four webgl1es2_texture elements 
+            /// that are closest to the center of the pixel) to produce a webgl1es2_texture value from each mipmap.  
+            /// The final webgl1es2_texture value is a weighted average of those two values.  
             linear_mipmap_linear
         };
 
-        //! The webgl1es2_texture magnification function is used when the pixel being webgl1es2_textured maps to an area less than or equal to one 
-        /// webgl1es2_texture element
+        //! The webgl1es2_texture magnification function is used when the pixel being webgl1es2_textured maps to an 
+        /// area less than or equal to one webgl1es2_texture element
         enum class magnification_filter
         {
-            //! Returns the value of the webgl1es2_texture element that is nearest (in Manhattan distance) to the center of the pixel 
-            /// being webgl1es2_textured.
+            //! Returns the value of the webgl1es2_texture element that is nearest 
+            /// (in Manhattan distance) to the center of the pixel being webgl1es2_textured.
             nearest,
             
-            //! Returns the weighted average of the four webgl1es2_texture elements that are closest to the center of the pixel being 
-            /// webgl1es2_textured.
+            //! Returns the weighted average of the four webgl1es2_texture elements that 
+            /// are closest to the center of the pixel being webgl1es2_textured.
             linear
         };
 
-        //! affects behaviour of sampling a texel outside of the normal range (0 - 1) along a webgl1es2_texture dimension
+        //! affects behaviour of sampling a texel outside of the normal range (0 - 1) along a 
+        /// webgl1es2_texture dimension
         enum class wrap_mode
         {
-            clamp_to_edge, //!< sampling above 1 will sample 1, sampling below 0 will sample 0
+            //! sampling above 1 will sample 1, sampling below 0 will sample 0
+            clamp_to_edge, 
 
-            //! causes the integer part of the s coordinate to be ignored; the GL uses only the fractional part, thereby 
-            /// creating a repeating pattern.
+            //! causes the integer part of the s coordinate to be ignored; the GL uses only the fractional 
+            /// part, thereby creating a repeating pattern.
             repeat,
 
-            //! causes the s coordinate to be set to the fractional part of the webgl1es2_texture coordinate if the integer part 
-            /// of s is even;  if the integer part of s is odd, then the s webgl1es2_texture coordinate is set to 1 - frac ⁡ s , where
-            /// frac ⁡ s represents the fractional part of s.
+            //! causes the s coordinate to be set to the fractional part of the webgl1es2_texture coordinate 
+            /// if the integer part of s is even;  if the integer part of s is odd, then the s webgl1es2_texture 
+            /// coordinate is set to 1 - frac ⁡ s , wherefrac ⁡ s represents the fractional part of s.
             mirrored_repeat
         };
 
@@ -134,13 +144,6 @@ namespace gdk
             /// \warwning non-owning pointer
             std::array<std::byte *, 6> data; 
         };
-
-    private:
-        //! the target type. Cannot be changed after construction. Decides whether the webgl1es2_texture data is 2d or cubic
-        GLenum m_BindTarget;
-
-        //! handle to the webgl1es2_texture buffer
-        jfc::unique_handle<GLuint> m_Handle;
     
     public:
         /// \brief returns the handle to the webgl1es2_texture in the opengl context
@@ -187,6 +190,13 @@ namespace gdk
         /// \throws invalid_argument if the image could not be decoded 
         /// (badly formed or not a PNG with component format RGBA32.)
         static webgl1es2_texture make_from_png_rgba32(const std::vector<std::underlying_type<std::byte>::type> aRGBA32PNGData);
+
+    private:
+        //! the target type. Cannot be changed after construction. Decides whether the webgl1es2_texture data is 2d or cubic
+        GLenum m_BindTarget;
+
+        //! handle to the webgl1es2_texture buffer
+        jfc::unique_handle<GLuint> m_Handle;
     };
 }
 
