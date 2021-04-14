@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
     auto pTexture = pContext->make_texture(view);
-    auto pMaterial = pContext->make_material(pAlpha);//, material::render_mode::transparent);
+    auto pMaterial = pContext->make_material(pAlpha, material::render_mode::transparent);
     pMaterial->setTexture("_Texture", pTextureCamera->get_color_texture());
     pMaterial->setVector2("_UVScale", {1, 1});
     pMaterial->setVector2("_UVOffset", {0, 0});
@@ -125,8 +125,10 @@ int main(int argc, char **argv)
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
     auto pTexture2 = pContext->make_texture(view);
-    auto pMaterial2 = pContext->make_material(pAlpha, material::render_mode::transparent);
+    auto pMaterial2 = pContext->make_material(pAlpha);//, material::render_mode::transparent);
     pMaterial2->setTexture("_Texture", pTexture2);
+    pMaterial2->setVector2("_UVScale", {1, 1});
+    pMaterial2->setVector2("_UVOffset", {0, 0});
     auto pEntity2 = std::shared_ptr<entity>(
         pContext->make_entity(pContext->get_cube_model(), pMaterial2));
     pScene->add_entity(pEntity2);

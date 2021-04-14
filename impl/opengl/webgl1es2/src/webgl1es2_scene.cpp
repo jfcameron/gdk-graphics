@@ -42,44 +42,47 @@ void webgl1es2_scene::remove_camera(std::shared_ptr<texture_camera> pCamera)
     
     if (search != m_texture_cameras.end()) m_texture_cameras.erase(search);
 }
-
-void sorted_render_set::sort()
+#include <vector>
+#include <algorithm>
+void sorted_render_set::draw(webgl1es2_camera *pCamera) const
 {
-    //TODO: implement
+    std::vector<std::shared_ptr<entity>> sorted_entities(
+        m_unique_entities.begin(), 
+        m_unique_entities.end());
+
+    std::sort(sorted_entities.begin(), sorted_entities.end(),
+    [pCamera](std::shared_ptr<entity> pA, std::shared_ptr<entity> pB)
+    {
+        return pA; //TODO: sort based on distance from Camera
+    });
+
+    for (auto current_entity : sorted_entities)
+    {
+        auto pEntity = static_cast<webgl1es2_entity *>(current_entity.get());
+        auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
+        auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
+
+        pMaterial->activate();
+
+        pModel->bind(*pMaterial->getShaderProgram());
+
+        pEntity->draw(pCamera->get_view_matrix(), 
+            pCamera->get_projection_matrix());
+    }
 }
 
 void sorted_render_set::try_add_entity(entity_ptr_type pEntityInterface)
 {
-    /*if (auto search = m_unique_entities.find(pEntityInterface); 
+    if (auto search = m_unique_entities.find(pEntityInterface); 
         search != m_unique_entities.end()) return;
 
     m_unique_entities.insert(pEntityInterface);
-
-    auto pEntity = static_cast<webgl1es2_entity *>(pEntityInterface.get());
-    auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
-    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
-
-    auto modelToEntityCollectionSearch = m_MaterialToModelToEntityCollection.find(pMaterial);
-
-    if (modelToEntityCollectionSearch == m_MaterialToModelToEntityCollection.end())
-    {
-        m_MaterialToModelToEntityCollection[pMaterial] = {};
-        
-        m_MaterialToModelToEntityCollection[pMaterial][pModel] = {};
-    }
-    else if (auto entityCollectionSearch = modelToEntityCollectionSearch->second.find(pModel); 
-        entityCollectionSearch == modelToEntityCollectionSearch->second.end())
-    {
-        modelToEntityCollectionSearch->second[pModel] = {};
-    }
-    
-    m_MaterialToModelToEntityCollection[pMaterial][pModel].insert(pEntityInterface);*/
 }
 
 void render_set::try_add_entity(entity_ptr_type pEntityInterface)
 {
-    /*if (auto search = m_unique_entities.find(pEntityInterface); 
-        search != m_unique_entities.end()) return;*/
+    if (auto search = m_unique_entities.find(pEntityInterface); 
+        search != m_unique_entities.end()) return;
 
     m_unique_entities.insert(pEntityInterface);
 

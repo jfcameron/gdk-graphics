@@ -26,7 +26,7 @@ namespace gdk
         using material_to_model_to_entity_collection_collection = 
             std::unordered_map<material_ptr_type, model_to_entity_collection>;
 
-        void draw(webgl1es2_camera *p) const;
+        virtual void draw(webgl1es2_camera *p) const;
         
         virtual void try_add_entity(entity_ptr_type);
 
@@ -38,12 +38,12 @@ namespace gdk
         std::unordered_set<entity_ptr_type> m_unique_entities;
     };
 
-    class sorted_render_set : public render_set
+    class sorted_render_set final : public render_set
     {
     public:
-        virtual void try_add_entity(entity_ptr_type) override;
+        virtual void draw(webgl1es2_camera *p) const;
 
-        void sort();
+        virtual void try_add_entity(entity_ptr_type) override;
 
         sorted_render_set() = default;
 
@@ -103,7 +103,7 @@ namespace gdk
 
         render_set m_opaque_set;
 
-        /*sorted_render_set*/render_set m_translucent_set;
+        sorted_render_set m_translucent_set;
     };
 }
 
