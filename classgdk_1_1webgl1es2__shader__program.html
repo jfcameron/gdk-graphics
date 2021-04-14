@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">a080655d839943aa9f974e019c5b933157f15a98</span>
+   &#160;<span id="projectnumber">e34c970e6d863d07065281a889e1c933a912566f</span>
    </div>
   </td>
  </tr>
@@ -100,13 +100,6 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aea572d604aa15116798413f0f64cac56"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56">FaceCullingMode</a> { <a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56a5835bab1ade0060909e31a06af2e2cde">FaceCullingMode::Front</a>, 
-<a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56a0557fa923dcee4d0f86b1409f5c2167f">FaceCullingMode::Back</a>, 
-<a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56a8be41da9b58e32ece35a2b5751f6aeb9">FaceCullingMode::FrontAndBack</a>, 
-<a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56a6adf97f83acf6453d4a6a4b1070f3754">FaceCullingMode::None</a>
- }<tr class="memdesc:aea572d604aa15116798413f0f64cac56"><td class="mdescLeft">&#160;</td><td class="mdescRight">specify whether front- or back-facing polygons can be culled  <a href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56">More...</a><br /></td></tr>
-</td></tr>
-<tr class="separator:aea572d604aa15116798413f0f64cac56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88f3716dffb113cf4a5527c5d19dd6a2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a88f3716dffb113cf4a5527c5d19dd6a2">active_attribute_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__attribute__info.html">active_attribute_info</a> &gt;</td></tr>
 <tr class="separator:a88f3716dffb113cf4a5527c5d19dd6a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a043b0e872c3aa8396880e5f9fd480b78"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a043b0e872c3aa8396880e5f9fd480b78">active_uniform_collection_type</a> = std::unordered_map&lt; std::string, <a class="el" href="structgdk_1_1webgl1es2__shader__program_1_1active__uniform__info.html">active_uniform_info</a> &gt;</td></tr>
@@ -205,9 +198,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aba31ea045e144506a5a56a55b179af9b">try_set_uniform</a> (const std::string &amp;aName, const <a class="el" href="classgdk_1_1webgl1es2__texture.html">gdk::webgl1es2_texture</a> &amp;aTexture) const</td></tr>
 <tr class="memdesc:aba31ea045e144506a5a56a55b179af9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">bind a texture to the context then assign it to a texture uniform <br /></td></tr>
 <tr class="separator:aba31ea045e144506a5a56a55b179af9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72fea51df7af267c9f11e6c7eceaa5ee"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#a72fea51df7af267c9f11e6c7eceaa5ee">useProgram</a> () const</td></tr>
-<tr class="memdesc:a72fea51df7af267c9f11e6c7eceaa5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">bind an array of textures to the context then assign them to texture uniforms  <a href="#a72fea51df7af267c9f11e6c7eceaa5ee">More...</a><br /></td></tr>
-<tr class="separator:a72fea51df7af267c9f11e6c7eceaa5ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab54c258f5ffd6872323fddd678805b9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#ab54c258f5ffd6872323fddd678805b9e">useProgram</a> () const</td></tr>
+<tr class="memdesc:ab54c258f5ffd6872323fddd678805b9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">bind an array of textures to the context then assign them to texture uniforms  <a href="#ab54c258f5ffd6872323fddd678805b9e">More...</a><br /></td></tr>
+<tr class="separator:ab54c258f5ffd6872323fddd678805b9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac56a2aa9c217d90d41ece769fb491c2"><td class="memItemLeft" align="right" valign="top"><a id="aac56a2aa9c217d90d41ece769fb491c2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aac56a2aa9c217d90d41ece769fb491c2">operator==</a> (const <a class="el" href="classgdk_1_1webgl1es2__shader__program.html">webgl1es2_shader_program</a> &amp;) const</td></tr>
 <tr class="memdesc:aac56a2aa9c217d90d41ece769fb491c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">equality semantics <br /></td></tr>
@@ -273,41 +266,6 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 
 </div>
 </div>
-<h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="aea572d604aa15116798413f0f64cac56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea572d604aa15116798413f0f64cac56">&#9670;&nbsp;</a></span>FaceCullingMode</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="classgdk_1_1webgl1es2__shader__program.html#aea572d604aa15116798413f0f64cac56">gdk::webgl1es2_shader_program::FaceCullingMode</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>specify whether front- or back-facing polygons can be culled </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aea572d604aa15116798413f0f64cac56a5835bab1ade0060909e31a06af2e2cde"></a>Front&#160;</td><td class="fielddoc"><p>cull front facing polygons </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aea572d604aa15116798413f0f64cac56a0557fa923dcee4d0f86b1409f5c2167f"></a>Back&#160;</td><td class="fielddoc"><p>cull back facing polygons </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aea572d604aa15116798413f0f64cac56a8be41da9b58e32ece35a2b5751f6aeb9"></a>FrontAndBack&#160;</td><td class="fielddoc"><p>cull front and back facing polygons </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aea572d604aa15116798413f0f64cac56a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>do not cull any polygons </p>
-</td></tr>
-</table>
-
-</div>
-</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="aacbad5e051143d6a5bd7b9303ac3fe0f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aacbad5e051143d6a5bd7b9303ac3fe0f">&#9670;&nbsp;</a></span>try_set_uniform()</h2>
@@ -340,14 +298,14 @@ static const jfc::shared_proxy_ptr&lt; <a class="el" href="classgdk_1_1webgl1es2
 
 </div>
 </div>
-<a id="a72fea51df7af267c9f11e6c7eceaa5ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a72fea51df7af267c9f11e6c7eceaa5ee">&#9670;&nbsp;</a></span>useProgram()</h2>
+<a id="ab54c258f5ffd6872323fddd678805b9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab54c258f5ffd6872323fddd678805b9e">&#9670;&nbsp;</a></span>useProgram()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">GLuint gdk::webgl1es2_shader_program::useProgram </td>
+          <td class="memname">void gdk::webgl1es2_shader_program::useProgram </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">a080655d839943aa9f974e019c5b933157f15a98</span>
+   &#160;<span id="projectnumber">e34c970e6d863d07065281a889e1c933a912566f</span>
    </div>
   </td>
  </tr>
@@ -91,6 +91,18 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="memdesc:a6426eb858a8c70d834521710295808ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">shaders can be shared among many webgl1es2_materials <br /></td></tr>
 <tr class="separator:a6426eb858a8c70d834521710295808ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_types_classgdk_1_1material"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classgdk_1_1material')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classgdk_1_1material.html">gdk::material</a></td></tr>
+<tr class="memitem:a9d2e38629d0e208c97b2c47c88315ec8 inherit pub_types_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">FaceCullingMode</a> { <a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a5835bab1ade0060909e31a06af2e2cde">FaceCullingMode::Front</a>, 
+<a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a0557fa923dcee4d0f86b1409f5c2167f">FaceCullingMode::Back</a>, 
+<a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a8be41da9b58e32ece35a2b5751f6aeb9">FaceCullingMode::FrontAndBack</a>, 
+<a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a6adf97f83acf6453d4a6a4b1070f3754">FaceCullingMode::None</a>
+ }<tr class="memdesc:a9d2e38629d0e208c97b2c47c88315ec8"><td class="mdescLeft">&#160;</td><td class="mdescRight">specify whether front- or back-facing polygons can be culled  <a href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a9d2e38629d0e208c97b2c47c88315ec8 inherit pub_types_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd278ddf154dd258615183e3cbb3fc95 inherit pub_types_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">render_mode</a> { <a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95a94619f8a70068b2591c2eed622525b0e">render_mode::opaque</a>, 
+<a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95a5e96bf62b9b2c18fdb65564b4a18fd1f">render_mode::transparent</a>
+ }<tr class="memdesc:afd278ddf154dd258615183e3cbb3fc95"><td class="mdescLeft">&#160;</td><td class="mdescRight">render mode decides transparency etc  <a href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:afd278ddf154dd258615183e3cbb3fc95 inherit pub_types_classgdk_1_1material"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="memItemLeft" align="right" valign="top"><a id="a4ab88d7de51b5d8d607455c7da912c25"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture.html">gdk::texture</a> &gt;</td></tr>
 <tr class="memdesc:a4ab88d7de51b5d8d607455c7da912c25 inherit pub_types_classgdk_1_1material"><td class="mdescLeft">&#160;</td><td class="mdescRight">textures can be shared among many webgl1es2_materials. <br /></td></tr>
@@ -98,13 +110,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a17f9b3415165f489ab46c6b4830628fb"><td class="memItemLeft" align="right" valign="top"><a id="a17f9b3415165f489ab46c6b4830628fb"></a>
-<a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getShaderProgram</b> ()</td></tr>
-<tr class="separator:a17f9b3415165f489ab46c6b4830628fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf8686854429e2e8a48b2b22a2424847"><td class="memItemLeft" align="right" valign="top"><a id="acf8686854429e2e8a48b2b22a2424847"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#acf8686854429e2e8a48b2b22a2424847">activate</a> ()</td></tr>
-<tr class="memdesc:acf8686854429e2e8a48b2b22a2424847"><td class="mdescLeft">&#160;</td><td class="mdescRight">modifies the opengl state, assigning the program, assigning values to the program's uniforms etc. <br /></td></tr>
-<tr class="separator:acf8686854429e2e8a48b2b22a2424847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a599b21bc20926edf87650bcc845c9cb2"><td class="memItemLeft" align="right" valign="top"><a id="a599b21bc20926edf87650bcc845c9cb2"></a>
 <a class="el" href="classgdk_1_1webgl1es2__material.html">webgl1es2_material</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a599b21bc20926edf87650bcc845c9cb2">operator=</a> (<a class="el" href="classgdk_1_1webgl1es2__material.html">webgl1es2_material</a> &amp;&amp;)=default</td></tr>
 <tr class="memdesc:a599b21bc20926edf87650bcc845c9cb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">support move semantics <br /></td></tr>
@@ -121,8 +126,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a6c193787241e6c2eb347c3589e09901d">webgl1es2_material</a> (const <a class="el" href="classgdk_1_1webgl1es2__material.html">webgl1es2_material</a> &amp;)=default</td></tr>
 <tr class="memdesc:a6c193787241e6c2eb347c3589e09901d"><td class="mdescLeft">&#160;</td><td class="mdescRight">support copy semantics <br /></td></tr>
 <tr class="separator:a6c193787241e6c2eb347c3589e09901d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4cbe1f1d92ba5e0f286d8e9039d34ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#af4cbe1f1d92ba5e0f286d8e9039d34ac">webgl1es2_material</a> (<a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a> pShader)</td></tr>
-<tr class="separator:af4cbe1f1d92ba5e0f286d8e9039d34ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19eb5514d753656cf5e5d108e0093006"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a19eb5514d753656cf5e5d108e0093006">webgl1es2_material</a> (<a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a> pShader, <a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">material::FaceCullingMode</a> aFaceCullingMode, <a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">material::render_mode</a> aRenderMode)</td></tr>
+<tr class="separator:a19eb5514d753656cf5e5d108e0093006"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a610f1bc17b6338e7cb4836d9da10ff19"><td class="memItemLeft" align="right" valign="top"><a id="a610f1bc17b6338e7cb4836d9da10ff19"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#a610f1bc17b6338e7cb4836d9da10ff19">~webgl1es2_material</a> ()=default</td></tr>
 <tr class="memdesc:a610f1bc17b6338e7cb4836d9da10ff19"><td class="mdescLeft">&#160;</td><td class="mdescRight">trivial destructor <br /></td></tr>
@@ -163,12 +168,23 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#afac5149ffae9202ea43c2b70edffde04">setInteger4</a> (const std::string &amp;aName, int aValue1, int aValue2, int aValue3, int aValue4) override</td></tr>
 <tr class="memdesc:afac5149ffae9202ea43c2b70edffde04"><td class="mdescLeft">&#160;</td><td class="mdescRight">assigns a 4 integer array to the material. <br /></td></tr>
 <tr class="separator:afac5149ffae9202ea43c2b70edffde04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">internal interface</div></td></tr>
+<tr class="memitem:a73d9bb87c1eca137a18185e66e8c8fd5"><td class="memItemLeft" align="right" valign="top"><a id="a73d9bb87c1eca137a18185e66e8c8fd5"></a>
+<a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">material::render_mode</a>&#160;</td><td class="memItemRight" valign="bottom"><b>get_render_mode</b> () const</td></tr>
+<tr class="separator:a73d9bb87c1eca137a18185e66e8c8fd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17f9b3415165f489ab46c6b4830628fb"><td class="memItemLeft" align="right" valign="top"><a id="a17f9b3415165f489ab46c6b4830628fb"></a>
+<a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getShaderProgram</b> ()</td></tr>
+<tr class="separator:a17f9b3415165f489ab46c6b4830628fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf8686854429e2e8a48b2b22a2424847"><td class="memItemLeft" align="right" valign="top"><a id="acf8686854429e2e8a48b2b22a2424847"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__material.html#acf8686854429e2e8a48b2b22a2424847">activate</a> ()</td></tr>
+<tr class="memdesc:acf8686854429e2e8a48b2b22a2424847"><td class="mdescLeft">&#160;</td><td class="mdescRight">modifies the opengl state, assigning the program, assigning values to the program's uniforms etc. <br /></td></tr>
+<tr class="separator:acf8686854429e2e8a48b2b22a2424847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>think about how to model blend functionality. subclass that provides blend func related state , in opaque case force opaque options? </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af4cbe1f1d92ba5e0f286d8e9039d34ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4cbe1f1d92ba5e0f286d8e9039d34ac">&#9670;&nbsp;</a></span>webgl1es2_material()</h2>
+<a id="a19eb5514d753656cf5e5d108e0093006"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19eb5514d753656cf5e5d108e0093006">&#9670;&nbsp;</a></span>webgl1es2_material()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -177,8 +193,24 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="memname">gdk::webgl1es2_material::webgl1es2_material </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classgdk_1_1webgl1es2__material.html#a6426eb858a8c70d834521710295808ce">shader_ptr_type</a>&#160;</td>
-          <td class="paramname"><em>pShader</em></td><td>)</td>
+          <td class="paramname"><em>pShader</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">material::FaceCullingMode</a>&#160;</td>
+          <td class="paramname"><em>aFaceCullingMode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">material::render_mode</a>&#160;</td>
+          <td class="paramname"><em>aRenderMode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

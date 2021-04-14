@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">a080655d839943aa9f974e019c5b933157f15a98</span>
+   &#160;<span id="projectnumber">e34c970e6d863d07065281a889e1c933a912566f</span>
    </div>
   </td>
  </tr>
@@ -203,9 +203,9 @@ virtual std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture__camera.html
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#aa6942eb2044703292fa52fef052a72f4">model_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a24411f270bf8af897941381a11e2a2ca">make_model</a> (const <a class="el" href="classvertex__data__view.html">vertex_data_view</a> &amp;vertexDataView) const =0</td></tr>
 <tr class="memdesc:a24411f270bf8af897941381a11e2a2ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">construct model by vertext data view <br /></td></tr>
 <tr class="separator:a24411f270bf8af897941381a11e2a2ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0769ab369c2808e5592184a451bac504"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a13e293e50a1b56214468634259a00e98">material_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a0769ab369c2808e5592184a451bac504">make_material</a> (<a class="el" href="classgdk_1_1graphics_1_1context.html#a92fb37e593edcf5c6e3a58b1d7408ceb">shader_program_shared_ptr_type</a> pShader) const =0</td></tr>
-<tr class="memdesc:a0769ab369c2808e5592184a451bac504"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a material.  <a href="#a0769ab369c2808e5592184a451bac504">More...</a><br /></td></tr>
-<tr class="separator:a0769ab369c2808e5592184a451bac504"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0eac2dae142147d3edeea0cb6593554f"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a13e293e50a1b56214468634259a00e98">material_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a0eac2dae142147d3edeea0cb6593554f">make_material</a> (<a class="el" href="classgdk_1_1graphics_1_1context.html#a92fb37e593edcf5c6e3a58b1d7408ceb">shader_program_shared_ptr_type</a> pShader, <a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">material::render_mode</a> aRenderMode=<a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95a94619f8a70068b2591c2eed622525b0e">material::render_mode::opaque</a>, <a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">material::FaceCullingMode</a> aFaceCullingMode=<a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a6adf97f83acf6453d4a6a4b1070f3754">material::FaceCullingMode::None</a>) const =0</td></tr>
+<tr class="memdesc:a0eac2dae142147d3edeea0cb6593554f"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a material.  <a href="#a0eac2dae142147d3edeea0cb6593554f">More...</a><br /></td></tr>
+<tr class="separator:a0eac2dae142147d3edeea0cb6593554f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a065fed14f026afe3000b6e82188d3e96"><td class="memItemLeft" align="right" valign="top"><a id="a065fed14f026afe3000b6e82188d3e96"></a>
 virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a20c71b2e281900291ceb20777c944a18">shader_program_ptr_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1graphics_1_1context.html#a065fed14f026afe3000b6e82188d3e96">make_shader</a> (const std::string &amp;aVertexStageSource, const std::string &amp;aFragmentStageSource) const =0</td></tr>
 <tr class="memdesc:a065fed14f026afe3000b6e82188d3e96"><td class="mdescLeft">&#160;</td><td class="mdescRight">make a shader program containing a user-defined vertex shader stage and fragment shader stage <br /></td></tr>
@@ -503,8 +503,8 @@ virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a9769ab7fea0c67
 
 </div>
 </div>
-<a id="a0769ab369c2808e5592184a451bac504"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0769ab369c2808e5592184a451bac504">&#9670;&nbsp;</a></span>make_material()</h2>
+<a id="a0eac2dae142147d3edeea0cb6593554f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0eac2dae142147d3edeea0cb6593554f">&#9670;&nbsp;</a></span>make_material()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -516,8 +516,24 @@ virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a9769ab7fea0c67
           <td class="memname">virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a13e293e50a1b56214468634259a00e98">material_ptr_type</a> gdk::graphics::context::make_material </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classgdk_1_1graphics_1_1context.html#a92fb37e593edcf5c6e3a58b1d7408ceb">shader_program_shared_ptr_type</a>&#160;</td>
-          <td class="paramname"><em>pShader</em></td><td>)</td>
-          <td> const</td>
+          <td class="paramname"><em>pShader</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">material::render_mode</a>&#160;</td>
+          <td class="paramname"><em>aRenderMode</em> = <code><a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95a94619f8a70068b2591c2eed622525b0e">material::render_mode::opaque</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">material::FaceCullingMode</a>&#160;</td>
+          <td class="paramname"><em>aFaceCullingMode</em> = <code><a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a6adf97f83acf6453d4a6a4b1070f3754">material::FaceCullingMode::None</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
         </tr>
       </table>
   </td>
@@ -531,11 +547,13 @@ virtual <a class="el" href="classgdk_1_1graphics_1_1context.html#a9769ab7fea0c67
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pShader</td><td>defines the pipeline's programmable stage behaviours, can be shared among multiple materials </td></tr>
+    <tr><td class="paramname">aRenderMode</td><td>Transparent, opaque </td></tr>
+    <tr><td class="paramname">aFaceCullingMode</td><td>face culling mode </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classgdk_1_1webgl1es2__context.html#a7d8121194062266ca6bf31b67dba2752">gdk::webgl1es2_context</a>.</p>
+<p>Implemented in <a class="el" href="classgdk_1_1webgl1es2__context.html#a1ccde40375bbb66a8e4149788611b7de">gdk::webgl1es2_context</a>.</p>
 
 </div>
 </div>

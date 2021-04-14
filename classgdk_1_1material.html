@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">a080655d839943aa9f974e019c5b933157f15a98</span>
+   &#160;<span id="projectnumber">e34c970e6d863d07065281a889e1c933a912566f</span>
    </div>
   </td>
  </tr>
@@ -89,6 +89,18 @@ Inheritance diagram for gdk::material:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
+<tr class="memitem:a9d2e38629d0e208c97b2c47c88315ec8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">FaceCullingMode</a> { <a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a5835bab1ade0060909e31a06af2e2cde">FaceCullingMode::Front</a>, 
+<a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a0557fa923dcee4d0f86b1409f5c2167f">FaceCullingMode::Back</a>, 
+<a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a8be41da9b58e32ece35a2b5751f6aeb9">FaceCullingMode::FrontAndBack</a>, 
+<a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8a6adf97f83acf6453d4a6a4b1070f3754">FaceCullingMode::None</a>
+ }<tr class="memdesc:a9d2e38629d0e208c97b2c47c88315ec8"><td class="mdescLeft">&#160;</td><td class="mdescRight">specify whether front- or back-facing polygons can be culled  <a href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a9d2e38629d0e208c97b2c47c88315ec8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd278ddf154dd258615183e3cbb3fc95"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">render_mode</a> { <a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95a94619f8a70068b2591c2eed622525b0e">render_mode::opaque</a>, 
+<a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95a5e96bf62b9b2c18fdb65564b4a18fd1f">render_mode::transparent</a>
+ }<tr class="memdesc:afd278ddf154dd258615183e3cbb3fc95"><td class="mdescLeft">&#160;</td><td class="mdescRight">render mode decides transparency etc  <a href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:afd278ddf154dd258615183e3cbb3fc95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ab88d7de51b5d8d607455c7da912c25"><td class="memItemLeft" align="right" valign="top"><a id="a4ab88d7de51b5d8d607455c7da912c25"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1material.html#a4ab88d7de51b5d8d607455c7da912c25">texture_ptr_type</a> = std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture.html">gdk::texture</a> &gt;</td></tr>
 <tr class="memdesc:a4ab88d7de51b5d8d607455c7da912c25"><td class="mdescLeft">&#160;</td><td class="mdescRight">textures can be shared among many webgl1es2_materials. <br /></td></tr>
@@ -135,7 +147,72 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>decides how models using the material should be drawn. </p>
 <p>This includes expected effects, such as texture colors, lightning, but can also include unexpected effects, like vertex displacements, transformations. Material is really pipeline state and persistent uniform values </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a9d2e38629d0e208c97b2c47c88315ec8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d2e38629d0e208c97b2c47c88315ec8">&#9670;&nbsp;</a></span>FaceCullingMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classgdk_1_1material.html#a9d2e38629d0e208c97b2c47c88315ec8">gdk::material::FaceCullingMode</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>specify whether front- or back-facing polygons can be culled </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9d2e38629d0e208c97b2c47c88315ec8a5835bab1ade0060909e31a06af2e2cde"></a>Front&#160;</td><td class="fielddoc"><p>cull front facing polygons </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a9d2e38629d0e208c97b2c47c88315ec8a0557fa923dcee4d0f86b1409f5c2167f"></a>Back&#160;</td><td class="fielddoc"><p>cull back facing polygons </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a9d2e38629d0e208c97b2c47c88315ec8a8be41da9b58e32ece35a2b5751f6aeb9"></a>FrontAndBack&#160;</td><td class="fielddoc"><p>cull front and back facing polygons </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a9d2e38629d0e208c97b2c47c88315ec8a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>do not cull any polygons </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="afd278ddf154dd258615183e3cbb3fc95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd278ddf154dd258615183e3cbb3fc95">&#9670;&nbsp;</a></span>render_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95">gdk::material::render_mode</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>render mode decides transparency etc </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="afd278ddf154dd258615183e3cbb3fc95a94619f8a70068b2591c2eed622525b0e"></a>opaque&#160;</td><td class="fielddoc"><p>no transparency </p>
+</td></tr>
+<tr><td class="fieldname"><a id="afd278ddf154dd258615183e3cbb3fc95a5e96bf62b9b2c18fdb65564b4a18fd1f"></a>transparent&#160;</td><td class="fielddoc"><p>transparency </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a79d1d46b7dcc2669083a1708842d6c30"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a79d1d46b7dcc2669083a1708842d6c30">&#9670;&nbsp;</a></span>setTexture()</h2>
 
