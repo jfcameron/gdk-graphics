@@ -110,8 +110,11 @@ namespace gdk::graphics
         [[nodiscard]] virtual material_ptr_type make_material(
             //! defines the pipeline's programmable stage behaviours, 
             /// can be shared among multiple materials
-            shader_program_shared_ptr_type pShader 
-        ) const = 0;
+            shader_program_shared_ptr_type pShader,
+            //! Transparent, opaque
+            material::render_mode aRenderMode = material::render_mode::opaque,
+            //! face culling mode
+            material::FaceCullingMode aFaceCullingMode = material::FaceCullingMode::None) const = 0;
 
         /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
         [[nodiscard]] virtual shader_program_ptr_type make_shader(

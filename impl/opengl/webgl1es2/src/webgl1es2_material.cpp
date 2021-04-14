@@ -6,12 +6,65 @@
 
 using namespace gdk;
 
-webgl1es2_material::webgl1es2_material(shader_ptr_type pShader)
-    : m_pShaderProgram(pShader)
+
+static inline void setUpFaceCullingMode(material::FaceCullingMode a)
+{
+    if (a == material::FaceCullingMode::None)
+    {
+        glDisable(GL_CULL_FACE);
+
+        return;
+    }
+
+    glEnable(GL_CULL_FACE);
+
+    switch(a)
+    {
+        case material::FaceCullingMode::Front: glCullFace(GL_FRONT); break;
+        case material::FaceCullingMode::Back: glCullFace(GL_BACK); break;
+        case material::FaceCullingMode::FrontAndBack: glCullFace(GL_FRONT_AND_BACK); break;
+
+        case material::FaceCullingMode::None: break;
+    }
+}
+
+static inline void setRenderMode(material::render_mode aRenderMode)
+{
+    switch(aRenderMode)
+    {
+        case material::render_mode::opaque: 
+            glDisable(GL_BLEND); break;
+
+        case material::render_mode::transparent:
+        {
+            glEnable(GL_BLEND);
+            
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        } break;
+
+        default: std::cout << "not handled!\n"; break;
+    }
+}
+
+webgl1es2_material::webgl1es2_material(shader_ptr_type pShader,
+    material::FaceCullingMode aFaceCullingMode,
+    material::render_mode aRenderMode)
+: m_pShaderProgram(pShader)
+, m_FaceCullMode(aFaceCullingMode)
+, m_RenderMode(aRenderMode)
 {}
+
+
+material::render_mode webgl1es2_material::get_render_mode() const
+{
+    return m_RenderMode;
+}
 
 void webgl1es2_material::activate()
 {
+        setUpFaceCullingMode(m_FaceCullMode);
+        setRenderMode(m_RenderMode);
+
 	m_pShaderProgram->useProgram();
 
 	for (const auto& [name, a] : m_Textures) m_pShaderProgram->try_set_uniform(name, *a);

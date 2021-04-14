@@ -243,6 +243,8 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type t
     //Generate mip maps
     glGenerateMipmap(GL_TEXTURE_2D);
 
+    //glBindTexture(m_BindTarget, 0);
+
     return handle;
 }(),
 [](const GLuint handle)

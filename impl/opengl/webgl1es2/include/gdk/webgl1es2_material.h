@@ -8,6 +8,7 @@
 
 #include <unordered_map>
 #include <array>
+#include <optional>
 
 namespace gdk
 {
@@ -37,11 +38,15 @@ namespace gdk
         //! shaders can be shared among many webgl1es2_materials
         using shader_ptr_type = std::shared_ptr<gdk::webgl1es2_shader_program>;
 
-        shader_ptr_type getShaderProgram();
+    /// \name internal interface
+    ///@{
+    //
+        material::render_mode get_render_mode() const;
 
+        shader_ptr_type getShaderProgram();
         //! modifies the opengl state, assigning the program, assigning values to the program's uniforms etc.
         void activate();
-
+    ///@}
         //! support move semantics
         webgl1es2_material &operator=(webgl1es2_material&&) = default;
         //! support move semantics
@@ -60,7 +65,9 @@ namespace gdk
         /// logically, a webgl1es2_material without a shader_program implies 
         /// a pipeline without a programmable vertex shader stage nor a 
         /// programmable fragment shader stage, which is not a valid pipeline
-        webgl1es2_material(shader_ptr_type pShader);
+        webgl1es2_material(shader_ptr_type pShader,
+            material::FaceCullingMode aFaceCullingMode,
+            material::render_mode aRenderMode);
 
         //! trivial destructor
         ~webgl1es2_material() = default;
@@ -74,6 +81,12 @@ namespace gdk
 
         //! the shader used by the webgl1es2_material
         shader_ptr_type m_pShaderProgram;
+        
+        //! Whether or not to discard polygons based on [entity space] normal direction
+        material::FaceCullingMode m_FaceCullMode = material::FaceCullingMode::None;
+
+        //! render mode or opaque
+        material::render_mode m_RenderMode = material::render_mode::opaque;
 
         //! texture data provided to the shader stages
         texture_uniform_collection_type m_Textures;

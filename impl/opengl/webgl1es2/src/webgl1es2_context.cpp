@@ -48,11 +48,16 @@ graphics::context::entity_ptr_type webgl1es2_context::make_entity(const entity &
             static_cast<const webgl1es2_entity &>(other)));
 }
 
-graphics::context::material_ptr_type webgl1es2_context::make_material(gdk::graphics::context::shader_program_shared_ptr_type pShader) const 
+graphics::context::material_ptr_type webgl1es2_context::make_material(
+    gdk::graphics::context::shader_program_shared_ptr_type pShader,
+    material::render_mode aRenderMode,
+    material::FaceCullingMode aFaceCullingMode) const 
 {
     return graphics::context::material_ptr_type(
         new webgl1es2_material(
-            std::static_pointer_cast<webgl1es2_shader_program>(pShader)));
+            std::static_pointer_cast<webgl1es2_shader_program>(pShader),
+            aFaceCullingMode,
+            aRenderMode));
 }
 
 graphics::context::shader_program_ptr_type webgl1es2_context::make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const 

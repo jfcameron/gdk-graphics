@@ -158,14 +158,14 @@ void webgl1es2_model::draw() const
 
 static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::UsageHint usageHint)
 {
-	switch (usageHint)
-	{
-	case vertex_data_view::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
-	case vertex_data_view::UsageHint::Static: return webgl1es2_model::Type::Static;
-	case vertex_data_view::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
-	}
+    switch (usageHint)
+    {
+        case vertex_data_view::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
+        case vertex_data_view::UsageHint::Static: return webgl1es2_model::Type::Static;
+        case vertex_data_view::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
+    }
 
-	throw std::invalid_argument("unhandled usageHint");
+    throw std::invalid_argument("unhandled usageHint");
 }
 
 //TODO: eliminate duplication between webgl1es2_model::update_vertex_data, webgl1es2_context::make_model

@@ -20,6 +20,22 @@ namespace gdk
     class material
     {
     public:
+        //! specify whether front- or back-facing polygons can be culled
+        enum class FaceCullingMode 
+        {
+            Front, //!< cull front facing polygons
+            Back, //!< cull back facing polygons
+            FrontAndBack, //!< cull front and back facing polygons
+            None //!< do not cull any polygons
+        };
+
+        //! render mode decides transparency etc
+        enum class render_mode
+        {
+            opaque, //!< no transparency
+            transparent //!< transparency
+        };
+
         /// \brief textures can be shared among many webgl1es2_materials.
         using texture_ptr_type = std::shared_ptr<gdk::texture>;
 

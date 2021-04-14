@@ -30,6 +30,7 @@ namespace gdk
         /// \brief gets the projection matrix
         graphics_mat4x4_type get_projection_matrix() const;
 
+    ///@}
         /// \brief copy semantics
         webgl1es2_camera(const webgl1es2_camera& a) = default;
         /// \brief copy semantics
@@ -42,8 +43,6 @@ namespace gdk
 
         /// \brief constructs with reasonable default values
         webgl1es2_camera();
-
-    ///@}
 
         virtual ~webgl1es2_camera() = default;
 

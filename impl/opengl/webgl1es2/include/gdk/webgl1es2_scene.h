@@ -14,6 +14,43 @@
 // TODO handle entity material & model changes. -> Will need to implement signals... vec<functor> likely. Maybe. This adds bookkeeping complexity, runtime complexity. it may be preferrable for the user to "change" an entities properties by removing the one you no longer want and inserting a new one with new properties.
 namespace gdk
 {
+    //! set of objects to render
+    class render_set
+    {
+    public:
+        using entity_ptr_type = std::shared_ptr<entity>;
+        using material_ptr_type = std::shared_ptr<webgl1es2_material>;
+        using model_ptr_type = std::shared_ptr<webgl1es2_model>;
+        using model_to_entity_collection = std::unordered_map<model_ptr_type, 
+            std::unordered_set<entity_ptr_type>>;
+        using material_to_model_to_entity_collection_collection = 
+            std::unordered_map<material_ptr_type, model_to_entity_collection>;
+
+        void draw(webgl1es2_camera *p) const;
+        
+        virtual void try_add_entity(entity_ptr_type);
+
+        virtual ~render_set() = default;
+
+    protected:
+        material_to_model_to_entity_collection_collection m_MaterialToModelToEntityCollection;
+
+        std::unordered_set<entity_ptr_type> m_unique_entities;
+    };
+
+    class sorted_render_set : public render_set
+    {
+    public:
+        virtual void try_add_entity(entity_ptr_type) override;
+
+        void sort();
+
+        sorted_render_set() = default;
+
+    private:
+        
+    };
+
     //! render scene.
     class webgl1es2_scene final : public scene
     {
@@ -63,6 +100,10 @@ namespace gdk
 
         //! Nested associative array, used to optimize gl calls.
         material_to_model_to_entity_collection_collection m_MaterialToModelToEntityCollection;
+
+        render_set m_opaque_set;
+
+        /*sorted_render_set*/render_set m_translucent_set;
     };
 }
 

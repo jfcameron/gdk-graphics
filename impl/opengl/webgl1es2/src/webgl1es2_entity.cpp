@@ -9,6 +9,8 @@
 #include <gdk/webgl1es2_shader_program.h>
 #include <gdk/webgl1es2_model.h>
 
+#include <iostream>
+
 using namespace gdk;
 
 static constexpr char TAG[] = "entity";
@@ -27,11 +29,12 @@ void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graph
     const graphics_mat4x4_type m = getModelMatrix();
 
     const auto mvp = p * v * m;
-
-    m_Material->getShaderProgram()->try_set_uniform("_Model", mvp); 
-    m_Material->getShaderProgram()->try_set_uniform("_View", mvp);
-    m_Material->getShaderProgram()->try_set_uniform("_Projection", mvp);
-    m_Material->getShaderProgram()->try_set_uniform("_MVP", mvp);
+    
+    auto pShader = m_Material->getShaderProgram();
+    pShader->try_set_uniform("_Model", mvp); 
+    pShader->try_set_uniform("_View", mvp);
+    pShader->try_set_uniform("_Projection", mvp);
+    pShader->try_set_uniform("_MVP", mvp);
 
     m_model->draw();
 }

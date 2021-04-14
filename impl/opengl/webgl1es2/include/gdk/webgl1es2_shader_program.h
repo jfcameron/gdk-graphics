@@ -48,15 +48,6 @@ namespace gdk
         /// index in the program. used in memoization strategy to reduce opengl api calls
         using active_uniform_collection_type = std::unordered_map<std::string, active_uniform_info>;
 
-        //! specify whether front- or back-facing polygons can be culled
-        enum class FaceCullingMode 
-        {
-            Front, //!< cull front facing polygons
-            Back, //!< cull back facing polygons
-            FrontAndBack, //!< cull front and back facing polygons
-            None //!< do not cull any polygons
-        };
-       
         //! type alias used for setting int2 uniform value
         using integer2_uniform_type = std::array<GLint, 2>;
         //! type alias used for setting int3 uniform value
@@ -154,7 +145,7 @@ namespace gdk
 
         //! Installs this program's shaders to their corresponding programmable stages 
         /// will be used for subsequent draw calls until a different program is installed.
-        GLuint useProgram() const;
+        void useProgram() const;
                 
         /// \brief equality semantics
         bool operator==(const webgl1es2_shader_program &) const; 
@@ -197,9 +188,6 @@ namespace gdk
         
         /// \brief uniform name to metadata
         active_uniform_collection_type m_ActiveUniforms;
-
-        //! Whether or not to discard polygons based on [entity space] normal direction
-        FaceCullingMode m_FaceCullingMode = FaceCullingMode::None;
     };
 }
 

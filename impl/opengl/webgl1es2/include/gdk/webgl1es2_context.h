@@ -24,7 +24,9 @@ namespace gdk
 
         virtual entity_ptr_type make_entity(const entity& other) const override;
 
-        virtual graphics::context::material_ptr_type make_material(shader_program_shared_ptr_type pShader) const override;
+        virtual graphics::context::material_ptr_type make_material(shader_program_shared_ptr_type pShader,
+            material::render_mode aRenderMode,
+            material::FaceCullingMode aFaceCullingMode) const override;
 
         virtual graphics::context::model_ptr_type make_model(const vertex_data_view &vertexDataView) const override;
 

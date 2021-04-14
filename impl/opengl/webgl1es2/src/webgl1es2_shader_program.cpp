@@ -20,10 +20,6 @@ static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
 
 static short s_ActiveTextureUnitCounter(0);
 
-//TODO: Consider moving this to the context. Context is the correct OO solution, but what is the meaning of two separate GL
-// contexts? they will affect eachother's state.
-static std::atomic<GLint> s_CurrentShaderProgramHandle(-1);
-
 const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]()
 {
     const std::string vertexShaderSource(R"V0G0N(    
@@ -95,7 +91,7 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
 
         if (frag[3] < 1.0) discard;
 
-        gl_FragColor = frag;                        
+        gl_FragColor = vec4(frag.xyz, 0.5);                        
     }
     )V0G0N");
 
@@ -103,27 +99,6 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
 
     return p;
 });
-
-static inline void setUpFaceCullingMode(webgl1es2_shader_program::FaceCullingMode a)
-{
-    if (a == webgl1es2_shader_program::FaceCullingMode::None)
-    {
-        glDisable(GL_CULL_FACE);
-
-        return;
-    }
-
-    glEnable(GL_CULL_FACE);
-
-    switch(a)
-    {
-        case webgl1es2_shader_program::FaceCullingMode::Front: glCullFace(GL_FRONT); break;
-        case webgl1es2_shader_program::FaceCullingMode::Back: glCullFace(GL_BACK); break;
-        case webgl1es2_shader_program::FaceCullingMode::FrontAndBack: glCullFace(GL_FRONT_AND_BACK); break;
-
-        case webgl1es2_shader_program::FaceCullingMode::None: break;
-    }
-}
 
 static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(std::string &aSource)
 {
@@ -295,23 +270,20 @@ webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, st
     }
 }
 
-GLuint webgl1es2_shader_program::useProgram() const
+void webgl1es2_shader_program::useProgram() const
 {
-    const auto handle(m_ProgramHandle.get());
+    static GLint s_CurrentShaderProgramHandle(-1);
 
-    if (s_CurrentShaderProgramHandle != handle)
+    if (const auto handle(m_ProgramHandle.get()); 
+        s_CurrentShaderProgramHandle != handle)
     {
         s_CurrentShaderProgramHandle = handle;
 
         s_ActiveTextureUniformNameToUnit.clear();
         s_ActiveTextureUnitCounter = 0;
 
-        setUpFaceCullingMode(m_FaceCullingMode);
-
         glUseProgram(handle);
     }
-
-    return handle;
 }
 
 bool webgl1es2_shader_program::operator==(const webgl1es2_shader_program &b) const
