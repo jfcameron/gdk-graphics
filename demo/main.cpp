@@ -125,7 +125,7 @@ int main(int argc, char **argv)
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
     auto pTexture2 = pContext->make_texture(view);
-    auto pMaterial2 = pContext->make_material(pAlpha);//, material::render_mode::transparent);
+    auto pMaterial2 = pContext->make_material(pAlpha, material::render_mode::transparent);
     pMaterial2->setTexture("_Texture", pTexture2);
     pMaterial2->setVector2("_UVScale", {1, 1});
     pMaterial2->setVector2("_UVOffset", {0, 0});

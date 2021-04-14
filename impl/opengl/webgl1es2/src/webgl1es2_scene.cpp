@@ -1,5 +1,11 @@
+// © Joseph Cameron - All Rights Reserved
+
 #include <gdk/webgl1es2_entity.h>
 #include <gdk/webgl1es2_scene.h>
+
+#include <algorithm>
+#include <list>
+#include <vector>
 
 using namespace gdk;
 
@@ -42,8 +48,7 @@ void webgl1es2_scene::remove_camera(std::shared_ptr<texture_camera> pCamera)
     
     if (search != m_texture_cameras.end()) m_texture_cameras.erase(search);
 }
-#include <vector>
-#include <algorithm>
+
 void sorted_render_set::draw(webgl1es2_camera *pCamera) const
 {
     std::vector<std::shared_ptr<entity>> sorted_entities(
@@ -53,7 +58,14 @@ void sorted_render_set::draw(webgl1es2_camera *pCamera) const
     std::sort(sorted_entities.begin(), sorted_entities.end(),
     [pCamera](std::shared_ptr<entity> pA, std::shared_ptr<entity> pB)
     {
-        return pA; //TODO: sort based on distance from Camera
+        const auto cameraPos = static_cast<webgl1es2_camera *>(pCamera)->get_view_matrix().translation();
+        const auto entityPosA = static_cast<webgl1es2_entity *>(pA.get())->getModelMatrix().translation();
+        const auto entityPosB = static_cast<webgl1es2_entity *>(pB.get())->getModelMatrix().translation();
+
+        const auto aDist = cameraPos.distance(entityPosA);
+        const auto bDist = cameraPos.distance(entityPosB);
+
+        return (aDist > bDist);
     });
 
     for (auto current_entity : sorted_entities)
@@ -62,6 +74,9 @@ void sorted_render_set::draw(webgl1es2_camera *pCamera) const
         auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
         auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
 
+        const auto entityPos = static_cast<webgl1es2_entity *>(pEntity)->getModelMatrix().translation();
+        const auto cameraPos = static_cast<webgl1es2_camera *>(pCamera)->get_view_matrix().translation();
+        
         pMaterial->activate();
 
         pModel->bind(*pMaterial->getShaderProgram());

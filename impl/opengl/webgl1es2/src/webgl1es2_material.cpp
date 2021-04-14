@@ -38,7 +38,6 @@ static inline void setRenderMode(material::render_mode aRenderMode)
         case material::render_mode::transparent:
         {
             glEnable(GL_BLEND);
-            
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         } break;
 
