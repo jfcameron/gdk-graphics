@@ -193,8 +193,8 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type t
 , m_Handle([&]()
 {
     if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height))
-            throw std::invalid_argument(std::string(TAG).append(
-                ": webgl1es2_texture dimensions must be power of 2"));
+        throw std::invalid_argument(std::string(TAG).append(
+            ": webgl1es2_texture dimensions must be power of 2"));
 
     static std::once_flag once;
     static GLint max_texture_2d_size;
@@ -207,7 +207,8 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type t
     if (textureData2d.width > max_texture_2d_size || 
         textureData2d.height > max_texture_2d_size)
         throw std::invalid_argument(std::string(TAG).append(
-            ": webgl1es2_texture too large for this platform. max: " + max_texture_2d_size));
+            ": webgl1es2_texture too large for this platform. max: " + 
+            max_texture_2d_size));
 
     GLuint handle;
 
@@ -243,8 +244,6 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type t
     //Generate mip maps
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    //glBindTexture(m_BindTarget, 0);
-
     return handle;
 }(),
 [](const GLuint handle)
@@ -263,4 +262,9 @@ bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const
     return m_Handle == b.m_Handle;
 }
 bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }
+
+void webgl1es2_texture::update_data(const image_data_2d_view &)
+{
+//tex2d
+}
 

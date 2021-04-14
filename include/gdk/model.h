@@ -18,6 +18,8 @@ namespace gdk
         /// \brief replace vertex data held by this model
         virtual void update_vertex_data(const vertex_data_view &vertexDataView) = 0;
 
+        //TODO: virtual void update_vertex_data(data, range or index) = 0;
+
         virtual ~model() = default;
 
     protected:
