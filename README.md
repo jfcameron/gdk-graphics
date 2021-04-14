@@ -8,7 +8,7 @@
 
 Documentation generated with doxygen ca be viewed online here: https://jfcameron.github.io/gdk-graphics/
 
-CI done using Travis CI. Build scripts cover Windows, Linux, Mac; Clang, GCC, MSVC: https://travis-ci.org/jfcameron/gdk-graphics
+Continuous integration builds are done for all PRs and all changes to main. Build scripts cover Windows, Linux, Mac, WebAssembly; Clang, GCC, MSVC; x86_64, arm64: https://travis-ci.org/jfcameron/gdk-graphics
 
 catch2 unit tests available under `test/` and can be run with ctest
 
