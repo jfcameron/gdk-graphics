@@ -23,6 +23,19 @@
 using namespace gdk;
 using namespace jfc;
 
+// Raw texture data (image these are loaded from file or compiled into the binary from e.g a "resource" header)
+std::vector<std::underlying_type<std::byte>::type> imageData2({
+    0x55, 0xff, 0xff, 0xff,
+    0xff, 0x00, 0xff, 0xff,
+    0xff, 0xff, 0x00, 0xff,
+    0x00, 0x00, 0x44, 0xff});
+
+std::vector<std::underlying_type<std::byte>::type> imageData({
+    0x00, 0xff, 0xff, 0xff,                                    
+    0xff, 0xff, 0xff, 0xff,                                    
+    0xff, 0xff, 0xff, 0xff,
+    0x00, 0x00, 0x00, 0xff});
+
 int main(int argc, char **argv)
 {
     // Separate lib, used to init GL and get a window ready for rendering on Linux/Mac/Windows
@@ -93,15 +106,10 @@ int main(int argc, char **argv)
         }});
 
     texture::image_data_2d_view view;
-
+    
     view.width = 2;
     view.height = 2;
     view.format = texture::data_format::rgba;
-    std::vector<std::underlying_type<std::byte>::type> imageData({ // raw rgba data
-        0x00, 0xff, 0xff, 0xff,                                    
-        0xff, 0xff, 0xff, 0xff,                                    
-        0xff, 0xff, 0xff, 0xff,
-        0x00, 0x00, 0x00, 0xff});
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
     auto pTexture = pContext->make_texture(view);
@@ -117,12 +125,7 @@ int main(int argc, char **argv)
     view.width = 2;
     view.height = 2;
     view.format = texture::data_format::rgba;
-    imageData = decltype(imageData)({
-        0x55, 0xff, 0xff, 0xff,
-        0xff, 0x00, 0xff, 0xff,
-        0xff, 0xff, 0x00, 0xff,
-        0x00, 0x00, 0x44, 0xff});
-    view.data = reinterpret_cast<std::byte *>(&imageData.front());
+    view.data = reinterpret_cast<std::byte *>(&imageData2.front());
 
     auto pTexture2 = pContext->make_texture(view);
     auto pMaterial2 = pContext->make_material(pAlpha, material::render_mode::transparent);

@@ -22,6 +22,8 @@ namespace gdk
     ///@{
     //
         virtual void update_data(const image_data_2d_view &) override;
+        
+        virtual void update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY) override;
     ///@}
 
         /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture 
