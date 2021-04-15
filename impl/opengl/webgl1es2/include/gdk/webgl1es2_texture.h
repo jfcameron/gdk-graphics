@@ -181,9 +181,6 @@ namespace gdk
         /// webgl1es2_texture(const cubic_image_data &data, min, max, wrap)
         /// struct cubic_image_data{ array<6, vec<byte>> data, w, h, format}
 
-        //! blarblarbalr
-        static const std::shared_ptr<gdk::webgl1es2_texture> GetTestTexture(); //TODO: delete this
-
         /// \brief webgl1es2_texture useful for indicating webgl1es2_texture related failure
         /// lazily instantiated.
         static const std::shared_ptr<gdk::webgl1es2_texture> GetCheckerboardOfDeath(); 

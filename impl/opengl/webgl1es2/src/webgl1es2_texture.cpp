@@ -98,34 +98,6 @@ static inline GLenum bind_target_to_glenum(const webgl1es2_texture::bind_target 
     throw std::runtime_error("unhandled bind target");
 }
 
-const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetTestTexture()
-{
-    static std::once_flag initFlag;
-
-    static std::shared_ptr<gdk::webgl1es2_texture> ptr;
-
-    std::call_once(initFlag, []()
-    {
-        std::vector<std::underlying_type<std::byte>::type> webgl1es2_textureData(
-        {
-            0xff, 0x00, 0x00, 0xff,
-            0x00, 0xff, 0x00, 0xff,
-            0x00, 0x00, 0xff, 0xff,
-            0x00, 0xff, 0xff, 0xff,
-        });
-       
-        webgl1es2_texture_2d_data_view_type data;
-        data.width = 2;
-        data.height = 2;
-        data.format = format::rgba;
-        data.data = reinterpret_cast<std::byte *>(&webgl1es2_textureData[0]);
-
-        ptr = std::make_shared<gdk::webgl1es2_texture>(data);
-    });
-    
-    return ptr;
-}
-
 const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboardOfDeath()
 {
     static std::once_flag initFlag;
@@ -269,7 +241,7 @@ void webgl1es2_texture::update_data(const image_data_2d_view &)
     // likely should move ctor work out to a static, reuse impl.
 }
 
-void update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY)
+void webgl1es2_texture::update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY)
 {
     //TODO: implement section rewrite. Must respect format, must respect size.
     // Will have to retain size and format as members
