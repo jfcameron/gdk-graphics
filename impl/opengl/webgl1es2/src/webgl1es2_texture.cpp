@@ -265,6 +265,13 @@ bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(
 
 void webgl1es2_texture::update_data(const image_data_2d_view &)
 {
-//tex2d
+    //TODO: implement total rewrite. Doesnt care about format, size etc.
+    // likely should move ctor work out to a static, reuse impl.
+}
+
+void update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY)
+{
+    //TODO: implement section rewrite. Must respect format, must respect size.
+    // Will have to retain size and format as members
 }
 

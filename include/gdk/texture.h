@@ -6,6 +6,8 @@
 #include <cstddef>
 #include <vector>
 
+#include <gdk/graphics_types.h>
+
 namespace gdk
 {
     /// \brief 2d color data, usually used to color the surfaces of a 3d model.
@@ -39,7 +41,7 @@ namespace gdk
         virtual void update_data(const image_data_2d_view &) = 0;
 
         //! update a section of texture data
-        virtual void update_data(const image_data_2d_view &) = 0;
+        virtual void update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY) = 0;
 
         //! trivial destructor
         virtual ~texture() = default;
