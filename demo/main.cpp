@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #include <chrono>
 #include <cmath>
@@ -106,7 +106,6 @@ int main(int argc, char **argv)
         }});
 
     texture::image_data_2d_view view;
-    
     view.width = 2;
     view.height = 2;
     view.format = texture::data_format::rgba;
@@ -122,12 +121,13 @@ int main(int argc, char **argv)
     pEntity->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
     pScene->add_entity(pEntity);
 
-    view.width = 2;
-    view.height = 2;
-    view.format = texture::data_format::rgba;
-    view.data = reinterpret_cast<std::byte *>(&imageData2.front());
+    texture::image_data_2d_view view2;
+    view2.width = 2;
+    view2.height = 2;
+    view2.format = texture::data_format::rgba;
+    view2.data = reinterpret_cast<std::byte *>(&imageData2.front());
 
-    auto pTexture2 = pContext->make_texture(view);
+    auto pTexture2 = pContext->make_texture(view2);
     auto pMaterial2 = pContext->make_material(pAlpha, material::render_mode::transparent);
     pMaterial2->setTexture("_Texture", pTexture2);
     pMaterial2->setVector2("_UVScale", {1, 1});
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
         //pBackgroundScene->draw(window.getWindowSize());
 
         pScene->draw(window.getWindowSize());
-        
+
         window.swapBuffer(); 
 
         time += 0.01;

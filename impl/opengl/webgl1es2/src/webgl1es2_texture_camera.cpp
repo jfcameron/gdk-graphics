@@ -94,7 +94,7 @@ const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_color_texture(
             {
                 static_cast<size_t>(m_TextureSize.x), 
                 static_cast<size_t>(m_TextureSize.y), 
-                webgl1es2_texture::format::rgb, 
+                texture::data_format::rgb, 
                 nullptr
             },
             webgl1es2_texture::minification_filter::nearest,
@@ -129,7 +129,7 @@ const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_depth_texture(
             {
                 static_cast<size_t>(m_TextureSize.x), 
                 static_cast<size_t>(m_TextureSize.y), 
-                webgl1es2_texture::format::depth_component, 
+                texture::data_format::depth_component, 
                 nullptr
             },
             webgl1es2_texture::minification_filter::nearest,

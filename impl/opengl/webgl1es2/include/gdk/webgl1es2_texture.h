@@ -113,25 +113,6 @@ namespace gdk
             cube_map //!< 6 2d images, generally used for coloring a skybox, reflection map etc.
         };
 
-        //! pod struct representing decoded image data + metadata that describes a 2d image
-        /// primary purpose is used in construction of a texture object.
-        /// \warn a view does not own its data. The user must ensure the data observed by the view
-        /// is cleaned up sometime after it has been used. By used, generally I mean sometime after it has been
-        /// passed to a texture ctor
-        /// \note: it is valid to provide width + height and a nullptr for data, opengl will allocate an
-        /// uninitialized texture buffer of the specified size and format.
-        struct webgl1es2_texture_2d_data_view_type
-        {
-            size_t width; //!< pix width of data
-            size_t height; //!< pix height of data
-
-            webgl1es2_texture::format format; //!< format of the image data.
-
-            //! decoded image data
-            /// \warning non-owning pointer
-            std::byte *data; 
-        };
-
         //! description of a cubic image
         //TODO make use of this
         /// \warn a view does not own its data.
@@ -167,8 +148,7 @@ namespace gdk
 
         /// \brief creates a 2d webgl1es2_texture from decoded image data.
         /// \exception length, width of the webgl1es2_texture must be power of 2
-        webgl1es2_texture(
-            const webgl1es2_texture_2d_data_view_type textureData2d,
+        webgl1es2_texture(const image_data_2d_view &,
             const minification_filter minFilter = minification_filter::linear,
             const magnification_filter magFilter = magnification_filter::nearest,
             const wrap_mode wrapMode = wrap_mode::repeat);
@@ -196,6 +176,10 @@ namespace gdk
 
         //! handle to the webgl1es2_texture buffer
         jfc::unique_handle<GLuint> m_Handle;
+
+        size_t m_CurrentDataWidth;
+        size_t m_CurrentDataHeight;
+        GLint m_CurrentDataFormat;
     };
 }
 

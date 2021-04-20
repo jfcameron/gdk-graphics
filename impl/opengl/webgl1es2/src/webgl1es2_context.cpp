@@ -94,27 +94,12 @@ graphics::context::built_in_model_ptr_type webgl1es2_context::get_quad_model() c
 
 graphics::context::texture_ptr_type webgl1es2_context::make_texture(const texture::image_data_2d_view &imageView) const
 {
-    webgl1es2_texture::webgl1es2_texture_2d_data_view_type data;
-    data.width = imageView.width;
-    data.height = imageView.height;
-
-    switch(imageView.format)
-    {
-        case texture::data_format::rgb: data.format = webgl1es2_texture::format::rgb; break;
-
-        case texture::data_format::rgba: data.format = webgl1es2_texture::format::rgba; break;
-
-        default: throw std::invalid_argument("webgl1es2 context does not support provided image format");
-    }
-
-    data.data = imageView.data;
-    
-    return graphics::context::texture_ptr_type(new webgl1es2_texture(data));
+    return graphics::context::texture_ptr_type(new webgl1es2_texture(imageView));
 }
 
 graphics::context::texture_ptr_type webgl1es2_context::make_texture(const std::vector<std::underlying_type<std::byte>::type>& aRGBA32PNGData) const
 {
-	return std::make_unique<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
+    return std::make_unique<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
 }
 
 static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::UsageHint usageHint)
