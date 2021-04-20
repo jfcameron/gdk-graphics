@@ -13,7 +13,7 @@
 #include <gdk/shader_program.h>
 #include <gdk/texture.h>
 #include <gdk/texture_camera.h>
-#include <gdk/vertex_data_view.h>
+#include <gdk/vertex_data.h>
 
 namespace gdk::graphics
 {
@@ -103,7 +103,7 @@ namespace gdk::graphics
        
         //! construct model by vertext data view
         [[nodiscard]] virtual model_ptr_type make_model(
-            const vertex_data_view &vertexDataView
+            const vertex_data &vertexDataView
         ) const = 0;
 
         //! make a material. 

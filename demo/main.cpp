@@ -85,25 +85,45 @@ int main(int argc, char **argv)
         0, 1,
         1, 1});
 
-    auto pUserModel = pContext->make_model({vertex_data_view::UsageHint::Static,
-        {
-            { 
-                "a_Position",
-                {
-                    &posData.front(),
-                    posData.size(),
-                    3
-                }
-            },
-            { 
-                "a_UV",
-                {
-                    &uvData.front(),
-                    uvData.size(),
-                    2
-                }
+    auto pUserModel = pContext->make_model({vertex_data::UsageHint::Static,
+    {
+        { 
+            "a_Position",
+            {
+                &posData.front(),
+                posData.size(),
+                3
             }
-        }});
+        },
+        { 
+            "a_UV",
+            {
+                &uvData.front(),
+                uvData.size(),
+                2
+            }
+        }
+    }});
+
+    pUserModel->update_vertex_data({vertex_data::UsageHint::Static,
+    {
+        { 
+            "a_Position",
+            {
+                &posData.front(),
+                posData.size(),
+                3
+            }
+        },
+        { 
+            "a_UV",
+            {
+                &uvData.front(),
+                uvData.size(),
+                2
+            }
+        }
+    }});
 
     texture::image_data_2d_view view;
     view.width = 2;

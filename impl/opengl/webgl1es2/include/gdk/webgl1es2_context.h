@@ -28,7 +28,7 @@ namespace gdk
             material::render_mode aRenderMode,
             material::FaceCullingMode aFaceCullingMode) const override;
 
-        virtual graphics::context::model_ptr_type make_model(const vertex_data_view &vertexDataView) const override;
+        virtual graphics::context::model_ptr_type make_model(const vertex_data &vertexDataView) const override;
 
         virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const override;
 

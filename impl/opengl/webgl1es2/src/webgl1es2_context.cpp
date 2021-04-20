@@ -1,6 +1,7 @@
 // © 2019 Joseph Cameron - All Rights Reserved
 
 #include <stdexcept>
+#include <iostream>
 
 #include <gdk/webgl1es2_screen_camera.h>
 #include <gdk/webgl1es2_context.h>
@@ -102,13 +103,14 @@ graphics::context::texture_ptr_type webgl1es2_context::make_texture(const std::v
     return std::make_unique<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
 }
 
-static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::UsageHint usageHint)
+//TODO: remove this, its a duplication from wgles_model.cpp
+static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data::UsageHint usageHint)
 {
     switch(usageHint)
     {
-        case vertex_data_view::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
-        case vertex_data_view::UsageHint::Static: return webgl1es2_model::Type::Static;
-        case vertex_data_view::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
+        case vertex_data::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
+        case vertex_data::UsageHint::Static: return webgl1es2_model::Type::Static;
+        case vertex_data::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
     }
 
     throw std::invalid_argument("unhandled usageHint");
@@ -119,58 +121,24 @@ static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::Usa
 //additional advantage of removing format and attribute abstraction from web1gles2 impl. 
 //this work needs to be moved into the initing functor for m_VertexHandle or whatver within the model impl, 
 //then simplify this method, passthrough params of this method to the ctor
-graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_data_view &vertexDataView) const
+graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_data &vertexDataView) const
 {
-    if (!vertexDataView.m_AttributeData.size()) 
-        throw std::invalid_argument("vertex data view must contain at least one attribute data view");
-
     auto usageType = VertexDataViewUsageHintToType(vertexDataView.m_Usage);
 
     std::vector<webgl1es2_vertex_attribute> attributeFormats;
 
-    size_t vertexCount(
-        vertexDataView.m_AttributeData.begin()->second.m_DataLength /
-        vertexDataView.m_AttributeData.begin()->second.m_ComponentCount);
-
-    if (!vertexCount) throw std::invalid_argument("vertex attribute data must have data");
-
-    for (const auto &[current_name, current_attribute_data_view] : vertexDataView.m_AttributeData)
+    for (const auto &[current_name, current_attribute_component_count] : vertexDataView.m_AttributeFormat)
     {
-        attributeFormats.push_back({
-            current_name, 
-            static_cast<short unsigned int>(current_attribute_data_view.m_ComponentCount)});
-
-        auto currentVertexCount = current_attribute_data_view.m_DataLength /
-            current_attribute_data_view.m_ComponentCount;
-
-        if (currentVertexCount != vertexCount) 
-            throw std::invalid_argument("attribute data arrays must contribute to the same number of vertexes");
+        attributeFormats.push_back({current_name, 
+            static_cast<short unsigned int>(current_attribute_component_count)});
     }
 
-    std::vector<attribute_data_view::attribute_component_type> data;
-
-    const size_t vertexcount = 
-        vertexDataView.m_AttributeData.begin()->second.m_DataLength / 
-        vertexDataView.m_AttributeData.begin()->second.m_ComponentCount;
-
-    //Interleaver. Adapter required to deal with diff between make_model and model ctor. Replace this
-    for (size_t vertexcounter(0); vertexcounter < vertexcount; ++vertexcounter) 
-    {
-        for (const auto &[current_name, current_attribute_data_view] : vertexDataView.m_AttributeData)
-        {
-            for (size_t i(0), s(current_attribute_data_view.m_ComponentCount); i < s; ++i)
-            {
-                data.push_back(*(current_attribute_data_view.m_pData + i + (vertexcounter * s)));
-            }
-        }
-    }
-
-    webgl1es2_vertex_format vertexFormat(attributeFormats);
+    webgl1es2_vertex_format vertexFormat(attributeFormats); //TODO: this hould be in view
 
     return graphics::context::model_ptr_type(new gdk::webgl1es2_model(
-        gdk::webgl1es2_model::Type::Static, //Why constant?
+        gdk::webgl1es2_model::Type::Static, //TODO: clean up this ctor.
         vertexFormat,
-        data));
+        vertexDataView.m_Data));
 }
 
 graphics::context::scene_ptr_type webgl1es2_context::make_scene() const

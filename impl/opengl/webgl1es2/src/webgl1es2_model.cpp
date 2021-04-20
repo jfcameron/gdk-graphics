@@ -156,85 +156,52 @@ void webgl1es2_model::draw() const
     else glDrawArrays(primitiveMode, 0, m_VertexCount);
 }
 
-static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data_view::UsageHint usageHint)
+static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data::UsageHint usageHint)
 {
     switch (usageHint)
     {
-        case vertex_data_view::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
-        case vertex_data_view::UsageHint::Static: return webgl1es2_model::Type::Static;
-        case vertex_data_view::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
+        case vertex_data::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
+        case vertex_data::UsageHint::Static: return webgl1es2_model::Type::Static;
+        case vertex_data::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
     }
 
     throw std::invalid_argument("unhandled usageHint");
 }
 
 //TODO: eliminate duplication between webgl1es2_model::update_vertex_data, webgl1es2_context::make_model
-void webgl1es2_model::update_vertex_data(const vertex_data_view& vertexDataView)
+void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
 {
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	if (!vertexDataView.m_AttributeData.size())
-		throw std::invalid_argument("vertex data view must contain at least one attribute data view");
+    //TODO: use
+    auto usageType = VertexDataViewUsageHintToType(vertexDataView.m_Usage);
+    auto aNewType = Type::Dynamic; //TODO SHouldnt be const
 
-	auto usageType = VertexDataViewUsageHintToType(vertexDataView.m_Usage);
+    //TODO: shouldnt be const
+    const PrimitiveMode& aPrimitiveMode = PrimitiveMode::Triangles;
+    const std::vector<GLushort>& aIndexData = {};
 
-	std::vector<webgl1es2_vertex_attribute> attributeFormats;
+    std::vector<webgl1es2_vertex_attribute> attributeFormats;
 
-	size_t vertexCount(
-		vertexDataView.m_AttributeData.begin()->second.m_DataLength /
-		vertexDataView.m_AttributeData.begin()->second.m_ComponentCount);
+    for (const auto &[current_name, current_attribute_component_count] : vertexDataView.m_AttributeFormat)
+    {
+        attributeFormats.push_back({current_name, 
+            static_cast<short unsigned int>(current_attribute_component_count)});
+    }
 
-	if (!vertexCount) throw std::invalid_argument("vertex attribute data must have data");
+    webgl1es2_vertex_format vertexFormat(attributeFormats);
 
-	for (const auto& [current_name, current_attribute_data_view] : vertexDataView.m_AttributeData)
-	{
-		attributeFormats.push_back({
-			current_name,
-			static_cast<short unsigned int>(current_attribute_data_view.m_ComponentCount) });
-
-		auto currentVertexCount = current_attribute_data_view.m_DataLength /
-			current_attribute_data_view.m_ComponentCount;
-
-		if (currentVertexCount != vertexCount)
-			throw std::invalid_argument("attribute data arrays must contribute to the same number of vertexes");
-	}
-
-	std::vector<attribute_data_view::attribute_component_type> data;
-
-	const size_t vertexcount =
-		vertexDataView.m_AttributeData.begin()->second.m_DataLength /
-		vertexDataView.m_AttributeData.begin()->second.m_ComponentCount;
-
-	//Interleaver. Adapter required to deal with diff between make_model and model ctor. Replace this
-	for (size_t vertexcounter(0); vertexcounter < vertexcount; ++vertexcounter)
-	{
-		for (const auto& [current_name, current_attribute_data_view] : vertexDataView.m_AttributeData)
-		{
-			for (size_t i(0), s(current_attribute_data_view.m_ComponentCount); i < s; ++i)
-			{
-				data.push_back(*(current_attribute_data_view.m_pData + i + (vertexcounter * s)));
-			}
-		}
-	}
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	const webgl1es2_model::Type& aNewType(usageType);
-	const webgl1es2_vertex_format& aNewvertex_format(attributeFormats);
-	const std::vector<webgl1es2_model::attribute_component_data_type>& aNewwebgl1es2_model(data);
-	const std::vector<GLushort>& aIndexData = {};
-	const PrimitiveMode& aPrimitiveMode = PrimitiveMode::Triangles;
-	///////////////
+    const std::vector<webgl1es2_model::attribute_component_data_type>& aNewwebgl1es2_model(vertexDataView.m_Data);
 
     //VBO
-    m_vertex_format = aNewvertex_format;
+    m_vertex_format = vertexFormat;
     m_VertexCount  = static_cast<GLsizei>(
-        aNewwebgl1es2_model.size() / aNewvertex_format.getSumOfAttributeComponents());
-    GLint type = webgl1es2_modelTypeToOpenGLDrawType(aNewType);
+        aNewwebgl1es2_model.size() / m_vertex_format.getSumOfAttributeComponents());
     
     glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
 
     glBufferData (GL_ARRAY_BUFFER, 
         sizeof(webgl1es2_model::attribute_component_data_type) * aNewwebgl1es2_model.size(), 
         &aNewwebgl1es2_model[0], 
-        type);
+        webgl1es2_modelTypeToOpenGLDrawType(aNewType));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 

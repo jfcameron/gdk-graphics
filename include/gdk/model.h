@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include <gdk/graphics_context.h>
-#include <gdk/vertex_data_view.h>
+#include <gdk/vertex_data.h>
 
 namespace gdk
 {
@@ -16,7 +16,7 @@ namespace gdk
     {
     public:
         /// \brief replace vertex data held by this model
-        virtual void update_vertex_data(const vertex_data_view &vertexDataView) = 0;
+        virtual void update_vertex_data(const vertex_data &vertexDataView) = 0;
 
         //TODO: virtual void update_vertex_data(data, range or index) = 0;
 

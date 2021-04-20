@@ -51,13 +51,13 @@ namespace gdk
         //! construct a format using supplied attributes.
         webgl1es2_vertex_format(const std::vector<webgl1es2_vertex_attribute> &aAttributes);
         
-		//! {3 position} format
-		static const webgl1es2_vertex_format Pos3;
+        //! {3 position} format
+        static const webgl1es2_vertex_format Pos3;
 
-		//! {3 position, 2 uv} format
-		static const webgl1es2_vertex_format Pos3uv2;
+        //! {3 position, 2 uv} format
+        static const webgl1es2_vertex_format Pos3uv2;
 
-		//! {3 position, 2 uv, 3 normal} format
+        //! {3 position, 2 uv, 3 normal} format
         static const webgl1es2_vertex_format Pos3uv2Norm3;
     };
 }

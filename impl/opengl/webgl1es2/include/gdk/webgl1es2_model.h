@@ -75,7 +75,7 @@ namespace gdk
         void draw() const;
 
         //! replace current data in the vbo and ibo with new data
-        virtual void update_vertex_data(const vertex_data_view& vertexDataView) override;
+        virtual void update_vertex_data(const vertex_data& vertexDataView) override;
       
         //! equality semantics based on handle values
         bool operator==(const webgl1es2_model &);

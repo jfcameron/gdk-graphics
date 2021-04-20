@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <stdexcept>
+#include <vector>
 
 class attribute_data_view final
 {
@@ -39,7 +40,7 @@ public:
 
 //! used to construct a model
 //\warn a view does not own its data. The user must guarantee the data is valid for the lifetime of the view.
-class vertex_data_view final
+class vertex_data final
 {
 public:
     enum class UsageHint
@@ -54,13 +55,14 @@ public:
 //private:
     UsageHint m_Usage;
 
-    attribute_data_type m_AttributeData;
+    //! Raw data, interleaved
+    std::vector<attribute_data_view::attribute_component_type> m_Data;
+
+    //! Attribute format
+    std::vector<std::pair<std::string, size_t>> m_AttributeFormat;
 
 public:
-    vertex_data_view(const UsageHint aUsage, const attribute_data_type &aAttributeData)
-    : m_Usage(aUsage)
-    , m_AttributeData(aAttributeData)
-    {}
+    vertex_data(const UsageHint aUsage, const attribute_data_type &aAttributeData);
 };
 
 #endif
