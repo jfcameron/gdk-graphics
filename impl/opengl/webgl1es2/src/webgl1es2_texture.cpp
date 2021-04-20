@@ -22,17 +22,17 @@ static inline bool isPowerOfTwo(const long a)
     return std::ceil(std::log2(a)) == std::floor(std::log2(a));
 }
 
-static inline GLint textureFormatToGLint(const webgl1es2_texture::format a)
+static inline GLint textureFormatToGLint(const texture::data_format a)
 {
     switch(a)
     {
-        case webgl1es2_texture::format::rgba: return GL_RGBA;
-        case webgl1es2_texture::format::rgb: return GL_RGB;
-        case webgl1es2_texture::format::luminance_alpha: return GL_LUMINANCE_ALPHA;
-        case webgl1es2_texture::format::luminance: return GL_LUMINANCE;
-        case webgl1es2_texture::format::a: return GL_ALPHA;
+        case texture::data_format::rgba: return GL_RGBA;
+        case texture::data_format::rgb: return GL_RGB;
+        /*case texture::data_format::luminance_alpha: return GL_LUMINANCE_ALPHA;
+        case texture::data_format::luminance: return GL_LUMINANCE;
+        case texture::data_format::a: return GL_ALPHA;*/
         
-        case webgl1es2_texture::format::depth_component: 
+        case texture::data_format::depth_component: 
         {
 //TODO: deal with extensions on not glew platforms. Move this into a header.
 #if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
@@ -145,10 +145,10 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<std:
             stbi_image_free(p);
         }); decodedData)
     {
-        webgl1es2_texture_2d_data_view_type data;
+        image_data_2d_view data;
         data.width = width;
         data.height = height;
-        data.format = format::rgba;
+        data.format = data_format::rgba;
         data.data = reinterpret_cast<std::byte *>(decodedData.get());
         
         return webgl1es2_texture(data);
@@ -157,17 +157,12 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<std:
     throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to webgl1es2_texture"));
 }
 
-webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type textureData2d,
-    const minification_filter minFilter,
-    const magnification_filter magFilter,
-    const wrap_mode wrapMode)
-: m_BindTarget(bind_target_to_glenum(bind_target::texture_2d))    
-, m_Handle([&]()
+static void verify_image_view(const texture::image_data_2d_view &imageView)
 {
-    if (!isPowerOfTwo(textureData2d.width) || !isPowerOfTwo(textureData2d.height))
+    if (!isPowerOfTwo(imageView.width) || !isPowerOfTwo((imageView.height)))
         throw std::invalid_argument(std::string(TAG).append(
             ": webgl1es2_texture dimensions must be power of 2"));
-
+    
     static std::once_flag once;
     static GLint max_texture_2d_size;
 
@@ -176,11 +171,21 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type t
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_2d_size);
     });
 
-    if (textureData2d.width > max_texture_2d_size || 
-        textureData2d.height > max_texture_2d_size)
+    if (imageView.width > max_texture_2d_size || 
+        imageView.height > max_texture_2d_size)
         throw std::invalid_argument(std::string(TAG).append(
             ": webgl1es2_texture too large for this platform. max: " + 
             max_texture_2d_size));
+}
+
+webgl1es2_texture::webgl1es2_texture(const image_data_2d_view &imageView,
+    const minification_filter minFilter,
+    const magnification_filter magFilter,
+    const wrap_mode wrapMode)
+: m_BindTarget(bind_target_to_glenum(bind_target::texture_2d))    
+, m_Handle([&]()
+{
+    verify_image_view(imageView);
 
     GLuint handle;
 
@@ -190,17 +195,20 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type t
 
     glBindTexture(m_BindTarget, handle);
 
-    auto format = textureFormatToGLint(textureData2d.format);
+    auto format = textureFormatToGLint(imageView.format);
 
     glTexImage2D(m_BindTarget, 
         0, 
         format,
-        textureData2d.width, 
-        textureData2d.height, 
+        imageView.width, 
+        imageView.height, 
         0, 
         format,
         GL_UNSIGNED_BYTE, 
-        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&textureData2d.data[0])));
+        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&imageView.data[0])));
+
+    //Generate mip maps
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     //Select webgl1es2_texture filter functions
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
@@ -213,37 +221,84 @@ webgl1es2_texture::webgl1es2_texture(const webgl1es2_texture_2d_data_view_type t
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(wrapMode));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(wrapMode));
 
-    //Generate mip maps
-    glGenerateMipmap(GL_TEXTURE_2D);
-
     return handle;
 }(),
 [](const GLuint handle)
 {
     glDeleteTextures(1, &handle);
 })
+, m_CurrentDataFormat(textureFormatToGLint(imageView.format))
+, m_CurrentDataHeight(imageView.height)
+, m_CurrentDataWidth(imageView.width)
 {}
+
+void webgl1es2_texture::update_data(const image_data_2d_view &imageView)
+{
+    verify_image_view(imageView);
+
+    glActiveTexture(GL_TEXTURE0);
+
+    const auto handle = getHandle();
+
+    glBindTexture(m_BindTarget, handle);
+
+    auto format = textureFormatToGLint(imageView.format);
+
+    glTexImage2D(m_BindTarget, 
+        0, 
+        format,
+        imageView.width, 
+        imageView.height, 
+        0, 
+        format,
+        GL_UNSIGNED_BYTE, 
+        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&imageView.data[0])));
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    m_CurrentDataFormat = format;
+    m_CurrentDataWidth = imageView.width;
+    m_CurrentDataHeight = imageView.height;
+}
+
+void webgl1es2_texture::update_data(const image_data_2d_view &imageView, 
+    const size_t offsetX, const size_t offsetY)
+{
+    if (offsetY + imageView.height > m_CurrentDataHeight ||
+        offsetX + imageView.width > m_CurrentDataWidth)
+        throw std::invalid_argument("webgl1es2_texture::update_data: "
+            "when updating a subsection of texture data, the incoming "
+            "data must be within the bounds of the existing data");
+
+    if (textureFormatToGLint(imageView.format) != m_CurrentDataFormat)
+        throw std::invalid_argument("webgl1es2_texture::update_data: "
+            "when updating a subsection of texture data, the incoming data "
+            "must match the existing data's format");
+
+    glActiveTexture(GL_TEXTURE0);
+
+    const auto handle = getHandle();
+
+    glBindTexture(m_BindTarget, handle);
+
+    glTexSubImage2D(m_BindTarget, 
+        0, 
+        offsetX,
+        offsetY,
+        imageView.width, 
+        imageView.height, 
+        m_CurrentDataFormat,
+        GL_UNSIGNED_BYTE, 
+        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&imageView.data[0])));
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const { return m_Handle == b.m_Handle; }
+bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }
 
 GLuint webgl1es2_texture::getHandle() const
 {
     return m_Handle.get();
-}
-
-bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const
-{
-    return m_Handle == b.m_Handle;
-}
-bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }
-
-void webgl1es2_texture::update_data(const image_data_2d_view &)
-{
-    //TODO: implement total rewrite. Doesnt care about format, size etc.
-    // likely should move ctor work out to a static, reuse impl.
-}
-
-void webgl1es2_texture::update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY)
-{
-    //TODO: implement section rewrite. Must respect format, must respect size.
-    // Will have to retain size and format as members
 }
 

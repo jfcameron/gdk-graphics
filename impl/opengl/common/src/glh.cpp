@@ -3,9 +3,8 @@
 #include <gdk/color.h>
 #include <gdk/glh.h>
 
-#include <vector>
-
 #include <cmath>
+#include <vector>
 
 namespace glh
 {

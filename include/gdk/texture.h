@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_TEXTURE_H
 #define GDK_GFX_TEXTURE_H
@@ -20,11 +20,18 @@ namespace gdk
         enum class data_format //!< format of data in the byte array
         {
             rgb, //!< data is a sequence of bytes representing red, green, blue, ...
-            rgba //!< data is a sequence of bytes representing red, green, blue, alpha, ...
+            rgba, //!< data is a sequence of bytes representing red, green, blue, alpha, ...
+            depth_component //!< special format used by textures attached to the depth buffer of a texture_camera
         };
 
-        /// \brief pod struct for 2d texture data
+        /// \brief pod struct representing a view on decoded image data 
+        /// + metadata that describes its size and format
         /// \warn a view does not own its data.
+        ///
+        /// the purpose of this type is in being used to construct a texture object.
+        /// \warn the user must ensure the data is not cleaned up until sometime after it has been used. 
+        /// \note: it is valid to provide width + height and a nullptr for data, 
+        /// the context will an uninitialized texture buffer of the specified size and format.
         struct image_data_2d_view
         {
             size_t width; //!< number of texels wide
@@ -37,10 +44,12 @@ namespace gdk
             std::byte *data;
         };
 
-        //! update texture data
+        //! replace the texture data with new data
         virtual void update_data(const image_data_2d_view &) = 0;
 
         //! update a section of texture data
+        /// \warn formats must match
+        /// \warn new data must be kept within bounds of the existing data
         virtual void update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY) = 0;
 
         //! trivial destructor
