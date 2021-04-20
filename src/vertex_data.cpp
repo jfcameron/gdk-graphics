@@ -47,3 +47,23 @@ vertex_data::vertex_data(const UsageHint aUsage, const attribute_data_type &aAtt
     }
 }
 
+vertex_data::PrimitiveMode vertex_data::getPrimitiveMode() const
+{
+    return m_PrimitiveMode;
+}
+
+vertex_data::UsageHint vertex_data::getUsageHint() const
+{
+    return m_Usage;
+}
+
+const std::vector<attribute_data_view::attribute_component_type> &vertex_data::getData() const
+{
+    return m_Data;
+}
+
+const std::vector<std::pair<std::string, size_t>> &vertex_data::getAttributeFormat() const
+{
+    return m_AttributeFormat;
+}
+

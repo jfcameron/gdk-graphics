@@ -92,9 +92,7 @@ namespace gdk
         //! disable copy semantics
         webgl1es2_model(const webgl1es2_model &) = delete;
       
-        webgl1es2_model(const webgl1es2_model::Type &aType, 
-            const webgl1es2_vertex_format &avertex_format, 
-            const std::vector<attribute_component_data_type> &awebgl1es2_model,
+        webgl1es2_model(const vertex_data &aData,
             const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
             const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
         
@@ -112,12 +110,12 @@ namespace gdk
         
         //! Handle to the vertex buffer in the context
         jfc::unique_handle<GLuint> m_VertexBufferHandle; 
-        
-        //! total number of vertexes
-        GLsizei m_VertexCount = 0; 
 
         //! Format of the vertex data
         webgl1es2_vertex_format m_vertex_format = webgl1es2_vertex_format::Pos3uv2; 
+        
+        //! total number of vertexes
+        GLsizei m_VertexCount = 0; 
 
         //! The primitive type to be generated using the vertex data
         PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 

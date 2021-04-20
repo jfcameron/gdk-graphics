@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <vector>
 
+/// \brief a view on to the data for a given attribute e.g: "uv", "position".
+/// \warn a view does not own its data, the user must guarantee the data lives as long as the view could be read from
 class attribute_data_view final
 {
 public:
@@ -38,8 +40,7 @@ public:
     }
 };
 
-//! used to construct a model
-//\warn a view does not own its data. The user must guarantee the data is valid for the lifetime of the view.
+//! used to construct a model. Vertex data represents a set of vertex data in system memory
 class vertex_data final
 {
 public:
@@ -50,9 +51,28 @@ public:
         Streaming
     };
 
+    enum class PrimitiveMode
+    {
+        Triangles
+    };
+
     using attribute_data_type = std::unordered_map<std::string, attribute_data_view>;
 
-//private:
+    vertex_data(const UsageHint aUsage, const attribute_data_type &aAttributeData);
+
+    PrimitiveMode getPrimitiveMode() const;
+
+    UsageHint getUsageHint() const;
+
+    const std::vector<attribute_data_view::attribute_component_type> &getData() const;
+
+    const std::vector<std::pair<std::string, size_t>> &getAttributeFormat() const;
+
+private:
+    //! primitive type to emit at primitive stage
+    PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
+
+    //! the context may use this to optimize where in video memory the data is uploaded
     UsageHint m_Usage;
 
     //! Raw data, interleaved
@@ -61,8 +81,6 @@ public:
     //! Attribute format
     std::vector<std::pair<std::string, size_t>> m_AttributeFormat;
 
-public:
-    vertex_data(const UsageHint aUsage, const attribute_data_type &aAttributeData);
 };
 
 #endif

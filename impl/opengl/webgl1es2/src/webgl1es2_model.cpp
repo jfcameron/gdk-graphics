@@ -14,83 +14,221 @@ static constexpr char TAG[] = "webgl1es2_model";
 
 const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
 {
-    std::vector<webgl1es2_model::attribute_component_data_type> data(
+    std::vector<webgl1es2_model::attribute_component_data_type> pos({
+        // x,    y,    z
+        1.0f, 1.0f, 0.0f, // 1--0
+        0.0f, 1.0f, 0.0f, // | /
+        0.0f, 0.0f, 0.0f, // 2
+        1.0f, 1.0f, 0.0f, //    0
+        0.0f, 0.0f, 0.0f, //  / |
+        1.0f, 0.0f, 0.0f, // 1--2
+    });
+    
+    // Center the quad
+    for (size_t i(0); i < (pos.size()); i += 3)
     {
-        // x,    y,    z,    u,    v,
-        1.0f, 1.0f, 0.0f, 1.0f, 0.0f, // 1--0
-        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, // | /
-        0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // 2
-        1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //    0
-        0.0f, 0.0f, 0.0f, 0.0f, 1.0f, //  / |
-        1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // 1--2
+        pos[i + 0] -= 0.5f;
+        pos[i + 1] -= 0.5f;
+    }
+    
+    std::vector<webgl1es2_model::attribute_component_data_type> uv({
+        // u,    v
+        1.0f, 0.0f, // 1--0
+        0.0f, 0.0f, // | /
+        0.0f, 1.0f, // 2
+        1.0f, 0.0f, //    0
+        0.0f, 1.0f, //  / |
+        1.0f, 1.0f, // 1--2
     });
 
-    // Center the quad
-    for (size_t i(0); i < (data.size()); i += 5)
+    return new gdk::webgl1es2_model({vertex_data::UsageHint::Static,
     {
-        data[i + 0] -= 0.5f;
-        data[i + 1] -= 0.5f;
-    }
-
-    return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, 
-        gdk::webgl1es2_vertex_format::Pos3uv2, 
-        data);
+        { 
+            "a_Position",
+            {
+                &pos.front(),
+                pos.size(),
+                3
+            }
+        },
+        { 
+            "a_UV",
+            {
+                &uv.front(),
+                uv.size(),
+                2
+            }
+        }
+    }});
 });
 
 const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
 {
     float size(1.f);
     float hsize(size/2.f);
-    
-    std::vector<webgl1es2_model::attribute_component_data_type> data(
-    {
-        //        x,           y,      z,   u,   v,  Nx,  Ny,    Nz, North
-        size -hsize, size -hsize, -hsize, 0.0, 0.0,  0.0, 0.0, -1.0, // 2--0
-        0.0f -hsize, 0.0f -hsize, -hsize, 1.0, 1.0,  0.0, 0.0, -1.0, // | /
-        0.0f -hsize, size -hsize, -hsize, 1.0, 0.0,  0.0, 0.0, -1.0, // 1
-        size -hsize, size -hsize, -hsize, 0.0, 0.0,  0.0, 0.0, -1.0, //    0
-        size -hsize, 0.0f -hsize, -hsize, 0.0, 1.0,  0.0, 0.0, -1.0, //  / |
-        0.0f -hsize, 0.0f -hsize, -hsize, 1.0, 1.0,  0.0, 0.0, -1.0, // 2--1 */
-        //        x,           y,      z,   u,   v,   Nx,  Ny,   Nz, South
-        size -hsize, size -hsize,  hsize, 1.0, 0.0,  0.0, 0.0, +1.0, // 1--0
-        0.0f -hsize, size -hsize,  hsize, 0.0, 0.0,  0.0, 0.0, +1.0, // | /
-        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, 0.0, +1.0, // 2
-        size -hsize, size -hsize,  hsize, 1.0, 0.0,  0.0, 0.0, +1.0, //    0
-        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, 0.0, +1.0, //  / |
-        size -hsize, 0.0f -hsize,  hsize, 1.0, 1.0,  0.0, 0.0, +1.0, // 1--2 */
-        //        x,           y       z,   u,   v,   Nx,  Ny,  Nz, West
-        0.0f -hsize, size -hsize,  hsize, 1.0, 0.0, -1.0, 0.0, 0.0, // 2--0
-        0.0f -hsize, size -hsize, -hsize, 0.0, 0.0, -1.0, 0.0, 0.0, // | /
-        0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 1.0, -1.0, 0.0, 0.0, // 1
-        0.0f -hsize, size -hsize,  hsize, 1.0, 0.0, -1.0, 0.0, 0.0, //    0
-        0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 1.0, -1.0, 0.0, 0.0, //  / |
-        0.0f -hsize, 0.0f -hsize,  hsize, 1.0, 1.0, -1.0, 0.0, 0.0, // 2--1 */
-        //        x,           y,      z,   u,   v,   Nx,   Ny,  Nz, East
-        size -hsize, size -hsize,  hsize, 0.0, 0.0, +1.0,  0.0, 0.0, // 2--0
-        size -hsize, 0.0f -hsize, -hsize, 1.0, 1.0, +1.0,  0.0, 0.0, // | /
-        size -hsize, size -hsize, -hsize, 1.0, 0.0, +1.0,  0.0, 0.0, // 1
-        size -hsize, size -hsize,  hsize, 0.0, 0.0, +1.0,  0.0, 0.0, //    0
-        size -hsize, 0.0f -hsize,  hsize, 0.0, 1.0, +1.0,  0.0, 0.0, //  / |
-        size -hsize, 0.0f -hsize, -hsize, 1.0, 1.0, +1.0,  0.0, 0.0, // 2--1 */
-        //        x,           y,      z,   u,   v,   Nx,  Ny,  Nz, Down
-        size -hsize, 0.0f -hsize, -hsize, 1.0, 0.0,  0.0, -1.0, 0.0, // 2--0
-        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, -1.0, 0.0, // | /
-        0.0f -hsize, 0.0f -hsize, -hsize, 0.0, 0.0,  0.0, -1.0, 0.0, // 1
-        size -hsize, 0.0f -hsize, -hsize, 1.0, 0.0,  0.0, -1.0, 0.0, //    0
-        size -hsize, 0.0f -hsize,  hsize, 1.0, 1.0,  0.0, -1.0, 0.0, //  / |
-        0.0f -hsize, 0.0f -hsize,  hsize, 0.0, 1.0,  0.0, -1.0, 0.0, // 2--1 */
-        //        x,           y,      z,   u,   v,   Nx,   Ny,  Nz, Up
-        size -hsize, 1.0f -hsize, -hsize, 1.0, 0.0,  0.0, +1.0, 0.0, // 1--0
-        0.0f -hsize, 1.0f -hsize, -hsize, 0.0, 0.0,  0.0, +1.0, 0.0, // | /
-        0.0f -hsize, 1.0f -hsize,  hsize, 0.0, 1.0,  0.0, +1.0, 0.0, // 2
-        size -hsize, 1.0f -hsize, -hsize, 1.0, 0.0,  0.0, +1.0, 0.0, //    0
-        0.0f -hsize, 1.0f -hsize,  hsize, 0.0, 1.0,  0.0, +1.0, 0.0, //  / |
-        size -hsize, 1.0f -hsize,  hsize, 1.0, 1.0,  0.0, +1.0, 0.0, // 1--2 */            
+
+    std::vector<webgl1es2_model::attribute_component_data_type> pos({
+        //        x,           y,      z,
+        size -hsize, size -hsize, -hsize, // 2--0
+        0.0f -hsize, 0.0f -hsize, -hsize, // | /
+        0.0f -hsize, size -hsize, -hsize, // 1
+        size -hsize, size -hsize, -hsize, //    0
+        size -hsize, 0.0f -hsize, -hsize, //  / |
+        0.0f -hsize, 0.0f -hsize, -hsize, // 2--1 
+        //        x,           y,      z,
+        size -hsize, size -hsize,  hsize, // 1--0
+        0.0f -hsize, size -hsize,  hsize, // | /
+        0.0f -hsize, 0.0f -hsize,  hsize, // 2
+        size -hsize, size -hsize,  hsize, //    0
+        0.0f -hsize, 0.0f -hsize,  hsize, //  / |
+        size -hsize, 0.0f -hsize,  hsize, // 1--2 
+        //        x,           y       z,
+        0.0f -hsize, size -hsize,  hsize, // 2--0
+        0.0f -hsize, size -hsize, -hsize, // | /
+        0.0f -hsize, 0.0f -hsize, -hsize, // 1
+        0.0f -hsize, size -hsize,  hsize, //    0
+        0.0f -hsize, 0.0f -hsize, -hsize, //  / |
+        0.0f -hsize, 0.0f -hsize,  hsize, // 2--1 
+        //        x,           y,      z,
+        size -hsize, size -hsize,  hsize, // 2--0
+        size -hsize, 0.0f -hsize, -hsize, // | /
+        size -hsize, size -hsize, -hsize, // 1
+        size -hsize, size -hsize,  hsize, //    0
+        size -hsize, 0.0f -hsize,  hsize, //  / |
+        size -hsize, 0.0f -hsize, -hsize, // 2--1 
+        //        x,           y,      z,
+        size -hsize, 0.0f -hsize, -hsize, // 2--0
+        0.0f -hsize, 0.0f -hsize,  hsize, // | /
+        0.0f -hsize, 0.0f -hsize, -hsize, // 1
+        size -hsize, 0.0f -hsize, -hsize, //    0
+        size -hsize, 0.0f -hsize,  hsize, //  / |
+        0.0f -hsize, 0.0f -hsize,  hsize, // 2--1 
+        //        x,           y,      z,
+        size -hsize, 1.0f -hsize, -hsize, // 1--0
+        0.0f -hsize, 1.0f -hsize, -hsize, // | /
+        0.0f -hsize, 1.0f -hsize,  hsize, // 2
+        size -hsize, 1.0f -hsize, -hsize, //    0
+        0.0f -hsize, 1.0f -hsize,  hsize, //  / |
+        size -hsize, 1.0f -hsize,  hsize, // 1--2             
     });
 
-    return new gdk::webgl1es2_model(gdk::webgl1es2_model::Type::Static, 
-        gdk::webgl1es2_vertex_format::Pos3uv2Norm3, 
-        data);
+    std::vector<webgl1es2_model::attribute_component_data_type> uv({
+        //u,   v,
+        0.0, 0.0, // 2--0
+        1.0, 1.0, // | /
+        1.0, 0.0, // 1
+        0.0, 0.0, //    0
+        0.0, 1.0, //  / |
+        1.0, 1.0, // 2--1 
+        //u,   v,
+        1.0, 0.0, // 1--0
+        0.0, 0.0, // | /
+        0.0, 1.0, // 2
+        1.0, 0.0, //    0
+        0.0, 1.0, //  / |
+        1.0, 1.0, // 1--2 
+        //u,   v,
+        1.0, 0.0, // 2--0
+        0.0, 0.0, // | /
+        0.0, 1.0, // 1
+        1.0, 0.0, //    0
+        0.0, 1.0, //  / |
+        1.0, 1.0, // 2--1 
+        //u,   v,
+        0.0, 0.0, // 2--0
+        1.0, 1.0, // | /
+        1.0, 0.0, // 1
+        0.0, 0.0, //    0
+        0.0, 1.0, //  / |
+        1.0, 1.0, // 2--1 
+        //u,   v,
+        1.0, 0.0, // 2--0
+        0.0, 1.0, // | /
+        0.0, 0.0, // 1
+        1.0, 0.0, //    0
+        1.0, 1.0, //  / |
+        0.0, 1.0, // 2--1 
+        //u,   v,
+        1.0, 0.0, // 1--0
+        0.0, 0.0, // | /
+        0.0, 1.0, // 2
+        1.0, 0.0, //    0
+        0.0, 1.0, //  / |
+        1.0, 1.0, // 1--2             
+    });
+    
+    std::vector<webgl1es2_model::attribute_component_data_type> normal({
+        //Nx,   Ny,   Nz, North
+        +0.0, +0.0, -1.0, // 2--0
+        +0.0, +0.0, -1.0, // | /
+        +0.0, +0.0, -1.0, // 1
+        +0.0, +0.0, -1.0, //    0
+        +0.0, +0.0, -1.0, //  / |
+        +0.0, +0.0, -1.0, // 2--1 
+        //Nx,   Ny,   Nz, South
+        +0.0, +0.0, +1.0, // 1--0
+        +0.0, +0.0, +1.0, // | /
+        +0.0, +0.0, +1.0, // 2
+        +0.0, +0.0, +1.0, //    0
+        +0.0, +0.0, +1.0, //  / |
+        +0.0, +0.0, +1.0, // 1--2 
+        //Nx,   Ny,   Nz, West
+        -1.0, +0.0, +0.0, // 2--0
+        -1.0, +0.0, +0.0, // | /
+        -1.0, +0.0, +0.0, // 1
+        -1.0, +0.0, +0.0, //    0
+        -1.0, +0.0, +0.0, //  / |
+        -1.0, +0.0, +0.0, // 2--1 
+        //Nx,   Ny,   Nz, East
+        +1.0, +0.0, +0.0, // 2--0
+        +1.0, +0.0, +0.0, // | /
+        +1.0, +0.0, +0.0, // 1
+        +1.0, +0.0, +0.0, //    0
+        +1.0, +0.0, +0.0, //  / |
+        +1.0, +0.0, +0.0, // 2--1 
+        //Nx,  Ny,    Nz, Down
+        +0.0, -1.0, +0.0, // 2--0
+        +0.0, -1.0, +0.0, // | /
+        +0.0, -1.0, +0.0, // 1
+        +0.0, -1.0, +0.0, //    0
+        +0.0, -1.0, +0.0, //  / |
+        +0.0, -1.0, +0.0, // 2--1 
+        //Nx,   Ny,   Nz, Up
+        +0.0, +1.0, +0.0, // 1--0
+        +0.0, +1.0, +0.0, // | /
+        +0.0, +1.0, +0.0, // 2
+        +0.0, +1.0, +0.0, //    0
+        +0.0, +1.0, +0.0, //  / |
+        +0.0, +1.0, +0.0, // 1--2             
+    });
+    
+    return new gdk::webgl1es2_model({vertex_data::UsageHint::Static,
+    {
+        { 
+            "a_Position",
+            {
+                &pos.front(),
+                pos.size(),
+                3
+            }
+        },
+        { 
+            "a_UV",
+            {
+                &uv.front(),
+                uv.size(),
+                2
+            }
+        },
+        { 
+            "a_Normal",
+            {
+                &uv.front(),
+                uv.size(),
+                2
+            }
+        }
+    }});
 });
 
 static inline GLenum webgl1es2_modelTypeToOpenGLDrawType(const webgl1es2_model::Type aType)
@@ -103,6 +241,18 @@ static inline GLenum webgl1es2_modelTypeToOpenGLDrawType(const webgl1es2_model::
     }
 
     throw std::invalid_argument("unhandled vertex data type");
+}
+
+static inline webgl1es2_model::Type vertexDataUsageHint_to_webgl1es2ModelType(const vertex_data::UsageHint aUsageHint)
+{
+    switch (aUsageHint)
+    {
+        case vertex_data::UsageHint::Static: return webgl1es2_model::Type::Dynamic;
+        case vertex_data::UsageHint::Dynamic: return webgl1es2_model::Type::Static;
+        case vertex_data::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
+    }
+    
+    throw std::invalid_argument("unhandled usage hint type");
 }
 
 static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const webgl1es2_model::PrimitiveMode aPrimitiveMode)
@@ -119,6 +269,18 @@ static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const webgl1es2_model::P
     }
     
     throw std::invalid_argument("unhandled vertex primitive mode");
+}
+
+static inline webgl1es2_model::PrimitiveMode vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(
+    const vertex_data::PrimitiveMode aPrimitiveMode)
+{
+    switch (aPrimitiveMode)
+    {
+        case vertex_data::PrimitiveMode::Triangles: 
+            return webgl1es2_model::PrimitiveMode::Triangles;
+    }
+    
+    throw std::invalid_argument("unhandled vertex_data::PrimitiveMode");
 }
 
 bool webgl1es2_model::operator==(const webgl1es2_model &that)
@@ -168,20 +330,16 @@ static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data::UsageHin
     throw std::invalid_argument("unhandled usageHint");
 }
 
-//TODO: eliminate duplication between webgl1es2_model::update_vertex_data, webgl1es2_context::make_model
 void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
 {
-    //TODO: use
-    auto usageType = VertexDataViewUsageHintToType(vertexDataView.m_Usage);
-    auto aNewType = Type::Dynamic; //TODO SHouldnt be const
+    const PrimitiveMode& aPrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(
+        vertexDataView.getPrimitiveMode());
 
-    //TODO: shouldnt be const
-    const PrimitiveMode& aPrimitiveMode = PrimitiveMode::Triangles;
     const std::vector<GLushort>& aIndexData = {};
 
     std::vector<webgl1es2_vertex_attribute> attributeFormats;
 
-    for (const auto &[current_name, current_attribute_component_count] : vertexDataView.m_AttributeFormat)
+    for (const auto &[current_name, current_attribute_component_count] : vertexDataView.getAttributeFormat())
     {
         attributeFormats.push_back({current_name, 
             static_cast<short unsigned int>(current_attribute_component_count)});
@@ -189,7 +347,7 @@ void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
 
     webgl1es2_vertex_format vertexFormat(attributeFormats);
 
-    const std::vector<webgl1es2_model::attribute_component_data_type>& aNewwebgl1es2_model(vertexDataView.m_Data);
+    const std::vector<webgl1es2_model::attribute_component_data_type>& aNewwebgl1es2_model(vertexDataView.getData());
 
     //VBO
     m_vertex_format = vertexFormat;
@@ -201,7 +359,8 @@ void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
     glBufferData (GL_ARRAY_BUFFER, 
         sizeof(webgl1es2_model::attribute_component_data_type) * aNewwebgl1es2_model.size(), 
         &aNewwebgl1es2_model[0], 
-        webgl1es2_modelTypeToOpenGLDrawType(aNewType));
+        webgl1es2_modelTypeToOpenGLDrawType(
+            vertexDataUsageHint_to_webgl1es2ModelType(vertexDataView.getUsageHint())));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -222,7 +381,8 @@ void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
             sizeof(GLushort) * aIndexData.size(), 
             &aIndexData[0], 
-            webgl1es2_modelTypeToOpenGLDrawType(aNewType));
+            webgl1es2_modelTypeToOpenGLDrawType(
+                vertexDataUsageHint_to_webgl1es2ModelType(vertexDataView.getUsageHint())));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
@@ -231,12 +391,10 @@ void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
     }
 }
 
-webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
-    const webgl1es2_vertex_format &avertex_format,
-    const std::vector<webgl1es2_model::attribute_component_data_type> &awebgl1es2_model, 
+webgl1es2_model::webgl1es2_model(const vertex_data &aData,
     const std::vector<GLushort> &aIndexData,
     const PrimitiveMode &aPrimitiveMode)
-: m_IndexBufferHandle([&aIndexData, &aType]()
+: m_IndexBufferHandle([&]()
 {
     GLuint ibo(0);
     
@@ -249,7 +407,8 @@ webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
             sizeof(GLushort) * aIndexData.size(), 
             &aIndexData[0], 
-            webgl1es2_modelTypeToOpenGLDrawType(aType));
+            webgl1es2_modelTypeToOpenGLDrawType(
+                vertexDataUsageHint_to_webgl1es2ModelType(aData.getUsageHint())));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     
@@ -264,19 +423,21 @@ webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
     glDeleteBuffers(1, &handle);
 })
 , m_IndexCount((GLsizei)aIndexData.size())
-, m_VertexBufferHandle([&awebgl1es2_model, &aType]()
+, m_VertexBufferHandle([&]()
 {
-    if (!awebgl1es2_model.size()) 
-        throw std::invalid_argument(std::string(TAG).append("no vertex data to upload!"));
+    if (!aData.getData().size()) 
+        throw std::invalid_argument(std::string(TAG).append(
+            ": no vertex data to upload!"));
     
     GLuint vbo(0);
     
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, 
-        sizeof(webgl1es2_model::attribute_component_data_type) * awebgl1es2_model.size(), 
-        &awebgl1es2_model[0], 
-        webgl1es2_modelTypeToOpenGLDrawType(aType));
+        sizeof(webgl1es2_model::attribute_component_data_type) * aData.getData().size(), 
+        &aData.getData()[0], 
+        webgl1es2_modelTypeToOpenGLDrawType(
+            vertexDataUsageHint_to_webgl1es2ModelType(aData.getUsageHint())));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
@@ -289,9 +450,19 @@ webgl1es2_model::webgl1es2_model(const webgl1es2_model::Type &aType,
 {
     glDeleteBuffers(1, &handle);
 })
-, m_VertexCount(static_cast<GLsizei>(
-    awebgl1es2_model.size()) / avertex_format.getSumOfAttributeComponents())
-, m_vertex_format(avertex_format)
-, m_PrimitiveMode(aPrimitiveMode)
+, m_vertex_format([&]()
+{
+    std::vector<webgl1es2_vertex_attribute> attributeFormats;
+
+    for (const auto &[current_name, current_attribute_component_count] : aData.getAttributeFormat())
+    {
+        attributeFormats.push_back({current_name, 
+            static_cast<short unsigned int>(current_attribute_component_count)});
+    }
+
+    return attributeFormats;
+}())
+, m_VertexCount(static_cast<GLsizei>(aData.getData().size()) / m_vertex_format.getSumOfAttributeComponents())
+, m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.getPrimitiveMode()))
 {}
 

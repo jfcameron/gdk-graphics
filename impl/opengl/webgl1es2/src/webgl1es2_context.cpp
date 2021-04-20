@@ -103,42 +103,9 @@ graphics::context::texture_ptr_type webgl1es2_context::make_texture(const std::v
     return std::make_unique<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
 }
 
-//TODO: remove this, its a duplication from wgles_model.cpp
-static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data::UsageHint usageHint)
-{
-    switch(usageHint)
-    {
-        case vertex_data::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
-        case vertex_data::UsageHint::Static: return webgl1es2_model::Type::Static;
-        case vertex_data::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
-    }
-
-    throw std::invalid_argument("unhandled usageHint");
-}
-
-//TODO remove copy. This is a memory wasteful adapter between public context api and webgles model ctor. 
-//How? mody ctor then in ctor do not interleave, instead append to back of vertexbuffer data. 
-//additional advantage of removing format and attribute abstraction from web1gles2 impl. 
-//this work needs to be moved into the initing functor for m_VertexHandle or whatver within the model impl, 
-//then simplify this method, passthrough params of this method to the ctor
 graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_data &vertexDataView) const
 {
-    auto usageType = VertexDataViewUsageHintToType(vertexDataView.m_Usage);
-
-    std::vector<webgl1es2_vertex_attribute> attributeFormats;
-
-    for (const auto &[current_name, current_attribute_component_count] : vertexDataView.m_AttributeFormat)
-    {
-        attributeFormats.push_back({current_name, 
-            static_cast<short unsigned int>(current_attribute_component_count)});
-    }
-
-    webgl1es2_vertex_format vertexFormat(attributeFormats); //TODO: this hould be in view
-
-    return graphics::context::model_ptr_type(new gdk::webgl1es2_model(
-        gdk::webgl1es2_model::Type::Static, //TODO: clean up this ctor.
-        vertexFormat,
-        vertexDataView.m_Data));
+    return graphics::context::model_ptr_type(new gdk::webgl1es2_model(vertexDataView));
 }
 
 graphics::context::scene_ptr_type webgl1es2_context::make_scene() const
@@ -146,3 +113,4 @@ graphics::context::scene_ptr_type webgl1es2_context::make_scene() const
     return graphics::context::scene_ptr_type(
         new gdk::webgl1es2_scene());
 }
+
