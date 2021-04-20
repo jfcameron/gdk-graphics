@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">fd550c94bd529d6128030b195c101614c0a0f343</span>
+   &#160;<span id="projectnumber">8e148563b03c75f41ab951e0303468c4de442b11</span>
    </div>
   </td>
  </tr>
@@ -72,7 +72,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>pod struct for 2d texture data  a view does not own its data.  
+<p>pod struct representing a view on decoded image data  
  <a href="structgdk_1_1texture_1_1image__data__2d__view.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="texture_8h_source.html">texture.h</a>&gt;</code></p>
@@ -95,7 +95,11 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 <tr class="separator:a8728d7ad77f7277bc4792a029b9b2a38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>pod struct for 2d texture data  a view does not own its data. </p>
+<div class="textblock"><p>pod struct representing a view on decoded image data </p>
+<ul>
+<li>metadata that describes its size and format  a view does not own its data.</li>
+</ul>
+<p>the purpose of this type is in being used to construct a texture object.  the user must ensure the data is not cleaned up until sometime after it has been used. </p><dl class="section note"><dt>Note</dt><dd>: it is valid to provide width + height and a nullptr for data, the context will an uninitialized texture buffer of the specified size and format. </dd></dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a8728d7ad77f7277bc4792a029b9b2a38"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8728d7ad77f7277bc4792a029b9b2a38">&#9670;&nbsp;</a></span>data</h2>
