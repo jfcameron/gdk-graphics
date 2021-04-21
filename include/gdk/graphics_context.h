@@ -17,6 +17,8 @@
 
 namespace gdk::graphics
 {
+    class entity_owner;
+
     //! entry point for gdk-graphics
     /// to use, call make with the desired implementation
     /// implementation chooses what Graphics API/API Standard to use

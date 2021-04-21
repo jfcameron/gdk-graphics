@@ -11,17 +11,11 @@
 
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
-
-#include <gdk/webgl1es2_camera.h>
-#include <gdk/webgl1es2_entity.h>
-#include <gdk/webgl1es2_material.h>
-#include <gdk/webgl1es2_model.h>
-#include <gdk/webgl1es2_shader_program.h> 
+#include <gdk/entity_owner.h>
 
 #include <GLFW/glfw3.h>
 
 using namespace gdk;
-using namespace jfc;
 
 // Raw texture data (image these are loaded from file or compiled into the binary from e.g a "resource" header)
 std::vector<std::underlying_type<std::byte>::type> imageData2({
@@ -36,6 +30,24 @@ std::vector<std::underlying_type<std::byte>::type> imageData({
     0xff, 0xff, 0xff, 0xff,
     0x00, 0x00, 0x00, 0xff});
 
+class tile_renderer : public gdk::entity_owner
+{
+    std::shared_ptr<entity> m_pEntity;
+public:
+    
+    virtual std::vector<std::shared_ptr<entity>> get_entities() override
+    {
+        return {m_pEntity};
+    }
+
+    tile_renderer(std::shared_ptr<graphics::context> pContext)
+    {
+
+    }
+
+    ~tile_renderer() = default;
+};
+
 int main(int argc, char **argv)
 {
     // Separate lib, used to init GL and get a window ready for rendering on Linux/Mac/Windows
@@ -45,21 +57,23 @@ int main(int argc, char **argv)
     auto pContext = graphics::context::make(
         graphics::context::implementation::opengl_webgl1_gles2);
 
+    auto pTileRenderer = std::make_shared<tile_renderer>(tile_renderer(pContext));
+
     // Setting up the main scene
     auto pScene = pContext->make_scene();
 
     auto pTextureCamera = pContext->make_texture_camera();
     pTextureCamera->set_clear_color({1,0.1,0.1,1});
-    pScene->add_camera(pTextureCamera);
+    pScene->add(pTextureCamera);
 
     auto pCamera = pContext->make_camera();
     //pCamera->set_viewport(0, 0, 0.5, 0.5);
-    pScene->add_camera(pCamera);
+    pScene->add(pCamera);
 
     /*auto pCamera2 = pContext->make_camera();
     //pCamera2->set_viewport(0.5, 0.5, 0.5, 0.5);
     pCamera2->set_clear_color(color::DarkGreen);
-    pScene->add_camera(pCamera2);*/
+    pScene->add(pCamera2);*/
 
     auto pAlpha = pContext->get_alpha_cutoff_shader();
 
@@ -139,7 +153,7 @@ int main(int argc, char **argv)
 
     auto pEntity = pContext->make_entity(pUserModel, pMaterial);
     pEntity->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
-    pScene->add_entity(pEntity);
+    pScene->add(pEntity);
 
     texture::image_data_2d_view view2;
     view2.width = 2;
@@ -154,7 +168,7 @@ int main(int argc, char **argv)
     pMaterial2->setVector2("_UVOffset", {0, 0});
     auto pEntity2 = std::shared_ptr<entity>(
         pContext->make_entity(pContext->get_cube_model(), pMaterial2));
-    pScene->add_entity(pEntity2);
+    pScene->add(pEntity2);
 
     auto pMaterial3 = pContext->make_material(pAlpha);
     pMaterial3->setTexture("_Texture", pTexture);
@@ -162,7 +176,7 @@ int main(int argc, char **argv)
     pMaterial3->setVector2("_UVOffset", {0, 0});
     auto pEntity3 = std::shared_ptr<entity>(
         pContext->make_entity(pContext->get_cube_model(), pMaterial3));
-    pScene->add_entity(pEntity3);
+    pScene->add(pEntity3);
     pEntity3->set_model_matrix(Vector3<float>{2., 0., -14.5}, 
         Quaternion<float>{{0, 2, 0.6}},
         {6.5, 0.5, 3});

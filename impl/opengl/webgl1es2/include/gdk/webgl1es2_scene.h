@@ -28,7 +28,7 @@ namespace gdk
 
         virtual void draw(webgl1es2_camera *p) const;
         
-        virtual void try_add_entity(entity_ptr_type);
+        virtual void try_add(entity_ptr_type);
 
         virtual ~render_set() = default;
 
@@ -43,7 +43,7 @@ namespace gdk
     public:
         virtual void draw(webgl1es2_camera *p) const;
 
-        virtual void try_add_entity(entity_ptr_type) override;
+        virtual void try_add(entity_ptr_type) override;
 
         sorted_render_set() = default;
 
@@ -72,18 +72,13 @@ namespace gdk
     /// \name factory methods
     ///@{
     //
-        virtual void add_camera(std::shared_ptr<screen_camera> pCamera) override;
-        virtual void add_camera(std::shared_ptr<texture_camera> pCamera) override;
+        virtual void add(std::shared_ptr<screen_camera> pCamera) override;
+        virtual void add(std::shared_ptr<texture_camera> pCamera) override;
+        virtual void add(entity_ptr_type pEntity) override;
         
-        virtual bool contains_camera(std::shared_ptr<screen_camera> pCamera) const override;
-        virtual bool contains_camera(std::shared_ptr<texture_camera> pCamera) const override;
-        
-        virtual void remove_camera(std::shared_ptr<screen_camera> pCamera) override;
-        virtual void remove_camera(std::shared_ptr<texture_camera> pCamera) override;
-
-        virtual void add_entity(entity_ptr_type pEntity) override;
-
-        virtual void remove_entity(entity_ptr_type pEntity) override;
+        virtual void remove(std::shared_ptr<screen_camera> pCamera) override;
+        virtual void remove(std::shared_ptr<texture_camera> pCamera) override;
+        virtual void remove(entity_ptr_type pEntity) override;
 
         virtual void draw(const gdk::graphics_intvector2_type &aFrameBufferSize) const override;
     ///@}
