@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">221df5e7e7707cfe9979fe705488006d6780df6f</span>
+   &#160;<span id="projectnumber">79c56810b1d3f645a6f4deba1e9b40590fcaa378</span>
    </div>
   </td>
  </tr>
@@ -82,7 +82,7 @@ Inheritance diagram for gdk::webgl1es2_scene:</div>
  <div class="center">
   <img src="classgdk_1_1webgl1es2__scene.png" usemap="#gdk::webgl1es2_5Fscene_map" alt=""/>
   <map id="gdk::webgl1es2_5Fscene_map" name="gdk::webgl1es2_5Fscene_map">
-<area href="classgdk_1_1scene.html" title="a 3d environment within which cameras rasterize entities " alt="gdk::scene" shape="rect" coords="0,0,139,24"/>
+<area href="classgdk_1_1scene.html" title="a 3d environment within which cameras draw entities " alt="gdk::scene" shape="rect" coords="0,0,139,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -109,42 +109,43 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr><td colspan="2"><div class="groupHeader">factory methods</div></td></tr>
-<tr class="memitem:a788b76abcb6c291d3c4046eb4fddc95a"><td class="memItemLeft" align="right" valign="top"><a id="a788b76abcb6c291d3c4046eb4fddc95a"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a788b76abcb6c291d3c4046eb4fddc95a">add_camera</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1screen__camera.html">screen_camera</a> &gt; pCamera) override</td></tr>
-<tr class="memdesc:a788b76abcb6c291d3c4046eb4fddc95a"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a screen camera to the scene <br /></td></tr>
-<tr class="separator:a788b76abcb6c291d3c4046eb4fddc95a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dc4f7bfd532d9e6e4630b15620cc757"><td class="memItemLeft" align="right" valign="top"><a id="a2dc4f7bfd532d9e6e4630b15620cc757"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a2dc4f7bfd532d9e6e4630b15620cc757">add_camera</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture__camera.html">texture_camera</a> &gt; pCamera) override</td></tr>
-<tr class="memdesc:a2dc4f7bfd532d9e6e4630b15620cc757"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a texture camera to the scene <br /></td></tr>
-<tr class="separator:a2dc4f7bfd532d9e6e4630b15620cc757"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43f3fbbd2b4d66acafaa4fae04cad733"><td class="memItemLeft" align="right" valign="top"><a id="a43f3fbbd2b4d66acafaa4fae04cad733"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a43f3fbbd2b4d66acafaa4fae04cad733">contains_camera</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1screen__camera.html">screen_camera</a> &gt; pCamera) const override</td></tr>
-<tr class="memdesc:a43f3fbbd2b4d66acafaa4fae04cad733"><td class="mdescLeft">&#160;</td><td class="mdescRight">check whether or not this scene contains the camera <br /></td></tr>
-<tr class="separator:a43f3fbbd2b4d66acafaa4fae04cad733"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac09f237046adae0ffe86ee57a61cafb7"><td class="memItemLeft" align="right" valign="top"><a id="ac09f237046adae0ffe86ee57a61cafb7"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#ac09f237046adae0ffe86ee57a61cafb7">contains_camera</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture__camera.html">texture_camera</a> &gt; pCamera) const override</td></tr>
-<tr class="memdesc:ac09f237046adae0ffe86ee57a61cafb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">check whether or not this scene contains the <a class="el" href="classgdk_1_1texture__camera.html" title="texture camera renders to textures instead of the screen ">texture_camera</a> <br /></td></tr>
-<tr class="separator:ac09f237046adae0ffe86ee57a61cafb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae047bbde9ac0a37dd50e5498ac98a4c8"><td class="memItemLeft" align="right" valign="top"><a id="ae047bbde9ac0a37dd50e5498ac98a4c8"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#ae047bbde9ac0a37dd50e5498ac98a4c8">remove_camera</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1screen__camera.html">screen_camera</a> &gt; pCamera) override</td></tr>
-<tr class="memdesc:ae047bbde9ac0a37dd50e5498ac98a4c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove a screen camera from the scene <br /></td></tr>
-<tr class="separator:ae047bbde9ac0a37dd50e5498ac98a4c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e1e0a0a5f6cea248e1d716e67471d43"><td class="memItemLeft" align="right" valign="top"><a id="a3e1e0a0a5f6cea248e1d716e67471d43"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a3e1e0a0a5f6cea248e1d716e67471d43">remove_camera</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture__camera.html">texture_camera</a> &gt; pCamera) override</td></tr>
-<tr class="memdesc:a3e1e0a0a5f6cea248e1d716e67471d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove a texture camera from the scene <br /></td></tr>
-<tr class="separator:a3e1e0a0a5f6cea248e1d716e67471d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add2e647a42c49f97bbca78e268480675"><td class="memItemLeft" align="right" valign="top"><a id="add2e647a42c49f97bbca78e268480675"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#add2e647a42c49f97bbca78e268480675">add_entity</a> (<a class="el" href="classgdk_1_1scene.html#acc38216193bc1d0e0cf39b89269c94b4">entity_ptr_type</a> pEntity) override</td></tr>
-<tr class="memdesc:add2e647a42c49f97bbca78e268480675"><td class="mdescLeft">&#160;</td><td class="mdescRight">add an entity to the scene <br /></td></tr>
-<tr class="separator:add2e647a42c49f97bbca78e268480675"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a621a30a21102d30be3437d4d88afb3b0"><td class="memItemLeft" align="right" valign="top"><a id="a621a30a21102d30be3437d4d88afb3b0"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a621a30a21102d30be3437d4d88afb3b0">remove_entity</a> (<a class="el" href="classgdk_1_1scene.html#acc38216193bc1d0e0cf39b89269c94b4">entity_ptr_type</a> pEntity) override</td></tr>
-<tr class="memdesc:a621a30a21102d30be3437d4d88afb3b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove an entity to the scene <br /></td></tr>
-<tr class="separator:a621a30a21102d30be3437d4d88afb3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fed9882ee4c448b405e955759dc6f2a"><td class="memItemLeft" align="right" valign="top"><a id="a6fed9882ee4c448b405e955759dc6f2a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a6fed9882ee4c448b405e955759dc6f2a">add</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1screen__camera.html">screen_camera</a> &gt; pCamera) override</td></tr>
+<tr class="memdesc:a6fed9882ee4c448b405e955759dc6f2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a screen camera to the scene <br /></td></tr>
+<tr class="separator:a6fed9882ee4c448b405e955759dc6f2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5692593edfbcf8e359aa0204ac3c0a"><td class="memItemLeft" align="right" valign="top"><a id="a1b5692593edfbcf8e359aa0204ac3c0a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a1b5692593edfbcf8e359aa0204ac3c0a">add</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture__camera.html">texture_camera</a> &gt; pCamera) override</td></tr>
+<tr class="memdesc:a1b5692593edfbcf8e359aa0204ac3c0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a texture camera to the scene <br /></td></tr>
+<tr class="separator:a1b5692593edfbcf8e359aa0204ac3c0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2363aac9aeeae1e3ef60824ea34459f"><td class="memItemLeft" align="right" valign="top"><a id="aa2363aac9aeeae1e3ef60824ea34459f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#aa2363aac9aeeae1e3ef60824ea34459f">add</a> (<a class="el" href="classgdk_1_1scene.html#acc38216193bc1d0e0cf39b89269c94b4">entity_ptr_type</a> pEntity) override</td></tr>
+<tr class="memdesc:aa2363aac9aeeae1e3ef60824ea34459f"><td class="mdescLeft">&#160;</td><td class="mdescRight">add an entity to the scene <br /></td></tr>
+<tr class="separator:aa2363aac9aeeae1e3ef60824ea34459f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefb8f88e96bfb113570c4f1886d08111"><td class="memItemLeft" align="right" valign="top"><a id="aefb8f88e96bfb113570c4f1886d08111"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#aefb8f88e96bfb113570c4f1886d08111">remove</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1screen__camera.html">screen_camera</a> &gt; pCamera) override</td></tr>
+<tr class="memdesc:aefb8f88e96bfb113570c4f1886d08111"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove a screen camera from the scene <br /></td></tr>
+<tr class="separator:aefb8f88e96bfb113570c4f1886d08111"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3f46e65687344ce37621278304d620e"><td class="memItemLeft" align="right" valign="top"><a id="ab3f46e65687344ce37621278304d620e"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#ab3f46e65687344ce37621278304d620e">remove</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1texture__camera.html">texture_camera</a> &gt; pCamera) override</td></tr>
+<tr class="memdesc:ab3f46e65687344ce37621278304d620e"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove a texture camera from the scene <br /></td></tr>
+<tr class="separator:ab3f46e65687344ce37621278304d620e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bd95cb532afdfcbacff7d939f693ffe"><td class="memItemLeft" align="right" valign="top"><a id="a2bd95cb532afdfcbacff7d939f693ffe"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#a2bd95cb532afdfcbacff7d939f693ffe">remove</a> (<a class="el" href="classgdk_1_1scene.html#acc38216193bc1d0e0cf39b89269c94b4">entity_ptr_type</a> pEntity) override</td></tr>
+<tr class="memdesc:a2bd95cb532afdfcbacff7d939f693ffe"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove an entity to the scene <br /></td></tr>
+<tr class="separator:a2bd95cb532afdfcbacff7d939f693ffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac16d21e4cc1b71373e0e91491f78bfc0"><td class="memItemLeft" align="right" valign="top"><a id="ac16d21e4cc1b71373e0e91491f78bfc0"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1webgl1es2__scene.html#ac16d21e4cc1b71373e0e91491f78bfc0">draw</a> (const gdk::graphics_intvector2_type &amp;aFrameBufferSize) const override</td></tr>
 <tr class="memdesc:ac16d21e4cc1b71373e0e91491f78bfc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">draws the scene <br /></td></tr>
 <tr class="separator:ac16d21e4cc1b71373e0e91491f78bfc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgdk_1_1scene"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgdk_1_1scene')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td></tr>
+<tr class="memitem:a155b30c84e2d9bfd7b6172ff4fe06ef3 inherit pub_methods_classgdk_1_1scene"><td class="memItemLeft" align="right" valign="top"><a id="a155b30c84e2d9bfd7b6172ff4fe06ef3"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1scene.html#a155b30c84e2d9bfd7b6172ff4fe06ef3">add</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1entity__owner.html">entity_owner</a> &gt; pOwner)</td></tr>
+<tr class="memdesc:a155b30c84e2d9bfd7b6172ff4fe06ef3 inherit pub_methods_classgdk_1_1scene"><td class="mdescLeft">&#160;</td><td class="mdescRight">add an owner to the scene <br /></td></tr>
+<tr class="separator:a155b30c84e2d9bfd7b6172ff4fe06ef3 inherit pub_methods_classgdk_1_1scene"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9016cce175b1f689101b494b62685215 inherit pub_methods_classgdk_1_1scene"><td class="memItemLeft" align="right" valign="top"><a id="a9016cce175b1f689101b494b62685215"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1scene.html#a9016cce175b1f689101b494b62685215">remove</a> (std::shared_ptr&lt; <a class="el" href="classgdk_1_1entity__owner.html">entity_owner</a> &gt; pOwner)</td></tr>
+<tr class="memdesc:a9016cce175b1f689101b494b62685215 inherit pub_methods_classgdk_1_1scene"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove an owner <br /></td></tr>
+<tr class="separator:a9016cce175b1f689101b494b62685215 inherit pub_methods_classgdk_1_1scene"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>render scene. </p>
