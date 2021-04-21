@@ -92,9 +92,7 @@ namespace gdk
         //! disable copy semantics
         webgl1es2_model(const webgl1es2_model &) = delete;
       
-        webgl1es2_model(const vertex_data &aData,
-            const std::vector<GLushort> &aIndexData = std::vector<GLushort>(), 
-            const PrimitiveMode &aPrimitiveMode = PrimitiveMode::Triangles);
+        webgl1es2_model(const vertex_data &aData);
         
         //! a quad with format pos3uv2
         static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Quad;

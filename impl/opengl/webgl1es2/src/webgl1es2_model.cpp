@@ -286,8 +286,8 @@ static inline webgl1es2_model::PrimitiveMode vertexDataPrimitiveMode_to_wegl1es2
 bool webgl1es2_model::operator==(const webgl1es2_model &that)
 {
     return
-        m_IndexBufferHandle == that.m_IndexBufferHandle
-        && m_VertexBufferHandle == that.m_VertexBufferHandle;
+        m_IndexBufferHandle  == that.m_IndexBufferHandle &&
+        m_VertexBufferHandle == that.m_VertexBufferHandle;
 }
 
 bool webgl1es2_model::operator!=(const webgl1es2_model &that)
@@ -332,10 +332,10 @@ static webgl1es2_model::Type VertexDataViewUsageHintToType(vertex_data::UsageHin
 
 void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
 {
+    auto aIndexData = vertexDataView.getIndexData();
+
     const PrimitiveMode& aPrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(
         vertexDataView.getPrimitiveMode());
-
-    const std::vector<GLushort>& aIndexData = {};
 
     std::vector<webgl1es2_vertex_attribute> attributeFormats;
 
@@ -391,22 +391,20 @@ void webgl1es2_model::update_vertex_data(const vertex_data& vertexDataView)
     }
 }
 
-webgl1es2_model::webgl1es2_model(const vertex_data &aData,
-    const std::vector<GLushort> &aIndexData,
-    const PrimitiveMode &aPrimitiveMode)
+webgl1es2_model::webgl1es2_model(const vertex_data &aData)
 : m_IndexBufferHandle([&]()
 {
     GLuint ibo(0);
     
-    if (aIndexData.size() > 0)
+    if (aData.getIndexData().size() > 0)
     {
         glGenBuffers(1, &ibo);
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
         
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-            sizeof(GLushort) * aIndexData.size(), 
-            &aIndexData[0], 
+            sizeof(GLushort) * aData.getIndexData().size(), 
+            &aData.getIndexData()[0], 
             webgl1es2_modelTypeToOpenGLDrawType(
                 vertexDataUsageHint_to_webgl1es2ModelType(aData.getUsageHint())));
 
@@ -422,7 +420,7 @@ webgl1es2_model::webgl1es2_model(const vertex_data &aData,
 {
     glDeleteBuffers(1, &handle);
 })
-, m_IndexCount((GLsizei)aIndexData.size())
+, m_IndexCount((GLsizei)aData.getIndexData().size())
 , m_VertexBufferHandle([&]()
 {
     if (!aData.getData().size()) 
