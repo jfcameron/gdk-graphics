@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">79c56810b1d3f645a6f4deba1e9b40590fcaa378</span>
+   &#160;<span id="projectnumber">4344b54939f5b42b89a554ad35aba5c20cda93ee</span>
    </div>
   </td>
  </tr>
@@ -71,17 +71,16 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="classgdk_1_1scene.html">gdk::scene</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#a155b30c84e2d9bfd7b6172ff4fe06ef3">add</a>(std::shared_ptr&lt; entity_owner &gt; pOwner)</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#a7631ac84a00923c0c19c9566cc3adc07">add</a>(std::shared_ptr&lt; screen_camera &gt; pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#a5fc4958b2b431c20e8bacfef6d8b5753">add</a>(std::shared_ptr&lt; texture_camera &gt; pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#a84cf272edd2dc953e272cfc937686d67">add</a>(entity_ptr_type pEntity)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#a601d6a627e324918f43b6de09dac28ac">add</a>(const entity_owner &amp;rOwner)</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#ae92f11340e46a5d077ab3457b757cb74">add</a>(const std::shared_ptr&lt; const screen_camera &gt; &amp;pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#a727140445443df7cf7bcaa7dad0c7979">add</a>(const std::shared_ptr&lt; const texture_camera &gt; &amp;pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#a98f84d3a66a38073686106d3fc4e48f2">add</a>(const std::shared_ptr&lt; const entity &gt; &amp;pEntity)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#a029fa3050d0b4b020ad68787f1aeac90">draw</a>(const gdk::graphics_intvector2_type &amp;aFrameBufferSize) const =0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#acc38216193bc1d0e0cf39b89269c94b4">entity_ptr_type</a> typedef</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#a9016cce175b1f689101b494b62685215">remove</a>(std::shared_ptr&lt; entity_owner &gt; pOwner)</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#a684ace307e2900f5267520a7a9214354">remove</a>(std::shared_ptr&lt; screen_camera &gt; pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#a286b542e1dad94c93357925c7b3413dc">remove</a>(std::shared_ptr&lt; texture_camera &gt; pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#a4ce5857488ed5fbd16687697ddd44344">remove</a>(entity_ptr_type pEntity)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~scene</b>()=default (defined in <a class="el" href="classgdk_1_1scene.html">gdk::scene</a>)</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#ac8f0b661227122586148296a74b41226">remove</a>(const entity_owner &amp;rOwner)</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#afad6251038c3c294dd0c576f0e8e5e36">remove</a>(const std::shared_ptr&lt; const screen_camera &gt; &amp;pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classgdk_1_1scene.html#a91f2ee54b53ed076d5db1792e61c2260">remove</a>(const std::shared_ptr&lt; const texture_camera &gt; &amp;pCamera)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classgdk_1_1scene.html#ab5c39d8f21dbcfed52503b43a201f772">remove</a>(const std::shared_ptr&lt; const entity &gt; &amp;pEntity)=0</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~scene</b>()=default (defined in <a class="el" href="classgdk_1_1scene.html">gdk::scene</a>)</td><td class="entry"><a class="el" href="classgdk_1_1scene.html">gdk::scene</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
