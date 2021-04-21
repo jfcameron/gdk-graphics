@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">ad55d6912e9afa69d2e4f2bfb630c8729ebe4ddc</span>
+   &#160;<span id="projectnumber">221df5e7e7707cfe9979fe705488006d6780df6f</span>
    </div>
   </td>
  </tr>
@@ -84,15 +84,15 @@ Public Types</h2></td></tr>
 <tr class="memitem:abde3c97f0e3d19eaa116e834e3eec48f"><td class="memItemLeft" align="right" valign="top"><a id="abde3c97f0e3d19eaa116e834e3eec48f"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>PrimitiveMode</b> { <b>Triangles</b>
  }</td></tr>
 <tr class="separator:abde3c97f0e3d19eaa116e834e3eec48f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad32bb705d38fe0d7bf498ab99abfde53"><td class="memItemLeft" align="right" valign="top"><a id="ad32bb705d38fe0d7bf498ab99abfde53"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>index_value_type</b> = unsigned short</td></tr>
+<tr class="separator:ad32bb705d38fe0d7bf498ab99abfde53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1829dcc1318eb22ab272c3217b48002a"><td class="memItemLeft" align="right" valign="top"><a id="a1829dcc1318eb22ab272c3217b48002a"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>attribute_data_type</b> = std::unordered_map&lt; std::string, <a class="el" href="classattribute__data__view.html">attribute_data_view</a> &gt;</td></tr>
 <tr class="separator:a1829dcc1318eb22ab272c3217b48002a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a092acbec36c5db955e34ec27488bf02c"><td class="memItemLeft" align="right" valign="top"><a id="a092acbec36c5db955e34ec27488bf02c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>vertex_data</b> (const UsageHint aUsage, const attribute_data_type &amp;aAttributeData)</td></tr>
-<tr class="separator:a092acbec36c5db955e34ec27488bf02c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e9fa965f9db1f605a28a3627d8eaa84"><td class="memItemLeft" align="right" valign="top"><a id="a6e9fa965f9db1f605a28a3627d8eaa84"></a>
 PrimitiveMode&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitiveMode</b> () const</td></tr>
 <tr class="separator:a6e9fa965f9db1f605a28a3627d8eaa84"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -105,6 +105,12 @@ const std::vector&lt; <a class="el" href="classattribute__data__view.html#a02b82
 <tr class="memitem:ab810c3ef56aa85e6540d8cda03be589d"><td class="memItemLeft" align="right" valign="top"><a id="ab810c3ef56aa85e6540d8cda03be589d"></a>
 const std::vector&lt; std::pair&lt; std::string, size_t &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttributeFormat</b> () const</td></tr>
 <tr class="separator:ab810c3ef56aa85e6540d8cda03be589d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30dd3dc64954fffa282e81b76f322510"><td class="memItemLeft" align="right" valign="top"><a id="a30dd3dc64954fffa282e81b76f322510"></a>
+const std::vector&lt; index_value_type &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getIndexData</b> () const</td></tr>
+<tr class="separator:a30dd3dc64954fffa282e81b76f322510"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b221d03cfed0cbeb20c4d0754e1b9e2"><td class="memItemLeft" align="right" valign="top"><a id="a2b221d03cfed0cbeb20c4d0754e1b9e2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>vertex_data</b> (const UsageHint aUsage, const attribute_data_type &amp;aAttributeData, std::vector&lt; index_value_type &gt; &amp;&amp;aIndexData={})</td></tr>
+<tr class="separator:a2b221d03cfed0cbeb20c4d0754e1b9e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>used to construct a model. Vertex data represents a set of vertex data in system memory </p>
