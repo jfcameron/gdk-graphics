@@ -9,49 +9,59 @@
 
 using namespace gdk;
 
-void webgl1es2_scene::remove(entity_ptr_type pEntity)
+void webgl1es2_scene::remove(const std::shared_ptr<const entity> &pEntity)
 {
     //TODO: implement
 }
 
-void webgl1es2_scene::add(std::shared_ptr<screen_camera> pCamera)
+void webgl1es2_scene::add(const std::shared_ptr<const screen_camera> &pCamera)
 {
+    if (!pCamera.get()) return;
+
     m_screen_cameras.insert(
-        std::static_pointer_cast<webgl1es2_screen_camera>(pCamera));
+        std::static_pointer_cast<const webgl1es2_screen_camera>(pCamera));
 }
 
-void webgl1es2_scene::add(std::shared_ptr<texture_camera> pCamera)
+void webgl1es2_scene::add(const std::shared_ptr<const texture_camera> &pCamera)
 {
+    if (!pCamera.get()) return;
+    
     m_texture_cameras.insert(
-        std::static_pointer_cast<webgl1es2_texture_camera>(pCamera));
+        std::static_pointer_cast<const webgl1es2_texture_camera>(pCamera));
 }
 
-void webgl1es2_scene::remove(std::shared_ptr<screen_camera> pCamera)
+void webgl1es2_scene::remove(const std::shared_ptr<const screen_camera> &pCamera)
 {
-    auto search = m_screen_cameras.find(std::static_pointer_cast<webgl1es2_screen_camera>(pCamera));
+    if (!pCamera.get()) return;
+
+    auto search = m_screen_cameras.find(
+        std::static_pointer_cast<const webgl1es2_screen_camera>(pCamera));
     
     if (search != m_screen_cameras.end()) m_screen_cameras.erase(search);
 }
 
-void webgl1es2_scene::remove(std::shared_ptr<texture_camera> pCamera)
+void webgl1es2_scene::remove(const std::shared_ptr<const texture_camera> &pCamera)
 {
-    auto search = m_texture_cameras.find(std::static_pointer_cast<webgl1es2_texture_camera>(pCamera));
+    if (!pCamera.get()) return;
+
+    auto search = m_texture_cameras.find(
+        std::static_pointer_cast<const webgl1es2_texture_camera>(pCamera));
     
     if (search != m_texture_cameras.end()) m_texture_cameras.erase(search);
 }
 
-void sorted_render_set::draw(webgl1es2_camera *pCamera) const
+void sorted_render_set::draw(const webgl1es2_camera *pCamera) const
 {
-    std::vector<std::shared_ptr<entity>> sorted_entities(
+    std::vector<std::shared_ptr<const entity>> sorted_entities(
         m_unique_entities.begin(), 
         m_unique_entities.end());
 
     std::sort(sorted_entities.begin(), sorted_entities.end(),
-    [pCamera](std::shared_ptr<entity> pA, std::shared_ptr<entity> pB)
+    [pCamera](std::shared_ptr<const entity> pA, std::shared_ptr<const entity> pB)
     {
-        const auto cameraPos = static_cast<webgl1es2_camera *>(pCamera)->get_view_matrix().translation();
-        const auto entityPosA = static_cast<webgl1es2_entity *>(pA.get())->getModelMatrix().translation();
-        const auto entityPosB = static_cast<webgl1es2_entity *>(pB.get())->getModelMatrix().translation();
+        const auto cameraPos = static_cast<const webgl1es2_camera *>(pCamera)->get_view_matrix().translation();
+        const auto entityPosA = static_cast<const webgl1es2_entity *>(pA.get())->getModelMatrix().translation();
+        const auto entityPosB = static_cast<const webgl1es2_entity *>(pB.get())->getModelMatrix().translation();
 
         const auto aDist = cameraPos.distance(entityPosA);
         const auto bDist = cameraPos.distance(entityPosB);
@@ -61,12 +71,12 @@ void sorted_render_set::draw(webgl1es2_camera *pCamera) const
 
     for (auto current_entity : sorted_entities)
     {
-        auto pEntity = static_cast<webgl1es2_entity *>(current_entity.get());
+        auto pEntity = static_cast<const webgl1es2_entity *>(current_entity.get());
         auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
         auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
 
-        const auto entityPos = static_cast<webgl1es2_entity *>(pEntity)->getModelMatrix().translation();
-        const auto cameraPos = static_cast<webgl1es2_camera *>(pCamera)->get_view_matrix().translation();
+        const auto entityPos = static_cast<const webgl1es2_entity *>(pEntity)->getModelMatrix().translation();
+        const auto cameraPos = static_cast<const webgl1es2_camera *>(pCamera)->get_view_matrix().translation();
         
         pMaterial->activate();
 
@@ -92,7 +102,7 @@ void render_set::try_add(entity_ptr_type pEntityInterface)
 
     m_unique_entities.insert(pEntityInterface);
 
-    auto pEntity = static_cast<webgl1es2_entity *>(pEntityInterface.get());
+    auto pEntity = static_cast<const webgl1es2_entity *>(pEntityInterface.get());
     auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
     auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
 
@@ -113,9 +123,11 @@ void render_set::try_add(entity_ptr_type pEntityInterface)
     m_MaterialToModelToEntityCollection[pMaterial][pModel].insert(pEntityInterface);
 }
 
-void webgl1es2_scene::add(entity_ptr_type pEntityInterface)
+void webgl1es2_scene::add(const std::shared_ptr<const entity> &pEntityInterface)
 {
-    auto pEntity = static_cast<webgl1es2_entity *>(pEntityInterface.get());
+    if (!pEntityInterface.get()) return;
+
+    auto pEntity = static_cast<const webgl1es2_entity *>(pEntityInterface.get());
     auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
 
     switch(pMaterial->get_render_mode())
@@ -128,7 +140,7 @@ void webgl1es2_scene::add(entity_ptr_type pEntityInterface)
     }
 }
 
-void render_set::draw(webgl1es2_camera *pCamera) const
+void render_set::draw(const webgl1es2_camera *pCamera) const
 {
     for (auto &[current_material, current_model_to_entity_collection] : 
         m_MaterialToModelToEntityCollection)
@@ -142,7 +154,7 @@ void render_set::draw(webgl1es2_camera *pCamera) const
 
             for (auto &current_entity : current_entity_collection) 
             {
-                static_cast<webgl1es2_entity *>(current_entity.get())->draw(
+                static_cast<const webgl1es2_entity *>(current_entity.get())->draw(
                     pCamera->get_view_matrix(), 
                     pCamera->get_projection_matrix());
             }
@@ -154,7 +166,7 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
 {
     for (auto &current_texture_camera : m_texture_cameras)
     {
-        static_cast<webgl1es2_texture_camera *>(current_texture_camera.get())->activate();
+        static_cast<const webgl1es2_texture_camera *>(current_texture_camera.get())->activate();
 
         m_opaque_set.draw(current_texture_camera.get());
 
@@ -163,7 +175,7 @@ void webgl1es2_scene::draw(const gdk::graphics_intvector2_type &aFrameBufferSize
     
     for (auto &current_screen_camera : m_screen_cameras)
     {
-        static_cast<webgl1es2_screen_camera *>(current_screen_camera.get())->activate(aFrameBufferSize);
+        static_cast<const webgl1es2_screen_camera *>(current_screen_camera.get())->activate(aFrameBufferSize);
 
         m_opaque_set.draw(current_screen_camera.get());
 

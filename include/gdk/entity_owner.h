@@ -24,7 +24,7 @@ namespace gdk
         friend gdk::scene;
 
         //! provide access to all of the owner's entities
-        virtual std::vector<std::shared_ptr<entity>> get_entities() = 0;
+        virtual std::vector<std::shared_ptr<const entity>> get_entities() const = 0;
 
     public:
         virtual ~entity_owner() = default;

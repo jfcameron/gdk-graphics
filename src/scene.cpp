@@ -7,17 +7,17 @@
 
 using namespace gdk;
 
-void scene::add(std::shared_ptr<entity_owner> pOwner)
+void scene::add(const entity_owner &rOwner)
 {
-    auto pEntities = pOwner->get_entities();
+    const auto pEntities = rOwner.get_entities();
 
     for (auto pEntity : pEntities) add(pEntity);
 }
 
-void scene::remove(std::shared_ptr<entity_owner> pOwner)
+void scene::remove(const entity_owner &rOwner)
 {
-    auto pEntities = pOwner->get_entities();
+    const auto pEntities = rOwner.get_entities();
 
-    for (auto pEntity : pEntities) remove(pEntity);
+    for (const auto &pEntity : pEntities) remove(pEntity);
 }
 

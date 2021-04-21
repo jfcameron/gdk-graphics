@@ -30,6 +30,8 @@ namespace gdk
 
         virtual graphics::context::model_ptr_type make_model(const vertex_data &vertexDataView) const override;
 
+        virtual graphics::context::model_ptr_type make_model() const override;
+
         virtual shader_program_ptr_type make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const override;
 
         virtual graphics::context::texture_ptr_type make_texture(const texture::image_data_2d_view &imageView) const override;

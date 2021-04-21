@@ -32,21 +32,71 @@ std::vector<std::underlying_type<std::byte>::type> imageData({
 
 class tile_renderer : public gdk::entity_owner
 {
+    std::shared_ptr<material> m_pMaterial;
+
+    std::shared_ptr<model> m_pModel;
+
     std::shared_ptr<entity> m_pEntity;
 public:
-    
-    virtual std::vector<std::shared_ptr<entity>> get_entities() override
-    {
-        return {m_pEntity};
-    }
+    virtual std::vector<std::shared_ptr<const entity>> get_entities() const override;
 
-    tile_renderer(std::shared_ptr<graphics::context> pContext)
-    {
-
-    }
+    tile_renderer(const std::shared_ptr<graphics::context> &pContext);
 
     ~tile_renderer() = default;
 };
+
+tile_renderer::tile_renderer(const std::shared_ptr<graphics::context> &pContext)
+: m_pMaterial(pContext->make_material(pContext->get_alpha_cutoff_shader()))
+, m_pModel(pContext->make_model())
+, m_pEntity(pContext->make_entity(m_pModel, m_pMaterial))
+{
+    float size = 1;
+    decltype(size) hsize = size/2.;
+
+    std::vector<float> posData({
+        size -hsize, size -hsize, 0.0f,
+        0.0f -hsize, size -hsize, 0.0f,
+        0.0f -hsize, 0.0f -hsize, 0.0f,
+        size -hsize, size -hsize, 0.0f,
+        0.0f -hsize, 0.0f -hsize, 0.0f,
+        size -hsize, 0.0f -hsize, 0.0f});
+
+    std::vector<float> uvData({
+        1, 0,
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1});
+
+    m_pModel->update_vertex_data({vertex_data::UsageHint::Dynamic,
+    {
+        { 
+            "a_Position",
+            {
+                &posData.front(),
+                posData.size(),
+                3
+            }
+        },
+        { 
+            "a_UV",
+            {
+                &uvData.front(),
+                uvData.size(),
+                2
+            }
+        }
+    }});
+
+    m_pEntity->set_model_matrix(Vector3<float>{-2, 0., -12}, 
+        Quaternion<float>{{0, 0, 0}});
+}
+
+std::vector<std::shared_ptr<const entity>> tile_renderer::get_entities() const
+{
+    return {m_pEntity};
+}
 
 int main(int argc, char **argv)
 {
@@ -57,10 +107,11 @@ int main(int argc, char **argv)
     auto pContext = graphics::context::make(
         graphics::context::implementation::opengl_webgl1_gles2);
 
-    auto pTileRenderer = std::make_shared<tile_renderer>(tile_renderer(pContext));
-
     // Setting up the main scene
     auto pScene = pContext->make_scene();
+
+    tile_renderer tileRenderer(pContext);
+    pScene->add(tileRenderer);
 
     auto pTextureCamera = pContext->make_texture_camera();
     pTextureCamera->set_clear_color({1,0.1,0.1,1});

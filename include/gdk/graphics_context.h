@@ -108,6 +108,9 @@ namespace gdk::graphics
             const vertex_data &vertexDataView
         ) const = 0;
 
+        //! construct an empty model
+        [[nodiscard]] virtual model_ptr_type make_model() const = 0;
+
         //! make a material. 
         [[nodiscard]] virtual material_ptr_type make_material(
             //! defines the pipeline's programmable stage behaviours, 

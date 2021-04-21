@@ -18,27 +18,25 @@ namespace gdk
     class scene
     {
     public:
-        //! entities can be shared across scenes, therefore shared
-        using entity_ptr_type = std::shared_ptr<entity>;
+        //! add all an owner's entities to the scene
+        void add(const entity_owner &rOwner);
+        //! remove all an owner's entities from the scene
+        void remove(const entity_owner &rOwner);
 
-    public:
-        //! add an owner to the scene
-        void add(std::shared_ptr<entity_owner> pOwner);
         //! add a screen camera to the scene
-        virtual void add(std::shared_ptr<screen_camera> pCamera) = 0;
-        //! add a texture camera to the scene
-        virtual void add(std::shared_ptr<texture_camera> pCamera) = 0;
-        //! add an entity to the scene
-        virtual void add(entity_ptr_type pEntity) = 0;
-
-        //! remove an owner
-        void remove(std::shared_ptr<entity_owner> pOwner);
+        virtual void add(const std::shared_ptr<const screen_camera> &pCamera) = 0;
         //! remove a screen camera from the scene
-        virtual void remove(std::shared_ptr<screen_camera> pCamera) = 0;
+        virtual void remove(const std::shared_ptr<const screen_camera> &pCamera) = 0;
+        
+        //! add a texture camera to the scene
+        virtual void add(const std::shared_ptr<const texture_camera> &pCamera) = 0;
         //! remove a texture camera from the scene
-        virtual void remove(std::shared_ptr<texture_camera> pCamera) = 0;
+        virtual void remove(const std::shared_ptr<const texture_camera> &pCamera) = 0;
+        
+        //! add an entity to the scene
+        virtual void add(const std::shared_ptr<const entity> &pEntity) = 0;
         //! remove an entity to the scene
-        virtual void remove(entity_ptr_type pEntity) = 0;
+        virtual void remove(const std::shared_ptr<const entity> &pEntity) = 0;
 
         //! draws the scene
         virtual void draw(const gdk::graphics_intvector2_type &aFrameBufferSize) const = 0;

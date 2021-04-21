@@ -423,21 +423,20 @@ webgl1es2_model::webgl1es2_model(const vertex_data &aData)
 , m_IndexCount((GLsizei)aData.getIndexData().size())
 , m_VertexBufferHandle([&]()
 {
-    if (!aData.getData().size()) 
-        throw std::invalid_argument(std::string(TAG).append(
-            ": no vertex data to upload!"));
-    
     GLuint vbo(0);
-    
     glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 
-        sizeof(webgl1es2_model::attribute_component_data_type) * aData.getData().size(), 
-        &aData.getData()[0], 
-        webgl1es2_modelTypeToOpenGLDrawType(
-            vertexDataUsageHint_to_webgl1es2ModelType(aData.getUsageHint())));
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    if (aData.getData().size())
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, 
+            sizeof(webgl1es2_model::attribute_component_data_type) * aData.getData().size(), 
+            &aData.getData()[0], 
+            webgl1es2_modelTypeToOpenGLDrawType(
+                vertexDataUsageHint_to_webgl1es2ModelType(aData.getUsageHint())));
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
 	
     if (std::string errorCode; glh::GetError(&errorCode)) 
         throw std::runtime_error(std::string(TAG).append(errorCode));
