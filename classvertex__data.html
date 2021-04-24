@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">4344b54939f5b42b89a554ad35aba5c20cda93ee</span>
+   &#160;<span id="projectnumber">d1f7add6d5a5c871f75ad307a8680a59cd420699</span>
    </div>
   </td>
  </tr>
@@ -61,6 +61,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classvertex__data-members.html">List of all members</a>  </div>
@@ -74,13 +75,13 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="vertex__data_8h_source.html">vertex_data.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvertex__data_1_1interleaved__data__view.html">interleaved_data_view</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a235532606be1b35a560b762759cc1e5b"><td class="memItemLeft" align="right" valign="top"><a id="a235532606be1b35a560b762759cc1e5b"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>UsageHint</b> { <b>Static</b>, 
-<b>Dynamic</b>, 
-<b>Streaming</b>
- }</td></tr>
-<tr class="separator:a235532606be1b35a560b762759cc1e5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abde3c97f0e3d19eaa116e834e3eec48f"><td class="memItemLeft" align="right" valign="top"><a id="abde3c97f0e3d19eaa116e834e3eec48f"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>PrimitiveMode</b> { <b>Triangles</b>
  }</td></tr>
 <tr class="separator:abde3c97f0e3d19eaa116e834e3eec48f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -96,25 +97,78 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6e9fa965f9db1f605a28a3627d8eaa84"><td class="memItemLeft" align="right" valign="top"><a id="a6e9fa965f9db1f605a28a3627d8eaa84"></a>
 PrimitiveMode&#160;</td><td class="memItemRight" valign="bottom"><b>getPrimitiveMode</b> () const</td></tr>
 <tr class="separator:a6e9fa965f9db1f605a28a3627d8eaa84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abda3b104831b4781a5e9c3638a2f7c44"><td class="memItemLeft" align="right" valign="top"><a id="abda3b104831b4781a5e9c3638a2f7c44"></a>
-UsageHint&#160;</td><td class="memItemRight" valign="bottom"><b>getUsageHint</b> () const</td></tr>
-<tr class="separator:abda3b104831b4781a5e9c3638a2f7c44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72e88115432c481ea47f49efd20d4c9c"><td class="memItemLeft" align="right" valign="top"><a id="a72e88115432c481ea47f49efd20d4c9c"></a>
 const std::vector&lt; <a class="el" href="classattribute__data__view.html#a02b82ccb1c934f9a7a73dd84f3afa028">attribute_data_view::attribute_component_type</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getData</b> () const</td></tr>
 <tr class="separator:a72e88115432c481ea47f49efd20d4c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab810c3ef56aa85e6540d8cda03be589d"><td class="memItemLeft" align="right" valign="top"><a id="ab810c3ef56aa85e6540d8cda03be589d"></a>
-const std::vector&lt; std::pair&lt; std::string, size_t &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getAttributeFormat</b> () const</td></tr>
-<tr class="separator:ab810c3ef56aa85e6540d8cda03be589d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30dd3dc64954fffa282e81b76f322510"><td class="memItemLeft" align="right" valign="top"><a id="a30dd3dc64954fffa282e81b76f322510"></a>
-const std::vector&lt; index_value_type &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getIndexData</b> () const</td></tr>
-<tr class="separator:a30dd3dc64954fffa282e81b76f322510"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b221d03cfed0cbeb20c4d0754e1b9e2"><td class="memItemLeft" align="right" valign="top"><a id="a2b221d03cfed0cbeb20c4d0754e1b9e2"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>vertex_data</b> (const UsageHint aUsage, const attribute_data_type &amp;aAttributeData, std::vector&lt; index_value_type &gt; &amp;&amp;aIndexData={})</td></tr>
-<tr class="separator:a2b221d03cfed0cbeb20c4d0754e1b9e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae863ee1793f4176dad1b5dfab2a00c16"><td class="memItemLeft" align="right" valign="top"><a id="ae863ee1793f4176dad1b5dfab2a00c16"></a>
+const std::vector&lt; std::pair&lt; std::string, std::size_t &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>attribute_format</b> () const</td></tr>
+<tr class="separator:ae863ee1793f4176dad1b5dfab2a00c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bece17bc3291e7d84ff076d1dc86e19"><td class="memItemLeft" align="right" valign="top"><a id="a1bece17bc3291e7d84ff076d1dc86e19"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>attribute_offset</b> (const std::string &amp;aName) const</td></tr>
+<tr class="separator:a1bece17bc3291e7d84ff076d1dc86e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1aa51e025e400e5cb00cee3ffbf5e8a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvertex__data.html#a1aa51e025e400e5cb00cee3ffbf5e8a9">operator+=</a> (const <a class="el" href="classvertex__data.html">vertex_data</a> &amp;&amp;other)</td></tr>
+<tr class="separator:a1aa51e025e400e5cb00cee3ffbf5e8a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa694d949831ea2842ff232b035c96895"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvertex__data.html#aa694d949831ea2842ff232b035c96895">push_back</a> (const <a class="el" href="classvertex__data.html">vertex_data</a> &amp;&amp;other)</td></tr>
+<tr class="separator:aa694d949831ea2842ff232b035c96895"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab91a2bbb7f0cdf34b2941846a2917f92"><td class="memItemLeft" align="right" valign="top"><a id="ab91a2bbb7f0cdf34b2941846a2917f92"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvertex__data.html#ab91a2bbb7f0cdf34b2941846a2917f92">clear</a> ()</td></tr>
+<tr class="memdesc:ab91a2bbb7f0cdf34b2941846a2917f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">clears all state from this <a class="el" href="classvertex__data.html" title="used to construct a model. Vertex data represents a set of vertex data in system memory ...">vertex_data</a> instance <br /></td></tr>
+<tr class="separator:ab91a2bbb7f0cdf34b2941846a2917f92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72ad1a02745a2c9915c2077786cd3f26"><td class="memItemLeft" align="right" valign="top"><a id="a72ad1a02745a2c9915c2077786cd3f26"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>vertex_data</b> (const attribute_data_type &amp;aAttributeData)</td></tr>
+<tr class="separator:a72ad1a02745a2c9915c2077786cd3f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcc2c468758cae597fa3e318049f8b1c"><td class="memItemLeft" align="right" valign="top"><a id="adcc2c468758cae597fa3e318049f8b1c"></a>
+<a class="el" href="structvertex__data_1_1interleaved__data__view.html">interleaved_data_view</a>&#160;</td><td class="memItemRight" valign="bottom"><b>view_to_interleaved_data</b> ()</td></tr>
+<tr class="separator:adcc2c468758cae597fa3e318049f8b1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8d19b9c9cf2ca422da7be59b1e34b80"><td class="memItemLeft" align="right" valign="top"><a id="ab8d19b9c9cf2ca422da7be59b1e34b80"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>vertex_size</b> () const</td></tr>
+<tr class="separator:ab8d19b9c9cf2ca422da7be59b1e34b80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73d2edb490f15830ee456549b88548a5"><td class="memItemLeft" align="right" valign="top"><a id="a73d2edb490f15830ee456549b88548a5"></a>
+std::vector&lt; index_value_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getIndexData</b> () const</td></tr>
+<tr class="separator:a73d2edb490f15830ee456549b88548a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>used to construct a model. Vertex data represents a set of vertex data in system memory </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a1aa51e025e400e5cb00cee3ffbf5e8a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1aa51e025e400e5cb00cee3ffbf5e8a9">&#9670;&nbsp;</a></span>operator+=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vertex_data::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classvertex__data.html">vertex_data</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>append a different <a class="el" href="classvertex__data.html" title="used to construct a model. Vertex data represents a set of vertex data in system memory ...">vertex_data</a> to this <a class="el" href="classvertex__data.html" title="used to construct a model. Vertex data represents a set of vertex data in system memory ...">vertex_data</a>  must be same format </p>
+
+</div>
+</div>
+<a id="aa694d949831ea2842ff232b035c96895"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa694d949831ea2842ff232b035c96895">&#9670;&nbsp;</a></span>push_back()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vertex_data::push_back </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classvertex__data.html">vertex_data</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>append a different <a class="el" href="classvertex__data.html" title="used to construct a model. Vertex data represents a set of vertex data in system memory ...">vertex_data</a> to this <a class="el" href="classvertex__data.html" title="used to construct a model. Vertex data represents a set of vertex data in system memory ...">vertex_data</a>  must be same format </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/travis/build/jfcameron/gdk-graphics/include/gdk/<a class="el" href="vertex__data_8h_source.html">vertex_data.h</a></li>
 </ul>
 </div><!-- contents -->

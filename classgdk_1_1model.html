@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">4344b54939f5b42b89a554ad35aba5c20cda93ee</span>
+   &#160;<span id="projectnumber">d1f7add6d5a5c871f75ad307a8680a59cd420699</span>
    </div>
   </td>
  </tr>
@@ -65,6 +65,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classgdk_1_1model-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -86,12 +87,20 @@ Inheritance diagram for gdk::model:</div>
 </map>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a0ce7859c04b0da8083bb7749a97736f8"><td class="memItemLeft" align="right" valign="top"><a id="a0ce7859c04b0da8083bb7749a97736f8"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>UsageHint</b> { <b>Static</b>, 
+<b>Dynamic</b>, 
+<b>Streaming</b>
+ }</td></tr>
+<tr class="separator:a0ce7859c04b0da8083bb7749a97736f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a692bf6713a5855c98028880b9897ac21"><td class="memItemLeft" align="right" valign="top"><a id="a692bf6713a5855c98028880b9897ac21"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1model.html#a692bf6713a5855c98028880b9897ac21">update_vertex_data</a> (const <a class="el" href="classvertex__data.html">vertex_data</a> &amp;vertexDataView)=0</td></tr>
-<tr class="memdesc:a692bf6713a5855c98028880b9897ac21"><td class="mdescLeft">&#160;</td><td class="mdescRight">replace vertex data held by this model <br /></td></tr>
-<tr class="separator:a692bf6713a5855c98028880b9897ac21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40e909eaa244154b2c99f67cc4616034"><td class="memItemLeft" align="right" valign="top"><a id="a40e909eaa244154b2c99f67cc4616034"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1model.html#a40e909eaa244154b2c99f67cc4616034">update_vertex_data</a> (const UsageHint &amp;, const <a class="el" href="classvertex__data.html">vertex_data</a> &amp;vertexDataView)=0</td></tr>
+<tr class="memdesc:a40e909eaa244154b2c99f67cc4616034"><td class="mdescLeft">&#160;</td><td class="mdescRight">replace vertex data held by this model <br /></td></tr>
+<tr class="separator:a40e909eaa244154b2c99f67cc4616034"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Vertex data representing a 3D graphical object. </p>
