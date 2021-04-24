@@ -103,17 +103,20 @@ graphics::context::texture_ptr_type webgl1es2_context::make_texture(const std::v
     return std::make_unique<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
 }
 
-graphics::context::model_ptr_type webgl1es2_context::make_model(const vertex_data &vertexDataView) const
+graphics::context::model_ptr_type webgl1es2_context::make_model(const model::UsageHint &usage,
+    const vertex_data &vertexDataView) const
 {
-    return graphics::context::model_ptr_type(new gdk::webgl1es2_model(vertexDataView));
+    return graphics::context::model_ptr_type(new gdk::webgl1es2_model(
+        gdk::model::UsageHint::Static, //TODO: what is this? dupe?
+        vertexDataView));
 }
 
 graphics::context::model_ptr_type webgl1es2_context::make_model() const
 {
     std::vector<float> data({0, 0, 0});
 
-    return make_model({vertex_data::UsageHint::Static, 
-        {{"", {&data.front(), data.size(), 1}}}});
+    return make_model(model::UsageHint::Static, 
+        {{{"a_Position", {&data.front(), data.size(), 1}}}});
 }
 
 graphics::context::scene_ptr_type webgl1es2_context::make_scene() const

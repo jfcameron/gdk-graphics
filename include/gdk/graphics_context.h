@@ -105,6 +105,7 @@ namespace gdk::graphics
        
         //! construct model by vertext data view
         [[nodiscard]] virtual model_ptr_type make_model(
+            const gdk::model::UsageHint &,
             const vertex_data &vertexDataView
         ) const = 0;
 

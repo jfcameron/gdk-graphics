@@ -46,49 +46,66 @@ class vertex_data final
 public:
     using index_value_type = unsigned short;
 
-    enum class UsageHint
-    {
-        Static,
-        Dynamic,
-        Streaming
-    };
-
     enum class PrimitiveMode
     {
         Triangles
     };
 
-    using attribute_data_type = std::unordered_map<std::string, attribute_data_view>;
+    using attribute_data_type = 
+        std::unordered_map<std::string, attribute_data_view>;
+    
+    struct interleaved_data_view
+    {
+        using value_type = attribute_data_view::attribute_component_type;
+
+        value_type *const begin;
+
+        const std::size_t size;
+    };
 
     PrimitiveMode getPrimitiveMode() const;
 
-    UsageHint getUsageHint() const;
-
     const std::vector<attribute_data_view::attribute_component_type> &getData() const;
 
-    const std::vector<std::pair<std::string, size_t>> &getAttributeFormat() const;
-
-    const std::vector<index_value_type> &getIndexData() const;
+    const std::vector<std::pair<std::string, std::size_t>> &attribute_format() const;
     
-    vertex_data(const UsageHint aUsage, 
-        const attribute_data_type &aAttributeData,
-        std::vector<index_value_type> &&aIndexData = {});
-private:
-    //! primitive type to emit at primitive stage
-    PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
+    size_t attribute_offset(const std::string &aName) const;
 
-    //! the context may use this to optimize where in video memory the data is uploaded
-    UsageHint m_Usage;
+    //! append a different vertex_data to this vertex_data
+    /// \warn must be same format
+    void operator+=(const vertex_data &&other);
+    //! append a different vertex_data to this vertex_data
+    /// \warn must be same format
+    void push_back(const vertex_data &&other);
+
+    //! clears all state from this vertex_data instance
+    void clear();
+    
+    vertex_data(const attribute_data_type &aAttributeData);
+
+    interleaved_data_view view_to_interleaved_data();
+
+    size_t vertex_size() const;
+
+    //TODO: this returns a constant, need index support
+    std::vector<index_value_type> getIndexData() const;
+
+private:
+    //! primitive type to emit at primitive stage TODO: support other modes
+    PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
 
     //! Raw data, interleaved
     std::vector<attribute_data_view::attribute_component_type> m_Data;
 
     //! Attribute format
-    std::vector<std::pair<std::string, size_t>> m_AttributeFormat;
+    std::vector<std::pair<std::string, size_t>> m_Format;
+    
+    std::unordered_map<std::string, size_t> m_AttributeOffsets;
    
     //! Indicies improve draw performance by reducing the number 
     /// of unique verticies, however they are not required.
-    std::vector<index_value_type> m_Indicies;
+    //TODO: support indicies
+    //std::vector<index_value_type> m_Indicies = {};
 };
 
 #endif

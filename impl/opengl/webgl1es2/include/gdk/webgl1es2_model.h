@@ -1,4 +1,4 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_VERTEX_DATA_H
 #define GDK_GFX_VERTEX_DATA_H
@@ -75,7 +75,8 @@ namespace gdk
         void draw() const;
 
         //! replace current data in the vbo and ibo with new data
-        virtual void update_vertex_data(const vertex_data& vertexDataView) override;
+        virtual void update_vertex_data(const UsageHint &,
+            const vertex_data& vertexDataView) override;
       
         //! equality semantics based on handle values
         bool operator==(const webgl1es2_model &);
@@ -92,7 +93,7 @@ namespace gdk
         //! disable copy semantics
         webgl1es2_model(const webgl1es2_model &) = delete;
       
-        webgl1es2_model(const vertex_data &aData);
+        webgl1es2_model(const UsageHint &aUsage, const vertex_data &aData);
         
         //! a quad with format pos3uv2
         static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Quad;
