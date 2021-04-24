@@ -48,11 +48,12 @@ vertex_data::vertex_data(const attribute_data_type &aAttributeData)
         for (const auto &[current_name, current_attribute_data_view] : aAttributeData)
         {
             size_t size = current_attribute_data_view.component_count();
-            offset += size;
 
             m_Format.push_back({current_name, size});
 
             m_AttributeOffsets[current_name] = offset;
+            
+            offset += size;
         }
 
         // Interleaves the data
