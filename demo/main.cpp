@@ -33,119 +33,19 @@ std::vector<std::underlying_type<std::byte>::type> imageData({
 #include <array>
 #include <type_traits>
 #include <map>
-class dynamic_vertex_batch : public gdk::entity_owner
-{
-public:
-    using tile_creator_type = std::function<vertex_data(const size_t, const size_t)>;
-
-    /*struct buffer_location
-    {
-        size_t x, y, z;
-    };
-    std::map<buffer_location, vertex_data> m_Buffer;*/
-
-    //! update buffer data at a location
-    //void update_buffer(size_t x, size_t y, size_t z);
-    //! update buffer data over a range
-    //void update_buffer(size_t xLow, size_t xHigh, size_t yLow, size_t yHigh);
-    //void clear_buffer();
-    //void update_model();
-
-    virtual std::vector<std::shared_ptr<const entity>> get_entities() const override
-    {
-        return {m_pEntity};
-    }
-
-    dynamic_vertex_batch(const std::shared_ptr<graphics::context> &pContext)
-    : m_pMaterial(pContext->make_material(pContext->get_alpha_cutoff_shader()))
-    , m_pModel(pContext->make_model())
-    , m_pEntity(pContext->make_entity(m_pModel, m_pMaterial))
-    {
-        m_pEntity->set_model_matrix(Vector3<float>{-2, 0., -12}, 
-            Quaternion<float>{{0, 0, 0}},
-            {0.5,0.5,0.5});
-
-        vertex_data newdata({});
-
-        for (size_t x(0); x < 10; ++x) for (size_t y(0); y < 10; ++y)
-            newdata += m_TileCreator(x, y);
-
-        m_pModel->update_vertex_data(model::UsageHint::Static, newdata);
-    }
-
-    ~dynamic_vertex_batch() = default;
-
-private:
-    std::shared_ptr<material> m_pMaterial;
-    std::shared_ptr<model> m_pModel;
-    std::shared_ptr<entity> m_pEntity;
-
-    tile_creator_type m_TileCreator = [](const size_t x, const size_t y)
-    {
-        std::vector<float> posData({
-            1.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-        });
-
-        for (size_t i(0); i < posData.size(); i += 3)
-        {
-            posData[i + 0] += x;
-            posData[i + 1] += y;
-            posData[i + 2] -= y;
-        }
-
-        std::vector<float> uvData({
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 0,
-            0, 1,
-            1, 1,
-        });
-
-        if (x == 2 && y == 2)
-        {
-            return vertex_data({});
-        }
-
-        return vertex_data(
-        {
-            { 
-                "a_Position",
-                {
-                    &posData.front(),
-                    posData.size(),
-                    3
-                }
-            },
-            { 
-                "a_UV",
-                {
-                    &uvData.front(),
-                    uvData.size(),
-                    2
-                }
-            }
-        });
-    };
-};
-
-// \brief a batch model is a model whos vertex data is the composition of
+// \brief a batch model is a model whos vertex data is made up of
 /// the transformed vertex data of many separate objects.
 /// these objects could be separate instances of the same model or
-/// instances of many different models, as long as they use the same
-/// material and the same primitive mode.
+/// instances of many different models, the only restrictions are:
+/// the vertex formats must match
+/// they must all use the same material
 class batch_model
 {
 public:
     //! update buffer at location
-    void generate_in_buffer(size_t vertexDataIndex, 
+    void write_to_buffer(size_t vertexDataIndex, 
         const graphics_vector3_type &aPos, 
-        const graphics_quaternion_type &aRot = {},
+        const graphics_vector3_type &aRot = {},
         const graphics_vector3_type &aScale = {1});
 
     //! erase all vertex data in the current buffer
@@ -184,9 +84,9 @@ std::shared_ptr<gdk::model> batch_model::model()
     return m_pModel;
 }
 
-void batch_model::generate_in_buffer(size_t vertexDataIndex, 
+void batch_model::write_to_buffer(size_t vertexDataIndex, 
     const graphics_vector3_type &aPos, 
-    const graphics_quaternion_type &aRot,
+    const graphics_vector3_type &aRot,
     const graphics_vector3_type &aScale)
 {
     if (vertexDataIndex >= m_Inputs.size()) 
@@ -200,19 +100,44 @@ void batch_model::generate_in_buffer(size_t vertexDataIndex,
    
     auto *p = view.begin + pos_offset;
 
+    auto rot_euler = aRot;
+
     for (size_t i(0); i < view.size; i+= vertex_size)
     {
-        //TODO: scale
-        *(p + 0) *= aScale.x;
-        *(p + 1) *= aScale.y;
-        *(p + 2) *= aScale.z;
+        float *x = p + 0;
+        float *y = p + 1;
+        float *z = p + 2;
 
-        //TODO: rotate
+        // scale
+        *x *= aScale.x;
+        *y *= aScale.y;
+        *z *= aScale.z;
+    
+        // rotate around x
+        auto q = rot_euler.x;
+        auto _x = *x, _y = *y, _z = *z;
+        *y = (_y * std::cos(q)) - (_z * std::sin(q));
+        *z = (_y * std::sin(q)) + (_z * std::cos(q));
+        *x = _x;
+    
+        // rotate around y
+        q = rot_euler.y;
+        _x = *x, _y = *y, _z = *z;
+        *x = (_x * std::cos(q)) - (_z * std::sin(q));
+        *z = (_x * std::sin(q)) + (_z * std::cos(q));
+        *y = _y;
 
-        //Offset
-        *(p + 0) += aPos.x;
-        *(p + 1) += aPos.y;
-        *(p + 2) += aPos.z;
+        // rotate around z
+        q = rot_euler.z;
+        _x = *x, _y = *y, _z = *z;
+        *x = (_x * std::cos(q)) - (_y * std::sin(q));
+        *y = (_x * std::sin(q)) + (_y * std::cos(q));
+        *z = _z;
+
+        // translate
+        *x += aPos.x;
+        *y += aPos.y;
+        *z += aPos.z;
 
         p += vertex_size;
     }
@@ -242,11 +167,6 @@ int main(int argc, char **argv)
 
     // Setting up the main scene
     auto pScene = pContext->make_scene();
-
-    //dynamic_vertex_batch tileRenderer(pContext);
-    //pScene->add(tileRenderer);
-    /*my_cool_batch tileRenderer(pContext);
-    pScene->add(tileRenderer);*/
 
     std::vector<float> aposData({
         1.0f, 1.0f, 0.0f,
@@ -380,13 +300,6 @@ int main(int argc, char **argv)
     pEntity->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
     pScene->add(pEntity);
 
-    batchModel.generate_in_buffer(0, {0, 0, 0});
-    batchModel.generate_in_buffer(0, {1, 0, 0}, 
-        {{1,1,1}}, {0.5f, 0.5f, 1});
-    batchModel.generate_in_buffer(0, {1, 1, 0}, 
-        {{1,1,1}}, {0.5f, 0.5f, 1});
-    batchModel.update_model();
-
     /*size_t vertexDataIndex, 
         const graphics_vector3_type &aPos, 
         const graphics_quaternion_type &aRot = {},
@@ -429,7 +342,7 @@ int main(int argc, char **argv)
 
         glfwPollEvents();
 
-        pEntity->set_model_matrix(Vector3<float>{std::cos(time), -0., -11.}, Quaternion<float>{ {time, 4 * (time / 2), 4}});
+        pEntity->set_model_matrix(Vector3<float>{std::cos(time), -0., -11.}, Quaternion<float>{ {0, 4 * ( 1/ 2), 4}});
         pEntity2->set_model_matrix(Vector3<float>{0., 0., -12.5}, Quaternion<float>{{time, 2 * (time / 2), 4}});
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
@@ -442,6 +355,14 @@ int main(int argc, char **argv)
         //pCamera2->set_view_matrix({ std::sin(time), 0, -10 }, {});
 
         //pBackgroundScene->draw(window.getWindowSize());
+
+        batchModel.clear_buffer();
+        batchModel.write_to_buffer(0, {0, 0, 0});
+        batchModel.write_to_buffer(0, {1, 0, 0}, 
+            {0,time,0}, {0.5f, 0.5f, 1});
+        batchModel.write_to_buffer(0, {-1, 1, 0}, 
+            {0,0,0}, {0.5f, 0.5f, 1});
+        batchModel.update_model();
 
         pScene->draw(window.getWindowSize());
 
