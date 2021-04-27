@@ -6,6 +6,8 @@
 #include <iostream>
 #include <thread>
 #include <unordered_map>
+#include <unordered_set>
+#include <set>
 
 #include <jfc/glfw_window.h>
 
@@ -39,6 +41,7 @@ std::vector<std::underlying_type<std::byte>::type> imageData({
 /// instances of many different models, the only restrictions are:
 /// the vertex formats must match
 /// they must all use the same material
+//TODO: add a max_buffer_vertex_count, bool try_write_to_buffer?
 class batch_model
 {
 public:
@@ -74,7 +77,7 @@ private:
 };
 
 batch_model::batch_model(std::shared_ptr<gdk::graphics::context> pContext, 
-    std::vector<vertex_data> data)
+    std::vector<vertex_data> data)//TODO assert pos3 exists
 : m_pModel(pContext->make_model())
 , m_Inputs(data)
 {}
@@ -155,6 +158,135 @@ void batch_model::update_model()
     m_pModel->update_vertex_data(model::UsageHint::Streaming,
         m_Buffer);
 }
+
+//TODO: write a basic skeleton animator.
+class animated_model
+{
+    //! hierarchical state of transformations to be applied to vertex data
+    struct skeleton
+    {
+        struct bone
+        {
+            std::string name;
+
+            graphics_mat4x4_type transform;
+
+            std::unordered_set<bone *> children;
+        };
+
+        //! set of unique bones
+        std::unordered_set<std::unique_ptr<bone>> all_bones = {};
+
+        //! bones with no parents
+        std::unordered_set<bone *> root_bones = {};
+
+        //! check if another skeleton's format matches this one
+        bool is_format_same(const skeleton &other) const
+        {
+            if (all_bones.size() != other.all_bones.size()) 
+                return false;
+
+            auto iThisBone = all_bones.begin();
+            auto iThatBone = other.all_bones.begin();
+           
+            while (iThisBone != all_bones.end())
+            {
+                if ((*iThisBone)->name != (*iThatBone)->name)
+                    return false;
+
+                iThisBone++;
+                iThatBone++;
+            }
+
+            // TODO: recurse root bones to make sure the trees 
+            // have the same structure
+
+            return true;
+        }
+    };
+
+    //! used to calculate a skeleton, to be used transform 
+    /// the vertex data
+    class animation
+    {
+    public:
+        using key_frame_collection_type = 
+            std::set<std::pair<float/*amount of time*/, skeleton>>;
+        
+        key_frame_collection_type m_KeyFrames;
+
+        skeleton calculate_skeleton_at(float timeSec)
+        {
+            auto iLowFrame(m_KeyFrames.begin()), 
+                iHighFrame(m_KeyFrames.begin());
+
+            float interpolationWeight(0);
+
+            for (auto i = m_KeyFrames.begin(); i != m_KeyFrames.end(); ++i)
+            {
+                if (timeSec < (*i).first)
+                {
+                    iHighFrame = i;
+                    
+                    auto lowTime  = iLowFrame->first;
+                    auto highTime = iHighFrame->first;
+                    
+                    interpolationWeight =
+                        (timeSec - lowTime) / (highTime - lowTime);
+
+                    break;
+                }
+
+                iLowFrame = i;
+            }
+            
+            skeleton interpolated_skeleton;
+
+            //TODO: interpolate the keyframes
+            //decompose translation, rotation, scale
+            //interpolate each component write 
+            //to the interpolated_skeleton
+
+            return interpolated_skeleton;
+        }
+
+        animation(key_frame_collection_type &&aKeyFrames)
+        : m_KeyFrames(std::move(aKeyFrames))
+        {
+            const auto &firstSkeleton = m_KeyFrames.begin()->second;
+
+            for (auto iFrame = m_KeyFrames.begin(); 
+                iFrame != m_KeyFrames.end(); ++iFrame)
+                if (!firstSkeleton.is_format_same(iFrame->second))
+                    throw std::invalid_argument("animation: "
+                        "skeletons must be the same in all keyframes");
+        }
+    };
+
+    //! animations for the model
+    std::unordered_map<std::string, animation> m_animations;
+
+    //! vertex data buffer in system memory
+    vertex_data m_Buffer = vertex_data({});
+   
+    //! vertex data buffer in vram
+    std::shared_ptr<gdk::model> m_pModel;
+
+    void animate(const std::unordered_set<std::pair<std::string, float>> 
+        &aContributingFrames)
+    {
+        //TODO: get skelies from all the arged animations, 
+        //interpolate them to a final skele
+        //iterate vertex data, apply the final skele's 
+        //matricies to the data
+    }
+    void animate(const std::pair<std::string, float> &aFrame)
+    {
+        //TODO: get skeleton
+        //iterate vertex data, apply the final skele's 
+        //matricies to the data
+    }
+};
 
 int main(int argc, char **argv)
 {
