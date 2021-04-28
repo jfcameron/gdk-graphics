@@ -41,7 +41,9 @@ std::vector<std::underlying_type<std::byte>::type> imageData({
 /// instances of many different models, the only restrictions are:
 /// the vertex formats must match
 /// they must all use the same material
-//TODO: add a max_buffer_vertex_count, bool try_write_to_buffer?
+/// TODO: add a max_buffer_vertex_count, optional try_write_to_buffer, 
+/// optional points to the head of the data just added to the buffer, so you can replace a section,
+/// returns nullptr if the vertex count would exceed the max
 class batch_model
 {
 public:
@@ -51,10 +53,17 @@ public:
         const graphics_vector3_type &aRot = {},
         const graphics_vector3_type &aScale = {1});
 
-    //! erase all vertex data in the current buffer
+    //! overwrites a part of the buffer
+    /// \warn throws if the new data goes out of bounds of the buffer
+    //void rewrite_buffer_at(size_t BufferIndex, size_t DataIndex, pos,rot,sca)
+
+    //! rewrite a subset of model's vertex data with the buffer range specified
+    //void update_model(size_t aBeginIndex, size_t aEndIndex);
+    
+    //! erase all vertex data in the buffer
     void clear_buffer();
 
-    //! overwrite the model's vertex data with the data in the buffer
+    //! clear the model's vertex data then upload the buffered data to the model
     void update_model();
     
     //! throw is no v_Position
@@ -160,6 +169,27 @@ void batch_model::update_model()
 }
 
 //TODO: write a basic skeleton animator.
+//TODO: offer different strategies:
+// Interpolation Strat
+//   Entirely interpolated: always interpolate everything. most cpu expensive, best results.
+//   Framerate locked: precalculate animations, user provides a "framerate", then interpolate 
+//    up front, write to a map, use the map. Anims will have a frame rate and will take up 
+//    more space but animation interp will not have to be calculated.
+//    Could also LRU cache the animation mixes, would have to parameterize the cache size,
+//    this would mean frequently used animation mixes also wouldnt be interpolated
+//    should also be able to manage many models, so multiple instances can take advantage of the lru and map,
+//    so these things wont grow linearly with instance count
+// Vertex Transform strat
+//   cpu: done in a loop in c++: no special shaders needed therefore no implementation dependencies.
+//    could TRY to make use of worker threads, but would have to introduce params around work size etc.
+//    to get best results on whatever platform.
+//   gpu: final skeleton is uploaded to the gpu, transformations are performed in the vertex shader
+//    offloads work to the gpu but requires special vertex shader.
+//   gpu2: could try to offload interpolation step to gpu? Probably dont have enough instructions to do this
+//    in opengles2.
+//   gpu3: when/ifever I decide to work on vulkan, all this interp work is a great candidate for a compute shader
+//    user provides list of anims to blend and positions in ther timelines:
+//    upload the keyframe pairs for all anims to blend -> interpolation_compute -> vertex_shader -> frag
 class animated_model
 {
     //! hierarchical state of transformations to be applied to vertex data
@@ -259,7 +289,7 @@ class animated_model
                 iFrame != m_KeyFrames.end(); ++iFrame)
                 if (!firstSkeleton.is_format_same(iFrame->second))
                     throw std::invalid_argument("animation: "
-                        "skeletons must be the same in all keyframes");
+                        "skeleton format must be the same in all keyframes");
         }
     };
 
