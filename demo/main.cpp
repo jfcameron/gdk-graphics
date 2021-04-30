@@ -15,6 +15,8 @@
 #include <gdk/scene.h>
 #include <gdk/entity_owner.h>
 
+#include <gdk/ext/batch_model.h>
+
 #include <GLFW/glfw3.h>
 
 using namespace gdk;
@@ -35,138 +37,6 @@ std::vector<std::underlying_type<std::byte>::type> imageData({
 #include <array>
 #include <type_traits>
 #include <map>
-// \brief a batch model is a model whos vertex data is made up of
-/// the transformed vertex data of many separate objects.
-/// these objects could be separate instances of the same model or
-/// instances of many different models, the only restrictions are:
-/// the vertex formats must match
-/// they must all use the same material
-/// TODO: add a max_buffer_vertex_count, optional try_write_to_buffer, 
-/// optional points to the head of the data just added to the buffer, so you can replace a section,
-/// returns nullptr if the vertex count would exceed the max
-class batch_model
-{
-public:
-    //! update buffer at location
-    void write_to_buffer(size_t vertexDataIndex, 
-        const graphics_vector3_type &aPos, 
-        const graphics_vector3_type &aRot = {},
-        const graphics_vector3_type &aScale = {1});
-
-    //! overwrites a part of the buffer
-    /// \warn throws if the new data goes out of bounds of the buffer
-    //void rewrite_buffer_at(size_t BufferIndex, size_t DataIndex, pos,rot,sca)
-
-    //! rewrite a subset of model's vertex data with the buffer range specified
-    //void update_model(size_t aBeginIndex, size_t aEndIndex);
-    
-    //! erase all vertex data in the buffer
-    void clear_buffer();
-
-    //! clear the model's vertex data then upload the buffered data to the model
-    void update_model();
-    
-    //! throw is no v_Position
-    //! throw is v_Postion does not have 3 components
-    //! throw if ahh
-    batch_model(std::shared_ptr<gdk::graphics::context> pContext, 
-        std::vector<vertex_data> data);
-
-    std::shared_ptr<gdk::model> model();
-
-private:
-    //! model, the polygonal model rendered
-    std::shared_ptr<gdk::model> m_pModel;
-
-    //! vetex data buffer, modifed and uploaded to the model
-    vertex_data m_Buffer = vertex_data({});
-
-    //! input models.
-    std::vector<vertex_data> m_Inputs;
-};
-
-batch_model::batch_model(std::shared_ptr<gdk::graphics::context> pContext, 
-    std::vector<vertex_data> data)//TODO assert pos3 exists
-: m_pModel(pContext->make_model())
-, m_Inputs(data)
-{}
-
-std::shared_ptr<gdk::model> batch_model::model()
-{
-    return m_pModel;
-}
-
-void batch_model::write_to_buffer(size_t vertexDataIndex, 
-    const graphics_vector3_type &aPos, 
-    const graphics_vector3_type &aRot,
-    const graphics_vector3_type &aScale)
-{
-    if (vertexDataIndex >= m_Inputs.size()) 
-        throw std::invalid_argument("index out of range");
-
-    auto newData = m_Inputs[vertexDataIndex];
-
-    auto view = newData.view_to_interleaved_data();
-    auto pos_offset = newData.attribute_offset("a_Position");
-    auto vertex_size = newData.vertex_size();
-   
-    auto *p = view.begin + pos_offset;
-
-    auto rot_euler = aRot;
-
-    for (size_t i(0); i < view.size; i+= vertex_size)
-    {
-        float *x = p + 0;
-        float *y = p + 1;
-        float *z = p + 2;
-
-        // scale
-        *x *= aScale.x;
-        *y *= aScale.y;
-        *z *= aScale.z;
-    
-        // rotate around x
-        auto q = rot_euler.x;
-        auto _x = *x, _y = *y, _z = *z;
-        *y = (_y * std::cos(q)) - (_z * std::sin(q));
-        *z = (_y * std::sin(q)) + (_z * std::cos(q));
-        *x = _x;
-    
-        // rotate around y
-        q = rot_euler.y;
-        _x = *x, _y = *y, _z = *z;
-        *x = (_x * std::cos(q)) - (_z * std::sin(q));
-        *z = (_x * std::sin(q)) + (_z * std::cos(q));
-        *y = _y;
-
-        // rotate around z
-        q = rot_euler.z;
-        _x = *x, _y = *y, _z = *z;
-        *x = (_x * std::cos(q)) - (_y * std::sin(q));
-        *y = (_x * std::sin(q)) + (_y * std::cos(q));
-        *z = _z;
-
-        // translate
-        *x += aPos.x;
-        *y += aPos.y;
-        *z += aPos.z;
-
-        p += vertex_size;
-    }
-
-    m_Buffer += std::move(newData);
-}
-
-void batch_model::clear_buffer()
-{
-    m_Buffer.clear();
-}
-
-void batch_model::update_model()
-{
-    m_pModel->update_vertex_data(model::UsageHint::Streaming,
-        m_Buffer);
-}
 
 //TODO: write a basic skeleton animator.
 //TODO: offer different strategies:

@@ -53,6 +53,8 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/graphics_context.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/scene.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data.cpp
+        
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_model.cpp
                 
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp  
