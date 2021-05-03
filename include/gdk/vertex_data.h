@@ -87,6 +87,8 @@ public:
 
     size_t vertex_size() const;
 
+    size_t interleaved_data_size() const;
+
     //TODO: this returns a constant, need index support
     std::vector<index_value_type> getIndexData() const;
 

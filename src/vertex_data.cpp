@@ -75,6 +75,11 @@ vertex_data::vertex_data(const attribute_data_type &aAttributeData)
 
 vertex_data::PrimitiveMode vertex_data::getPrimitiveMode() const { return m_PrimitiveMode; }
 
+size_t vertex_data::interleaved_data_size() const
+{
+    return m_Data.size();
+}
+
 const std::vector<attribute_data_view::attribute_component_type> &vertex_data::getData() const 
     { return m_Data; }
 

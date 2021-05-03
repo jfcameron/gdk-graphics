@@ -6,9 +6,9 @@
 using namespace gdk;
 
 batch_model::batch_model(std::shared_ptr<gdk::graphics::context> pContext, 
-        std::vector<vertex_data> data)//TODO assert pos3 exists
-    : m_pModel(pContext->make_model())
-      , m_Inputs(data)
+    std::vector<vertex_data> data)//TODO assert pos3 exists
+: m_pModel(pContext->make_model())
+, m_Inputs(data)
 {}
 
 std::shared_ptr<gdk::model> batch_model::model()
@@ -16,7 +16,7 @@ std::shared_ptr<gdk::model> batch_model::model()
     return m_pModel;
 }
 
-void batch_model::write_to_buffer(size_t vertexDataIndex, 
+size_t batch_model::write_to_buffer(size_t vertexDataIndex, 
     const graphics_vector3_type &aPos, 
     const graphics_vector3_type &aRot,
     const graphics_vector3_type &aScale)
@@ -74,7 +74,11 @@ void batch_model::write_to_buffer(size_t vertexDataIndex,
         p += vertex_size;
     }
 
+    const auto indexToStartOfNewData = m_Buffer.interleaved_data_size();
+
     m_Buffer += std::move(newData);
+
+    return indexToStartOfNewData;
 }
 
 void batch_model::clear_buffer()
@@ -86,5 +90,10 @@ void batch_model::update_model()
 {
     m_pModel->update_vertex_data(model::UsageHint::Streaming,
         m_Buffer);
+}
+
+vertex_data::interleaved_data_view batch_model::view_to_interleaved_data()
+{
+    return m_Buffer.view_to_interleaved_data();
 }
 
