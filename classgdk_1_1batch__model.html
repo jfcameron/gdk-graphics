@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">gdk-graphics
-   &#160;<span id="projectnumber">3f01c8ba05aa8b7e0928a7ed99f28543d4fbe4fd</span>
+   &#160;<span id="projectnumber">6e51c42774ac5dc6bd71bff1b4c564b1fdcd9787</span>
    </div>
   </td>
  </tr>
@@ -78,8 +78,13 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3db6c5ab74645f1230d71f5bd8beb991"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1batch__model.html#a3db6c5ab74645f1230d71f5bd8beb991">write_to_buffer</a> (size_t vertexDataIndex, const graphics_vector3_type &amp;aPos, const graphics_vector3_type &amp;aRot={}, const graphics_vector3_type &amp;aScale={1})</td></tr>
 <tr class="separator:a3db6c5ab74645f1230d71f5bd8beb991"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9dd5d9f77743d4ab6289b4caaa33785"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structvertex__data_1_1interleaved__data__view.html">vertex_data::interleaved_data_view</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1batch__model.html#ad9dd5d9f77743d4ab6289b4caaa33785">view_to_interleaved_data</a> ()</td></tr>
-<tr class="memdesc:ad9dd5d9f77743d4ab6289b4caaa33785"><td class="mdescLeft">&#160;</td><td class="mdescRight">throws if the new data goes out of bounds of the buffer  <a href="#ad9dd5d9f77743d4ab6289b4caaa33785">More...</a><br /></td></tr>
+<tr class="memitem:a2897f18af04b21c7633357201f758684"><td class="memItemLeft" align="right" valign="top"><a id="a2897f18af04b21c7633357201f758684"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1batch__model.html#a2897f18af04b21c7633357201f758684">rewrite_buffer_at</a> (size_t BufferIndex, size_t vertexDataIndex, const graphics_vector3_type &amp;pos, const graphics_vector3_type &amp;rot, const graphics_vector3_type &amp;sca={1})</td></tr>
+<tr class="memdesc:a2897f18af04b21c7633357201f758684"><td class="mdescLeft">&#160;</td><td class="mdescRight">throws if the new data goes out of bounds of the buffer <br /></td></tr>
+<tr class="separator:a2897f18af04b21c7633357201f758684"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9dd5d9f77743d4ab6289b4caaa33785"><td class="memItemLeft" align="right" valign="top"><a id="ad9dd5d9f77743d4ab6289b4caaa33785"></a>
+<a class="el" href="structvertex__data_1_1interleaved__data__view.html">vertex_data::interleaved_data_view</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1batch__model.html#ad9dd5d9f77743d4ab6289b4caaa33785">view_to_interleaved_data</a> ()</td></tr>
+<tr class="memdesc:ad9dd5d9f77743d4ab6289b4caaa33785"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets a view to the buffer <br /></td></tr>
 <tr class="separator:ad9dd5d9f77743d4ab6289b4caaa33785"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70a2d561b7910de7b019a2609a127fa0"><td class="memItemLeft" align="right" valign="top"><a id="a70a2d561b7910de7b019a2609a127fa0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgdk_1_1batch__model.html#a70a2d561b7910de7b019a2609a127fa0">clear_buffer</a> ()</td></tr>
@@ -132,26 +137,6 @@ std::shared_ptr&lt; <a class="el" href="classgdk_1_1model.html">gdk::model</a> &
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad9dd5d9f77743d4ab6289b4caaa33785"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9dd5d9f77743d4ab6289b4caaa33785">&#9670;&nbsp;</a></span>view_to_interleaved_data()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structvertex__data_1_1interleaved__data__view.html">vertex_data::interleaved_data_view</a> gdk::batch_model::view_to_interleaved_data </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>throws if the new data goes out of bounds of the buffer </p>
-<p>gets a view to the buffer </p>
-
-</div>
-</div>
 <a id="a3db6c5ab74645f1230d71f5bd8beb991"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3db6c5ab74645f1230d71f5bd8beb991">&#9670;&nbsp;</a></span>write_to_buffer()</h2>
 
