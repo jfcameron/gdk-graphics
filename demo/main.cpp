@@ -215,8 +215,16 @@ int main(int argc, char **argv)
         Quaternion<float>{{0, 2, 0.6}},
         {6.5, 0.5, 3});
 
+    batchModel.clear_buffer();
+    batchModel.write_to_buffer(0, {0, 0, 0});
+    batchModel.write_to_buffer(0, {-1, 1, 0}, 
+        {0,0,0}, {0.5f, 0.5f, 1});
+
     // Main loop
     float time = 0;
+
+    auto rotatingDataBufferIndex = batchModel.write_to_buffer(0, {1, 0, 0}, 
+        {0,time,0}, {0.5f, 0.5f, 1});
 
     for (float deltaTime(0); !window.shouldClose();)
     {
@@ -240,12 +248,8 @@ int main(int argc, char **argv)
 
         //pBackgroundScene->draw(window.getWindowSize());
 
-        batchModel.clear_buffer();
-        batchModel.write_to_buffer(0, {0, 0, 0});
-        batchModel.write_to_buffer(0, {1, 0, 0}, 
+        batchModel.rewrite_buffer_at(rotatingDataBufferIndex, 0, {1, 0, 0}, 
             {0,time,0}, {0.5f, 0.5f, 1});
-        batchModel.write_to_buffer(0, {-1, 1, 0}, 
-            {0,0,0}, {0.5f, 0.5f, 1});
         batchModel.update_model();
 
         pScene->draw(window.getWindowSize());
@@ -256,7 +260,8 @@ int main(int argc, char **argv)
 
         while (true)
         {
-            std::this_thread::sleep_for(1us);
+            //std::this_thread::sleep_for(1us);
+            std::this_thread::sleep_for(10ms);
     
             steady_clock::time_point t2(steady_clock::now());
 

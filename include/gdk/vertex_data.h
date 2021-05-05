@@ -58,7 +58,7 @@ public:
     {
         using value_type = attribute_data_view::attribute_component_type;
 
-        value_type *const begin;
+        value_type *const begin; //TODO: iter type? + const end?
 
         const std::size_t size;
     };
@@ -71,6 +71,13 @@ public:
     
     size_t attribute_offset(const std::string &aName) const;
 
+    size_t vertex_size() const;
+
+    size_t interleaved_data_size() const;
+
+    //TODO: this returns a constant, need index support
+    std::vector<index_value_type> getIndexData() const;
+
     //! append a different vertex_data to this vertex_data
     /// \warn must be same format
     void operator+=(const vertex_data &&other);
@@ -80,17 +87,10 @@ public:
 
     //! clears all state from this vertex_data instance
     void clear();
-    
+
     vertex_data(const attribute_data_type &aAttributeData);
 
     interleaved_data_view view_to_interleaved_data();
-
-    size_t vertex_size() const;
-
-    size_t interleaved_data_size() const;
-
-    //TODO: this returns a constant, need index support
-    std::vector<index_value_type> getIndexData() const;
 
 private:
     //! primitive type to emit at primitive stage TODO: support other modes
@@ -101,13 +101,9 @@ private:
 
     //! Attribute format
     std::vector<std::pair<std::string, size_t>> m_Format;
-    
+
+    //! Memoized attribute offsets
     std::unordered_map<std::string, size_t> m_AttributeOffsets;
-   
-    //! Indicies improve draw performance by reducing the number 
-    /// of unique verticies, however they are not required.
-    //TODO: support indicies
-    //std::vector<index_value_type> m_Indicies = {};
 };
 
 #endif

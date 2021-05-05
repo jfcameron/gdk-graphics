@@ -5,30 +5,14 @@
 
 using namespace gdk;
 
-batch_model::batch_model(std::shared_ptr<gdk::graphics::context> pContext, 
-    std::vector<vertex_data> data)//TODO assert pos3 exists
-: m_pModel(pContext->make_model())
-, m_Inputs(data)
-{}
-
-std::shared_ptr<gdk::model> batch_model::model()
-{
-    return m_pModel;
-}
-
-size_t batch_model::write_to_buffer(size_t vertexDataIndex, 
+static void transform_vertex_data(vertex_data *const oNewData,
     const graphics_vector3_type &aPos, 
     const graphics_vector3_type &aRot,
     const graphics_vector3_type &aScale)
 {
-    if (vertexDataIndex >= m_Inputs.size()) 
-        throw std::invalid_argument("index out of range");
-
-    auto newData = m_Inputs[vertexDataIndex];
-
-    auto view = newData.view_to_interleaved_data();
-    auto pos_offset = newData.attribute_offset("a_Position");
-    auto vertex_size = newData.vertex_size();
+    auto view = oNewData->view_to_interleaved_data();
+    auto pos_offset = oNewData->attribute_offset("a_Position");
+    auto vertex_size = oNewData->vertex_size();
 
     auto *p = view.begin + pos_offset;
 
@@ -73,8 +57,58 @@ size_t batch_model::write_to_buffer(size_t vertexDataIndex,
 
         p += vertex_size;
     }
+};
 
-    const auto indexToStartOfNewData = m_Buffer.interleaved_data_size();
+batch_model::batch_model(std::shared_ptr<gdk::graphics::context> pContext, 
+    std::vector<vertex_data> data)//TODO assert pos3 exists
+: m_pModel(pContext->make_model())
+, m_Inputs(data)
+{}
+
+std::shared_ptr<gdk::model> batch_model::model()
+{
+    return m_pModel;
+}
+
+void batch_model::rewrite_buffer_at(size_t BufferIndex, 
+    size_t vertexDataIndex,
+    const graphics_vector3_type &aPos, 
+    const graphics_vector3_type &aRot,
+    const graphics_vector3_type &aScale)
+{
+    if (vertexDataIndex >= m_Inputs.size()) 
+        throw std::invalid_argument("index out of range");
+
+    auto newData(m_Inputs[vertexDataIndex]);
+
+    transform_vertex_data(&newData, aPos, aRot, aScale);
+
+    auto buffer_view = m_Buffer.view_to_interleaved_data();
+    auto new_data_view = newData.view_to_interleaved_data();
+
+    if (new_data_view.size > (buffer_view.size - BufferIndex))
+        throw std::invalid_argument("rewrite would exceed buffer bounds");
+
+    auto *pBuffer = buffer_view.begin + BufferIndex;
+    for (size_t i(0); i < new_data_view.size; ++i)
+    {
+        *(pBuffer + i) = *(new_data_view.begin + i);
+    }
+}
+
+size_t batch_model::write_to_buffer(size_t vertexDataIndex, 
+    const graphics_vector3_type &aPos, 
+    const graphics_vector3_type &aRot,
+    const graphics_vector3_type &aScale)
+{
+    if (vertexDataIndex >= m_Inputs.size()) 
+        throw std::invalid_argument("index out of range");
+
+    auto newData(m_Inputs[vertexDataIndex]);
+
+    transform_vertex_data(&newData, aPos, aRot, aScale);
+
+    const auto indexToStartOfNewData = m_Buffer.interleaved_data_size() - 0;
 
     m_Buffer += std::move(newData);
 

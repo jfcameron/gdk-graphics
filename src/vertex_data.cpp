@@ -114,6 +114,7 @@ void vertex_data::push_back(const vertex_data &&other)
             "incoming attribute format must match");
     //END
     
+    m_Data.reserve(m_Data.size() + other.m_Data.size());
     m_Data.insert(m_Data.end(), other.m_Data.begin(), other.m_Data.end());
 }
 
@@ -125,7 +126,7 @@ void vertex_data::clear()
 }
 
 std::vector<vertex_data::index_value_type> vertex_data::getIndexData() const 
-    { return std::vector<vertex_data::index_value_type>(); }
+{ return std::vector<vertex_data::index_value_type>(); }
 
 vertex_data::interleaved_data_view vertex_data::view_to_interleaved_data()
 {

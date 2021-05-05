@@ -35,7 +35,11 @@ namespace gdk
             const graphics_vector3_type &aScale = {1});
 
         /// \warn throws if the new data goes out of bounds of the buffer
-        //void rewrite_buffer_at(size_t BufferIndex, size_t DataIndex, pos,rot,sca)
+        void rewrite_buffer_at(size_t BufferIndex, 
+            size_t vertexDataIndex, 
+            const graphics_vector3_type &pos,
+            const graphics_vector3_type &rot,
+            const graphics_vector3_type &sca = {1});
 
         //! gets a view to the buffer
         vertex_data::interleaved_data_view view_to_interleaved_data();
