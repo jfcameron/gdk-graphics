@@ -92,6 +92,10 @@ public:
 
     interleaved_data_view view_to_interleaved_data();
 
+    //TODO: transform method?
+    // throw if name is not 3 component attribute?
+    //void transform(std::string name, sca, rot, tra)
+
 private:
     //! primitive type to emit at primitive stage TODO: support other modes
     PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
