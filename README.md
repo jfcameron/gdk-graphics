@@ -13,7 +13,7 @@ Continuous integration builds are done for all PRs and all changes to main. Buil
 catch2 unit tests available under `test/` and can be run with ctest
 
 ## Build instructions
-Open the `.travis.yml` file on root, refer to the section for your platform
+Open the `.travis.yml` file on the root of the project, refer to the section for your platform
 
 ## Sample project
 
