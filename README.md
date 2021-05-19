@@ -6,7 +6,7 @@
 
 ## CI & Documentation
 
-Documentation generated with doxygen ca be viewed online here: https://jfcameron.github.io/gdk-graphics/
+Documentation generated with doxygen can be viewed online here: https://jfcameron.github.io/gdk-graphics/
 
 Continuous integration builds are done for all PRs and all changes to main. Build scripts cover Windows, Linux, Mac, WebAssembly; Clang, GCC, MSVC; x86_64, arm64: https://travis-ci.org/jfcameron/gdk-graphics
 
