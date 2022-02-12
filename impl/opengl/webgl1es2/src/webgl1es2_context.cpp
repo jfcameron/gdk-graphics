@@ -93,14 +93,9 @@ graphics::context::built_in_model_ptr_type webgl1es2_context::get_quad_model() c
         std::shared_ptr<webgl1es2_model>(webgl1es2_model::Quad));
 }
 
-graphics::context::texture_ptr_type webgl1es2_context::make_texture(const texture::image_data_2d_view &imageView) const
+graphics::context::texture_ptr_type webgl1es2_context::make_texture(const image_data_2d_view &imageView) const
 {
     return graphics::context::texture_ptr_type(new webgl1es2_texture(imageView));
-}
-
-graphics::context::texture_ptr_type webgl1es2_context::make_texture(const std::vector<std::underlying_type<std::byte>::type>& aRGBA32PNGData) const
-{
-    return std::make_unique<gdk::webgl1es2_texture>(webgl1es2_texture::make_from_png_rgba32(aRGBA32PNGData));
 }
 
 graphics::context::model_ptr_type webgl1es2_context::make_model(const model::UsageHint &usage,
@@ -116,7 +111,7 @@ graphics::context::model_ptr_type webgl1es2_context::make_model() const
     std::vector<float> data({0, 0, 0});
 
     return make_model(model::UsageHint::Static, 
-        {{{"a_Position", {&data.front(), data.size(), 1}}}});
+        {{{"a_Position", {data, 1}}}});
 }
 
 graphics::context::scene_ptr_type webgl1es2_context::make_scene() const

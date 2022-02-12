@@ -30,32 +30,28 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
         pos[i + 0] -= 0.5f;
         pos[i + 1] -= 0.5f;
     }
-    
-    std::vector<webgl1es2_model::attribute_component_data_type> uv({
-        // u,    v
-        1.0f, 0.0f, // 1--0
-        0.0f, 0.0f, // | /
-        0.0f, 1.0f, // 2
-        1.0f, 0.0f, //    0
-        0.0f, 1.0f, //  / |
-        1.0f, 1.0f, // 1--2
-    });
 
     return new gdk::webgl1es2_model(model::UsageHint::Static, {
     {
         { 
             "a_Position",
             {
-                &pos.front(),
-                pos.size(),
+                pos,
                 3
             }
         },
         { 
             "a_UV",
             {
-                &uv.front(),
-                uv.size(),
+                {
+                    // u,    v
+                    1.0f, 0.0f, // 1--0
+                    0.0f, 0.0f, // | /
+                    0.0f, 1.0f, // 2
+                    1.0f, 0.0f, //    0
+                    0.0f, 1.0f, //  / |
+                    1.0f, 1.0f, // 1--2
+                },
                 2
             }
         }
@@ -207,25 +203,22 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
         { 
             "a_Position",
             {
-                &pos.front(),
-                pos.size(),
+                pos,
                 3
             }
         },
         { 
             "a_UV",
             {
-                &uv.front(),
-                uv.size(),
+                uv,
                 2
             }
         },
         { 
             "a_Normal",
             {
-                &uv.front(),
-                uv.size(),
-                2
+                normal,
+                3
             }
         }
     }});
@@ -283,42 +276,7 @@ static inline webgl1es2_model::PrimitiveMode vertexDataPrimitiveMode_to_wegl1es2
     throw std::invalid_argument("unhandled vertex_data::PrimitiveMode");
 }
 
-bool webgl1es2_model::operator==(const webgl1es2_model &that)
-{
-    return
-        m_IndexBufferHandle  == that.m_IndexBufferHandle &&
-        m_VertexBufferHandle == that.m_VertexBufferHandle;
-}
-
-bool webgl1es2_model::operator!=(const webgl1es2_model &that)
-{
-    return !(*this == that);
-}
-
-void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
-{
-    glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
-    
-    m_vertex_format.enableAttributes(aShaderProgram);
-}
-
-void webgl1es2_model::draw() const
-{
-    GLenum primitiveMode = PrimitiveModeToOpenGLPrimitiveType(m_PrimitiveMode);
-
-    if (m_IndexBufferHandle.get() > 0)
-    {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.get());
-        
-        glDrawElements(primitiveMode,
-            m_IndexCount,
-            GL_UNSIGNED_SHORT,
-            static_cast<void *>(0));
-    }
-    else glDrawArrays(primitiveMode, 0, m_VertexCount);
-}
-
-static webgl1es2_model::Type VertexDataViewUsageHintToType(model::UsageHint usageHint)
+static inline webgl1es2_model::Type VertexDataViewUsageHintToType(model::UsageHint usageHint)
 {
     switch (usageHint)
     {
@@ -330,142 +288,180 @@ static webgl1es2_model::Type VertexDataViewUsageHintToType(model::UsageHint usag
     throw std::invalid_argument("unhandled usageHint");
 }
 
-void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
-    const vertex_data& vertexDataView)
+static inline void update_index_data(
+    std::optional<jfc::unique_handle<GLuint>> &handle,
+    size_t index_count, 
+    const GLushort *pIndexBegin, 
+    GLenum aUsageHint,
+    GLsizei &m_IndexCount
+    )
 {
-    auto aIndexData = vertexDataView.getIndexData();
-
-    const PrimitiveMode& aPrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(
-        vertexDataView.getPrimitiveMode());
-
-    std::vector<webgl1es2_vertex_attribute> attributeFormats;
-
-    for (const auto &[current_name, current_attribute_component_count] : vertexDataView.attribute_format())
+    if (m_IndexCount = index_count > 0)
     {
-        attributeFormats.push_back({current_name, 
-            static_cast<short unsigned int>(current_attribute_component_count)});
-    }
-
-    webgl1es2_vertex_format vertexFormat(attributeFormats);
-
-    const std::vector<webgl1es2_model::attribute_component_data_type>& aNewwebgl1es2_model(vertexDataView.getData());
-
-    //VBO
-    m_vertex_format = vertexFormat;
-    m_VertexCount = m_vertex_format.getSumOfAttributeComponents() 
-        ? static_cast<GLsizei>(
-            aNewwebgl1es2_model.size() / m_vertex_format.getSumOfAttributeComponents())
-        : 0;
-    
-    glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandle.get());
-
-    glBufferData (GL_ARRAY_BUFFER, 
-        sizeof(webgl1es2_model::attribute_component_data_type) * aNewwebgl1es2_model.size(), 
-        &aNewwebgl1es2_model[0], 
-        webgl1es2_modelTypeToOpenGLDrawType(
-            vertexDataUsageHint_to_webgl1es2ModelType(aUsage)));
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    m_PrimitiveMode = aPrimitiveMode;
-
-    //IBO    
-    if (m_IndexCount = (GLsizei)aIndexData.size(); m_IndexCount > 0)
-    {
-        if (!m_IndexBufferHandle.get())
+        if (!handle.has_value())
         {
-            auto handle = m_IndexBufferHandle.get();
-
-            glGenBuffers(1, &handle);
+            handle.emplace([&]()
+            {
+                GLuint ibo(0);
+                
+                glGenBuffers(1, &ibo);
+                
+                return ibo;
+            }(),
+            [](const GLuint handle)
+            {
+                glDeleteBuffers(1, &handle);
+            });
         }
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.get());
-        
+        GLuint ibo = handle.value().get();
+            
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+                
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-            sizeof(GLushort) * aIndexData.size(), 
-            &aIndexData[0], 
-            webgl1es2_modelTypeToOpenGLDrawType(
-                vertexDataUsageHint_to_webgl1es2ModelType(aUsage)));
+            sizeof(GLushort) * index_count, 
+            pIndexBegin, 
+            aUsageHint);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-    
+
         if (std::string errorCode; glh::GetError(&errorCode)) 
             throw std::runtime_error(std::string(TAG).append(errorCode));
+    }
+    else handle.reset();
+}
+
+void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
+{
+    for (const auto &[name, current_attribute] : m_Attributes)
+    {
+        if (auto activeAttribute = aShaderProgram.tryGetActiveAttribute(name); 
+            activeAttribute.has_value())
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, 
+                m_VertexBufferHandles[current_attribute.buffer_handle_index].get());
+            
+            glEnableVertexAttribArray(activeAttribute->location);
+        
+            glVertexAttribPointer(
+                activeAttribute->location, //index of the shader program's matching attribute
+                current_attribute.components, //# of components per individual attribute
+                GL_FLOAT, //component type TODO: support smaller types
+                GL_FALSE, //^normalize fixed-point values. fixed-point is one of the possible component types
+                0, //stride: distance between consecutive attributes. Would only be nonzero if data is interleaved
+                0  //offset to the first component. only nonzero if interleaved and not the first attribute.
+            );
+        }
+    }
+}
+
+void webgl1es2_model::draw() const
+{
+    const GLenum primitiveMode(PrimitiveModeToOpenGLPrimitiveType(m_PrimitiveMode));
+
+    if (m_IndexBufferHandle.has_value())
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.value().get());
+
+        glDrawElements(primitiveMode,
+            m_IndexCount,
+            GL_UNSIGNED_SHORT,
+            static_cast<void *>(0));
+    }
+    else glDrawArrays(primitiveMode, 0, m_VertexCount);
+}
+
+void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
+    const vertex_data &aData)
+{
+    //Primitive mode
+    {
+        m_PrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(
+            aData.primitive_mode());
+    }
+
+    //Index buffer object (optional)
+    {
+        update_index_data(m_IndexBufferHandle, 
+            aData.getIndexData().size(), 
+            &aData.getIndexData()[0], 
+            webgl1es2_modelTypeToOpenGLDrawType(
+                vertexDataUsageHint_to_webgl1es2ModelType(aUsage)),
+            m_IndexCount);
+    }
+
+    //Vertex buffer objects
+    {
+        const auto &newAttibuteData(aData.data());
+
+        if (m_VertexBufferHandles.size() < newAttibuteData.size())
+        {
+            m_VertexBufferHandles.reserve(newAttibuteData.size());
+
+            while (m_VertexBufferHandles.size() < newAttibuteData.size())
+            {
+                m_VertexBufferHandles.push_back({[&]()
+                {
+                    GLuint vbo(0);
+                    glGenBuffers(1, &vbo);
+
+                    if (std::string errorCode; glh::GetError(&errorCode)) 
+                    throw std::runtime_error(std::string(TAG).append(errorCode));
+
+                    return vbo;
+                }(),
+                [](const GLuint handle)
+                {
+                    glDeleteBuffers(1, &handle);
+                }});
+            }
+        }
+        else if (m_VertexBufferHandles.size() > newAttibuteData.size())
+        {
+            while (m_VertexBufferHandles.size() > newAttibuteData.size())
+                m_VertexBufferHandles.pop_back();
+        }
+
+        m_Attributes.clear();
+
+        size_t i(0);
+        
+        for (const auto &[name, data] : newAttibuteData)
+        {
+            glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandles[i].get());
+
+            glBufferData (GL_ARRAY_BUFFER, 
+                sizeof(webgl1es2_model::attribute_component_data_type) * data.m_Components.size(), 
+                &data.m_Components[0], 
+                webgl1es2_modelTypeToOpenGLDrawType(
+                    vertexDataUsageHint_to_webgl1es2ModelType(aUsage)));
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+            attribute newAttribute =
+            {
+                .buffer_handle_index = i,
+                .components = data.m_ComponentCount,
+                .size = data.m_Components.size()
+            };
+
+            m_Attributes[name] = newAttribute;
+
+            i++;
+
+            //TODO: likely vertexcount should come from the vertex_data object, which will
+            // check that all attrib arrays have the same vertex count at construction/update time
+            //m_VertexCount = aData.interleaved_data_size() / aData.vertex_size();
+            m_VertexCount = newAttribute.size / newAttribute.components;
+        }
     }
 }
 
 webgl1es2_model::webgl1es2_model(const UsageHint &aUsage,
     const vertex_data &aData)
-: m_IndexBufferHandle([&]()
-{
-    GLuint ibo(0);
-    
-    if (aData.getIndexData().size() > 0)
-    {
-        glGenBuffers(1, &ibo);
-        
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-            sizeof(GLushort) * aData.getIndexData().size(), 
-            &aData.getIndexData()[0], 
-            webgl1es2_modelTypeToOpenGLDrawType(
-                vertexDataUsageHint_to_webgl1es2ModelType(aUsage)));
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-    
-        if (std::string errorCode; glh::GetError(&errorCode)) 
-            throw std::runtime_error(std::string(TAG).append(errorCode));
-    }
-    
-    return ibo;
-}(),
-[](const GLuint handle)
-{
-    glDeleteBuffers(1, &handle);
-})
+: m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.primitive_mode()))
 , m_IndexCount((GLsizei)aData.getIndexData().size())
-, m_VertexBufferHandle([&]()
 {
-    GLuint vbo(0);
-    glGenBuffers(1, &vbo);
-
-    if (aData.getData().size())
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, 
-            sizeof(webgl1es2_model::attribute_component_data_type) * aData.getData().size(), 
-            &aData.getData()[0], 
-            webgl1es2_modelTypeToOpenGLDrawType(
-                vertexDataUsageHint_to_webgl1es2ModelType(aUsage)));
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-	
-    if (std::string errorCode; glh::GetError(&errorCode)) 
-        throw std::runtime_error(std::string(TAG).append(errorCode));
-    
-    return vbo;
-}(),
-[](const GLuint handle)
-{
-    glDeleteBuffers(1, &handle);
-})
-, m_vertex_format([&]()
-{
-    std::vector<webgl1es2_vertex_attribute> attributeFormats;
-
-    for (const auto &[current_name, current_attribute_component_count] : aData.attribute_format())
-    {
-        attributeFormats.push_back({current_name, 
-            static_cast<short unsigned int>(current_attribute_component_count)});
-    }
-
-    return attributeFormats;
-}())
-, m_VertexCount(m_vertex_format.getSumOfAttributeComponents()
-    ? static_cast<GLsizei>(aData.getData().size()) / m_vertex_format.getSumOfAttributeComponents()
-    : 0)
-, m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.getPrimitiveMode()))
-{}
+    update_vertex_data(aUsage, aData);
+}
 

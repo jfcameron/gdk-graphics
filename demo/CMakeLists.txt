@@ -1,21 +1,8 @@
-# © 2018 Joseph Cameron - All Rights Reserved
+# © Joseph Cameron - All Rights Reserved
 
-jfc_project(executable
-    NAME "gdkgraphics-demo"
-    VERSION 1.0
-    DESCRIPTION "demo gdk-graphics app"
-    C++_STANDARD 17
-    C_STANDARD 90
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
-    SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    
-    PRIVATE_INCLUDE_DIRECTORIES
-        "${gdkgraphics_INCLUDE_DIRECTORIES}"
+add_subdirectory(adhoc)
+add_subdirectory(voxel)
+add_subdirectory(simple_text)
 
-    LIBRARIES
-        "${gdkgraphics_LIBRARIES}"
-
-    DEPENDENCIES
-        "gdkgraphics"
-)

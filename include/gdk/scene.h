@@ -10,7 +10,6 @@
 namespace gdk
 {
     class entity;
-    class entity_owner;
     class screen_camera;
     class texture_camera;
 
@@ -18,11 +17,6 @@ namespace gdk
     class scene
     {
     public:
-        //! add all an owner's entities to the scene
-        void add(const entity_owner &rOwner);
-        //! remove all an owner's entities from the scene
-        void remove(const entity_owner &rOwner);
-
         //! add a screen camera to the scene
         virtual void add(const std::shared_ptr<const screen_camera> &pCamera) = 0;
         //! remove a screen camera from the scene

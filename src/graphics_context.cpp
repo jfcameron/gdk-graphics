@@ -3,8 +3,6 @@
 #include <gdk/graphics_context.h>
 #include <gdk/webgl1es2_context.h>
 
-#include <gdk/entity_owner.h>
-
 #include <stdexcept>
 
 using namespace gdk;

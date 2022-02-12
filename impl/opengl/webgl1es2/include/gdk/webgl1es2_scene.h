@@ -72,6 +72,7 @@ namespace gdk
     /// \name external interface
     ///@{
     //
+        //TODO: these fail silently on nullptr. should probably throw?
         virtual void add(const std::shared_ptr<const screen_camera> &pCamera) override;
         virtual void add(const std::shared_ptr<const texture_camera> &pCamera) override;
         virtual void add(const std::shared_ptr<const entity> &pEntity) override;

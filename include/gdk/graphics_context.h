@@ -12,6 +12,7 @@
 #include <gdk/screen_camera.h>
 #include <gdk/shader_program.h>
 #include <gdk/texture.h>
+#include <gdk/image_data.h>
 #include <gdk/texture_camera.h>
 #include <gdk/vertex_data.h>
 
@@ -98,19 +99,18 @@ namespace gdk::graphics
             //! decides how the vertex data is ultimately rendered through the pipeline.
             material_shared_ptr_type pMaterial 
         ) const = 0;
-        //! make an entity by copy
+        //! make an entity by copy TODO: why provide a copy factory? this is not necessary, breaks rule of minimally useful
         [[nodiscard]] virtual entity_ptr_type make_entity(
             const entity &other //!< entity to copy
         ) const = 0;
-       
-        //! construct model by vertext data view
-        [[nodiscard]] virtual model_ptr_type make_model(
-            const gdk::model::UsageHint &,
-            const vertex_data &vertexDataView
-        ) const = 0;
-
+        
         //! construct an empty model
         [[nodiscard]] virtual model_ptr_type make_model() const = 0;
+        //! construct batched model
+        [[nodiscard]] virtual model_ptr_type make_model(
+            const gdk::model::UsageHint &,
+            const vertex_data &vertexData
+        ) const = 0;
 
         //! make a material. 
         [[nodiscard]] virtual material_ptr_type make_material(
@@ -120,7 +120,8 @@ namespace gdk::graphics
             //! Transparent, opaque
             material::render_mode aRenderMode = material::render_mode::opaque,
             //! face culling mode
-            material::FaceCullingMode aFaceCullingMode = material::FaceCullingMode::None) const = 0;
+            material::FaceCullingMode aFaceCullingMode = material::FaceCullingMode::None
+        ) const = 0;
 
         /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
         [[nodiscard]] virtual shader_program_ptr_type make_shader(
@@ -130,12 +131,7 @@ namespace gdk::graphics
 
         //! make a texture using a 2d image view
         [[nodiscard]] virtual texture_ptr_type make_texture(
-            const texture::image_data_2d_view &imageView
-        ) const = 0;
-
-        //! make a texture from an in-memory RGBA32 PNG
-        [[nodiscard]] virtual texture_ptr_type make_texture(
-            const std::vector<std::underlying_type<std::byte>::type> &aRGBA32PNGData
+            const image_data_2d_view &imageView
         ) const = 0;
     ///@}
 

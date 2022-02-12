@@ -1,0 +1,2 @@
+make GDK graphics a pure interface, split webgl implementation into a separate repo.
+gdk graphic extensions only need the interface. much less duplication.

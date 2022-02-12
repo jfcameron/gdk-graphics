@@ -5,6 +5,7 @@
 
 #include <gdk/opengl.h>
 #include <gdk/texture.h>
+#include <gdk/image_data.h>
 #include <jfc/unique_handle.h>
 
 #include <array>

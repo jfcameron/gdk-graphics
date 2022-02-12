@@ -1,49 +1,92 @@
 // © Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GFX_VERTEX_DATA_VIEW_H
-#define GDK_GFX_VERTEX_DATA_VIEW_H
+#ifndef GDK_GFX_VERTEX_DATA_H
+#define GDK_GFX_VERTEX_DATA_H
+
+#include <gdk/graphics_types.h>
+
+#include <jfc/contiguous_view.h>
 
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <map>
 #include <vector>
 
-/// \brief a view on to the data for a given attribute e.g: "uv", "position".
-/// \warn a view does not own its data, the user must guarantee the data lives 
-/// as long as the view could be read from
-class attribute_data_view final
+namespace gdk
 {
-public:
-    //! all vertex components must be of this type.
-    using attribute_component_type = float; 
-
-    attribute_data_view(attribute_component_type *const pData, 
-        const size_t aDataLength, 
-        const size_t aComponentCount);
-
-    attribute_component_type *data_begin() const;
-    
-    size_t data_size() const;
-    
-    size_t component_count() const;
-
-private:
-    //! ptr to the beginning of the data
-    /// \warn unowning
-    attribute_component_type *m_pData; 
-
-    //! total number of components in the data
-    size_t m_DataLength; 
-
-    //! number of components in a single attribute
-    size_t m_ComponentCount; 
-};
-
-//! used to construct a model. Vertex data represents a set of vertex data in system memory
+/// \brief A sequence of vertexes stored in system memory.
+///
+/// when given to a model, vertex data is used to create the polygonal surfaces of that model
+///
+/// interleaved data, best for data that does not need to be updated
+///
 class vertex_data final
 {
 public:
+    /// \brief type of a single vertex attribute component.
+    using component_type = graphics_floating_point_type;
+
+    //TODO: separate this from vertex_data? maybe
+    //TODO: unify atttribute_data and attribute_data_view: attribute_data::view.
+    //TODO: create methods to convert them, to simplify impl
+    class attribute_data
+    {
+    public:
+        /// \brief view to attribute data owned by the user. Used when constructing a vertex_data instance
+        /// 
+        /// a view on to a contiguous sequence of component_type values representing the values of all 
+        /// the components of a single attribute for a model + the size of the attribute
+        /// 
+        class view final
+        {
+        public:
+            /// \brief build a view from a view to vertex component data and a attribute size
+            view(jfc::contiguous_view<const component_type> aDataView, 
+                const size_t aComponentCount);
+            
+            /// \brief [convenience] build a view from a const reference to component data and attribute size
+            view(const std::vector<component_type> &aData, 
+                const size_t aComponentCount);
+
+            const component_type *begin() const;
+            
+            size_t data_size() const;
+            
+            size_t component_count() const;
+
+        private:
+            const component_type *m_pData; 
+
+            size_t m_DataLength; 
+
+            size_t m_ComponentCount; 
+        };
+
+        attribute_data() = default;
+
+        attribute_data(const std::vector<component_type> &m_Components, 
+            const size_t aComponentCount);
+        
+        attribute_data &operator+=(const attribute_data &rhs);
+        
+        //TODO: create from view
+        //attribute_data(const attribute_data::view)
+
+    //private://TODO: write getters
+        //! collections of all the components for all of this attribute
+        std::vector<component_type> m_Components;
+        
+        //! number of components in a single attribute
+        size_t m_ComponentCount;
+
+        //! number of vertexes this data provides components for
+        //size_t m_VertexCount;
+    };
+    
+    using attribute_collection_type = std::unordered_map<std::string, attribute_data>;
+    
     using index_value_type = unsigned short;
 
     enum class PrimitiveMode
@@ -51,64 +94,90 @@ public:
         Triangles
     };
 
-    using attribute_data_type = 
-        std::unordered_map<std::string, attribute_data_view>;
-    
-    struct interleaved_data_view
-    {
-        using value_type = attribute_data_view::attribute_component_type;
+    using attribute_name_to_view_type = std::unordered_map<std::string, attribute_data::view>;
 
-        value_type *const begin; //TODO: iter type? + const end?
+    /// \brief gets the primitive mode
+    PrimitiveMode primitive_mode() const;
 
-        const std::size_t size;
-    };
-
-    PrimitiveMode getPrimitiveMode() const;
-
-    const std::vector<attribute_data_view::attribute_component_type> &getData() const;
-
-    const std::vector<std::pair<std::string, std::size_t>> &attribute_format() const;
-    
     size_t attribute_offset(const std::string &aName) const;
 
-    size_t vertex_size() const;
-
-    size_t interleaved_data_size() const;
-
-    //TODO: this returns a constant, need index support
-    std::vector<index_value_type> getIndexData() const;
-
-    //! append a different vertex_data to this vertex_data
-    /// \warn must be same format
-    void operator+=(const vertex_data &&other);
-    //! append a different vertex_data to this vertex_data
-    /// \warn must be same format
-    void push_back(const vertex_data &&other);
+    //TODO: this returns a constant. need to modify vertex_data ctor to accept index data
+    //TODO: change to view
+    //TODO; rename "indicies"
+    const std::vector<index_value_type> &getIndexData() const;
 
     //! clears all state from this vertex_data instance
     void clear();
 
-    vertex_data(const attribute_data_type &aAttributeData);
+    //! Convenience method, applies a transformation to a 3 component position attribute
+    //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
+    //So maybe this should be moved to a funciton not a method
+    void transform_position(
+        const graphics_vector3_type &aPos,
+        const graphics_quaternion_type &aRot = {},
+        const graphics_vector3_type &aSca = {1},
+        const std::string &aPositionAttributeName = "a_Position");
+        
+    //! Convenience method, applies a offset + scale to a 2 component UV attribute
+    //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
+    //So maybe this should be moved to a funciton not a method
+    void transform_uv(
+        const graphics_vector2_type &aPos,
+        const graphics_vector2_type &aSca = {1},
+        const std::string &aUVAttributeName = "a_UV");
 
-    interleaved_data_view view_to_interleaved_data();
+    const attribute_collection_type &data() const;
 
-    //TODO: transform method?
-    // throw if name is not 3 component attribute?
-    //void transform(std::string name, sca, rot, tra)
+    /// \brief append a different vertex_data to this vertex_data
+    ///
+    /// returns the index to the start of the newly added data
+    //TODO: allow new attribute_datas to be introduced, but be sure vertexcount is same etc.
+    size_t push_back(const vertex_data &other);
+
+    /// \brief overwrite a section of vertex data using another vertex data instance
+    ///
+    /// formats must match exactly, the incoming data cannot write past the end of this
+    void overwrite(const size_t index, const vertex_data &other);
+
+    /// \brief overwrite a section of a single attribute in the vertex data
+    ///
+    /// the vertex data must contain an attribute with the given name and that attribute must have
+    /// the same # of components
+    void overwrite(const std::string &aAttributeName, const size_t vertexOffset, const vertex_data &other);
+
+    size_t vertex_count() const;
+
+    //! create a new instance that is a concatenation of two separate datas
+    vertex_data operator+(const vertex_data &aData);
+
+    //! append a copy of different vertex_data to this vertex_data
+    /// \warn must be same format
+    vertex_data &operator+=(const vertex_data &other);
+
+    //! assignment by const ref
+    vertex_data &operator=(const vertex_data &other) = default;
+
+    //! assignment by rvalue
+    vertex_data &operator=(vertex_data &&other) = default;
+
+    //! construct a vertex_data from attribute data
+    vertex_data(const attribute_name_to_view_type &aAttributeData);
+
+    vertex_data(const vertex_data &) = default;
+    
+    vertex_data(vertex_data &&) = default;
+
+    //! default inited vertex_data is very useful for procedurally generated data
+    vertex_data() = default;
 
 private:
-    //! primitive type to emit at primitive stage TODO: support other modes
+    size_t m_VertexCount = 0;
+
+    //! primitive type to emit at primitive stage
     PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
-
-    //! Raw data, interleaved
-    std::vector<attribute_data_view::attribute_component_type> m_Data;
-
-    //! Attribute format
-    std::vector<std::pair<std::string, size_t>> m_Format;
-
-    //! Memoized attribute offsets
-    std::unordered_map<std::string, size_t> m_AttributeOffsets;
+    
+    attribute_collection_type m_NonInterleavedData;
 };
-
+}
 #endif
 

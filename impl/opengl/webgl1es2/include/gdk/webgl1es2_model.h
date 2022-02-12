@@ -1,15 +1,17 @@
 // © Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GFX_VERTEX_DATA_H
-#define GDK_GFX_VERTEX_DATA_H
+#ifndef GDK_GFX_WEB1GLES2_MODEL_H
+#define GDK_GFX_WEB1GLES2_MODEL_H
 
 #include <gdk/model.h>
-#include <gdk/webgl1es2_vertex_format.h>
+#include <gdk/webgl1es2_shader_program.h>
 #include <jfc/shared_proxy_ptr.h>
 #include <jfc/unique_handle.h>
 
 #include <iosfwd>
+#include <optional>
 #include <string>
+#include <unordered_map>
 
 namespace gdk
 {
@@ -75,13 +77,11 @@ namespace gdk
         void draw() const;
 
         //! replace current data in the vbo and ibo with new data
+        //TODO: optional vector to selectively update data,
+        //TODO if vertex_count is different in selective mode, throw
         virtual void update_vertex_data(const UsageHint &,
-            const vertex_data& vertexDataView) override;
-      
-        //! equality semantics based on handle values
-        bool operator==(const webgl1es2_model &);
-        //! equality semantics based on handle values
-        bool operator!=(const webgl1es2_model &);
+            const vertex_data& vertexDataView
+            /*, std::vector<std::string> aAttributesToUpdate*/) override;
 
         //! support move semantics
         webgl1es2_model &operator=(webgl1es2_model &&) = default;
@@ -97,27 +97,30 @@ namespace gdk
         
         //! a quad with format pos3uv2
         static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Quad;
+        
         //! a cube with format pos3uv2norm3
         static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Cube; 
 
     private:
-        //! Handle to the (optional) index buffer in the context
-        jfc::unique_handle<GLuint> m_IndexBufferHandle;
-
-        //! total number of indicies
-        GLsizei m_IndexCount = 0; 
+        //! stores component data for a single attribute
+        struct attribute
+        {
+            size_t buffer_handle_index;
+            size_t components;
+            size_t size;
+        };
         
-        //! Handle to the vertex buffer in the context
-        jfc::unique_handle<GLuint> m_VertexBufferHandle; 
+        std::vector<jfc::unique_handle<GLuint>> m_VertexBufferHandles;
 
-        //! Format of the vertex data
-        webgl1es2_vertex_format m_vertex_format = webgl1es2_vertex_format::Pos3uv2; 
-        
-        //! total number of vertexes
-        GLsizei m_VertexCount = 0; 
-
-        //! The primitive type to be generated using the vertex data
         PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
+
+        std::optional<jfc::unique_handle<GLuint>> m_IndexBufferHandle;
+
+        GLsizei m_IndexCount = 0; 
+
+        std::unordered_map<std::string, attribute> m_Attributes;
+        
+        GLsizei m_VertexCount = 0; 
     };
 }
 

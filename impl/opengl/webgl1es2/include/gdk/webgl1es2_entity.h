@@ -20,26 +20,14 @@ namespace gdk
     
     /// \brief Represents an observable 3D object. 
     ///
-    /// \detailed Contains a model, a material (shader, uniform data) a shader
-	///
-	/// TODO: animations, skeletons. These may be more appropriate in a separate animation library
-	///
+    /// \detailed Has a position/rotation/scale, a polygonal shape (model), a material (shader, uniforms)
+    ///
     class webgl1es2_entity final : public entity
     {
-    private:
-        //! model used when rendering the entity
-        std::shared_ptr<webgl1es2_model> m_model;
-       
-        //! material used when rendering the entity
-        std::shared_ptr<webgl1es2_material> m_Material;
-
-        //! Position in the world
-        graphics_mat4x4_type m_ModelMatrix;
-
-        //! Whether or not to respect draw calls
-        bool m_IsHidden = false;
-
     public:
+    /// \name external interface
+    ///@{
+    //
         //! do not allow this entity to be drawn
         virtual void hide() override;
 
@@ -49,28 +37,25 @@ namespace gdk
         //! check if the entity is hidden
         virtual bool isHidden() const override;
 
+        /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
+        virtual void set_model_matrix(const graphics_vector3_type &aWorldPos, 
+            const graphics_quaternion_type &aRotation, 
+            const graphics_vector3_type &aScale = graphics_vector3_type::One) override;
+
+        virtual void set_model_matrix(const graphics_mat4x4_type& a) override;
+    ///@}
+
         //! get the model
-		virtual std::shared_ptr<model> getModel() const;
+        virtual std::shared_ptr<model> getModel() const;
 
         //! get the material
-		virtual std::shared_ptr<material> getMaterial() const;
+        virtual std::shared_ptr<material> getMaterial() const;
 
         /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
         /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity 
         /// via a camera.
         //TODO throw if drwa is called and the currently bound model is not m_model?
         void draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const;
-
-        /// \brief sets this entity's model.
-		virtual void set_model(const std::shared_ptr<model> a) override;
-        //void set_model(const std::shared_ptr<webgl1es2_model> a);
-
-        /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
-        virtual void set_model_matrix(const graphics_vector3_type &aWorldPos, 
-            const graphics_quaternion_type &aRotation, 
-            const graphics_vector3_type &aScale = graphics_vector3_type::One) override;
-
-		virtual void set_model_matrix(const graphics_mat4x4_type& a) override;
 		
         /// \brief returns a const ref to the model matrix
         const graphics_mat4x4_type &getModelMatrix() const;
@@ -90,6 +75,19 @@ namespace gdk
         
         //! trivial destructor
         ~webgl1es2_entity() = default;
+    
+    private:
+        //! model used when rendering the entity
+        std::shared_ptr<webgl1es2_model> m_model;
+       
+        //! material used when rendering the entity
+        std::shared_ptr<webgl1es2_material> m_Material;
+
+        //! Position in the world
+        graphics_mat4x4_type m_ModelMatrix;
+
+        //! Whether or not to respect draw calls
+        bool m_IsHidden = false;
     };
 }
 

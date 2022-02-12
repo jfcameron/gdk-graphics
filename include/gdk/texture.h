@@ -10,38 +10,28 @@
 
 namespace gdk
 {
+    struct image_data_2d_view;
+
     /// \brief 2d color data, usually used to color the surfaces of a 3d model.
     /// more accurately: used to color fragments produced from the rasterization of primitive surfaces.
     /// ultimately textures are just a uniform type, they can be used in any number of ways and may not contribute to the color of any fragments,
-	/// Example: being used as a "heightmap", to displace vertex position in the programmable vertex stage. 
+    /// Example: being used as a "heightmap", to displace vertex position in the programmable vertex stage. 
     class texture
     {
     public:
         enum class data_format //!< format of data in the byte array
         {
-            rgb, //!< data is a sequence of bytes representing red, green, blue, ...
-            rgba, //!< data is a sequence of bytes representing red, green, blue, alpha, ...
+            rgba, //!< data represents a sequence of 4 channel, single byte colors: red, green, blue, alpha, ...
+            rgb,  //!< data represents a sequence of 3 channel, single byte colors: red, green, blue, ...
+            //a,  //!< data represents a sequence of 1 channel, single byte colors: alpha, ...
             depth_component //!< special format used by textures attached to the depth buffer of a texture_camera
         };
-
-        /// \brief pod struct representing a view on decoded image data 
-        /// + metadata that describes its size and format
-        /// \warn a view does not own its data.
-        ///
-        /// the purpose of this type is in being used to construct a texture object.
-        /// \warn the user must ensure the data is not cleaned up until sometime after it has been used. 
-        /// \note: it is valid to provide width + height and a nullptr for data, 
-        /// the context will an uninitialized texture buffer of the specified size and format.
-        struct image_data_2d_view
+        
+        enum class wrap_mode //!< behavior when sampling outside of the normalized texture range (u0-1, v0-1)
         {
-            size_t width; //!< number of texels wide
-            size_t height; //!< number of texels tall
-            
-            data_format format; //!< format of the data
-
-            //! raw image data
-            /// \warn non-owning pointer
-            std::byte *data;
+            clamped, //!< returns the closest value in range. e.g: {0, 2} OR {0, 1.1} would sample {0, 1}
+            repeat,  //!< sampled values repeat. e.g: {2,2}, {3,3}, 100,100} would all sample {1,1}
+            mirrored //!< every odd whole value flips the index of the sampled value. {1.25, 0.5} would sample {0.75, 0.5}
         };
 
         //! replace the texture data with new data

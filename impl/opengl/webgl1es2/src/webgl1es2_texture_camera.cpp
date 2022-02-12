@@ -95,11 +95,12 @@ const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_color_texture(
                 static_cast<size_t>(m_TextureSize.x), 
                 static_cast<size_t>(m_TextureSize.y), 
                 texture::data_format::rgb, 
+                texture::wrap_mode::repeat,
+                texture::wrap_mode::repeat,
                 nullptr
             },
             webgl1es2_texture::minification_filter::nearest,
-            webgl1es2_texture::magnification_filter::nearest,
-            webgl1es2_texture::wrap_mode::clamp_to_edge);
+            webgl1es2_texture::magnification_filter::nearest);
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferHandle.get());
 
@@ -130,6 +131,8 @@ const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_depth_texture(
                 static_cast<size_t>(m_TextureSize.x), 
                 static_cast<size_t>(m_TextureSize.y), 
                 texture::data_format::depth_component, 
+                texture::wrap_mode::clamped,
+                texture::wrap_mode::clamped,
                 nullptr
             },
             webgl1es2_texture::minification_filter::nearest,

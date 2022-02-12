@@ -28,9 +28,9 @@ static inline GLint textureFormatToGLint(const texture::data_format a)
     {
         case texture::data_format::rgba: return GL_RGBA;
         case texture::data_format::rgb: return GL_RGB;
+        //case texture::data_format::a: return GL_ALPHA;
         /*case texture::data_format::luminance_alpha: return GL_LUMINANCE_ALPHA;
-        case texture::data_format::luminance: return GL_LUMINANCE;
-        case texture::data_format::a: return GL_ALPHA;*/
+        case texture::data_format::luminance: return GL_LUMINANCE;*/
         
         case texture::data_format::depth_component: 
         {
@@ -75,7 +75,19 @@ static inline GLint magnification_filter_to_glint(const webgl1es2_texture::magni
     throw std::runtime_error("unhandled magnification filter");
 }
 
-static inline GLint wrap_mode_to_glint(const webgl1es2_texture::wrap_mode a)
+static inline GLint wrap_mode_to_glint(const texture::wrap_mode a)
+{
+    switch(a)
+    {
+        case texture::wrap_mode::clamped: return GL_CLAMP_TO_EDGE;
+        case texture::wrap_mode::repeat: return GL_REPEAT;
+        case texture::wrap_mode::mirrored: return GL_MIRRORED_REPEAT;
+    }
+    
+    throw std::runtime_error("unhandled wrap mode");
+}
+
+/*static inline GLint wrap_mode_to_glint(const webgl1es2_texture::wrap_mode a)
 {
     switch(a)
     {
@@ -85,7 +97,7 @@ static inline GLint wrap_mode_to_glint(const webgl1es2_texture::wrap_mode a)
     }
     
     throw std::runtime_error("unhandled wrap mode");
-}
+}*/
 
 static inline GLenum bind_target_to_glenum(const webgl1es2_texture::bind_target a)
 {
@@ -157,7 +169,7 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<std:
     throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to webgl1es2_texture"));
 }
 
-static void verify_image_view(const texture::image_data_2d_view &imageView)
+static void verify_image_view(const image_data_2d_view &imageView)
 {
     if (!isPowerOfTwo(imageView.width) || !isPowerOfTwo((imageView.height)))
         throw std::invalid_argument(std::string(TAG).append(
@@ -218,8 +230,8 @@ webgl1es2_texture::webgl1es2_texture(const image_data_2d_view &imageView,
         minification_filter_to_glint(minFilter));
    
     //Set wrap modes
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(wrapMode));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(wrapMode));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(imageView.horizontal_wrap_mode));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(imageView.vertical_wrap_mode));
 
     return handle;
 }(),

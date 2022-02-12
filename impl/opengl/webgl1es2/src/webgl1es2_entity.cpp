@@ -57,11 +57,6 @@ void webgl1es2_entity::set_model_matrix(const graphics_mat4x4_type& a)
 	m_ModelMatrix = a;
 }
 
-void webgl1es2_entity::set_model(const std::shared_ptr<model> a)
-{
-    m_model = std::static_pointer_cast<webgl1es2_model>(a);
-}
-
 std::shared_ptr<model> webgl1es2_entity::getModel() const
 {
     return m_model;

@@ -13,8 +13,10 @@ namespace glh
         glClearColor(acolor.r, acolor.g, acolor.b, acolor.a);
     }
 
-    void Enablevertex_attribute(const GLint attributeLocation, const int aAttributeSize, const int aAttributeOffset, 
-		const int aTotalNumberOfvertex_attributeComponents)
+    void Enablevertex_attribute(const GLint attributeLocation, 
+        const int aAttributeSize, 
+        const int aAttributeOffset, 
+        const int aTotalNumberOfvertex_attributeComponents)
     {
         glEnableVertexAttribArray(attributeLocation);
     
