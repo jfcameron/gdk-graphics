@@ -1,6 +1,6 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include "voxel_modeler.h"
+#include "skeleton_model.h"
 
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
@@ -25,16 +25,9 @@
 #include <vector>
 
 using namespace gdk;
-using namespace gdk::graphics::ext;
 
 int main(int argc, char **argv)
 {
-    std::vector<int> data{1,2,3,4,5,6,7,8};
-
-    jfc::contiguous_view<const int> data_view(data);
-
-    for (auto value : data_view) std::cout << value << "\n";
-
     glfw_window window("basic rendering demo");
 
     auto pContext = graphics::context::make(
@@ -43,6 +36,8 @@ int main(int argc, char **argv)
     auto pScene = pContext->make_scene();
 
     auto pCamera = pContext->make_camera();
+    pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+    pCamera->set_view_matrix({0, 0, -10}, {});
     pScene->add(pCamera);
 
     auto pAlpha = pContext->get_alpha_cutoff_shader();
@@ -58,35 +53,21 @@ int main(int argc, char **argv)
     view.height = 2;
     view.format = texture::data_format::rgba;
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
-
     auto pTexture = pContext->make_texture(view);
     
-    auto pMaterial3 = pContext->make_material(pAlpha);
-    pMaterial3->setTexture("_Texture", pTexture);
-    pMaterial3->setVector2("_UVScale", {1, 1});
-    pMaterial3->setVector2("_UVOffset", {0, 0});
+    auto pMaterial = pContext->make_material(pAlpha);
+    pMaterial->setTexture("_Texture", pTexture);
+    pMaterial->setVector2("_UVScale", {1, 1});
+    pMaterial->setVector2("_UVOffset", {0, 0});
+
+    auto pEntity = std::shared_ptr<entity>(
+        pContext->make_entity(pContext->get_cube_model(), pMaterial));
+    pScene->add(pEntity);
+
+    pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, Quaternion<float>{{0, 0, 0}},
+        {1.0, 1.0, 1});
 
     float time(0);
-
-    voxel_modeler voxelModeler(pContext);
-
-    auto pVoxelModel(pContext->make_model());
-    
-    auto pVoxelEntity = pContext->make_entity(pVoxelModel, pMaterial3);
-    pScene->add(pVoxelEntity);
-    
-    for (size_t i(0); i < 8; ++i)
-    {
-        voxelModeler.set_voxel_data(i,0,0,1);
-        voxelModeler.set_voxel_data(0,i,0,1);
-        voxelModeler.set_voxel_data(0,0,i,1);
-        
-        voxelModeler.set_voxel_data(i,i,i,1);
-    }
-
-    voxelModeler.update_vertex_data(); 
-
-    pVoxelModel->update_vertex_data(model::UsageHint::Streaming, voxelModeler.vertex_data());
 
     for (float deltaTime(0); !window.shouldClose();)
     {
@@ -96,16 +77,14 @@ int main(int argc, char **argv)
 
         glfwPollEvents();
 
-        pVoxelEntity->set_model_matrix(Vector3<float>{-0., 0., -15}, Quaternion<float>{{time, 2 * (time / 2), 4}});
-
-        pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
-
         pScene->draw(window.getWindowSize());
 
         window.swapBuffer(); 
 
-        time += 0.01;
+        time += deltaTime;
+
+        pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, Quaternion<float>{{time, 0, 0}},
+            {1.0, 1.0, 1});
 
         while (true)
         {

@@ -3,13 +3,13 @@
 #ifndef GDK_GFX_EXT_VOXEL_MODELER_H
 #define GDK_GFX_EXT_VOXEL_MODELER_H
 
-#include <gdk/ext/vertex_batch.h>
+#include <gdk/graphics_context.h>
 
 namespace gdk::graphics::ext 
 {
     /// \brief generates a volumetic-pixel model of a 3D array
     ///
-    ///TODO: take vertex_batch as ctor param? I want to do this, so lots of modelers can contribute to the same batch.
+    ///TODO: remove model from class, provide vertex_data getter
     ///
     template<size_t data_size = 8>
     class voxel_modeler final
@@ -30,11 +30,12 @@ namespace gdk::graphics::ext
         // implementation could be better: 
         // data could be further optimized by finding multi voxel surfaces, then rendering that surface with a single large quad.
         // would require a flag to say what work has been done? it would sort of iterate and spread rather than pure iteration.
-        void update_model()
+        //TODO: rename this. this is needed but does not update a model. update_vertex_data?
+        void update_vertex_data()
         {
-            //m_VertexBatch.clear_vertex_data();
+            m_VertexBuffer.clear();
 
-            static vertex_data buffer;
+            static gdk::vertex_data buffer;
                             
             for (size_t x(0); x < data_size; ++x)
             {
@@ -92,71 +93,72 @@ namespace gdk::graphics::ext
 
                             if (!northNeighbourValue)
                             {
-                                vertex_data data(northData);
+                                gdk::vertex_data data(northData);
 
                                 data.transform_position({fX, fY, fZ});
 
                                 buffer += data;
+                                m_VertexBuffer.push_back(data);
                             }
 
                             if (!southNeighbourValue)
                             {
-                                vertex_data data(southData);
+                                gdk::vertex_data data(southData);
 
                                 data.transform_position({fX, fY, fZ});
 
                                 buffer += data;
+                                m_VertexBuffer.push_back(data);
                             }
 
                             if (!eastNeighbourValue)
                             {
-                                vertex_data data(eastData);
+                                gdk::vertex_data data(eastData);
 
                                 data.transform_position({fX, fY, fZ});
 
                                 buffer += data;
+                                m_VertexBuffer.push_back(data);
                             }
                             
                             if (!westNeighbourValue)
                             {
-                                vertex_data data(westData);
+                                gdk::vertex_data data(westData);
 
                                 data.transform_position({fX, fY, fZ});
 
                                 buffer += data;
+                                m_VertexBuffer.push_back(data);
                             }
                            
                             if (!topNeighbourValue)
                             {
-                                vertex_data data(topData);
+                                gdk::vertex_data data(topData);
 
                                 data.transform_position({fX, fY, fZ});
 
                                 buffer += data;
+                                m_VertexBuffer.push_back(data);
                             }
 
                             if (!bottomNeighbourValue)
                             {
-                                vertex_data data(bottomData);
+                                gdk::vertex_data data(bottomData);
 
                                 data.transform_position({fX, fY, fZ});
 
                                 buffer += data;
+                                m_VertexBuffer.push_back(data);
                             }
                         }
                     }
                 }
             }
-            
-            m_VertexBatch.overwrite_or_add_instance(m_VertexDataInstanceHandle, buffer);
-
-            m_VertexBatch.update_model();
         }
 
-        //! gets the voxel model
-        std::shared_ptr<gdk::model> model() const
+        const gdk::vertex_data &vertex_data() const
         {
-            return m_VertexBatch.model();
+            return m_VertexBuffer;
         }
 
         void set_north_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
@@ -182,7 +184,7 @@ namespace gdk::graphics::ext
         void set_top_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
         {
             m_pTopNeighbour = aNeighbour;
-        }
+        ;}
         
         void set_bottom_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
         {
@@ -191,14 +193,10 @@ namespace gdk::graphics::ext
 
         //! constructs a voxel modeler
         voxel_modeler(std::shared_ptr<gdk::graphics::context> pContext)
-        : m_VertexBatch(pContext)
-        , m_VertexDataInstanceHandle(m_VertexBatch.add_instance())
         {}
 
     private:
-        vertex_batch m_VertexBatch;
-
-        vertex_batch::instance_handle_type m_VertexDataInstanceHandle;
+        gdk::vertex_data m_VertexBuffer;
 
         std::weak_ptr<voxel_modeler> m_pNorthNeighbour;
         std::weak_ptr<voxel_modeler> m_pSouthNeighbour;
@@ -220,7 +218,7 @@ namespace gdk::graphics::ext
             1, 1,
         };
 
-        const vertex_data northData = {
+        const gdk::vertex_data northData = {
             {
                 { 
                     "a_Position",
@@ -246,7 +244,7 @@ namespace gdk::graphics::ext
             }
         };
 
-        const vertex_data southData = {
+        const gdk::vertex_data southData = {
             {
                 { 
                     "a_Position",
@@ -272,7 +270,7 @@ namespace gdk::graphics::ext
             }
         };
         
-        const vertex_data eastData = {
+        const gdk::vertex_data eastData = {
             {
                 { 
                     "a_Position",
@@ -298,7 +296,7 @@ namespace gdk::graphics::ext
             }
         };
         
-        const vertex_data westData = {
+        const gdk::vertex_data westData = {
             {
                 { 
                     "a_Position",
@@ -324,7 +322,7 @@ namespace gdk::graphics::ext
             }
         };
         
-        const vertex_data bottomData = {
+        const gdk::vertex_data bottomData = {
             {
                 { 
                     "a_Position",
@@ -350,7 +348,7 @@ namespace gdk::graphics::ext
             }
         };
 
-        const vertex_data topData = {
+        const gdk::vertex_data topData = {
             {
                 { 
                     "a_Position",

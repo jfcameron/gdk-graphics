@@ -303,7 +303,7 @@ int main(int argc, char **argv)
         {0.2, 0.2, 0.2});
 
     // Main loop
-    float time = 0;
+    float time(0);
 
     for (float deltaTime(0); !window.shouldClose();)
     {

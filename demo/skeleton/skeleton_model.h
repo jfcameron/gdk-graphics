@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <gdk/graphics_context.h>
 #include <gdk/vertex_data.h>
 #include <gdk/graphics_types.h>
 
