@@ -21,9 +21,9 @@ namespace gdk
     {
         size_t width; //!< number of texels wide
         size_t height; //!< number of texels tall
-        
         texture::data_format format; //!< format of the data
 
+        //wrapmodes should probably be removed from image view, this information is not part of image data
         texture::wrap_mode horizontal_wrap_mode = texture::wrap_mode::repeat;
         texture::wrap_mode vertical_wrap_mode = texture::wrap_mode::repeat;
 
@@ -32,6 +32,7 @@ namespace gdk
         std::byte *data;
     };
 
+    //TODO: move this namespace to ext, these functions are convenient but tie the user to a specific png decoding implementation. png decoding is not a core feature of this library.
     namespace decode_image
     {
         using byte_type = std::underlying_type<std::byte>::type;
