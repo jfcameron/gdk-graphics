@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #include <jfc/catch.hpp>
 #include <jfc/types.h>

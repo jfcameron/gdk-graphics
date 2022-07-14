@@ -1,4 +1,4 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #include <gdkgraphics/buildinfo.h>
 

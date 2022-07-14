@@ -1,4 +1,4 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #include <jfc/default_ptr.h>
 #include <gdk/glh.h>

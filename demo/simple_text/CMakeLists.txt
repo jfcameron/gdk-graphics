@@ -9,6 +9,7 @@ jfc_project(executable
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/text_renderer.cpp
     
     PRIVATE_INCLUDE_DIRECTORIES
         "${gdkgraphics_INCLUDE_DIRECTORIES}"

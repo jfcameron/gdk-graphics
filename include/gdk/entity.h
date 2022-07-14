@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_ENTITY_H
 #define GDK_GFX_ENTITY_H

@@ -2,6 +2,7 @@
 
 #include "skeleton_model.h"
 
+#include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
 
@@ -62,41 +63,25 @@ int main(int argc, char **argv)
 
     auto pEntity = std::shared_ptr<entity>(
         pContext->make_entity(pContext->get_cube_model(), pMaterial));
+    pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, 
+        Quaternion<float>{{0, 0, 0}},
+        {1.0, 1.0, 1});
     pScene->add(pEntity);
 
-    pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, Quaternion<float>{{0, 0, 0}},
-        {1.0, 1.0, 1});
-
-    float time(0);
-
-    for (float deltaTime(0); !window.shouldClose();)
+    game_loop(60, [&](const float time, const float deltaTime)
     {
-        using namespace std::chrono;
-
-        steady_clock::time_point t1(steady_clock::now());
-
         glfwPollEvents();
 
         pScene->draw(window.getWindowSize());
-
+        
+        pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, 
+            Quaternion<float>{{time, 0, 0}},
+            {1.0, 1.0, 1});
+        
         window.swapBuffer(); 
 
-        time += deltaTime;
-
-        pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, Quaternion<float>{{time, 0, 0}},
-            {1.0, 1.0, 1});
-
-        while (true)
-        {
-            std::this_thread::sleep_for(10ms);
-    
-            steady_clock::time_point t2(steady_clock::now());
-
-            duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-
-            if (deltaTime = time_span.count(); deltaTime > 0.01666667) break;
-        }
-    }
+        return window.shouldClose();
+    });
 
     return EXIT_SUCCESS;
 }

@@ -1,4 +1,4 @@
-// © 2019 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GFX_WEBGL1ES2_MATERIAL_H
 #define GDK_GFX_WEBGL1ES2_MATERIAL_H

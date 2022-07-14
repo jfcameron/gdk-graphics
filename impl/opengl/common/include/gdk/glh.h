@@ -1,4 +1,4 @@
-// © 2018 Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - All Rights Reserved
 
 #ifndef GDK_GLH_H
 #define GDK_GLH_H

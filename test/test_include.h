@@ -1,3 +1,5 @@
+// © Joseph Cameron - All Rights Reserved
+
 #ifndef JFC_TEST_INCLUDE_H
 #define JFC_TEST_INCLUDE_H
 

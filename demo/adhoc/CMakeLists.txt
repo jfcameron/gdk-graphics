@@ -1,4 +1,4 @@
-# © 2018 Joseph Cameron - All Rights Reserved
+# © Joseph Cameron - All Rights Reserved
 
 jfc_project(executable
     NAME "demo"
@@ -19,3 +19,4 @@ jfc_project(executable
     DEPENDENCIES
         "gdkgraphics"
 )
+

@@ -1,5 +1,6 @@
 // © Joseph Cameron - All Rights Reserved
 
+#include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
 
@@ -114,13 +115,13 @@ int main(int argc, char **argv)
 
     auto pUserModel = pContext->make_model(model::UsageHint::Static, userdefined_quad_vertex_data);
 
-    image_data_2d_view view;
     std::vector<std::underlying_type<std::byte>::type> imageData({
         0x00, 0xff, 0xff, 0xff,                                    
         0xff, 0xff, 0xff, 0xff,                                    
         0xff, 0xff, 0xff, 0xff,
         0x00, 0x00, 0x00, 0xff
     });
+    image_data_2d_view view;
     view.width = 2;
     view.height = 2;
     view.format = texture::data_format::rgba;
@@ -137,13 +138,13 @@ int main(int argc, char **argv)
     pEntity->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
     pScene->add(pEntity);
 
-    image_data_2d_view view2;
     std::vector<std::underlying_type<std::byte>::type> imageData2({
         0x55, 0xff, 0xff, 0xff,
         0xff, 0x00, 0xff, 0xff,
         0xff, 0xff, 0x00, 0xff,
         0x00, 0x00, 0x44, 0xff
     });
+    image_data_2d_view view2;
     view2.width = 2;
     view2.height = 2;
     view2.format = texture::data_format::rgba;
@@ -157,10 +158,10 @@ int main(int argc, char **argv)
     
     auto pEntity2 = std::shared_ptr<entity>(
         pContext->make_entity(pContext->get_cube_model(), pMaterial2));
-    pScene->add(pEntity2);
-    
-    pEntity2->set_model_matrix(Vector3<float>{2., 0., -12.5}, Quaternion<float>{{0, 0, 0}},
+    pEntity2->set_model_matrix(Vector3<float>{2., 0., -12.5}, 
+        Quaternion<float>{{0, 0, 0}},
         {1.0, 1.0, 1});
+    pScene->add(pEntity2);
 
     auto pMaterial3 = pContext->make_material(pAlpha);
     pMaterial3->setTexture("_Texture", pTexture);
@@ -169,25 +170,19 @@ int main(int argc, char **argv)
     
     auto pEntity3 = std::shared_ptr<entity>(
         pContext->make_entity(pContext->get_cube_model(), pMaterial3));
+    pEntity3->set_model_matrix(Vector3<float>{2., 0., -14.5}, 
+        Quaternion<float>{{0, 2, 0.6}},
+        {6.5, 0.5, 3});
     pScene->add(pEntity3);
     
-    pEntity3->set_model_matrix(Vector3<float>{2., 0., -14.5}, Quaternion<float>{{0, 2, 0.6}},
-        {6.5, 0.5, 3});
-
-    float time(0);
-
     vertex_data newData(batchVertexData);
-    newData.transform_uv({0.2f * time, 0}, {2.f, 2.f});
+    newData.transform_uv({0.2f, 0}, {2.f, 2.f});
     newData.transform_position({1,0,0},{},{1});
     vertex_data buffer(batchVertexData);
     auto indexToSpinner = buffer.push_back(newData);
     
-    for (float deltaTime(0); !window.shouldClose();)
+    game_loop(60, [&](const float time, const float deltaTime)
     {
-        using namespace std::chrono;
-
-        steady_clock::time_point t1(steady_clock::now());
-
         glfwPollEvents();
 
         pEntity2->set_model_matrix(Vector3<float>{2., 0., -12.5}, Quaternion<float>{{time *0.9f, time *0.5f, 0}},
@@ -211,19 +206,8 @@ int main(int argc, char **argv)
 
         window.swapBuffer(); 
 
-        time += 0.01;
-
-        while (true)
-        {
-            std::this_thread::sleep_for(10ms);
-    
-            steady_clock::time_point t2(steady_clock::now());
-
-            duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-
-            if (deltaTime = time_span.count(); deltaTime > 0.01666667) break;
-        }
-    }
+        return window.shouldClose();
+    });
 
     return EXIT_SUCCESS;
 }

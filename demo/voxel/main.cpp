@@ -2,6 +2,7 @@
 
 #include "voxel_modeler.h"
 
+#include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
 
@@ -29,12 +30,6 @@ using namespace gdk::graphics::ext;
 
 int main(int argc, char **argv)
 {
-    std::vector<int> data{1,2,3,4,5,6,7,8};
-
-    jfc::contiguous_view<const int> data_view(data);
-
-    for (auto value : data_view) std::cout << value << "\n";
-
     glfw_window window("basic rendering demo");
 
     auto pContext = graphics::context::make(
@@ -66,8 +61,6 @@ int main(int argc, char **argv)
     pMaterial3->setVector2("_UVScale", {1, 1});
     pMaterial3->setVector2("_UVOffset", {0, 0});
 
-    float time(0);
-
     voxel_modeler voxelModeler(pContext);
 
     auto pVoxelModel(pContext->make_model());
@@ -88,15 +81,12 @@ int main(int argc, char **argv)
 
     pVoxelModel->update_vertex_data(model::UsageHint::Streaming, voxelModeler.vertex_data());
 
-    for (float deltaTime(0); !window.shouldClose();)
+    game_loop(60, [&](const float time, const float deltaTime)
     {
-        using namespace std::chrono;
-
-        steady_clock::time_point t1(steady_clock::now());
-
         glfwPollEvents();
 
-        pVoxelEntity->set_model_matrix(Vector3<float>{-0., 0., -15}, Quaternion<float>{{time, 2 * (time / 2), 4}});
+        pVoxelEntity->set_model_matrix(Vector3<float>{-0., 0., -20}, 
+            Quaternion<float>{{time, 2 * (time / 2), 4}});
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
@@ -105,19 +95,8 @@ int main(int argc, char **argv)
 
         window.swapBuffer(); 
 
-        time += 0.01;
-
-        while (true)
-        {
-            std::this_thread::sleep_for(10ms);
-    
-            steady_clock::time_point t2(steady_clock::now());
-
-            duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-
-            if (deltaTime = time_span.count(); deltaTime > 0.01666667) break;
-        }
-    }
+        return window.shouldClose();
+    });
 
     return EXIT_SUCCESS;
 }
