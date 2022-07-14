@@ -174,36 +174,33 @@ void text_renderer::set_text(const std::string &string)
             float uvMarginLow = 0.01f;
             float uvMarginHigh = 1 - uvMarginLow;
 
-            gdk::vertex_data data(
-            {
-                {
-                    { 
-                        "a_Position",
+            gdk::vertex_data data({
+                { 
+                    "a_Position",
+                    {
                         {
-                            {
-                                1.0f, 1.0f, 0.0f,
-                                0.0f, 1.0f, 0.0f,
-                                0.0f, 0.0f, 0.0f,
-                                1.0f, 1.0f, 0.0f,
-                                0.0f, 0.0f, 0.0f,
-                                1.0f, 0.0f, 0.0f,
-                            },
-                            3
-                        }
-                    },
-                    { 
-                        "a_UV",
+                            1.0f, 1.0f, 0.0f,
+                            0.0f, 1.0f, 0.0f,
+                            0.0f, 0.0f, 0.0f,
+                            1.0f, 1.0f, 0.0f,
+                            0.0f, 0.0f, 0.0f,
+                            1.0f, 0.0f, 0.0f,
+                        },
+                        3
+                    }
+                },
+                { 
+                    "a_UV",
+                    {
                         {
-                            {
-                                uvMarginHigh, uvMarginLow, 
-                                uvMarginLow,  uvMarginLow,
-                                uvMarginLow,  uvMarginHigh, 
-                                uvMarginHigh, uvMarginLow,
-                                uvMarginLow,  uvMarginHigh,
-                                uvMarginHigh, uvMarginHigh,
-                            },
-                            2
-                        }
+                            uvMarginHigh, uvMarginLow, 
+                            uvMarginLow,  uvMarginLow,
+                            uvMarginLow,  uvMarginHigh, 
+                            uvMarginHigh, uvMarginLow,
+                            uvMarginLow,  uvMarginHigh,
+                            uvMarginHigh, uvMarginHigh,
+                        },
+                        2
                     }
                 }
             });

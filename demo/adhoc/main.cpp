@@ -95,7 +95,7 @@ int main(int argc, char **argv)
         1, 1
     });
 
-    vertex_data userdefined_quad_vertex_data({
+    const vertex_data userdefined_quad_vertex_data(
     {
         { 
             "a_Position",
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
                 2
             }
         }
-    }});
+    });
 
     auto pUserModel = pContext->make_model(model::UsageHint::Static, userdefined_quad_vertex_data);
 

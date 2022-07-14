@@ -145,7 +145,7 @@ namespace gdk
         std::unordered_map<std::string, animation> m_animations;
 
         //! vertex data buffer in system memory
-        vertex_data m_Buffer = vertex_data({});
+        vertex_data m_Buffer = {};
        
         //! vertex data buffer in vram
         std::shared_ptr<gdk::model> m_pModel;
