@@ -33,8 +33,11 @@ namespace gdk
             const float aFarClippingPlane,
             const float aViewportAspectRatio) = 0;
 
-        /// \brief rebuilds the view matrix from a 3d position and rotation
-        virtual void set_view_matrix(const gdk::graphics_vector3_type &aWorldPos,
+        // sets projection matrix from an arbitrary 4x4
+        //virtual void set_projection(const gdk::graphics_matrix_type &aMatrix) = 0;
+
+        /// \brief sets the world and view matrix from a 3d position and rotation
+        virtual void set_world_matrix(const gdk::graphics_vector3_type &aWorldPos,
             const gdk::graphics_quaternion_type &aRotation) = 0;
 
         /// \brief sets the clear color, used to fill color buffer after it is cleared.

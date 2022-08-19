@@ -7,11 +7,13 @@
 
 #include <jfc/contiguous_view.h>
 
+#include <array>
+#include <functional>
+#include <map>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
-#include <map>
 #include <vector>
 
 namespace gdk
@@ -111,7 +113,7 @@ public:
 
     //! Convenience method, applies a transformation to a 3 component position attribute
     //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
-    //So maybe this should be moved to a funciton not a method
+    //So maybe this should be moved to a function not a method
     void transform_position(
         const graphics_vector3_type &aPos,
         const graphics_quaternion_type &aRot = {},
@@ -120,11 +122,19 @@ public:
         
     //! Convenience method, applies a offset + scale to a 2 component UV attribute
     //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
-    //So maybe this should be moved to a funciton not a method
+    //So maybe this should be moved to a function not a method
     void transform_uv(
         const graphics_vector2_type &aPos,
         const graphics_vector2_type &aSca = {1},
         const std::string &aUVAttributeName = "a_UV");
+
+    //! Convenience method, sort the position attribute by a functor
+    //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
+    //So maybe this should be moved to a function not a method
+    void sort_faces(
+        const std::function<bool(graphics_vector3_type /*first vertex*/, 
+            graphics_vector3_type /*second vertex*/)> &aComparator,
+        const std::string &aPositionAttributeName = "a_Position");
 
     const attribute_collection_type &data() const;
 

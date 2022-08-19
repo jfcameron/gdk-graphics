@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
     auto pCamera = pContext->make_camera();
     pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-    pCamera->set_view_matrix({0, 0, -10}, {});
+    pCamera->set_world_matrix({0, 0, -10}, {});
     pScene->add(pCamera);
 
     auto pAlpha = pContext->get_alpha_cutoff_shader();

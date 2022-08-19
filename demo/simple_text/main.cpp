@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         pTextModel->update_vertex_data(model::UsageHint::Streaming, textRenderer.vertex_data());
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
+        pCamera->set_world_matrix({std::sin(time), 0, -10}, {});
         
         pScene->draw(window.getWindowSize());
 

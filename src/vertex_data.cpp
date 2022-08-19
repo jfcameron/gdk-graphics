@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <unordered_map>
 #include <stdexcept>
 
 using namespace gdk;
@@ -203,6 +204,112 @@ const std::vector<vertex_data::index_value_type> &vertex_data::getIndexData() co
     //TODO: need to add "index_data_view" as an optional param for vertex_data
     static const std::vector<vertex_data::index_value_type> index_data;
     return index_data;
+}
+#include <iostream>
+void vertex_data::sort_faces(
+    const std::function<bool(graphics_vector3_type /*first vertex*/, 
+        graphics_vector3_type /*second vertex*/)> &aComparator,
+    const std::string &aPositionAttributeName)
+{
+    if (auto search = m_NonInterleavedData.find(aPositionAttributeName); search != m_NonInterleavedData.end())
+    {
+        auto &position_attribute_data = search->second.m_Components;
+
+        struct triangle {
+            size_t index;
+            
+            graphics_vector3_type a;
+        };
+        std::vector<triangle> triangles;
+
+        size_t i(0);
+        for (auto p = position_attribute_data.begin(); p != position_attribute_data.end(); p += 9)
+        {
+            auto x1(p + 0), y1(p + 1), z1(p + 2);
+            auto x2(p + 3), y2(p + 4), z2(p + 5);
+            auto x3(p + 6), y3(p + 7), z3(p + 8);
+
+            triangles.push_back({
+                .index = i,
+                /*.a = {*x1,*y1,*z1},
+                .b = {*x2,*y2,*z2},
+                .c = {*x3,*y3,*z3}*/
+                
+                .a = {*x1,*y1,*z1}, //TODO: make this the centroid
+            });
+
+            i += 3;
+        }
+
+        std::cout << "======================================\n";
+        for (auto &tri : triangles) std::cout << tri.index << "\n";
+
+        /*std::sort(triangles.begin(), triangles.end(),
+            [](triangle a, triangle b)
+            {
+                const auto cameraPos = graphics_vector3_type(0.f,0.f,-30.f); //hardcoded camera pos
+                const auto entityPosA = a.a;
+                const auto entityPosB = b.a;
+
+                const auto aDist = cameraPos.distance(entityPosA);
+                const auto bDist = cameraPos.distance(entityPosB);
+
+                return (aDist < bDist);
+            });*/
+
+        std::cout << ",,,,,,,,,,,,,,,,,,,,\n";
+        for (auto &tri : triangles) std::cout << tri.index << "\n";
+   
+        i = 0;
+        for (auto triangle : triangles)
+        {
+            /*auto p = position_attribute_data.begin() + (i * 9);
+            
+            auto x1(p + 0), y1(p + 1), z1(p + 2);
+            auto x2(p + 3), y2(p + 4), z2(p + 5);
+            auto x3(p + 6), y3(p + 7), z3(p + 8);
+
+            *x1 = triangle.a.x;
+            *y1 = triangle.a.y;
+            *z1 = triangle.a.z;
+
+            *x2 = triangle.b.x;
+            *y2 = triangle.b.y;
+            *z2 = triangle.b.z;
+
+            *x3 = triangle.c.x;
+            *y3 = triangle.c.y;
+            *z3 = triangle.c.z;*/
+            
+            auto p = position_attribute_data.begin() + (i * 9);
+
+            auto x1(p + 0), y1(p + 1), z1(p + 2);
+            auto x2(p + 3), y2(p + 4), z2(p + 5);
+            auto x3(p + 6), y3(p + 7), z3(p + 8);
+
+            float buffer;
+            auto begin = position_attribute_data.begin() + triangle.index;
+
+            std::cout << *x1 << " vs " << *(begin + 0) << "\n";
+            /*std::cout << *y2 << " vs " << *(begin + 1) << "\n";
+            std::cout << *z3 << " vs " << *(begin + 2) << "\n";
+            std::cout << *x2 << " vs " << *(begin + 3) << "\n";*/
+
+            /*buffer = *x1; *x1 = *(begin + triangle.index1 + 0); *(begin + triangle.index1 + 0) = buffer;
+            buffer = *y1; *y1 = *(begin + triangle.index1 + 1); *(begin + triangle.index1 + 1) = buffer;
+            buffer = *z1; *z1 = *(begin + triangle.index1 + 2); *(begin + triangle.index1 + 2) = buffer;
+
+            buffer = *x2; *x2 = *(begin + triangle.index1 + 3); *(begin + triangle.index1 + 3) = buffer;
+            buffer = *y2; *y2 = *(begin + triangle.index1 + 4); *(begin + triangle.index1 + 4) = buffer;
+            buffer = *z2; *z2 = *(begin + triangle.index1 + 5); *(begin + triangle.index1 + 5) = buffer;
+            
+            buffer = *x3; *x3 = *(begin + triangle.index1 + 6); *(begin + triangle.index1 + 6) = buffer;
+            buffer = *y3; *y3 = *(begin + triangle.index1 + 7); *(begin + triangle.index1 + 7) = buffer;
+            buffer = *z3; *z3 = *(begin + triangle.index1 + 8); *(begin + triangle.index1 + 8) = buffer;*/
+
+            ++i;
+        }
+    }
 }
 
 void vertex_data::transform_position(

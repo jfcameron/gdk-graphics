@@ -191,10 +191,10 @@ int main(int argc, char **argv)
         pEntity->set_model_matrix(Vector3<float>{std::cos(time), -0., -11.}, Quaternion<float>{ {0, 4 * ( 1/ 2), 4}});
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
+        pCamera->set_world_matrix({std::sin(time), 0, -10}, {});
         
         pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pTextureCamera->set_view_matrix({std::sin(time), 0, -10}, {});
+        pTextureCamera->set_world_matrix({std::sin(time), 0, -10}, {});
 
         vertex_data newNewData(newData);
         newNewData.transform_position({0,0,0},{{time,0,0}},{1});

@@ -89,7 +89,7 @@ int main(int argc, char **argv)
             Quaternion<float>{{time, 2 * (time / 2), 4}});
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pCamera->set_view_matrix({std::sin(time), 0, -10}, {});
+        pCamera->set_world_matrix({std::sin(time), 0, -10}, {});
 
         pScene->draw(window.getWindowSize());
 
