@@ -24,7 +24,11 @@ namespace gdk
     /// \name internal interface
     ///@{
     //
+        /// \brief position and rotation of the camera in worldspace, same as an entity model matrix
+        graphics_mat4x4_type get_world_matrix() const;
+
         /// \brief gets the view matrix
+        /// \note the view matrix is the inverse of the world matrix
         graphics_mat4x4_type get_view_matrix() const;
 
         /// \brief gets the projection matrix
@@ -65,7 +69,7 @@ namespace gdk
 
         void set_clear_mode(const gdk::camera::clear_mode aClearMode);
 
-        void set_view_matrix(const gdk::graphics_vector3_type& aWorldPos, 
+        void set_world_matrix(const gdk::graphics_vector3_type& aWorldPos, 
             const gdk::graphics_quaternion_type& aRotation);
    
         void activate_clear_mode() const;
@@ -75,6 +79,7 @@ namespace gdk
     ///@}
 
     private:
+        graphics_mat4x4_type m_WorldMatrix = graphics_mat4x4_type::Identity; 
         graphics_mat4x4_type m_ViewMatrix = graphics_mat4x4_type::Identity; 
         graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::Identity; 
 

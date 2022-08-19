@@ -73,9 +73,9 @@ void webgl1es2_texture_camera::set_clear_mode(const clear_mode aClearMode)
     webgl1es2_camera::set_clear_mode(aClearMode); 
 }
 
-void webgl1es2_texture_camera::set_view_matrix(const gdk::graphics_vector3_type& aWorldPos, const gdk::graphics_quaternion_type& aRotation) 
+void webgl1es2_texture_camera::set_world_matrix(const gdk::graphics_vector3_type& aWorldPos, const gdk::graphics_quaternion_type& aRotation) 
 {
-    webgl1es2_camera::set_view_matrix(aWorldPos, aRotation); 
+    webgl1es2_camera::set_world_matrix(aWorldPos, aRotation); 
 }
 
 // pattern dupe for lazy insantiation in all the gets could be replaced with a 

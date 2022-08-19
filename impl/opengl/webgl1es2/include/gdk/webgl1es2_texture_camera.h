@@ -41,7 +41,7 @@ namespace gdk
 
         virtual void set_clear_mode(const clear_mode aClearMode) override;
 
-        virtual void set_view_matrix(const gdk::graphics_vector3_type& aWorldPos, 
+        virtual void set_world_matrix(const gdk::graphics_vector3_type& aWorldPos, 
             const gdk::graphics_quaternion_type& aRotation) override;
         
         virtual const std::shared_ptr<gdk::texture> get_color_texture(size_t i) const override;

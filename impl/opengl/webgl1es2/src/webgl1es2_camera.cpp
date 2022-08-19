@@ -32,12 +32,14 @@ void webgl1es2_camera::set_clear_mode(const camera::clear_mode aClearMode)
     m_ClearMode = aClearMode;
 }
 
-void webgl1es2_camera::set_view_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
+void webgl1es2_camera::set_world_matrix(const gdk::graphics_vector3_type &aWorldPos, const gdk::graphics_quaternion_type &aRotation)
 {
+    m_WorldMatrix.setToIdentity();
+    m_WorldMatrix.translate(aWorldPos);
+    m_WorldMatrix.rotate(aRotation);
+
     m_ViewMatrix.setToIdentity();
-
     m_ViewMatrix.rotate({aRotation.toEuler() * -1});
-
     m_ViewMatrix.translate(aWorldPos * -1);
 }
 
@@ -63,6 +65,11 @@ void webgl1es2_camera::set_orthographic_projection(const float aWidth,
 graphics_mat4x4_type webgl1es2_camera::get_view_matrix() const 
 { 
     return m_ViewMatrix; 
+}
+
+graphics_mat4x4_type webgl1es2_camera::get_world_matrix() const
+{
+    return m_WorldMatrix;
 }
 
 graphics_mat4x4_type webgl1es2_camera::get_projection_matrix() const 

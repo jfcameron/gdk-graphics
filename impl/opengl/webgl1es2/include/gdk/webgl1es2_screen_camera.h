@@ -45,7 +45,7 @@ namespace gdk
                 const float aViewportAspectRatio) override;
 
         /// \brief rebuilds the view matrix from a 3d position and rotation
-        virtual void set_view_matrix(const gdk::graphics_vector3_type &aWorldPos,
+        virtual void set_world_matrix(const gdk::graphics_vector3_type &aWorldPos,
             const gdk::graphics_quaternion_type &aRotation) override;
 
         /// \brief sets the clear color, used to fill color buffer after it is cleared.

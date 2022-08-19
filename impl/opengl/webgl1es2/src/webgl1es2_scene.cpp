@@ -59,7 +59,7 @@ void sorted_render_set::draw(const webgl1es2_camera *pCamera) const
     std::sort(sorted_entities.begin(), sorted_entities.end(),
     [pCamera](std::shared_ptr<const entity> pA, std::shared_ptr<const entity> pB)
     {
-        const auto cameraPos = static_cast<const webgl1es2_camera *>(pCamera)->get_view_matrix().translation();
+        const auto cameraPos = static_cast<const webgl1es2_camera *>(pCamera)->get_world_matrix().translation();
         const auto entityPosA = static_cast<const webgl1es2_entity *>(pA.get())->getModelMatrix().translation();
         const auto entityPosB = static_cast<const webgl1es2_entity *>(pB.get())->getModelMatrix().translation();
 
