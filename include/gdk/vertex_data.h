@@ -111,7 +111,7 @@ public:
     //! clears all state from this vertex_data instance
     void clear();
 
-    //! Convenience method, applies a transformation to a 3 component position attribute
+    //! Convenience method, applies a transformation to a 3 component attribute
     //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
     //So maybe this should be moved to a function not a method
     void transform_position(
@@ -120,21 +120,25 @@ public:
         const graphics_vector3_type &aSca = {1},
         const std::string &aPositionAttributeName = "a_Position");
         
-    //! Convenience method, applies a offset + scale to a 2 component UV attribute
+    //! Convenience method, applies a transformation to a 2 component attribute
     //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
     //So maybe this should be moved to a function not a method
     void transform_uv(
         const graphics_vector2_type &aPos,
+        //TODO: float aRot,
         const graphics_vector2_type &aSca = {1},
         const std::string &aUVAttributeName = "a_UV");
 
-    //! Convenience method, sort the position attribute by a functor
-    //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
-    //So maybe this should be moved to a function not a method
-    void sort_faces(
-        const std::function<bool(graphics_vector3_type /*first vertex*/, 
-            graphics_vector3_type /*second vertex*/)> &aComparator,
+    //void transform_scalar(
+
+    //! Convenience method, sorts all attribute data by distance of an entity to an observer
+    void sort_by_nearest(
+        const graphics_vector3_type &aObserverWorldPosition,
+        graphics_mat4x4_type aEntityInstanceWorldMatrix,
         const std::string &aPositionAttributeName = "a_Position");
+    //TODO:
+    // vector3 aObserverWorldPosition, mat4x4 aInstanceWorldMatrix
+    // change args^
 
     const attribute_collection_type &data() const;
 
