@@ -9,27 +9,11 @@
 
 using namespace gdk;
 
-vertex_data::attribute_data::view::view(
-    jfc::contiguous_view<const component_type> aDataView,
-    const size_t aComponentCount)
-: m_pData(aDataView.begin())
-, m_DataLength(aDataView.size())
-, m_ComponentCount(aComponentCount)
-{
-    if (!m_DataLength) throw std::invalid_argument("attribute data view must contain data");
-    if (!m_ComponentCount) throw std::invalid_argument("attribute component count cannot be zero");
-}
-
-vertex_data::attribute_data::view::view(const std::vector<component_type> &aData, const size_t aComponentCount)
-: vertex_data::attribute_data::view::view(jfc::contiguous_view<const component_type>(aData), aComponentCount)
-{}
-
 vertex_data::attribute_data::attribute_data(
     const std::vector<component_type> &aComponents, 
     const size_t aComponentCount)
 : m_Components(aComponents)
 , m_ComponentCount(aComponentCount)
-//, m_VertexCount(aComponents.size() / aComponentCount)
 {}
 
 vertex_data::attribute_data &vertex_data::attribute_data::operator+=(const attribute_data &rhs)
@@ -42,11 +26,11 @@ vertex_data::attribute_data &vertex_data::attribute_data::operator+=(const attri
     return *this;
 }
 
-size_t vertex_data::attribute_data::view::data_size() const { return m_DataLength; }
+size_t vertex_data::attribute_data::component_count() const { return m_ComponentCount; }
 
-size_t vertex_data::attribute_data::view::component_count() const { return m_ComponentCount; }
-    
-const vertex_data::component_type *vertex_data::attribute_data::view::begin() const { return m_pData; }
+std::vector<vertex_data::component_type> &vertex_data::attribute_data::components() { return m_Components; }
+
+const std::vector<vertex_data::component_type> &vertex_data::attribute_data::components() const { return m_Components; }
 
 void vertex_data::overwrite(const size_t index, const vertex_data &other)
 {
@@ -54,20 +38,20 @@ void vertex_data::overwrite(const size_t index, const vertex_data &other)
     {
         auto &this_attribute_data = m_NonInterleavedData[other_name];
 
-        if (this_attribute_data.m_ComponentCount != other_attribute_data.m_ComponentCount)
+        if (this_attribute_data.component_count() != other_attribute_data.component_count())
             throw std::invalid_argument("component counts must match");
 
-        auto component_index(index * other_attribute_data.m_ComponentCount);
+        auto component_index(index * other_attribute_data.component_count());
 
-        if (component_index > this_attribute_data.m_Components.size())
+        if (component_index > this_attribute_data.components().size())
             throw std::invalid_argument("out of range");
 
-        if (component_index + other_attribute_data.m_Components.size() > this_attribute_data.m_Components.size())
+        if (component_index + other_attribute_data.components().size() > this_attribute_data.components().size())
             throw std::invalid_argument("out of range");
 
-        std::copy(other_attribute_data.m_Components.begin(), 
-            other_attribute_data.m_Components.end(),
-            this_attribute_data.m_Components.begin() + component_index);
+        std::copy(other_attribute_data.components().begin(), 
+            other_attribute_data.components().end(),
+            this_attribute_data.components().begin() + component_index);
     }
 }
 
@@ -87,18 +71,18 @@ void vertex_data::overwrite(const std::string &aAttributeName, const size_t vert
 
     const auto &thatAttributeData = search2->second;
 
-    if (thisAttributeData.m_ComponentCount != thatAttributeData.m_ComponentCount) 
+    if (thisAttributeData.component_count() != thatAttributeData.component_count()) 
         throw std::invalid_argument("attribute's component count must match");
 
-    const size_t componentOffset(vertexOffset * thisAttributeData.m_ComponentCount);
+    const size_t componentOffset(vertexOffset * thisAttributeData.component_count());
     
-    if (componentOffset + thatAttributeData.m_Components.size() > thisAttributeData.m_Components.size())
+    if (componentOffset + thatAttributeData.components().size() > thisAttributeData.components().size())
         throw std::invalid_argument("new attrib data would write past the end of current attribute data");
 
     //TODO: overwrite
-    std::copy(thatAttributeData.m_Components.begin(), 
-        thatAttributeData.m_Components.begin() + thatAttributeData.m_Components.size(),
-        thisAttributeData.m_Components.begin() + componentOffset);
+    std::copy(thatAttributeData.components().begin(), 
+        thatAttributeData.components().begin() + thatAttributeData.components().size(),
+        thisAttributeData.components().begin() + componentOffset);
 }
 
 //TODO: unify push_back and vertex_data::vertex_data. likely need a data to view converter etc.
@@ -129,48 +113,27 @@ size_t vertex_data::push_back(const vertex_data &other)
 
     size_t indexToHeadOfNewData(m_VertexCount);
 
-    m_VertexCount = m_NonInterleavedData.begin()->second.m_Components.size() /
-            m_NonInterleavedData.begin()->second.m_ComponentCount;
+    m_VertexCount = m_NonInterleavedData.begin()->second.components().size() /
+            m_NonInterleavedData.begin()->second.component_count();
 
     return indexToHeadOfNewData;
 }
 
-vertex_data::vertex_data(const attribute_name_to_view_type &aAttributeData)
+vertex_data::vertex_data(attribute_collection_type &&aAttributeData)
 {
-    if (!aAttributeData.empty())
+    const size_t vertexCount(aAttributeData.begin()->second.components().size() /
+        aAttributeData.begin()->second.component_count());
+
+    for (const auto &[current_name, current_attribute_data_view] : aAttributeData)
     {
-        const size_t vertexCount(aAttributeData.begin()->second.data_size() /
-            aAttributeData.begin()->second.component_count());
+        const size_t currentAttribVertexCount = current_attribute_data_view.components().size() / current_attribute_data_view.component_count();
 
-        if (!vertexCount) throw std::invalid_argument("vertex_data: "
-            "vertex attribute data must have data");
-
-        for (const auto &[current_name, current_attribute_data_view] : aAttributeData)
-        {
-            auto currentVertexCount = current_attribute_data_view.data_size() /
-                current_attribute_data_view.component_count();
-
-            if (currentVertexCount != vertexCount) throw std::invalid_argument("vertex_data: "
-                "attribute data arrays must contribute to the same number of vertexes");
-        }
-
-        for (const auto &[current_name, current_attribute_data_view] : aAttributeData)
-        {
-            const size_t currentAttribVertexCount = current_attribute_data_view.data_size() / current_attribute_data_view.component_count();
-
-            if (currentAttribVertexCount != vertexCount) throw std::invalid_argument(
-                "attribute data must contribute to the same number of vertexes");
-
-            vertex_data::attribute_data data(
-                std::vector<vertex_data::component_type>(current_attribute_data_view.begin(), 
-                    current_attribute_data_view.begin() + current_attribute_data_view.data_size()),
-                current_attribute_data_view.component_count());
-
-            m_NonInterleavedData.emplace(current_name, data);
-        }
-
-        m_VertexCount = vertexCount;
+        if (currentAttribVertexCount != vertexCount) throw std::invalid_argument(
+            "attribute data must contribute to the same number of vertexes");
     }
+
+    m_NonInterleavedData = aAttributeData;
+    m_VertexCount = vertexCount;
 }
 
 vertex_data::PrimitiveMode vertex_data::primitive_mode() const 
@@ -206,19 +169,22 @@ const std::vector<vertex_data::index_value_type> &vertex_data::getIndexData() co
     return index_data;
 }
 
-void vertex_data::sort_by_nearest(
-    const graphics_vector3_type &aObserverWorldPosition,
-    graphics_mat4x4_type aEntityInstanceWorldMatrix,
-    const std::string &aObserverWorldPositionAttributeName)
-{
-    if (auto search = m_NonInterleavedData.find(aObserverWorldPositionAttributeName); search != m_NonInterleavedData.end())
-    {
-        auto &position_attribute_data = search->second.m_Components;
+struct triangle {
+    size_t index;
+    graphics_vector3_type centroid;
+};
 
-        struct triangle {
-            size_t index;
-            graphics_vector3_type centroid;
-        };
+void sort_by_triangle(
+    std::function<bool(triangle, triangle)> aSort,
+    vertex_data &aVertexData,
+    const std::string &aPositionAttributeName)
+{
+    auto m_NonInterleavedData = aVertexData.data();
+
+    if (auto search = m_NonInterleavedData.find(aPositionAttributeName); search != m_NonInterleavedData.end())
+    {
+        auto &position_attribute_data = search->second.components();
+
         std::vector<triangle> triangles;
 
         size_t i(0);
@@ -229,42 +195,27 @@ void vertex_data::sort_by_nearest(
             auto x3(p + 6), y3(p + 7), z3(p + 8);
 
             triangles.push_back({
-                .index = i,
-                .centroid = {*x1,*y1,*z1}, //TODO: make this the centroid
+                i,
+                {
+                    (*x1 + *x2 + *x3) / vertex_data::component_type(3.f),
+                    (*y1 + *y2 + *y3) / vertex_data::component_type(3.f),
+                    (*z1 + *z2 + *z3) / vertex_data::component_type(3.f)
+                }, 
             });
 
             i += 3;
         }
        
-        aEntityInstanceWorldMatrix.inverse(); //TODO: name becomes misleading at this point. maybe require teh inverse in the method param
-
-        graphics_mat4x4_type observerWorldMatrix;
-        observerWorldMatrix.translate(aObserverWorldPosition);
-        
-        graphics_mat4x4_type localBird = aEntityInstanceWorldMatrix * observerWorldMatrix;
-        graphics_vector3_type observerLocalPostion(localBird.m[3][0], localBird.m[3][1], localBird.m[3][2]);
-
-        std::sort(triangles.begin(), triangles.end(),
-            [&observerLocalPostion](triangle a, triangle b)
-            {
-                const auto cameraPos = observerLocalPostion;
-                const auto entityPosA = a.centroid;
-                const auto entityPosB = b.centroid;
-
-                const auto aDist = cameraPos.distance(entityPosA);
-                const auto bDist = cameraPos.distance(entityPosB);
-
-                return (aDist < bDist);
-            });
+        std::sort(triangles.begin(), triangles.end(), aSort);
 
         decltype(m_NonInterleavedData) newNonInterleavedData;
 
         for (auto &[key, value] : m_NonInterleavedData)
         {
-            const auto currentComponentCount = value.m_ComponentCount;
-            auto &currentAttributeData = value.m_Components;
+            const auto currentComponentCount = value.component_count();
+            auto &currentAttributeData = value.components();
 
-            std::vector<component_type> new_attribute_data;
+            std::vector<vertex_data::component_type> new_attribute_data;
             new_attribute_data.reserve(currentAttributeData.size());
        
             size_t triangleIndex = 0;
@@ -281,15 +232,75 @@ void vertex_data::sort_by_nearest(
 
                 ++triangleIndex;
             }
-
+            
             newNonInterleavedData[key] = {
-                .m_Components = std::move(new_attribute_data),
-                .m_ComponentCount = currentComponentCount
+                std::move(new_attribute_data),
+                currentComponentCount
             };
         }
 
-        m_NonInterleavedData = std::move(newNonInterleavedData);
+        aVertexData = vertex_data(std::move(newNonInterleavedData));
     }
+}
+
+void vertex_data::sort_by_nearest_triangle(
+    const graphics_vector3_type &aObserverWorldPosition,
+    graphics_mat4x4_type aEntityInstanceWorldMatrix,
+    const std::string &aObserverWorldPositionAttributeName)
+{
+    //TODO: name becomes misleading at this point. maybe require teh inverse in the method param
+    aEntityInstanceWorldMatrix.inverse(); 
+
+    graphics_mat4x4_type observerWorldMatrix;
+    observerWorldMatrix.translate(aObserverWorldPosition);
+    
+    graphics_mat4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
+    graphics_vector3_type observerLocalPostion(localObserver.m[3][0], localObserver.m[3][1], localObserver.m[3][2]);
+
+    sort_by_triangle(
+        [&observerLocalPostion](triangle a, triangle b)
+        {
+            const auto cameraPos = observerLocalPostion;
+            const auto entityPosA = a.centroid;
+            const auto entityPosB = b.centroid;
+
+            const auto aDist = cameraPos.distance(entityPosA);
+            const auto bDist = cameraPos.distance(entityPosB);
+
+            return (aDist < bDist);
+        },
+        *this,
+        aObserverWorldPositionAttributeName);
+}
+
+void vertex_data::sort_by_furthest_triangle(
+    const graphics_vector3_type &aObserverWorldPosition,
+    graphics_mat4x4_type aEntityInstanceWorldMatrix,
+    const std::string &aObserverWorldPositionAttributeName)
+{
+    //TODO: name becomes misleading at this point. maybe require teh inverse in the method param
+    aEntityInstanceWorldMatrix.inverse(); 
+
+    graphics_mat4x4_type observerWorldMatrix;
+    observerWorldMatrix.translate(aObserverWorldPosition);
+    
+    graphics_mat4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
+    graphics_vector3_type observerLocalPostion(localObserver.m[3][0], localObserver.m[3][1], localObserver.m[3][2]);
+
+    sort_by_triangle(
+        [&observerLocalPostion](triangle a, triangle b)
+        {
+            const auto cameraPos = observerLocalPostion;
+            const auto entityPosA = a.centroid;
+            const auto entityPosB = b.centroid;
+
+            const auto aDist = cameraPos.distance(entityPosA);
+            const auto bDist = cameraPos.distance(entityPosB);
+
+            return (aDist > bDist);
+        },
+        *this,
+        aObserverWorldPositionAttributeName);
 }
 
 void vertex_data::transform_position(
@@ -304,7 +315,7 @@ void vertex_data::transform_position(
 
     if (auto search = m_NonInterleavedData.find(aPositionAttributeName); search != m_NonInterleavedData.end())
     {
-        auto &position_attribute_data = search->second.m_Components;
+        auto &position_attribute_data = search->second.components();
 
         for (auto p = position_attribute_data.begin(); p != position_attribute_data.end(); p += 3)
         {
@@ -354,7 +365,7 @@ void vertex_data::transform_uv(
     //TODO: throw if size isnt 2
     if (auto search = m_NonInterleavedData.find(aUVAttributeName); search != m_NonInterleavedData.end())
     {
-        auto &uv_attribute_data = search->second.m_Components;
+        auto &uv_attribute_data = search->second.components();
 
         for (auto p = uv_attribute_data.begin(); p != uv_attribute_data.end(); p += 2) //TODO because iters, MUST BE CERTAIN OF COMPONENET COUNT!
         {

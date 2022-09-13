@@ -431,8 +431,8 @@ void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
             glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandles[i].get());
 
             glBufferData (GL_ARRAY_BUFFER, 
-                sizeof(webgl1es2_model::attribute_component_data_type) * data.m_Components.size(), 
-                &data.m_Components[0], 
+                sizeof(webgl1es2_model::attribute_component_data_type) * data.components().size(), 
+                &data.components()[0], 
                 webgl1es2_modelTypeToOpenGLDrawType(
                     vertexDataUsageHint_to_webgl1es2ModelType(aUsage)));
 
@@ -441,8 +441,8 @@ void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
             attribute newAttribute =
             {
                 .buffer_handle_index = i,
-                .components = data.m_ComponentCount,
-                .size = data.m_Components.size()
+                .components = data.component_count(),
+                .size = data.components().size()
             };
 
             m_Attributes[name] = newAttribute;

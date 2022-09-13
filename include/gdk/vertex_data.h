@@ -36,36 +36,6 @@ public:
     class attribute_data
     {
     public:
-        /// \brief view to attribute data owned by the user. Used when constructing a vertex_data instance
-        /// 
-        /// a view on to a contiguous sequence of component_type values representing the values of all 
-        /// the components of a single attribute for a model + the size of the attribute
-        /// 
-        class view final
-        {
-        public:
-            /// \brief build a view from a view to vertex component data and a attribute size
-            view(jfc::contiguous_view<const component_type> aDataView, 
-                const size_t aComponentCount);
-            
-            /// \brief [convenience] build a view from a const reference to component data and attribute size
-            view(const std::vector<component_type> &aData, 
-                const size_t aComponentCount);
-
-            const component_type *begin() const;
-            
-            size_t data_size() const;
-            
-            size_t component_count() const;
-
-        private:
-            const component_type *m_pData; 
-
-            size_t m_DataLength; 
-
-            size_t m_ComponentCount; 
-        };
-
         attribute_data() = default;
 
         attribute_data(const std::vector<component_type> &m_Components, 
@@ -76,15 +46,18 @@ public:
         //TODO: create from view
         //attribute_data(const attribute_data::view)
 
-    //private://TODO: write getters
+        size_t component_count() const;
+
+        std::vector<component_type> &components();
+        
+        const std::vector<component_type> &components() const;
+
+    private://TODO: write getters
         //! collections of all the components for all of this attribute
         std::vector<component_type> m_Components;
         
         //! number of components in a single attribute
         size_t m_ComponentCount;
-
-        //! number of vertexes this data provides components for
-        //size_t m_VertexCount;
     };
     
     using attribute_collection_type = std::unordered_map<std::string, attribute_data>;
@@ -96,16 +69,11 @@ public:
         Triangles
     };
 
-    using attribute_name_to_view_type = std::unordered_map<std::string, attribute_data::view>;
-
     /// \brief gets the primitive mode
     PrimitiveMode primitive_mode() const;
 
     size_t attribute_offset(const std::string &aName) const;
 
-    //TODO: this returns a constant. need to modify vertex_data ctor to accept index data
-    //TODO: change to view
-    //TODO; rename "indicies"
     const std::vector<index_value_type> &getIndexData() const;
 
     //! clears all state from this vertex_data instance
@@ -132,13 +100,15 @@ public:
     //void transform_scalar(
 
     //! Convenience method, sorts all attribute data by distance of an entity to an observer
-    void sort_by_nearest(
+    void sort_by_nearest_triangle(
         const graphics_vector3_type &aObserverWorldPosition,
         graphics_mat4x4_type aEntityInstanceWorldMatrix,
         const std::string &aPositionAttributeName = "a_Position");
-    //TODO:
-    // vector3 aObserverWorldPosition, mat4x4 aInstanceWorldMatrix
-    // change args^
+    
+    void sort_by_furthest_triangle(
+        const graphics_vector3_type &aObserverWorldPosition,
+        graphics_mat4x4_type aEntityInstanceWorldMatrix,
+        const std::string &aPositionAttributeName = "a_Position");
 
     const attribute_collection_type &data() const;
 
@@ -175,8 +145,8 @@ public:
     vertex_data &operator=(vertex_data &&other) = default;
 
     //! construct a vertex_data from attribute data
-    vertex_data(const attribute_name_to_view_type &aAttributeData);
-
+    //vertex_data(const attribute_name_to_view_type &aAttributeData);
+    
     vertex_data(const vertex_data &) = default;
     
     vertex_data(vertex_data &&) = default;
@@ -184,7 +154,9 @@ public:
     //! default inited vertex_data is very useful for procedurally generated data
     vertex_data() = default;
 
+    vertex_data(attribute_collection_type &&aAttributeData);
 private:
+
     size_t m_VertexCount = 0;
 
     //! primitive type to emit at primitive stage
