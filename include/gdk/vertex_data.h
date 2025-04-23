@@ -97,8 +97,6 @@ public:
         const graphics_vector2_type &aSca = {1},
         const std::string &aUVAttributeName = "a_UV");
 
-    //void transform_scalar(
-
     //! Convenience method, sorts all attribute data by distance of an entity to an observer
     void sort_by_nearest_triangle(
         const graphics_vector3_type &aObserverWorldPosition,
@@ -144,9 +142,6 @@ public:
     //! assignment by rvalue
     vertex_data &operator=(vertex_data &&other) = default;
 
-    //! construct a vertex_data from attribute data
-    //vertex_data(const attribute_name_to_view_type &aAttributeData);
-    
     vertex_data(const vertex_data &) = default;
     
     vertex_data(vertex_data &&) = default;
@@ -155,8 +150,8 @@ public:
     vertex_data() = default;
 
     vertex_data(attribute_collection_type &&aAttributeData);
-private:
 
+private:
     size_t m_VertexCount = 0;
 
     //! primitive type to emit at primitive stage
@@ -165,5 +160,6 @@ private:
     attribute_collection_type m_NonInterleavedData;
 };
 }
+
 #endif
 

@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
     auto pCamera = pContext->make_camera();
     pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-    pCamera->set_world_matrix({0, 0, -10}, {});
+    pCamera->set_world_matrix({0, 0, 5}, {});
     pScene->add(pCamera);
 
     auto pAlpha = pContext->get_alpha_cutoff_shader();
@@ -61,22 +61,128 @@ int main(int argc, char **argv)
     pMaterial->setVector2("_UVScale", {1, 1});
     pMaterial->setVector2("_UVOffset", {0, 0});
 
-    auto pEntity = std::shared_ptr<entity>(
-        pContext->make_entity(pContext->get_cube_model(), pMaterial));
-    pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, 
-        Quaternion<float>{{0, 0, 0}},
-        {1.0, 1.0, 1});
-    pScene->add(pEntity);
+    skeleton characterSkeleton({
+        bone_data("head", 
+            {{0,1,0},{{0,0,0}},{1,1,1}}, 
+            {}),
+        bone_data("chest", 
+            {{0,0,0},{{0,0,0}},{1,1,1}}, 
+            {"head", "armLeft", "armRight", "legLeft", "legRight"}),
+        bone_data("armLeft", 
+            {{1,0,0},{{0,0,0}},{1,1,1}}, 
+            {}),
+        bone_data("armRight", 
+            {{-1,0,0},{{0,0,0}},{1,1,1}}, 
+            {}),
+        bone_data("legLeft", 
+            {{0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+            {}),
+        bone_data("legRight", 
+            {{-0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+            {}),
+    });
+    
+    std::unordered_map<std::string, std::shared_ptr<entity>> boneVisualizers;
+    for (const auto &[name, bone] : characterSkeleton.boneMap)
+    {
+        auto pEntity = std::shared_ptr<entity>(
+            pContext->make_entity(pContext->get_cube_model(), pMaterial));
+        
+        pScene->add(pEntity);
+
+        pEntity->set_model_matrix(bone.transform);
+
+        boneVisualizers[name] = pEntity;
+    }
+
+    animation walkAnimation({
+        {
+            0,
+            skeleton({
+                bone_data("head", 
+                    {{0,1,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("chest", 
+                    {{0,0,0},{{0,0,0}},{1,1,1}}, 
+                    {"head", "armLeft", "armRight", "legLeft", "legRight"}),
+                bone_data("armLeft", 
+                    {{1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("armRight", 
+                    {{-1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("legLeft", 
+                    {{0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("legRight", 
+                    {{-0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+            })
+        },
+        {
+            2.1f,
+            skeleton({
+                bone_data("head", 
+                    {{0,1,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("chest", 
+                    {{2,0,0},{{0,0,0}},{1,1,1}}, 
+                    {"head", "armLeft", "armRight", "legLeft", "legRight"}),
+                bone_data("armLeft", 
+                    {{1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("armRight", 
+                    {{-1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("legLeft", 
+                    {{0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+                bone_data("legRight", 
+                    {{-0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {}),
+            })
+        },
+    });
+
+    /*Vector3<float> eulers(3.14,3.14/2.,3.14/3);
+    Quaternion<float> quat(eulers);
+    auto eulers2 = quat.toEuler();
+
+    std::cout << eulers << ", " << eulers2 << "\n";*/
 
     game_loop(60, [&](const float time, const float deltaTime)
     {
         glfwPollEvents();
 
-        pScene->draw(window.getWindowSize());
+        using namespace std;
+        auto t = time;
+        auto d = t*2;
+        auto h = t/2;
+        auto q = t/2;
+        Vector3<float> eulers(time/2,time/4,0);
+        Quaternion<float> quat(eulers);
+        auto eulers2 = quat.toEuler();
+
+        /*characterSkeleton.set_local_transform("head",  {{0,1,0},{{time,time,0}},{1}});
+        characterSkeleton.set_local_transform("chest", {{0,0,0},{{0,0,0}},{1}});*/
+
+        graphics_mat4x4_type m1({ -1,  0,1.5},Quaternion<float>({0,0,0}), {1});
+        graphics_mat4x4_type m2({  0,  1,  0},Quaternion<float>({d,d,t}), {1});
+        boneVisualizers["head"]->set_model_matrix(m1 * m2);
         
-        pEntity->set_model_matrix(Vector3<float>{2., 0., -12.5}, 
-            Quaternion<float>{{time, 0, 0}},
-            {1.0, 1.0, 1});
+        graphics_mat4x4_type m3;
+        //graphics_mat4x4_type m3({  1,  0,1.5},Quaternion<float>({0,0,0}), {1});
+        graphics_mat4x4_type m4({  1,  1,1.5},Quaternion<float>({d,d,t}), {1});
+        boneVisualizers["chest"]->set_model_matrix(m4);
+
+        /*for (auto &[key, value] : boneVisualizers)
+        {
+            value->set_model_matrix(characterSkeleton.boneMap[key].transform);
+        }*/
+
+        pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+        
+        pScene->draw(window.getWindowSize());
         
         window.swapBuffer(); 
 
