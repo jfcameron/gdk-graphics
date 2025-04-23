@@ -26,7 +26,7 @@ using namespace gdk;
 int main(int argc, char **argv)
 {
     // Separate lib, used to init GL and get a window ready for rendering on Linux/Mac/Windows
-    glfw_window window("basic rendering demo");
+    glfw_window window("per entity and per triangle translucency");
 
     // Init a gles2/webgl1 context
     auto pContext = webgl1es2_context::make();

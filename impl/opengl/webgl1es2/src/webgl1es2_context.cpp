@@ -120,3 +120,7 @@ graphics::context::scene_ptr_type webgl1es2_context::make_scene() const
         new gdk::webgl1es2_scene());
 }
 
+graphics::context::context_ptr_type webgl1es2_context::make() {
+    return std::make_unique<webgl1es2_context>(webgl1es2_context());
+}
+

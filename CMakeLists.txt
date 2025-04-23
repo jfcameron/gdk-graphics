@@ -22,6 +22,7 @@ jfc_project(library
 
     PUBLIC_INCLUDE_DIRECTORIES
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/include
         
         ${gdkmath_INCLUDE_DIRECTORIES} 
         ${gdkmemory_INCLUDE_DIRECTORIES}
@@ -32,7 +33,6 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/include
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/include
 
         ${stb_INCLUDE_DIR}
 

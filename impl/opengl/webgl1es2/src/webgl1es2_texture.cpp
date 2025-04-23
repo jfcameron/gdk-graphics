@@ -169,12 +169,7 @@ webgl1es2_texture webgl1es2_texture::make_from_png_rgba32(const std::vector<std:
     throw std::runtime_error(std::string(TAG).append(": could not decode RGBA32 data provided to webgl1es2_texture"));
 }
 
-static void verify_image_view(const image_data_2d_view &imageView)
-{
-    if (!isPowerOfTwo(imageView.width) || !isPowerOfTwo((imageView.height)))
-        throw std::invalid_argument(std::string(TAG).append(
-            ": webgl1es2_texture dimensions must be power of 2"));
-    
+const GLint webgl1es2_texture::getMaxTextureSize() {
     static std::once_flag once;
     static GLint max_texture_2d_size;
 
@@ -182,6 +177,17 @@ static void verify_image_view(const image_data_2d_view &imageView)
     {
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_2d_size);
     });
+
+    return max_texture_2d_size;
+}
+
+static void verify_image_view(const image_data_2d_view &imageView)
+{
+    if (!isPowerOfTwo(imageView.width) || !isPowerOfTwo((imageView.height)))
+        throw std::invalid_argument(std::string(TAG).append(
+            ": webgl1es2_texture dimensions must be power of 2"));
+
+    const auto max_texture_2d_size = webgl1es2_texture::getMaxTextureSize();
 
     if (imageView.width > max_texture_2d_size || 
         imageView.height > max_texture_2d_size)

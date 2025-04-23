@@ -9,7 +9,8 @@ namespace gdk::graphics::ext
 {
     /// \brief generates a volumetic-pixel model of a 3D array
     ///
-    ///TODO: remove model from class, provide vertex_data getter
+    /// TODO:
+    ///  implement greedy meshing in update_vertex_data
     ///
     template<size_t data_size = 8>
     class voxel_modeler final
@@ -19,18 +20,13 @@ namespace gdk::graphics::ext
         {
             m_VoxelData[aX][aY][aZ] = aValue;
         }
-        //void set_voxel_data(array fullsize)
-        //void set_voxel_data(vector subset)
         
         size_t value_at(size_t aX, size_t aY, size_t aZ) const
         {
             return m_VoxelData[aX][aY][aZ];
         }
 
-        // implementation could be better: 
-        // data could be further optimized by finding multi voxel surfaces, then rendering that surface with a single large quad.
-        // would require a flag to say what work has been done? it would sort of iterate and spread rather than pure iteration.
-        //TODO: rename this. this is needed but does not update a model. update_vertex_data?
+        // Per voxel rendering. greedy would be better
         void update_vertex_data()
         {
             m_VertexBuffer.clear();
@@ -43,7 +39,7 @@ namespace gdk::graphics::ext
                 {
                     for (size_t z(0); z < data_size; ++z)
                     {
-                        if (m_VoxelData[x][y][z] > 0) //TODO: a visitor? a virtual function? Some way to add userdefined stuff here
+                        if (m_VoxelData[x][y][z] > 0) 
                         {
                             auto pNorthNeighbour = m_pNorthNeighbour.lock(); 
                             size_t northNeighbourValue = z == data_size - 1 
@@ -87,9 +83,9 @@ namespace gdk::graphics::ext
                                     : 0
                                 : m_VoxelData[x][y - 1][z];
 
-                            graphics_floating_point_type fX(static_cast<graphics_floating_point_type>(x));
-                            graphics_floating_point_type fY(static_cast<graphics_floating_point_type>(y));
-                            graphics_floating_point_type fZ(static_cast<graphics_floating_point_type>(z));
+                            auto fX(static_cast<graphics_floating_point_type>(x));
+                            auto fY(static_cast<graphics_floating_point_type>(y));
+                            auto fZ(static_cast<graphics_floating_point_type>(z));
 
                             if (!northNeighbourValue)
                             {
@@ -207,8 +203,6 @@ namespace gdk::graphics::ext
 
         std::array<std::array<std::array<size_t, data_size>, data_size>, data_size> m_VoxelData = {{{0}}};
 
-        // Doesnt look correct when I reuse this for all surfaces. 
-        // check if some of the position data is wound differently
         std::vector<float> uvData = {
             1, 0,
             0, 0,
@@ -329,11 +323,11 @@ namespace gdk::graphics::ext
                     {
                         {
                             0.0f, 0.0f, 0.0f,
-                            0.0f, 0.0f, 1.0f,
                             1.0f, 0.0f, 0.0f,
-                            1.0f, 0.0f, 0.0f,
-                            0.0f, 0.0f, 1.0f,
                             1.0f, 0.0f, 1.0f,
+                            0.0f, 0.0f, 0.0f,
+                            1.0f, 0.0f, 1.0f,
+                            0.0f, 0.0f, 1.0f,
                         },
                         3
                     }
@@ -355,11 +349,11 @@ namespace gdk::graphics::ext
                     {
                         {
                             0.0f, 1.0f, 0.0f,
-                            0.0f, 1.0f, 1.0f,
                             1.0f, 1.0f, 0.0f,
-                            1.0f, 1.0f, 0.0f,
-                            0.0f, 1.0f, 1.0f,
                             1.0f, 1.0f, 1.0f,
+                            0.0f, 1.0f, 0.0f,
+                            1.0f, 1.0f, 1.0f,
+                            0.0f, 1.0f, 1.0f,
                         },
                         3
                     }

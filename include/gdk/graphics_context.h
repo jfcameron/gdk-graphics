@@ -62,23 +62,9 @@ namespace gdk::graphics
         //! shared ptr to a texture
         using texture_shared_ptr_type = std::shared_ptr<texture>;
 
-        //! specifies implementation to use in context construction
-        enum class implementation
-        {
-            //! limited subset of OpenGL API available on a wide variety of desktop, 
-            /// mobile devices and browsers
-            opengl_webgl1_gles2,
-            null
-        };
-
     /// \name factory methods
     ///@{
     //
-        //! context factory method
-        [[nodiscard]] static context_ptr_type make(
-            const implementation &
-        );
-
         //! makes a scene
         [[nodiscard]] virtual scene_ptr_type make_scene() const = 0;
 

@@ -5,9 +5,9 @@
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
-
-#include <jfc/glfw_window.h>
+#include <gdk/webgl1es2_context.h>
 #include <jfc/contiguous_view.h>
+#include <jfc/glfw_window.h>
 
 #include <GLFW/glfw3.h>
 
@@ -29,10 +29,9 @@ using namespace gdk;
 
 int main(int argc, char **argv)
 {
-    glfw_window window("basic rendering demo");
+    glfw_window window("skeleton");
 
-    auto pContext = graphics::context::make(
-        graphics::context::implementation::opengl_webgl1_gles2);
+    auto pContext = webgl1es2_context::make();
 
     auto pScene = pContext->make_scene();
 
@@ -162,18 +161,20 @@ int main(int argc, char **argv)
         Vector3<float> eulers(time/2,time/4,0);
         Quaternion<float> quat(eulers);
         auto eulers2 = quat.toEuler();
+        
+        //25-04-22: matrix multiplication is working correctly 
+        graphics_mat4x4_type m1({ 0,  0, 0},Quaternion<float>({d,0,0}), {2*std::abs(std::cos(t))});
+        graphics_mat4x4_type m2({ std::cos(t),  1, 0},Quaternion<float>({0,q,0}), {1});
+        boneVisualizers["head"]->set_model_matrix(m1);
+        boneVisualizers["chest"]->set_model_matrix(m1 * m2);
 
         /*characterSkeleton.set_local_transform("head",  {{0,1,0},{{time,time,0}},{1}});
         characterSkeleton.set_local_transform("chest", {{0,0,0},{{0,0,0}},{1}});*/
-
-        graphics_mat4x4_type m1({ -1,  0,1.5},Quaternion<float>({0,0,0}), {1});
-        graphics_mat4x4_type m2({  0,  1,  0},Quaternion<float>({d,d,t}), {1});
-        boneVisualizers["head"]->set_model_matrix(m1 * m2);
         
-        graphics_mat4x4_type m3;
+        /*graphics_mat4x4_type m3;
         //graphics_mat4x4_type m3({  1,  0,1.5},Quaternion<float>({0,0,0}), {1});
         graphics_mat4x4_type m4({  1,  1,1.5},Quaternion<float>({d,d,t}), {1});
-        boneVisualizers["chest"]->set_model_matrix(m4);
+        boneVisualizers["chest"]->set_model_matrix(m4);*/
 
         /*for (auto &[key, value] : boneVisualizers)
         {

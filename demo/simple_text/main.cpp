@@ -4,6 +4,7 @@
 
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
+#include <gdk/webgl1es2_context.h>
 #include <gdk/scene.h>
 
 #include <jfc/glfw_window.h>
@@ -28,8 +29,7 @@ int main(int argc, char **argv)
 {
     glfw_window window("basic rendering demo");
 
-    auto pContext = graphics::context::make(
-        graphics::context::implementation::opengl_webgl1_gles2);
+    auto pContext = webgl1es2_context::make();
 
     auto pScene = pContext->make_scene();
 

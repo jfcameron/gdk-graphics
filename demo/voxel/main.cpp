@@ -4,6 +4,8 @@
 
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
+#include <gdk/webgl1es2_context.h>
+#include <gdk/webgl1es2_texture.h>
 #include <gdk/scene.h>
 
 #include <jfc/glfw_window.h>
@@ -30,17 +32,18 @@ using namespace gdk::graphics::ext;
 
 int main(int argc, char **argv)
 {
-    glfw_window window("basic rendering demo");
+    glfw_window window("Voxel rendering");
 
-    auto pContext = graphics::context::make(
-        graphics::context::implementation::opengl_webgl1_gles2);
+    auto pGraphics = webgl1es2_context::make();
 
-    auto pScene = pContext->make_scene();
+    std::cout << "max texture size: " << webgl1es2_texture::getMaxTextureSize() << std::endl;
 
-    auto pCamera = pContext->make_camera();
+    auto pScene = pGraphics->make_scene();
+
+    auto pCamera = pGraphics->make_camera();
     pScene->add(pCamera);
 
-    auto pAlpha = pContext->get_alpha_cutoff_shader();
+    auto pAlpha = pGraphics->get_alpha_cutoff_shader();
 
     std::vector<std::underlying_type<std::byte>::type> imageData({
         0x00, 0xff, 0xff, 0xff,                                    
@@ -54,28 +57,39 @@ int main(int argc, char **argv)
     view.format = texture::data_format::rgba;
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
-    auto pTexture = pContext->make_texture(view);
+    auto pTexture = pGraphics->make_texture(view);
     
-    auto pMaterial3 = pContext->make_material(pAlpha);
+    auto pMaterial3 = pGraphics->make_material(pAlpha);
     pMaterial3->setTexture("_Texture", pTexture);
     pMaterial3->setVector2("_UVScale", {1, 1});
     pMaterial3->setVector2("_UVOffset", {0, 0});
 
-    voxel_modeler voxelModeler(pContext);
+    voxel_modeler voxelModeler(pGraphics);
 
-    auto pVoxelModel(pContext->make_model());
+    auto pVoxelModel(pGraphics->make_model());
     
-    auto pVoxelEntity = pContext->make_entity(pVoxelModel, pMaterial3);
+    auto pVoxelEntity = pGraphics->make_entity(pVoxelModel, pMaterial3);
     pScene->add(pVoxelEntity);
     
-    for (size_t i(0); i < 8; ++i)
-    {
-        voxelModeler.set_voxel_data(i,0,0,1);
-        voxelModeler.set_voxel_data(0,i,0,1);
-        voxelModeler.set_voxel_data(0,0,i,1);
-        
-        voxelModeler.set_voxel_data(i,i,i,1);
+    for (size_t x(0); x < 8; ++x) for (size_t y(0); y < 8; ++y) {
+        voxelModeler.set_voxel_data(x,0,y,1);
     }
+
+    for (size_t x(1); x < 6; ++x) for (size_t z(1); z < 6; ++z) {
+        voxelModeler.set_voxel_data(x,1,z,1);
+    }
+
+    voxelModeler.set_voxel_data(1,7,0,1);
+    voxelModeler.set_voxel_data(1,6,0,1);
+    voxelModeler.set_voxel_data(3,7,0,1);
+    voxelModeler.set_voxel_data(3,6,0,1);
+    voxelModeler.set_voxel_data(0,4,0,1);
+    voxelModeler.set_voxel_data(1,3,0,1);
+    voxelModeler.set_voxel_data(2,3,0,1);
+    voxelModeler.set_voxel_data(3,3,0,1);
+    voxelModeler.set_voxel_data(4,4,0,1);
+
+    voxelModeler.set_voxel_data(7,7,7,1);
 
     voxelModeler.update_vertex_data(); 
 
@@ -85,11 +99,12 @@ int main(int argc, char **argv)
     {
         glfwPollEvents();
 
-        pVoxelEntity->set_model_matrix(Vector3<float>{-0., 0., -20}, 
-            Quaternion<float>{{time, 2 * (time / 2), 4}});
+        graphics_mat4x4_type root({0,0,0},Quaternion<float>({0,time,0}), {1});
+        graphics_mat4x4_type chunkMatrix({-4,0,-4},Quaternion<float>({0,0,0}), {1});
+        pVoxelEntity->set_model_matrix(root * chunkMatrix);
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pCamera->set_world_matrix({std::sin(time), 0, -10}, {});
+        pCamera->set_world_matrix({0, 6, +10}, {0.1,0,0,1});
 
         pScene->draw(window.getWindowSize());
 

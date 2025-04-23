@@ -61,9 +61,13 @@ namespace gdk
         
         [[nodiscard]] virtual built_in_model_ptr_type get_quad_model() const override;
 
-        webgl1es2_context(); 
-
         virtual ~webgl1es2_context() override = default;
+
+        //! context factory method
+        [[nodiscard]] static context_ptr_type make();
+
+    private:
+        webgl1es2_context(); 
     };
 }
 

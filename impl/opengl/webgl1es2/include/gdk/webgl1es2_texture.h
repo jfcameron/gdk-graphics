@@ -171,6 +171,9 @@ namespace gdk
         /// (badly formed or not a PNG with component format RGBA32.)
         static webgl1es2_texture make_from_png_rgba32(const std::vector<std::underlying_type<std::byte>::type> aRGBA32PNGData);
 
+        /// \brief gets the max texture size supported by the current graphics device 
+        static const GLint getMaxTextureSize();
+
     private:
         //! the target type. Cannot be changed after construction. Decides whether the webgl1es2_texture data is 2d or cubic
         GLenum m_BindTarget;
