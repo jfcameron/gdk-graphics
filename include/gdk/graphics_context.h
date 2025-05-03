@@ -62,6 +62,15 @@ namespace gdk::graphics
         //! shared ptr to a texture
         using texture_shared_ptr_type = std::shared_ptr<texture>;
 
+        //! specifies implementation to use in context construction
+        enum class implementation
+        {
+            //! limited subset of OpenGL API available on a wide variety of desktop, 
+            /// mobile devices and browsers
+            opengl_webgl1_gles2,
+            null
+        };
+
     /// \name factory methods
     ///@{
     //
@@ -110,6 +119,9 @@ namespace gdk::graphics
         ) const = 0;
 
         /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
+        //TODO: i dont think this should be exposed. top level graphics_context is not tied to an implementation,
+        // so it doesnt make sense to force all implementations to have to be able to make a shader program using
+        // two strings. instantiating custom shaders should be done by a pointer to the concrete context, whatever it is
         [[nodiscard]] virtual shader_program_ptr_type make_shader(
             const std::string &aVertexStageSource, 
             const std::string &aFragmentStageSource

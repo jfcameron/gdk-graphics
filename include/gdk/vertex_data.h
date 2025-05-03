@@ -79,25 +79,32 @@ public:
     //! clears all state from this vertex_data instance
     void clear();
 
+    /// \name convenience methods, should probably be moved out of the class
+    // TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
+    // So maybe this should be moved to a function not a method
+    ///@{
+    //
+    //! 
+
     //! Convenience method, applies a transformation to a 3 component attribute
-    //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
-    //So maybe this should be moved to a function not a method
+    //TODO: 
+    // - rename "transform"
+    // - provide overloads for 2 and 3 component attributes "transform"
+    // - instead of pos, rot, sca, just require a mat4x4
     void transform_position(
         const graphics_vector3_type &aPos,
         const graphics_quaternion_type &aRot = {},
         const graphics_vector3_type &aSca = {1},
         const std::string &aPositionAttributeName = "a_Position");
         
-    //! Convenience method, applies a transformation to a 2 component attribute
-    //TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
-    //So maybe this should be moved to a function not a method
+    //! applies a transformation to a 2 component attribute
     void transform_uv(
         const graphics_vector2_type &aPos,
         //TODO: float aRot,
         const graphics_vector2_type &aSca = {1},
         const std::string &aUVAttributeName = "a_UV");
 
-    //! Convenience method, sorts all attribute data by distance of an entity to an observer
+    //! sorts all attribute data by distance of an entity to an observer
     void sort_by_nearest_triangle(
         const graphics_vector3_type &aObserverWorldPosition,
         graphics_mat4x4_type aEntityInstanceWorldMatrix,
@@ -107,6 +114,7 @@ public:
         const graphics_vector3_type &aObserverWorldPosition,
         graphics_mat4x4_type aEntityInstanceWorldMatrix,
         const std::string &aPositionAttributeName = "a_Position");
+    ///@}
 
     const attribute_collection_type &data() const;
 

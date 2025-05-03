@@ -8,6 +8,7 @@
 namespace gdk
 {
     /// \brief Represents a 4 channel color: {Red, Green, Blue, Alpha}.
+    ///TODO: channel values should be limited to the range 0.0 - 1.0
     struct color final
     {
         using channel_type = float;

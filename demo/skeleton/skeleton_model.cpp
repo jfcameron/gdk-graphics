@@ -112,6 +112,7 @@ skeleton animation::get_frame(const float aTime) const
     //get the 2 closest frames
 
     //return interpolation
+    return {{}};
 }
 
 animation::animation(key_frame_collection_type aKeyFrames)

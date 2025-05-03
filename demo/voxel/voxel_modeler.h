@@ -12,7 +12,7 @@ namespace gdk::graphics::ext
     /// TODO:
     ///  implement greedy meshing in update_vertex_data
     ///
-    template<size_t data_size = 8>
+    template<size_t data_size = 16>
     class voxel_modeler final
     {
     public:
@@ -26,12 +26,12 @@ namespace gdk::graphics::ext
             return m_VoxelData[aX][aY][aZ];
         }
 
-        // Per voxel rendering. greedy would be better
+        // Per voxel rendering. works but should replace with greedy meshing implementation
         void update_vertex_data()
         {
             m_VertexBuffer.clear();
 
-            static gdk::vertex_data buffer;
+            gdk::vertex_data buffer;
                             
             for (size_t x(0); x < data_size; ++x)
             {
@@ -92,6 +92,7 @@ namespace gdk::graphics::ext
                                 gdk::vertex_data data(northData);
 
                                 data.transform_position({fX, fY, fZ});
+                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
@@ -102,6 +103,7 @@ namespace gdk::graphics::ext
                                 gdk::vertex_data data(southData);
 
                                 data.transform_position({fX, fY, fZ});
+                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
@@ -112,6 +114,7 @@ namespace gdk::graphics::ext
                                 gdk::vertex_data data(eastData);
 
                                 data.transform_position({fX, fY, fZ});
+                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
@@ -122,6 +125,7 @@ namespace gdk::graphics::ext
                                 gdk::vertex_data data(westData);
 
                                 data.transform_position({fX, fY, fZ});
+                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
@@ -132,6 +136,7 @@ namespace gdk::graphics::ext
                                 gdk::vertex_data data(topData);
 
                                 data.transform_position({fX, fY, fZ});
+                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
@@ -142,6 +147,7 @@ namespace gdk::graphics::ext
                                 gdk::vertex_data data(bottomData);
 
                                 data.transform_position({fX, fY, fZ});
+                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
@@ -203,7 +209,7 @@ namespace gdk::graphics::ext
 
         std::array<std::array<std::array<size_t, data_size>, data_size>, data_size> m_VoxelData = {{{0}}};
 
-        std::vector<float> uvData = {
+        std::vector<float> uvData {
             1, 0,
             0, 0,
             0, 1,
@@ -212,7 +218,7 @@ namespace gdk::graphics::ext
             1, 1,
         };
 
-        const gdk::vertex_data northData = {
+        const gdk::vertex_data northData {
             {
                 { 
                     "a_Position",
@@ -233,12 +239,26 @@ namespace gdk::graphics::ext
                     {
                         uvData,
                         2
+                    }
+                },
+                {
+                    "a_VoxelPosition",
+                    {
+                        {
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                        },
+                        3
                     }
                 }
             }
         };
 
-        const gdk::vertex_data southData = {
+        const gdk::vertex_data southData {
             {
                 { 
                     "a_Position",
@@ -260,11 +280,25 @@ namespace gdk::graphics::ext
                         uvData,
                         2
                     }
+                },
+                {
+                    "a_VoxelPosition",
+                    {
+                        {
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                        },
+                        3
+                    }
                 }
             }
         };
         
-        const gdk::vertex_data eastData = {
+        const gdk::vertex_data eastData {
             {
                 { 
                     "a_Position",
@@ -286,11 +320,25 @@ namespace gdk::graphics::ext
                         uvData,
                         2
                     }
+                },
+                {
+                    "a_VoxelPosition",
+                    {
+                        {
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                        },
+                        3
+                    }
                 }
             }
         };
         
-        const gdk::vertex_data westData = {
+        const gdk::vertex_data westData {
             {
                 { 
                     "a_Position",
@@ -312,11 +360,25 @@ namespace gdk::graphics::ext
                         uvData,
                         2
                     }
+                },
+                {
+                    "a_VoxelPosition",
+                    {
+                        {
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                        },
+                        3
+                    }
                 }
             }
         };
         
-        const gdk::vertex_data bottomData = {
+        const gdk::vertex_data bottomData {
             {
                 { 
                     "a_Position",
@@ -337,12 +399,26 @@ namespace gdk::graphics::ext
                     {
                         uvData,
                         2
+                    }
+                },
+                {
+                    "a_VoxelPosition",
+                    {
+                        {
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                        },
+                        3
                     }
                 }
             }
         };
 
-        const gdk::vertex_data topData = {
+        const gdk::vertex_data topData {
             {
                 { 
                     "a_Position",
@@ -363,6 +439,20 @@ namespace gdk::graphics::ext
                     {
                         uvData,
                         2
+                    }
+                },
+                {
+                    "a_VoxelPosition",
+                    {
+                        {
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                            1.0f, 1.0f, 1.0f,
+                        },
+                        3
                     }
                 }
             }

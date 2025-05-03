@@ -367,7 +367,7 @@ void vertex_data::transform_uv(
     {
         auto &uv_attribute_data = search->second.components();
 
-        for (auto p = uv_attribute_data.begin(); p != uv_attribute_data.end(); p += 2) //TODO because iters, MUST BE CERTAIN OF COMPONENET COUNT!
+        for (auto p = uv_attribute_data.begin(); p != uv_attribute_data.end(); p += 2) //TODO because iters, MUST BE CERTAIN OF COMPONENT COUNT!
         {
             auto x(p + 0), y(p + 1);
 
