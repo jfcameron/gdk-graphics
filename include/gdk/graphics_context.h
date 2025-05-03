@@ -118,18 +118,13 @@ namespace gdk::graphics
             material::FaceCullingMode aFaceCullingMode = material::FaceCullingMode::None
         ) const = 0;
 
-        /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
-        //TODO: i dont think this should be exposed. top level graphics_context is not tied to an implementation,
-        // so it doesnt make sense to force all implementations to have to be able to make a shader program using
-        // two strings. instantiating custom shaders should be done by a pointer to the concrete context, whatever it is
-        [[nodiscard]] virtual shader_program_ptr_type make_shader(
-            const std::string &aVertexStageSource, 
-            const std::string &aFragmentStageSource
-        ) const = 0;
-
         //! make a texture using a 2d image view
         [[nodiscard]] virtual texture_ptr_type make_texture(
             const image_data_2d_view &imageView
+        ) const = 0;
+
+        //! make an empty texture 
+        [[nodiscard]] virtual texture_ptr_type make_texture(
         ) const = 0;
     ///@}
 

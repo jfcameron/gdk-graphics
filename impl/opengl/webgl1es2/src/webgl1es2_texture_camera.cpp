@@ -130,7 +130,7 @@ const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_depth_texture(
             {
                 static_cast<size_t>(m_TextureSize.x), 
                 static_cast<size_t>(m_TextureSize.y), 
-                texture::data_format::depth_component, 
+                texture::data_format::depth, 
                 texture::wrap_mode::clamped,
                 texture::wrap_mode::clamped,
                 nullptr

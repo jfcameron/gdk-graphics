@@ -96,18 +96,23 @@ void addGlobalLight(const gdk::color &aColor) {
 }
 
 // Does not do any occlusion checking (light will pass through walls)
-void addPointLight(int aX, int aY, int aZ, float aSize, gdk::color aColor) {
-    const float SIZE(aSize);
-    const float HALF(SIZE/2.f);
-    const gdk::Vector3<float> CENTRE(SIZE/2.f); 
+//TODO: think about how to do this. 
+//  1 create a line segment from light's origin point to the current light voxel
+//  2 check for any solid objects in each voxel that the line intersects
+//  3 if a solid object is found, do not add any color to the current voxel, continue to next 
+//  - lighting with occulsion will require a grid or a bsp or something passed as a const ref, to perform the check
+//  - should start treating all position values as world space positions. currently its all local space
+void addPointLight(int aX, int aY, int aZ, const float aSize, const gdk::color aColor) {
+    const gdk::Vector3<float> CENTRE(aSize/2.f); 
+    const float HALF(aSize/2.f);
 
     aX -= HALF;
     aY -= HALF;
     aZ -= HALF;
 
-    for (int x(0); x < SIZE; ++x) 
-        for (int y(0); y < SIZE; ++y) 
-            for (int z(0); z < SIZE; ++z) {
+    for (int x(0); x < aSize; ++x) 
+        for (int y(0); y < aSize; ++y) 
+            for (int z(0); z < aSize; ++z) {
                 float distanceFromCentre = CENTRE.distance(gdk::Vector3<float>(x,y,z));
                 float normalizedHalfDistanceFromCentre = distanceFromCentre / HALF; 
                 float intensity = 1.0f;
@@ -127,6 +132,7 @@ void addPointLight(int aX, int aY, int aZ, float aSize, gdk::color aColor) {
             }    
 };
 
+//TODO: think about how to integrate the 3d/2d packing code into the GL implementation of gdk_graphics
 void updateLightingTexture(std::shared_ptr<texture> aTexture) {
     //multiplied by 3 because this array is raw r,g,b,... channel data
     std::vector<std::underlying_type<std::byte>::type> imageData(LIGHT_TOTAL_VOXELS * 3, {});
@@ -157,7 +163,6 @@ int main(int argc, char **argv)
 
     auto pGraphics = webgl1es2_context::make();
     auto pScene = pGraphics->make_scene();
-    //auto pShader = pGraphics->get_alpha_cutoff_shader();
     auto pCamera = pGraphics->make_camera();
     pScene->add(pCamera);
 
@@ -177,22 +182,7 @@ int main(int argc, char **argv)
         return pGraphics->make_texture(view);
     }());
 
-    auto pLightingTexture = ([&]() {
-        //points to the need to be able to instantiate textures without any data
-        std::vector<std::underlying_type<std::byte>::type> imageData({
-            0xff, 0xff, 0xff, 0xff, 
-            0xff, 0xff, 0xff, 0xff,                                    
-            0xff, 0xff, 0xff, 0xff,
-            0x00, 0x00, 0x00, 0xff,
-        });
-        image_data_2d_view view;
-        view.width = 2;
-        view.height = 2;
-        view.format = texture::data_format::rgba;
-        view.data = reinterpret_cast<std::byte *>(&imageData.front());
-
-        return pGraphics->make_texture(view);
-    }());
+    auto pLightingTexture = pGraphics->make_texture();
 
     auto pShader = [&](){
         const std::string vertexShaderSource(R"V0G0N(
@@ -204,7 +194,7 @@ int main(int argc, char **argv)
 
         //VertexIn
         attribute highp vec3 a_Position;
-        attribute mediump vec2 a_UV;
+        attribute lowp vec2 a_UV;
         attribute highp vec3 a_VoxelPosition;
        
         //FragmentIn
@@ -222,18 +212,6 @@ int main(int argc, char **argv)
         }
         )V0G0N");
 
-        clearLighting();
-
-        addGlobalLight({0.1f,0.1f,0.1f});
-
-        addPointLight(1,-0,2, 10, {1.0,1.0,1.0});
-        addPointLight(7,-5,2, 10, {1.0,0.0,0.0});
-        addPointLight(7,-5,7, 10, {0.0,1.0,0.0});
-        addPointLight(0,-5,0, 10, {0.0,0.0,1.0});
-        addPointLight(0,-5,7, 10, {1.0,0.0,1.0});
-
-        updateLightingTexture(pLightingTexture);
-
         const std::string fragmentShaderSource(R"V0G0N(
         //Uniforms
         uniform sampler2D _Texture;
@@ -242,15 +220,15 @@ int main(int argc, char **argv)
 
         uniform sampler2D _LightTexture;
 
-        lowp vec3 getLightVoxel(highp vec3 aPosition) {
-            highp float x = aPosition.x;
-            highp float y = aPosition.y;
-            highp float z = aPosition.z;
-            highp float oneDimensionIndex = x + (y * 16.) + (z * 16. * 16.);
+        lowp vec3 getLightVoxel(ivec3 aPosition) {
+            highp float oneDimensionIndex = float(aPosition.x) + 
+                (float(aPosition.y) * 16.) + 
+                (float(aPosition.z) * 16. * 16.);
 
-            lowp vec2 normalizedLightVoxelCoordinates;
-            normalizedLightVoxelCoordinates.x = mod(oneDimensionIndex, 64.) /64.;
-            normalizedLightVoxelCoordinates.y = floor(oneDimensionIndex /64.)/64.;
+            lowp vec2 normalizedLightVoxelCoordinates = vec2(
+                mod(oneDimensionIndex, 64.) / 64.,
+                floor(oneDimensionIndex / 64.) / 64.
+            );
 
             return texture2D(_LightTexture, normalizedLightVoxelCoordinates).xyz;
         }
@@ -262,47 +240,55 @@ int main(int argc, char **argv)
 
         void main()
         {
-            lowp vec2 uv = v_UV;
-            uv += _UVOffset;
-            uv *= _UVScale;
-
+            lowp vec2 uv = v_UV + _UVOffset * _UVScale;
             vec4 texel = texture2D(_Texture, uv);
             if (texel[3] < 1.0) discard;
 
-            vec3 position = floor(v_Position); 
-      
-            //Using v_VoxelPosition (static value across voxel) works, using v_Position has a weird artifact.
-            // Try to find a way to fix the artifact, that will reduce vertex data.
-            // Possibly as simple as like if val > 0.1 then val -= 0.09 or something. 
-            highp vec3 light = getLightVoxel(v_VoxelPosition);
-
-            gl_FragColor = vec4(texel.xyz * light.xyz, 1.);
-            //gl_FragColor = vec4(light.xyz, 1.);
-
-            /*
-            // Works correctly. colors a single voxel
-            if (
-                position.z == 2. 
-                && position.y == 2.  
-                && position.x == 3.
-            ) {
-                //gl_FragColor = vec4(0.,1.,1., 1.);
-            }*/
-
-            
-            /*// voxel position, looks good
-            highp vec3 voxelPosition;
-            voxelPosition = v_VoxelPosition;
-            voxelPosition.xyz /= 16.;
-            //gl_FragColor = vec4(voxelPosition.xyz,1.);
-            gl_FragColor.rgb = vec3(voxelPosition.x);*/
-            
-            /*
-            // Per vertex. works
-            position.xyz /=16.;
-            gl_FragColor = vec4(position.xyz,1.);
+            vec3 voxelPosition = v_VoxelPosition;
+            /* 
+                //visually confirms v_VoxelPosition values are reaching frag shader correctly
+                voxelPosition = v_VoxelPosition;
+                voxelPosition.xyz /= 16.;
+                gl_FragColor.rgb = vec3(voxelPosition);
             */
-            
+
+            vec3 position = v_Position;
+            /* 
+                //visually confirms v_Position values are reaching frag shader correctly
+                position = floor(position); 
+                position.xyz /=16.;
+                gl_FragColor.rgb = vec3(position);
+            */
+     
+            //Sampling section is incomplete, currently only uses thislight.
+            //TODO: need to think about how to blend this light with neighbours correctly  
+            highp vec3 thisLight =   getLightVoxel(ivec3(voxelPosition) + ivec3( 0, 0, 0));
+            highp vec3 topLight =    getLightVoxel(ivec3(voxelPosition) + ivec3( 0, 1, 0));
+            highp vec3 bottomLight = getLightVoxel(ivec3(voxelPosition) + ivec3( 0,-1, 0));
+            highp vec3 northLight =  getLightVoxel(ivec3(voxelPosition) + ivec3( 0, 0, 1));
+            highp vec3 southLight =  getLightVoxel(ivec3(voxelPosition) + ivec3( 0, 0,-1));
+            highp vec3 eastLight =   getLightVoxel(ivec3(voxelPosition) + ivec3(-1, 0, 0));
+            highp vec3 westLight =   getLightVoxel(ivec3(voxelPosition) + ivec3( 1, 0, 0));
+
+            highp vec3 subVoxelPosition = mod(v_Position, 1.);
+            highp vec3 samplingBiasVector = subVoxelPosition - 0.5; //centering it so 0,0,0 is center of voxel
+            highp float samplingBiasMagnitude = length(samplingBiasVector);
+
+            highp vec3 light = 
+                (thisLight * 1.0)
+
+                //(thisLight * (1.0 - samplingBiasMagnitude))
+            ;
+
+                /*+ (northLight *  samplingBiasVector.z)
+                + (southLight *  samplingBiasVector.z)
+                + (topLight *    samplingBiasVector.y)
+                + (bottomLight * samplingBiasVector.y)
+                + (eastLight *   samplingBiasVector.x)
+                + (westLight *   samplingBiasVector.x)*/
+
+            gl_FragColor = vec4(texel.xyz * light.xyz, 1.); 
+            //gl_FragColor = vec4(light.xyz, 1.); //enable this line to see just lighting data
         }
         )V0G0N");
 
@@ -350,13 +336,19 @@ int main(int argc, char **argv)
     {
         glfwPollEvents();
 
-
         clearLighting();
         addGlobalLight({0.1f,0.1f,0.1f});
+
+        addPointLight(0,2,0, 20, {0.0,0.0,1.0});
+        addPointLight(14,2,14, 10, {1.0,0.0,1.0});
+        addPointLight(0,2,14, 10, {0.0,1.0,0.0});
+
+        addPointLight(8,1,8, std::abs(std::sin(time)) * 10, {1.0,1.0,1.0});
+
         static int x = 8;
         static int z = 8;
         addPointLight(std::sin(time) * 8 + x,-2,std::cos(time) * 8 + z, 10, {1.0,1.0,1.0});
-        addPointLight(8,1,8, std::abs(std::sin(time)) * 10, {1.0,1.0,1.0});
+
         updateLightingTexture(pLightingTexture);
 
         graphics_mat4x4_type root({0,0,0},Quaternion<float>({0,time,0}), {1});

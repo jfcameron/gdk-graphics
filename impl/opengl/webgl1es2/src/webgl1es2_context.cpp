@@ -3,12 +3,12 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <gdk/webgl1es2_screen_camera.h>
 #include <gdk/webgl1es2_context.h>
 #include <gdk/webgl1es2_entity.h>
 #include <gdk/webgl1es2_material.h>
 #include <gdk/webgl1es2_model.h>
 #include <gdk/webgl1es2_scene.h>
+#include <gdk/webgl1es2_screen_camera.h>
 #include <gdk/webgl1es2_shader_program.h>
 #include <gdk/webgl1es2_texture_camera.h>
 
@@ -61,10 +61,10 @@ graphics::context::material_ptr_type webgl1es2_context::make_material(
             aRenderMode));
 }
 
-graphics::context::shader_program_ptr_type webgl1es2_context::make_shader(const std::string &aVertexGLSL, const std::string &aFragGLSL) const 
+graphics::context::shader_program_ptr_type webgl1es2_context::make_shader(const std::string &aVertexShaderStageSourceCodeGLSL, const std::string &aFragmentShaderStageSourceCodeGLSL) const 
 {
     return graphics::context::shader_program_ptr_type(
-        new webgl1es2_shader_program(aVertexGLSL, aFragGLSL));
+        new webgl1es2_shader_program(aVertexShaderStageSourceCodeGLSL, aFragmentShaderStageSourceCodeGLSL));
 }
 
 graphics::context::built_in_shader_ptr_type webgl1es2_context::get_alpha_cutoff_shader() const
@@ -96,6 +96,16 @@ graphics::context::built_in_model_ptr_type webgl1es2_context::get_quad_model() c
 graphics::context::texture_ptr_type webgl1es2_context::make_texture(const image_data_2d_view &imageView) const
 {
     return graphics::context::texture_ptr_type(new webgl1es2_texture(imageView));
+}
+
+graphics::context::texture_ptr_type webgl1es2_context::make_texture() const {
+    image_data_2d_view view;
+    view.width = 0;
+    view.height = 0;
+    view.format = texture::data_format::grey;
+    view.data = nullptr;
+
+    return graphics::context::texture_ptr_type(new webgl1es2_texture(view));
 }
 
 graphics::context::model_ptr_type webgl1es2_context::make_model(const model::UsageHint &usage,

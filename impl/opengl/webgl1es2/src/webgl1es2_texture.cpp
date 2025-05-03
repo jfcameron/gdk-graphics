@@ -28,11 +28,11 @@ static inline GLint textureFormatToGLint(const texture::data_format a)
     {
         case texture::data_format::rgba: return GL_RGBA;
         case texture::data_format::rgb: return GL_RGB;
-        //case texture::data_format::a: return GL_ALPHA;
+        case texture::data_format::grey: return GL_ALPHA;
         /*case texture::data_format::luminance_alpha: return GL_LUMINANCE_ALPHA;
         case texture::data_format::luminance: return GL_LUMINANCE;*/
         
-        case texture::data_format::depth_component: 
+        case texture::data_format::depth: 
         {
 //TODO: deal with extensions on not glew platforms. Move this into a header.
 #if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
@@ -206,7 +206,6 @@ webgl1es2_texture::webgl1es2_texture(const image_data_2d_view &imageView,
     verify_image_view(imageView);
 
     GLuint handle;
-
     glGenTextures(1, &handle);
 
     glActiveTexture(GL_TEXTURE0);

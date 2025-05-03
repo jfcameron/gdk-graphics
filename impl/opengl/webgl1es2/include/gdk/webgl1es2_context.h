@@ -11,6 +11,15 @@ namespace gdk
     class webgl1es2_context final : public graphics::context
     {
     public: 
+        /// \brief context factory method
+        [[nodiscard]] static context_ptr_type make();
+
+        /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
+        [[nodiscard]] virtual shader_program_ptr_type make_shader(
+            const std::string &aVertexShaderStageSourceCodeGLSL, 
+            const std::string &aFragmentShaderStageSourceCodeGLSL
+        ) const;
+
         [[nodiscard]] virtual scene_ptr_type make_scene() const override;
 
         [[nodiscard]] virtual std::shared_ptr<screen_camera> make_camera() const override;
@@ -43,15 +52,11 @@ namespace gdk
             const vertex_data &vertexDataView
         ) const override;
 
-
-        [[nodiscard]] virtual shader_program_ptr_type make_shader(
-            const std::string &aVertexGLSL, 
-            const std::string &aFragGLSL
-        ) const override;
-
         [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture(
             const image_data_2d_view &imageView
         ) const override;
+
+        [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture() const override;
 
         [[nodiscard]] virtual graphics::context::built_in_shader_ptr_type get_alpha_cutoff_shader() const override;
 
@@ -62,9 +67,6 @@ namespace gdk
         [[nodiscard]] virtual built_in_model_ptr_type get_quad_model() const override;
 
         virtual ~webgl1es2_context() override = default;
-
-        //! context factory method
-        [[nodiscard]] static context_ptr_type make();
 
     private:
         webgl1es2_context(); 

@@ -166,6 +166,7 @@ namespace gdk
         /// lazily instantiated.
         static const std::shared_ptr<gdk::webgl1es2_texture> GetCheckerboardOfDeath(); 
 
+        //TODO: should move this to gdk_graphics. doesnt need to be implementation specific to gles2
         /// \brief constructs a 2d webgl1es2_texture from png rgba32 encoded file data
         /// \throws invalid_argument if the image could not be decoded 
         /// (badly formed or not a PNG with component format RGBA32.)
