@@ -248,7 +248,7 @@ void vertex_data::sort_by_nearest_triangle(
     graphics_mat4x4_type aEntityInstanceWorldMatrix,
     const std::string &aObserverWorldPositionAttributeName)
 {
-    //TODO: name becomes misleading at this point. maybe require teh inverse in the method param
+    //TODO: name becomes misleading at this point. 
     aEntityInstanceWorldMatrix.inverse(); 
 
     graphics_mat4x4_type observerWorldMatrix;

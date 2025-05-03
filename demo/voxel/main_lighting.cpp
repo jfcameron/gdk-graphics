@@ -13,6 +13,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <cmath>
@@ -68,42 +69,62 @@ gdk::color getLighting(const int aX, const int aY, const int aZ) {
 }
 
 void addLighting(int aX, int aY, int aZ, gdk::color aColor) {
+    if (aX < 0 || aX >= 16) return;
+    if (aY < 0 || aY >= 16) return;
+    if (aZ < 0 || aZ >= 16) return;
+
     auto lightVoxel = getLighting(aX, aY, aZ);
 
     lightVoxel.r += aColor.r;
     lightVoxel.g += aColor.g;
     lightVoxel.b += aColor.b;
 
-    lightVoxel.r = lightVoxel.r > 1.f ? 1.f : lightVoxel.r; 
-    lightVoxel.g = lightVoxel.g > 1.f ? 1.f : lightVoxel.g; 
-    lightVoxel.b = lightVoxel.b > 1.f ? 1.f : lightVoxel.b; 
+    lightVoxel.r = std::clamp<float>(lightVoxel.r, 0.f, 1.f);
+    lightVoxel.g = std::clamp<float>(lightVoxel.g, 0.f, 1.f);
+    lightVoxel.b = std::clamp<float>(lightVoxel.b, 0.f, 1.f);
 
     setLighting(aX, aY, aZ, lightVoxel);
 }
 
-void addPointLight(int aX, int aY, int aZ, gdk::color aColor) {
-    static constexpr int SIZE(10);
+// Applys a uniform light to the whole 3d array
+void addGlobalLight(const gdk::color &aColor) {
+    const auto size(mData.size());
+    for (int x(0); x < size; ++x) 
+        for (int y(0); y < size; ++y) 
+            for (int z(0); z < size; ++z) 
+                addLighting( x, y, z, aColor);   
+}
+
+// Does not do any occlusion checking (light will pass through walls)
+void addPointLight(int aX, int aY, int aZ, float aSize, gdk::color aColor) {
+    const float SIZE(aSize);
+    const float HALF(SIZE/2.f);
+    const gdk::Vector3<float> CENTRE(SIZE/2.f); 
+
+    aX -= HALF;
+    aY -= HALF;
+    aZ -= HALF;
 
     for (int x(0); x < SIZE; ++x) 
         for (int y(0); y < SIZE; ++y) 
             for (int z(0); z < SIZE; ++z) {
+                float distanceFromCentre = CENTRE.distance(gdk::Vector3<float>(x,y,z));
+                float normalizedHalfDistanceFromCentre = distanceFromCentre / HALF; 
+                float intensity = 1.0f;
+                //Inverse of the square distance drop off
+                intensity = (1.0f / std::sqrt(normalizedHalfDistanceFromCentre)) - 1.0f; 
+                //Linear drop off
+                //intensity = 1.0f - normalizedHalfDistanceFromCentre;
+                
+                intensity = std::clamp(intensity, 0.0f, 1.0f);
+
                 auto color(aColor);
-                float intensity = float(x) / float(SIZE);
-                std::cout << intensity << "\n";
                 color.r *= intensity;
                 color.g *= intensity;
                 color.b *= intensity;
 
-                addLighting(
-                    aX + x,
-                    aY + y,
-                    aZ + z,
-                    color
-                );   
+                addLighting(aX + x, aY + y, aZ + z, color);   
             }    
-    
-    
-    setLighting(aX, aY, aZ, aColor); 
 };
 
 void updateLightingTexture(std::shared_ptr<texture> aTexture) {
@@ -201,14 +222,15 @@ int main(int argc, char **argv)
         }
         )V0G0N");
 
-        for (int x(0); x < 16; ++x) for (int y(0); y < 16; ++y) for (int z(0); z < 16; ++z) 
-            setLighting(x,y,z, {0.05,0.05,0.05}); 
+        clearLighting();
 
-        setLighting(0,0,0, {0.95,0.95,0.95}); 
-        setLighting(1,1,1, {0.95,0.95,0.95}); 
-        addLighting(0,4,0, {0.0,0.9,0.0}); 
+        addGlobalLight({0.1f,0.1f,0.1f});
 
-        addPointLight(4,0,4,{1.0,1.0,1.0});
+        addPointLight(1,-0,2, 10, {1.0,1.0,1.0});
+        addPointLight(7,-5,2, 10, {1.0,0.0,0.0});
+        addPointLight(7,-5,7, 10, {0.0,1.0,0.0});
+        addPointLight(0,-5,0, 10, {0.0,0.0,1.0});
+        addPointLight(0,-5,7, 10, {1.0,0.0,1.0});
 
         updateLightingTexture(pLightingTexture);
 
@@ -255,6 +277,7 @@ int main(int argc, char **argv)
             highp vec3 light = getLightVoxel(v_VoxelPosition);
 
             gl_FragColor = vec4(texel.xyz * light.xyz, 1.);
+            //gl_FragColor = vec4(light.xyz, 1.);
 
             /*
             // Works correctly. colors a single voxel
@@ -318,6 +341,8 @@ int main(int argc, char **argv)
     voxelModeler.set_voxel_data(4,4,0,1);
     voxelModeler.set_voxel_data(7,7,7,1);
 
+    voxelModeler.set_voxel_data(8,3,8,1);
+
     voxelModeler.update_vertex_data(); 
     pVoxelModel->update_vertex_data(model::UsageHint::Streaming, voxelModeler.vertex_data());
 
@@ -325,14 +350,14 @@ int main(int argc, char **argv)
     {
         glfwPollEvents();
 
-        /*clearLighting();
-        static int x = 0;
-        static int z = 0;
-        setLighting(x,0,z, {0.0,0.9,0.0}); 
+
+        clearLighting();
+        addGlobalLight({0.1f,0.1f,0.1f});
+        static int x = 8;
+        static int z = 8;
+        addPointLight(std::sin(time) * 8 + x,-2,std::cos(time) * 8 + z, 10, {1.0,1.0,1.0});
+        addPointLight(8,1,8, std::abs(std::sin(time)) * 10, {1.0,1.0,1.0});
         updateLightingTexture(pLightingTexture);
-        x++;
-        if (x >= 16) { x = 0; z++; }
-        if (z >= 16) { z = 0; }*/
 
         graphics_mat4x4_type root({0,0,0},Quaternion<float>({0,time,0}), {1});
         graphics_mat4x4_type chunkMatrix({-8,0,-8},Quaternion<float>({0,0,0}), {1});

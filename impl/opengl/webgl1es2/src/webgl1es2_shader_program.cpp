@@ -606,15 +606,15 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
 
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
     {
-        static constexpr auto magnitude(graphics_mat4x4_type::RowOrColumnCount);
+        static constexpr auto order(graphics_mat4x4_type::order);
 
         std::vector<graphics_mat4x4_type::component_type> data;
 
-        data.reserve(a.size() * magnitude * magnitude);
+        data.reserve(a.size() * order * order);
 
         for (const auto &mat : a) 
         {
-            for (int y(0); y < magnitude; ++y) for (int x(0); x < magnitude; ++x)
+            for (int y(0); y < order; ++y) for (int x(0); x < order; ++x)
             {
                 data.push_back(mat.m[y][x]);
             }
