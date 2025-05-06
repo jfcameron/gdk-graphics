@@ -1,14 +1,13 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <gdkgraphics/buildinfo.h>
-
 #include <gdk/glh.h>
+#include <gdk/graphics_exception.h>
 #include <gdk/webgl1es2_shader_program.h>
+#include <gdkgraphics/buildinfo.h>
 
 #include <atomic>
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include <vector>
 
 using namespace gdk;
@@ -20,88 +19,64 @@ static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
 
 static short s_ActiveTextureUnitCounter(0);
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]()
-{
-    const std::string vertexShaderSource(R"V0G0N(    
-    //Uniforms
+const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]() {
+    const std::string vertexShaderSource(R"V0G0N(
     uniform mat4 _MVP;
-
-    //VertexIn
     attribute highp vec3 a_Position;
 
-    void main()
-    {
+    void main() {
         gl_Position = _MVP * vec4(a_Position,1.0);
     }
     )V0G0N");
 
     const std::string fragmentShaderSource(R"V0G0N(
-    const vec4 DEATHLY_PINK = vec4(1,0.2,0.8,1);
-
-    void main()
-    {
-        gl_FragColor = DEATHLY_PINK;
+    void main() {
+        gl_FragColor = vec4(1,0.2,0.8,1);
     }
     )V0G0N");
 
     return new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
 });
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::AlphaCutOff([]()
-{
+const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::AlphaCutOff([]() {
     const std::string vertexShaderSource(R"V0G0N(
-    //Uniforms
     uniform mat4 _MVP;
     uniform mat4 _Model;
-    uniform mat4 _View;
     uniform mat4 _Projection;
+    uniform mat4 _View;
 
-    //VertexIn
     attribute highp vec3 a_Position;
     attribute mediump vec2 a_UV;
     
-    //FragmentIn
     varying mediump vec2 v_UV;
 
-    void main ()
-    {
+    void main () {
         gl_Position = _MVP * vec4(a_Position,1.0);
-
         v_UV = a_UV;
     }
     )V0G0N");
 
     const std::string fragmentShaderSource(R"V0G0N(
-    //Uniforms
     uniform sampler2D _Texture;
     uniform vec2 _UVOffset;
     uniform vec2 _UVScale; 
 
-    //FragmentIn
     varying lowp vec2 v_UV;
-    lowp vec2 uv;
 
-    void main()
-    {
-        uv = v_UV;  
-        uv += _UVOffset;
-        uv *= _UVScale;
+    void main() {
+        lowp vec2 uv = v_UV + _UVOffset * _UVScale;  
 
-        vec4 frag = texture2D(_Texture, uv);
+        vec4 texel = texture2D(_Texture, uv);
+        if (texel[3] < 1.0) discard;
 
-        if (frag[3] < 1.0) discard;
-
-        gl_FragColor = vec4(frag.xyz, 0.5);                        
+        gl_FragColor = vec4(texel.xyz, 0.5);                        
     }
     )V0G0N");
 
-    auto p = new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
-
-    return p;
+    return new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
 });
 
-static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(std::string &aSource)
-{
+static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(std::string &aSource) {
     aSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
 #if defined JFC_TARGET_PLATFORM_Emscripten 
     // version must be the first line in source. version must be present for WebGL platforms
@@ -114,8 +89,7 @@ static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_s
 #endif
 }
 
-static void perform_shader_code_preprocessing_done_to_only_fragment_stages(std::string &aSource)
-{
+static void perform_shader_code_preprocessing_done_to_only_fragment_stages(std::string &aSource) {
 #if defined JFC_TARGET_PLATFORM_Emscripten 
     // sets float precision, required by webgl
     aSource.insert(0, std::string("precision mediump float;\n"));
@@ -123,160 +97,135 @@ static void perform_shader_code_preprocessing_done_to_only_fragment_stages(std::
 }
 
 webgl1es2_shader_program::webgl1es2_shader_program(std::string aVertexSource, std::string aFragmentSource)
-: m_VertexShaderHandle([&aVertexSource]()
-{
+: m_VertexShaderHandle([&aVertexSource]() {
     perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(aVertexSource);
 
-    // Compile vertex stage
-    const GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    const char *const vertex_shader = aVertexSource.c_str();
-    glShaderSource(vs, 1, &vertex_shader, 0);
-    glCompileShader(vs);
+    const GLuint hVertexShader(glCreateShader(GL_VERTEX_SHADER));
+    const auto *const arrayOfSourceCodeStrings(&aVertexSource.front()); 
+    glShaderSource(hVertexShader, 1, &arrayOfSourceCodeStrings, 0);
+    glCompileShader(hVertexShader);
 
-    return decltype(m_VertexShaderHandle)(vs, [](const GLuint handle)
-    {
+    return decltype(m_VertexShaderHandle)(hVertexShader, [](const GLuint handle) {
         glDeleteShader(handle);
     });
 }())
-, m_FragmentShaderHandle([&aFragmentSource]()
-{
+, m_FragmentShaderHandle([&aFragmentSource]() {
     perform_shader_code_preprocessing_done_to_only_fragment_stages(aFragmentSource);
     perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(aFragmentSource);
     
-    // Compile fragment stage
-    const char *const fragment_shader = aFragmentSource.c_str();
-    const GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fragment_shader, 0);
-    glCompileShader(fs);
+    const GLuint hFragmentShader(glCreateShader(GL_FRAGMENT_SHADER));
+    const auto *const arrayOfSourceCodeStrings(&aFragmentSource.front()); 
+    glShaderSource(hFragmentShader, 1, &arrayOfSourceCodeStrings, 0);
+    glCompileShader(hFragmentShader);
 
-    return decltype(m_FragmentShaderHandle)(fs, [](const GLuint handle)
-    {
+    return decltype(m_FragmentShaderHandle)(hFragmentShader, [](const GLuint handle) {
         glDeleteShader(handle);
     });
 }())
-, m_ProgramHandle([this]()
-{
-    const auto vs = m_VertexShaderHandle.get();
-    const auto fs = m_FragmentShaderHandle.get();
+, m_ProgramHandle([this]() {
+    const auto hVertexShader(m_VertexShaderHandle.get());
+    const auto hFragmentShader(m_FragmentShaderHandle.get());
 
-    // Link the program
-    GLuint programHandle = glCreateProgram();
-    glAttachShader(programHandle, vs);
-    glAttachShader(programHandle, fs);
-    glLinkProgram(programHandle);
+    const auto hShaderProgram(glCreateProgram());
+    glAttachShader(hShaderProgram, hVertexShader);
+    glAttachShader(hShaderProgram, hFragmentShader);
+    glLinkProgram(hShaderProgram);
 
-    // Confirm no compilation/link errors
-    GLint status(-1);
-    glGetProgramiv(programHandle, GL_LINK_STATUS, &status);
+    GLint status;
+    glGetProgramiv(hShaderProgram, GL_LINK_STATUS, &status);
     
-    if (status == GL_FALSE)
-    {
+    if (status == GL_FALSE) {
         std::ostringstream message;
         
         message << "A shader could not be linked!\n";
         
-        static const auto decorator = [](std::ostringstream& ss, std::string log_header, 
-            std::string &&log_msg)
-        {
+        static const auto decorator = [](std::ostringstream& ss, std::string log_header, std::string &&log_msg) {
             ss  << log_header << "\n" << (log_msg.size() ? log_msg : "clear") << "\n\n";
         };
 
-        decorator(message, "vertex log", glh::GetShaderInfoLog(vs));
-        decorator(message, "fragment log", glh::GetShaderInfoLog(fs));
-        decorator(message, "program log", glh::GetProgramInfoLog(programHandle));
+        decorator(message, "vertex log", glh::GetShaderInfoLog(hVertexShader));
+        decorator(message, "fragment log", glh::GetShaderInfoLog(hFragmentShader));
+        decorator(message, "program log", glh::GetProgramInfoLog(hShaderProgram));
 
-        throw std::runtime_error(std::string(TAG).append(": ").append(message.str()));
+        throw gdk::graphics_exception(std::string(TAG).append(": ").append(message.str()));
     }
 
-    return jfc::unique_handle<GLuint>(programHandle,
-        [](const GLuint handle)
-        {
-            glDeleteProgram(handle);
-        });
-}())
-{
-    const auto programHandle = m_ProgramHandle.get();
+    return jfc::unique_handle<GLuint>(hShaderProgram, [](const GLuint handle) {
+        glDeleteProgram(handle);
+    });
+}()) {
+    const auto hShaderProgram(m_ProgramHandle.get());
 
-    GLint count;
-
-    GLsizei currentNameLength;
-  
     // poll active attributes, record their names and locations for attribute enabling & creating vertex attrib pointers
     {
-        // (c string bookkeeping) create a buffer big enough to contain the longest active attrib's name
-        GLint maxAttribNameLength(0);
-        glGetProgramiv(programHandle, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribNameLength);
-        
-        std::vector<GLchar> attrib_name_buffer(maxAttribNameLength); 
+        auto attributeNameBuffer = [&]() {
+            GLint maxAttribNameLength(0);
+            glGetProgramiv(hShaderProgram, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribNameLength);
+            return std::vector<GLchar>(maxAttribNameLength);
+        }();
 
-        glGetProgramiv(programHandle, GL_ACTIVE_ATTRIBUTES, &count);
+        GLint activeAttributeCount;
+        glGetProgramiv(hShaderProgram, GL_ACTIVE_ATTRIBUTES, &activeAttributeCount);
 
-        for (decltype(count) i(0); i < count; ++i)
-        {
-            GLint component_count;
-            GLenum component_type;
+        for (decltype(activeAttributeCount) indexToCurrentAttribute(0); indexToCurrentAttribute < activeAttributeCount; ++indexToCurrentAttribute) {
+            GLint attributeCount;
+            GLenum attributeType;
+            GLsizei attributeNameLength;
 
-            glGetActiveAttrib(programHandle, 
-                i, 
-                attrib_name_buffer.size(),    // (c string bookkeeping) max size the gl can safely write into my buffer
-                &currentNameLength,           // (c string bookkeeping) actual char count for the current attribute's name 
-                &component_count,             // e.g: 3 //TODO: RENAME! This isnt what I tohught it was. 
-                                              // Size is the number of gltypes.. so vec2 would == 1 as in 1 vec 2, not 2 floats,
-                                              // being the components... need to rename all this stuff...
-                &component_type,              // e.g: float
-                &attrib_name_buffer.front()); // e.g: "a_Position"
+            glGetActiveAttrib(hShaderProgram,
+                indexToCurrentAttribute,
+                attributeNameBuffer.size(), 
+                &attributeNameLength, 
+                &attributeCount,
+                &attributeType,
+                &attributeNameBuffer.front());
 
             webgl1es2_shader_program::active_attribute_info info;
-            info.location = i;
-            info.type = component_type;
-            info.count = component_count;
+            info.location = indexToCurrentAttribute;
+            info.type = attributeType;
+            info.count = attributeCount;
 
-            m_ActiveAttributes[std::string(attrib_name_buffer.begin(), 
-                attrib_name_buffer.begin() + currentNameLength)] = std::move(info);
+            m_ActiveAttributes[std::string(attributeNameBuffer.begin(), 
+                attributeNameBuffer.begin() + attributeNameLength)] = std::move(info);
         }
     }
 
     // poll active uniforms, record their names and locations for uniform value assignments
     {
-        // (c string bookkeeping) create a buffer likely big enough to contain the longest active attrib's name
-        // There is a GL_ACTIVE_UNIFORM_MAX_LENGTH (equivalent of above attrib code), but I have found recent posts online
-        // (2010s) of programmers complaining that it is fairly common for drivers to return incorrect values,
-        // so I am allocating a large buffer instead.
+        // GL_ACTIVE_UNIFORM_MAX_LENGTH is known to return wrong values on many implementations, so I am using a large constant instead
         std::vector<GLchar> uniform_name_buffer(256); 
 
-        glGetProgramiv(programHandle, GL_ACTIVE_UNIFORMS, &count);
+        GLint activeAttributeCount;
+        glGetProgramiv(hShaderProgram, GL_ACTIVE_UNIFORMS, &activeAttributeCount);
 
-        for (decltype(count) i(0); i < count; ++i)
-        {
-            GLint attribute_size;
-            GLenum attribute_type;
+        for (decltype(activeAttributeCount) currentAttributeIndex(0); currentAttributeIndex < activeAttributeCount; ++currentAttributeIndex) {
+            GLenum attributeType;
+            GLint attributeSize;
+            GLsizei attributeNameLength;
 
-            glGetActiveUniform(programHandle, 
-                i, 
+            glGetActiveUniform(hShaderProgram, 
+                currentAttributeIndex, 
                 uniform_name_buffer.size(),    // (c string bookkeeping) max size the gl can safely write into my buffer
-                &currentNameLength,            // (c string bookkeeping) actual char count for the current attribute's name
-                &attribute_size,               // e.g: "1"
-                &attribute_type,               // e.g: "texture"
+                &attributeNameLength,            // (c string bookkeeping) actual char activeAttributeCount for the current attribute's name
+                &attributeSize,               // e.g: "1"
+                &attributeType,               // e.g: "texture"
                 &uniform_name_buffer.front()); // e.g: "u_Diffuse" 
 
             webgl1es2_shader_program::active_uniform_info info;
-            info.location = i;
-            info.type = attribute_type;
-            info.size = attribute_size;
+            info.location = currentAttributeIndex;
+            info.type = attributeType;
+            info.size = attributeSize;
 
-            m_ActiveUniforms[std::string(uniform_name_buffer.begin(), uniform_name_buffer.begin() + currentNameLength)] 
-                = std::move(info);
+            m_ActiveUniforms[std::string(uniform_name_buffer.begin(), uniform_name_buffer.begin() + attributeNameLength)] = std::move(info);
         }
     }
 }
 
-void webgl1es2_shader_program::useProgram() const
-{
+void webgl1es2_shader_program::useProgram() const {
     static GLint s_CurrentShaderProgramHandle(-1);
 
     if (const auto handle(m_ProgramHandle.get()); 
-        s_CurrentShaderProgramHandle != handle)
-    {
+        s_CurrentShaderProgramHandle != handle) {
         s_CurrentShaderProgramHandle = handle;
 
         s_ActiveTextureUniformNameToUnit.clear();
@@ -286,87 +235,66 @@ void webgl1es2_shader_program::useProgram() const
     }
 }
 
-bool webgl1es2_shader_program::operator==(const webgl1es2_shader_program &b) const
-{
+bool webgl1es2_shader_program::operator==(const webgl1es2_shader_program &b) const {
     return m_ProgramHandle == b.m_ProgramHandle;
 }
 bool webgl1es2_shader_program::operator!=(const webgl1es2_shader_program &b) const {return !(*this == b);}
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const GLfloat aValue) const 
-{
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const GLfloat aValue) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform1f(search->second.location, aValue);
-        
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector2_type &aValue) const 
-{
-
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector2_type &aValue) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform2f(search->second.location, aValue.x, aValue.y);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector3_type &aValue) const 
-{
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector3_type &aValue) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform3f(search->second.location, aValue.x, aValue.y, aValue.z);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector4_type &aValue) const 
-{
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_vector4_type &aValue) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform4f(search->second.location, aValue.x, aValue.y, aValue.z, aValue.w);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLfloat> &avalue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLfloat> &avalue) const {
     if (!avalue.size()) return false;
 
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform1fv(search->second.location, avalue.size(), &avalue[0]);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector2_type> &avalue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector2_type> &avalue) const {
     if (!avalue.size()) return false;
     
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<graphics_vector2_type::component_type> data;
-
         data.reserve(avalue.size() * 2);
 
-        for (const auto &vec : avalue) 
-        {
+        for (const auto &vec : avalue) {
             data.push_back(vec.x);
             data.push_back(vec.y);
         }
@@ -379,18 +307,15 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 } 
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector3_type> &avalue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector3_type> &avalue) const {
     if (!avalue.size()) return false;
     
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<graphics_vector3_type::component_type> data;
 
         data.reserve(avalue.size() * 3);
 
-        for (const auto &vec : avalue) 
-        {
+        for (const auto &vec : avalue) {
             data.push_back(vec.x);
             data.push_back(vec.y);
             data.push_back(vec.z);
@@ -404,18 +329,14 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector4_type> &avalue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector4_type> &avalue) const {
     if (!avalue.size()) return false;
 
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<graphics_vector4_type::component_type> data;
-
         data.reserve(avalue.size() * 4);
 
-        for (const auto &vec : avalue) 
-        {
+        for (const auto &vec : avalue) {
             data.push_back(vec.x);
             data.push_back(vec.y);
             data.push_back(vec.z);
@@ -430,80 +351,61 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 } 
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const GLint aValue) const 
-{
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const GLint aValue) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform1i(search->second.location, aValue);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer2_uniform_type &a) const 
-{
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer2_uniform_type &a) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform2i(search->second.location, a[0], a[1]);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer3_uniform_type &a) const 
-{
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer3_uniform_type &a) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform3i(search->second.location, a[0], a[1], a[2]);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer4_uniform_type &a) const 
-{
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer4_uniform_type &a) const {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform4i(search->second.location, a[0], a[1], a[2], a[3]);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLint> &aValue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLint> &aValue) const {
     if (!aValue.size()) return false;
 
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniform1iv(search->second.location, aValue.size(), &aValue[0]);
-
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer2_uniform_type> &aValue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer2_uniform_type> &aValue) const {
     if (!aValue.size()) return false;
 
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<integer2_uniform_type::value_type> data;
-
         data.reserve(aValue.size() * 2);
 
-        for (const auto &vec : aValue) 
-        {
+        for (const auto &vec : aValue) {
             data.push_back(vec[0]);
             data.push_back(vec[1]);
         }
@@ -516,19 +418,14 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer3_uniform_type> &aValue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer3_uniform_type> &aValue) const {
     if (!aValue.size()) return false;
 
-
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<integer3_uniform_type::value_type> data;
-
         data.reserve(aValue.size() * 3);
 
-        for (const auto &vec : aValue) 
-        {
+        for (const auto &vec : aValue) {
             data.push_back(vec[0]);
             data.push_back(vec[1]);
             data.push_back(vec[2]);
@@ -542,18 +439,14 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer4_uniform_type> &aValue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<integer4_uniform_type> &aValue) const {
     if (!aValue.size()) return false;
 
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<integer4_uniform_type::value_type> data;
-
         data.reserve(aValue.size() * 4);
 
-        for (const auto &vec : aValue) 
-        {
+        for (const auto &vec : aValue) {
             data.push_back(vec[0]);
             data.push_back(vec[1]);
             data.push_back(vec[2]);
@@ -588,50 +481,38 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
 
 }*/
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat4x4_type &a) const 
-{
-    if (const auto& search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat4x4_type &a) const {
+    if (const auto& search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &a.m[0][0]);
-
         return true;
     }
 
     return false;
 } 
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat4x4_type> &a) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat4x4_type> &a) const {
     if (!a.size()) return false;
 
-    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) 
-    {
+    if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         static constexpr auto order(graphics_mat4x4_type::order);
 
         std::vector<graphics_mat4x4_type::component_type> data;
-
         data.reserve(a.size() * order * order);
 
-        for (const auto &mat : a) 
-        {
-            for (int y(0); y < order; ++y) for (int x(0); x < order; ++x)
-            {
-                data.push_back(mat.m[y][x]);
-            }
+        for (const auto &mat : a) for (int y(0); y < order; ++y) for (int x(0); x < order; ++x) {
+            data.push_back(mat.m[y][x]);
+            glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &data[0]);
+            return true;
         }
 
-        glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &data[0]);
-
-        return true;
+        return false;
     }
 
     return false;
-} 
+}
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const gdk::webgl1es2_texture &aTexture) const
-{
-    if (const auto &activeUniformSearch = m_ActiveUniforms.find(aName); activeUniformSearch != m_ActiveUniforms.end())
-    {   
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const gdk::webgl1es2_texture &aTexture) const {
+    if (const auto &activeUniformSearch = m_ActiveUniforms.find(aName); activeUniformSearch != m_ActiveUniforms.end()) {   
         const auto &activeTextureSearch = s_ActiveTextureUniformNameToUnit.find(aName);
         
         const GLint unit = activeTextureSearch == s_ActiveTextureUniformNameToUnit.end()
@@ -644,19 +525,11 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const g
             }()
             : activeTextureSearch->second;
 
-        if (s_ActiveTextureUnitCounter < webgl1es2_shader_program::MAX_TEXTURE_UNITS) 
-        {
-            //TODO: parameterize! Improve texture as well to support non2ds. 
-            // The type (2d or cube) should be a property of the texture abstraction.
-            const GLenum target(GL_TEXTURE_2D); 
-
-            glActiveTexture(GL_TEXTURE0 + unit);
-
-            glBindTexture(target, aTexture.getHandle());
-
+        if (s_ActiveTextureUnitCounter < webgl1es2_shader_program::MAX_TEXTURE_UNITS) {
+            aTexture.activateAndBind(unit);
             glUniform1i(activeUniformSearch->second.location, unit);
         }
-        else throw std::invalid_argument(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; "
+        else throw gdk::graphics_exception(std::string("GLES2.0/WebGL1.0 only provide 8 texture units; "
             "you are trying to bind too many simultaneous textures to the context: ") + 
             std::to_string(s_ActiveTextureUnitCounter));
 
@@ -666,8 +539,7 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const g
     return false;
 }
 
-std::optional<webgl1es2_shader_program::active_attribute_info> webgl1es2_shader_program::tryGetActiveAttribute(const std::string &aAttributeName) const
-{
+std::optional<webgl1es2_shader_program::active_attribute_info> webgl1es2_shader_program::tryGetActiveAttribute(const std::string &aAttributeName) const {
     if (auto found = m_ActiveAttributes.find(aAttributeName); found != m_ActiveAttributes.end()) 
         return found->second;
 

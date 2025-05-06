@@ -20,7 +20,7 @@ namespace gdk
     /// \name external interface
     ///@{
     //
-        virtual void setTexture(const std::string& aName, texture_ptr_type aTexture) override;
+        virtual void setTexture(const std::string& aName, const texture_ptr_type aTexture) override;
         
         virtual void setFloat(const std::string& aName, float aValue) override;
         virtual void setVector2(const std::string& aName, graphics_vector2_type aValue) override;
@@ -29,8 +29,7 @@ namespace gdk
 
         virtual void setInteger(const std::string& aName, int aValue) override;
         virtual void setInteger2(const std::string& aName, int aValue1, int aValue2) override;
-        virtual void setInteger3(const std::string& aName, int aValue1, int aValue2, 
-            int aValue3) override;
+        virtual void setInteger3(const std::string& aName, int aValue1, int aValue2, int aValue3) override;
         virtual void setInteger4(const std::string& aName, int aValue1, int aValue2, 
             int aValue3, int aValue4) override;
     ///@}

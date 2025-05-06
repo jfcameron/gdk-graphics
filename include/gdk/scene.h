@@ -7,15 +7,13 @@
 
 #include <memory>
 
-namespace gdk
-{
+namespace gdk {
     class entity;
     class screen_camera;
     class texture_camera;
 
     /// \brief a 3d environment within which cameras draw entities
-    class scene
-    {
+    class scene {
     public:
         //! add a screen camera to the scene
         virtual void add(const std::shared_ptr<const screen_camera> &pCamera) = 0;

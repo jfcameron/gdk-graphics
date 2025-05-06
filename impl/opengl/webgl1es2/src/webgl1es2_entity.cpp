@@ -1,13 +1,12 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <jfc/default_ptr.h>
 #include <gdk/glh.h>
 #include <gdk/mat4x4.h>
 #include <gdk/opengl.h>
-
 #include <gdk/webgl1es2_entity.h>
-#include <gdk/webgl1es2_shader_program.h>
 #include <gdk/webgl1es2_model.h>
+#include <gdk/webgl1es2_shader_program.h>
+#include <jfc/default_ptr.h>
 
 #include <iostream>
 

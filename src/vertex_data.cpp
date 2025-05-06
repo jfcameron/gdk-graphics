@@ -1,11 +1,12 @@
 // © Joseph Cameron - All Rights Reserved
 
+#include <gdk/graphics_exception.h>
 #include <gdk/vertex_data.h>
 
 #include <algorithm>
 #include <iostream>
-#include <unordered_map>
 #include <stdexcept>
+#include <unordered_map>
 
 using namespace gdk;
 
@@ -39,15 +40,15 @@ void vertex_data::overwrite(const size_t index, const vertex_data &other)
         auto &this_attribute_data = m_NonInterleavedData[other_name];
 
         if (this_attribute_data.component_count() != other_attribute_data.component_count())
-            throw std::invalid_argument("component counts must match");
+            throw graphics_exception("component counts must match");
 
         auto component_index(index * other_attribute_data.component_count());
 
         if (component_index > this_attribute_data.components().size())
-            throw std::invalid_argument("out of range");
+            throw graphics_exception("out of range");
 
         if (component_index + other_attribute_data.components().size() > this_attribute_data.components().size())
-            throw std::invalid_argument("out of range");
+            throw graphics_exception("out of range");
 
         std::copy(other_attribute_data.components().begin(), 
             other_attribute_data.components().end(),
@@ -59,7 +60,7 @@ void vertex_data::overwrite(const std::string &aAttributeName, const size_t vert
 {
     auto search(m_NonInterleavedData.find(aAttributeName));
     
-    if (search == m_NonInterleavedData.end()) throw std::invalid_argument("attribute not present");
+    if (search == m_NonInterleavedData.end()) throw graphics_exception("attribute not present");
 
     auto &thisAttributeData = search->second;
 
@@ -67,17 +68,17 @@ void vertex_data::overwrite(const std::string &aAttributeName, const size_t vert
 
     auto search2(other.m_NonInterleavedData.find(aAttributeName));
     
-    if (search2 == other.m_NonInterleavedData.end()) throw std::invalid_argument("attribute not present");
+    if (search2 == other.m_NonInterleavedData.end()) throw graphics_exception("attribute not present");
 
     const auto &thatAttributeData = search2->second;
 
     if (thisAttributeData.component_count() != thatAttributeData.component_count()) 
-        throw std::invalid_argument("attribute's component count must match");
+        throw graphics_exception("attribute's component count must match");
 
     const size_t componentOffset(vertexOffset * thisAttributeData.component_count());
     
     if (componentOffset + thatAttributeData.components().size() > thisAttributeData.components().size())
-        throw std::invalid_argument("new attrib data would write past the end of current attribute data");
+        throw graphics_exception("new attrib data would write past the end of current attribute data");
 
     //TODO: overwrite
     std::copy(thatAttributeData.components().begin(), 
@@ -98,12 +99,12 @@ size_t vertex_data::push_back(const vertex_data &other)
     }
 
     if (other.m_PrimitiveMode != m_PrimitiveMode) throw 
-        std::invalid_argument("vertex_data: "
+        graphics_exception("vertex_data: "
             "incoming primitive modes must match");
 
     //TODO: Assert that the vertex_data's attribute names and components per attrib match
     /*if (other.m_Format != m_Format) throw 
-        std::invalid_argument("vertex_data: "
+        graphics_exception("vertex_data: "
             "incoming attribute format must match");*/
     
     for (const auto &[other_name, other_attribute_data] : other.data())
@@ -128,7 +129,7 @@ vertex_data::vertex_data(attribute_collection_type &&aAttributeData)
     {
         const size_t currentAttribVertexCount = current_attribute_data_view.components().size() / current_attribute_data_view.component_count();
 
-        if (currentAttribVertexCount != vertexCount) throw std::invalid_argument(
+        if (currentAttribVertexCount != vertexCount) throw graphics_exception(
             "attribute data must contribute to the same number of vertexes");
     }
 

@@ -5,14 +5,11 @@
 
 #include <gdk/vertex_data.h>
 
-namespace gdk
-{
+namespace gdk {
     /// \brief Vertex data representing a 3D graphical object
-    class model
-    {
+    class model {
     public:
-        enum class UsageHint
-        {
+        enum class UsageHint {
             Static,
             Dynamic,
             Streaming

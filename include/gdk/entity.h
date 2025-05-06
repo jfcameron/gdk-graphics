@@ -5,14 +5,12 @@
 
 #include <gdk/graphics_types.h>
 
-namespace gdk
-{
+namespace gdk {
     class material;
     class model;
 
     //! represents an observable 3d object.
-    class entity
-    {
+    class entity {
     public:
         //! do not allow this entity to be drawn
         virtual void hide() = 0;

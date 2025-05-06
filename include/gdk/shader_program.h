@@ -6,8 +6,7 @@
 namespace gdk
 {
     /// \brief Specifies drawing behaviours at the programmable stages in the graphics pipeline 
-    class shader_program
-    {
+    class shader_program {
     public:
         virtual ~shader_program() = default;
 

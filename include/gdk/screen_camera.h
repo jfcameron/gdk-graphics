@@ -7,14 +7,12 @@
 #include <gdk/color.h>
 #include <gdk/graphics_types.h>
 
-namespace gdk
-{
+namespace gdk {
     /// \brief Position, orientation and perspective from which entity(s) are drawn
     /// \todo cull functor
     /// \todo set_projection from matrix
     /// \todo project vector from viewport coord into world
-    class screen_camera : public camera
-    {
+    class screen_camera : public camera {
     public:
         /// \brief sets the normalized size and position of the viewport within of the window
         virtual void set_viewport(const float aX, 

@@ -2,7 +2,7 @@
 
 #include "text_renderer.h"
 
-#include <gdk/image_data.h>
+#include <gdk/texture_data.h>
 
 using namespace gdk;
 
@@ -70,7 +70,7 @@ text_renderer::text_renderer(std::shared_ptr<gdk::graphics::context> pContext)
 {
     m_pMaterial = pContext->make_material(pContext->get_alpha_cutoff_shader());
 
-    auto [image_view, image_data] = decode_image::decode_png_rgba32bit(GLYPH_PNG_DATA);
+    auto [image_view, image_data] = texture_data::decode_from_png(GLYPH_PNG_DATA);
 
     image_view.horizontal_wrap_mode = texture::wrap_mode::mirrored;
 

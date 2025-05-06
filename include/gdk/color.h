@@ -5,12 +5,10 @@
 
 #include <iosfwd>
 
-namespace gdk
-{
+namespace gdk {
     /// \brief Represents a 4 channel color: {Red, Green, Blue, Alpha}.
     ///TODO: channel values should be limited to the range 0.0 - 1.0
-    struct color final
-    {
+    struct color final {
         using channel_type = float;
 
         channel_type r = 0, g = 0, b = 0, a = 1;

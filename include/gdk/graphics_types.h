@@ -16,7 +16,6 @@ namespace gdk
 ///@{
 //
     using graphics_floating_point_type = float;
-
     using graphics_mat4x4_type = Mat4x4<graphics_floating_point_type>;
     using graphics_quaternion_type = Quaternion<graphics_floating_point_type>;
     using graphics_vector2_type = Vector2<graphics_floating_point_type>;
@@ -28,7 +27,6 @@ namespace gdk
 ///@{
 //
     using graphics_signed_integral_type = int;
-    
     using graphics_intvector2_type = IntVector2<graphics_signed_integral_type>;
 ///@}
 }

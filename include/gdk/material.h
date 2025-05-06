@@ -3,13 +3,12 @@
 #ifndef GDK_GFX_MATERIAL_H
 #define GDK_GFX_MATERIAL_H
 
+#include <gdk/graphics_types.h>
+
 #include <string>
 #include <memory>
 
-#include <gdk/graphics_types.h>
-
-namespace gdk
-{
+namespace gdk {
     class texture;
 
     /// \brief decides how models using the material should be drawn.
@@ -17,12 +16,10 @@ namespace gdk
     /// This includes expected effects, such as texture colors, lightning, 
     /// but can also include unexpected effects, like vertex displacements, transformations.
     /// Material is really pipeline state and persistent uniform values
-    class material
-    {
+    class material {
     public:
         //! specify whether front- or back-facing polygons can be culled
-        enum class FaceCullingMode 
-        {
+        enum class FaceCullingMode {
             Front, //!< cull front facing polygons
             Back, //!< cull back facing polygons
             FrontAndBack, //!< cull front and back facing polygons
@@ -30,8 +27,7 @@ namespace gdk
         };
 
         //! render mode decides transparency etc
-        enum class render_mode
-        {
+        enum class render_mode {
             opaque, //!< no transparency
             transparent //!< transparency
         };

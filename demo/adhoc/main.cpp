@@ -121,10 +121,10 @@ int main(int argc, char **argv)
         0xff, 0xff, 0xff, 0xff,
         0x00, 0x00, 0x00, 0xff
     });
-    image_data_2d_view view;
+    texture_data::view view;
     view.width = 2;
     view.height = 2;
-    view.format = texture::data_format::rgba;
+    view.format = texture::format::rgba;
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
     auto pTexture = pContext->make_texture(view);
 
@@ -144,10 +144,10 @@ int main(int argc, char **argv)
         0xff, 0xff, 0x00, 0xff,
         0x00, 0x00, 0x44, 0xff
     });
-    image_data_2d_view view2;
+    texture_data::view view2;
     view2.width = 2;
     view2.height = 2;
-    view2.format = texture::data_format::rgba;
+    view2.format = texture::format::rgba;
     view2.data = reinterpret_cast<std::byte *>(&imageData2.front());
     auto pTexture2 = pContext->make_texture(view2);
 
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
         pEntity->set_model_matrix(Vector3<float>{std::cos(time), -0., -11.}, Quaternion<float>{ {0, 4 * ( 1/ 2), 4}});
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pCamera->set_world_matrix({std::sin(time), 0, -10}, {});
+        pCamera->set_world_matrix({std::sin(time*0.2f), 0, -10}, {});
         
         pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pTextureCamera->set_world_matrix({std::sin(time), 0, -10}, {});

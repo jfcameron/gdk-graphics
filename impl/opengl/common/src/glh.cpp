@@ -2,18 +2,19 @@
 
 #include <gdk/color.h>
 #include <gdk/glh.h>
+#include <gdk/graphics_exception.h>
 
 #include <cmath>
 #include <vector>
 
 namespace glh
 {
-    void Clearcolor(const gdk::color &acolor)
+    void ClearColor(const gdk::color &acolor)
     {
         glClearColor(acolor.r, acolor.g, acolor.b, acolor.a);
     }
 
-    void Enablevertex_attribute(const GLint attributeLocation, 
+    void EnableVertexAttribute(const GLint attributeLocation, 
         const int aAttributeSize, 
         const int aAttributeOffset, 
         const int aTotalNumberOfvertex_attributeComponents)
@@ -39,7 +40,7 @@ namespace glh
         glScissor(aPos.x, aPos.y, aSize.x, aSize.y);
     }
 
-    void Bind1FloatUniform(GLint uniformHandle, const float aValue)
+    void Bind1FloatUniform(const GLint uniformHandle, const float aValue)
     {
         glUniform1f(uniformHandle, aValue);
     }
@@ -65,12 +66,11 @@ namespace glh
         glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.m[0][0]);
     }
 
-    void BindtextureUniform(const GLuint aUniformHandle, const GLuint atextureHandle, const int atextureUnit)
+    void BindTextureUniform(const GLuint aUniformHandle, const GLuint aTextureHandle, const int aTextureUnit)
     {
         decltype(GL_TEXTURE_2D) thetextureType(GL_TEXTURE_2D); //TODO: parameterize! Improve texture as well to support non2ds
         
-        switch (atextureUnit)
-        {
+        switch (aTextureUnit) {
             case 0: glActiveTexture(GL_TEXTURE0); break;
             case 1: glActiveTexture(GL_TEXTURE1); break;
             case 2: glActiveTexture(GL_TEXTURE2); break;
@@ -80,14 +80,14 @@ namespace glh
             case 6: glActiveTexture(GL_TEXTURE6); break;
             case 7: glActiveTexture(GL_TEXTURE7); break;
 
-            default: throw std::invalid_argument(
+            default: throw gdk::graphics_exception(
 				"GLES2.0/WebGL1.0 only guarantee 8 texture units; "
 				"you are trying to bind too many textures simultaneously to the context");
         }
         
-        glBindTexture(thetextureType, atextureHandle);
+        glBindTexture(thetextureType, aTextureHandle);
 
-        glUniform1i(aUniformHandle, atextureUnit);
+        glUniform1i(aUniformHandle, aTextureUnit);
     }
 
     std::string GetShaderInfoLog(const GLuint aShaderStageHandle)
@@ -123,40 +123,19 @@ namespace glh
     }
 }
 
-bool glh::GetError(std::string *aErrorCode)
+std::optional<std::string> glh::GetError()
 {
-    std::string errorcodebuffer = "";
-    
     switch (glGetError())
     {
-        case(GL_NO_ERROR):
-            errorcodebuffer = "GL_NO_ERROR";
-            return false;
-        
-        case(GL_INVALID_ENUM):
-            errorcodebuffer = "GL_INVALID_ENUM";
-            
-        case(GL_INVALID_VALUE):
-            errorcodebuffer = "GL_INVALID_VALUE";
-            
-        case(GL_INVALID_OPERATION):
-            errorcodebuffer = "GL_INVALID_OPERATION";
-            
-        case(GL_INVALID_FRAMEBUFFER_OPERATION):
-            errorcodebuffer = "GL_INVALID_FRAMEBUFFER_OPERATION";
-        
-        case(GL_OUT_OF_MEMORY):
-            errorcodebuffer = "GL_OUT_OF_MEMORY";
-        
-        default:
-            errorcodebuffer = "gdk_UNHANDLED_GL_ERROR_CODE";
+        case(GL_NO_ERROR): return {};
+        case(GL_INVALID_ENUM): return {"GL_INVALID_ENUM"};
+        case(GL_INVALID_VALUE): return {"GL_INVALID_VALUE"};
+        case(GL_INVALID_OPERATION): return {"GL_INVALID_OPERATION"};
+        case(GL_INVALID_FRAMEBUFFER_OPERATION): return {"GL_INVALID_FRAMEBUFFER_OPERATION"};
+        case(GL_OUT_OF_MEMORY): return {"GL_OUT_OF_MEMORY"};
+
+        default: break;
     }
-    
-    if (aErrorCode != nullptr)
-    {
-        *aErrorCode = std::move(errorcodebuffer);
-    }
-    
-    return true;
+    throw gdk::graphics_exception("unhandled gl error type");
 }
 

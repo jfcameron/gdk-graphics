@@ -93,16 +93,16 @@ graphics::context::built_in_model_ptr_type webgl1es2_context::get_quad_model() c
         std::shared_ptr<webgl1es2_model>(webgl1es2_model::Quad));
 }
 
-graphics::context::texture_ptr_type webgl1es2_context::make_texture(const image_data_2d_view &imageView) const
+graphics::context::texture_ptr_type webgl1es2_context::make_texture(const texture_data::view &imageView) const
 {
     return graphics::context::texture_ptr_type(new webgl1es2_texture(imageView));
 }
 
 graphics::context::texture_ptr_type webgl1es2_context::make_texture() const {
-    image_data_2d_view view;
+    texture_data::view view;
     view.width = 0;
     view.height = 0;
-    view.format = texture::data_format::grey;
+    view.format = texture::format::grey;
     view.data = nullptr;
 
     return graphics::context::texture_ptr_type(new webgl1es2_texture(view));
@@ -112,7 +112,7 @@ graphics::context::model_ptr_type webgl1es2_context::make_model(const model::Usa
     const vertex_data &vertexDataView) const
 {
     return graphics::context::model_ptr_type(new gdk::webgl1es2_model(
-        gdk::model::UsageHint::Static, //TODO: what is this? dupe?
+        gdk::model::UsageHint::Static, 
         vertexDataView));
 }
 

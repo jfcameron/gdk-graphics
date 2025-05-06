@@ -4,12 +4,11 @@
 
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
+#include <gdk/graphics_exception.h>
+#include <gdk/scene.h>
 #include <gdk/webgl1es2_context.h>
 #include <gdk/webgl1es2_texture.h>
-#include <gdk/scene.h>
-
 #include <jfc/glfw_window.h>
-#include <jfc/contiguous_view.h>
 
 #include <GLFW/glfw3.h>
 
@@ -33,8 +32,8 @@ using namespace gdk::graphics::ext;
 
 // 16^3 = 4096 & sqrt(4096) = 64, so a 16^3 volume fits perfectly into a 64^2 area
 constexpr size_t LIGHT_TOTAL_VOXELS(4096);
-constexpr size_t LIGHT_3D_TEXTURE_LENGTH(std::cbrt(LIGHT_TOTAL_VOXELS)); 
 constexpr size_t LIGHT_2D_TEXTURE_LENGTH(std::sqrt(LIGHT_TOTAL_VOXELS)); 
+constexpr size_t LIGHT_3D_TEXTURE_LENGTH(std::cbrt(LIGHT_TOTAL_VOXELS)); 
 //im not 100% sure these restrictions are needed. maybe as long as the 2dtexture has enough texels to store the
 //3d data then its fine, they dont all have to be power of 2? possibly 2d restriction is just being a whole number
 
@@ -86,12 +85,13 @@ void addLighting(int aX, int aY, int aZ, gdk::color aColor) {
     setLighting(aX, aY, aZ, lightVoxel);
 }
 
-// Applys a uniform light to the whole 3d array
+// Applies a uniform light to the whole 3d array
 void addGlobalLight(const gdk::color &aColor) {
     const auto size(mData.size());
-    for (int x(0); x < size; ++x) 
-        for (int y(0); y < size; ++y) 
-            for (int z(0); z < size; ++z) 
+    using size_type = decltype(mData)::size_type;
+    for (size_type x(0); x < size; ++x) 
+        for (size_type y(0); y < size; ++y) 
+            for (size_type z(0); z < size; ++z) 
                 addLighting( x, y, z, aColor);   
 }
 
@@ -115,12 +115,7 @@ void addPointLight(int aX, int aY, int aZ, const float aSize, const gdk::color a
             for (int z(0); z < aSize; ++z) {
                 float distanceFromCentre = CENTRE.distance(gdk::Vector3<float>(x,y,z));
                 float normalizedHalfDistanceFromCentre = distanceFromCentre / HALF; 
-                float intensity = 1.0f;
-                //Inverse of the square distance drop off
-                intensity = (1.0f / std::sqrt(normalizedHalfDistanceFromCentre)) - 1.0f; 
-                //Linear drop off
-                //intensity = 1.0f - normalizedHalfDistanceFromCentre;
-                
+                float intensity = (1.0f / std::sqrt(normalizedHalfDistanceFromCentre)) - 1.0f; 
                 intensity = std::clamp(intensity, 0.0f, 1.0f);
 
                 auto color(aColor);
@@ -148,18 +143,19 @@ void updateLightingTexture(std::shared_ptr<texture> aTexture) {
                 i = i + 3;
             }
 
-    image_data_2d_view view;
+    texture_data::view view;
     view.width = LIGHT_2D_TEXTURE_LENGTH;
     view.height = LIGHT_2D_TEXTURE_LENGTH;
-    view.format = texture::data_format::rgb;
+    view.format = texture::format::rgb;
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
     aTexture->update_data(view);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     glfw_window window("Voxel rendering with lighting");
+
+    //throw graphics_exception();
 
     auto pGraphics = webgl1es2_context::make();
     auto pScene = pGraphics->make_scene();
@@ -173,10 +169,12 @@ int main(int argc, char **argv)
             0xff, 0xff, 0xff, 0xff,
             0x00, 0x00, 0x00, 0xff,
         });
-        image_data_2d_view view;
+        texture_data::view view;
         view.width = 2;
         view.height = 2;
-        view.format = texture::data_format::rgba;
+        view.format = texture::format::rgba;
+        view.horizontal_wrap_mode = texture::wrap_mode::mirrored;
+        view.vertical_wrap_mode = texture::wrap_mode::mirrored;
         view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
         return pGraphics->make_texture(view);
@@ -186,39 +184,34 @@ int main(int argc, char **argv)
 
     auto pShader = [&](){
         const std::string vertexShaderSource(R"V0G0N(
-        //Uniforms
         uniform mat4 _MVP;
-        uniform mat4 _Model;
-        uniform mat4 _View;
-        uniform mat4 _Projection;
 
-        //VertexIn
         attribute highp vec3 a_Position;
-        attribute lowp vec2 a_UV;
         attribute highp vec3 a_VoxelPosition;
+        attribute lowp vec2 a_UV;
        
-        //FragmentIn
-        varying mediump vec2 v_UV;
         varying highp vec3 v_Position;
         varying highp vec3 v_VoxelPosition;
+        varying mediump vec2 v_UV;
 
-        void main ()
-        {
+        void main () {
             gl_Position = _MVP * vec4(a_Position,1.0);
 
-            v_UV = a_UV;
             v_Position = a_Position;
+            v_UV = a_UV;
             v_VoxelPosition = a_VoxelPosition;
         }
         )V0G0N");
 
         const std::string fragmentShaderSource(R"V0G0N(
-        //Uniforms
+        uniform sampler2D _LightTexture;
         uniform sampler2D _Texture;
         uniform vec2 _UVOffset;
         uniform vec2 _UVScale; 
 
-        uniform sampler2D _LightTexture;
+        varying highp vec3 v_Position;
+        varying highp vec3 v_VoxelPosition;
+        varying lowp vec2 v_UV;
 
         lowp vec3 getLightVoxel(ivec3 aPosition) {
             highp float oneDimensionIndex = float(aPosition.x) + 
@@ -233,13 +226,7 @@ int main(int argc, char **argv)
             return texture2D(_LightTexture, normalizedLightVoxelCoordinates).xyz;
         }
 
-        //FragmentIn
-        varying lowp vec2 v_UV;
-        varying highp vec3 v_Position;
-        varying highp vec3 v_VoxelPosition;
-
-        void main()
-        {
+        void main() {
             lowp vec2 uv = v_UV + _UVOffset * _UVScale;
             vec4 texel = texture2D(_Texture, uv);
             if (texel[3] < 1.0) discard;
@@ -271,24 +258,29 @@ int main(int argc, char **argv)
             highp vec3 westLight =   getLightVoxel(ivec3(voxelPosition) + ivec3( 1, 0, 0));
 
             highp vec3 subVoxelPosition = mod(v_Position, 1.);
-            highp vec3 samplingBiasVector = subVoxelPosition - 0.5; //centering it so 0,0,0 is center of voxel
-            highp float samplingBiasMagnitude = length(samplingBiasVector);
+            highp vec3 bias = subVoxelPosition; 
+            //centering it so 0,0,0 is center of voxel
+            //bias.x -= 0.5;
+            //bias.y -= 0.5;
+            //bias.z -= 0.5;
 
-            highp vec3 light = 
-                (thisLight * 1.0)
+            highp float mag = length(bias);
 
-                //(thisLight * (1.0 - samplingBiasMagnitude))
-            ;
+            highp vec3 light;
+            light = thisLight * 1.0;
 
-                /*+ (northLight *  samplingBiasVector.z)
-                + (southLight *  samplingBiasVector.z)
-                + (topLight *    samplingBiasVector.y)
-                + (bottomLight * samplingBiasVector.y)
-                + (eastLight *   samplingBiasVector.x)
-                + (westLight *   samplingBiasVector.x)*/
+            //light += thisLight * (1.0 - mag);
+
+            /*light += thisLight * (1.0 - bias.z) + (northLight * bias.z);
+            light += thisLight * (1.0 - bias.z) + (southLight * bias.z);
+            light += thisLight * (1.0 - bias.x) + (eastLight * bias.x);
+            light += thisLight * (1.0 - bias.x) + (westLight * bias.x);
+            light += thisLight * (1.0 - bias.y) + (eastLight * bias.y);
+            light += thisLight * (1.0 - bias.y) + (westLight * bias.y);*/
 
             gl_FragColor = vec4(texel.xyz * light.xyz, 1.); 
             //gl_FragColor = vec4(light.xyz, 1.); //enable this line to see just lighting data
+            //gl_FragColor = vec4(bias.x, bias.x, bias.x, 1.);
         }
         )V0G0N");
 
@@ -296,10 +288,10 @@ int main(int argc, char **argv)
     }();
     
     auto pMaterial = pGraphics->make_material(pShader);
-    pMaterial->setTexture("_Texture", pTexture);
-    pMaterial->setVector2("_UVScale", {1, 1});
-    pMaterial->setVector2("_UVOffset", {0, 0});
     pMaterial->setTexture("_LightTexture", pLightingTexture);
+    pMaterial->setTexture("_Texture", pTexture);
+    pMaterial->setVector2("_UVOffset", {0, 0});
+    pMaterial->setVector2("_UVScale", {1, 1});
 
     voxel_modeler voxelModeler(pGraphics);
 
@@ -332,6 +324,42 @@ int main(int argc, char **argv)
     voxelModeler.update_vertex_data(); 
     pVoxelModel->update_vertex_data(model::UsageHint::Streaming, voxelModeler.vertex_data());
 
+    auto pSkyboxShader = [&](){
+        const std::string vertexShaderSource(R"V0G0N(
+        uniform mat4 _MVP;
+        attribute highp vec3 a_Position;
+        varying highp vec3 v_Position;
+
+        void main () {
+            gl_Position = _MVP * vec4(a_Position,1.0);
+            v_Position = a_Position;
+        }
+        )V0G0N");
+
+        const std::string fragmentShaderSource(R"V0G0N(
+        varying highp vec3 v_Position;
+
+        const vec3 spaceColor = vec3(0.8,1.0,1.0);
+        const vec3 horizonColor = vec3(0.4, 0.5, 0.8);
+
+        float dist(vec3 a, vec3 b) {
+            return sqrt(dot(a, b));
+        }
+
+        void main() {
+            vec3 color = mix(horizonColor, spaceColor, abs(normalize(v_Position).y)); 
+            gl_FragColor.xyz = vec3(color);
+        }
+        )V0G0N");
+
+        return std::static_pointer_cast<webgl1es2_context>(pGraphics)->make_shader(vertexShaderSource,fragmentShaderSource);
+    }();
+    auto pSkyboxMaterial = pGraphics->make_material(pSkyboxShader);
+    auto pSkyboxModel(pGraphics->get_cube_model());
+    auto pSkyboxEntity = pGraphics->make_entity(pSkyboxModel, pSkyboxMaterial);
+    pScene->add(pSkyboxEntity);
+    pSkyboxEntity->set_model_matrix({0,5,0}, {}, {30,30,30});
+
     game_loop(60, [&](const float time, const float deltaTime)
     {
         glfwPollEvents();
@@ -355,7 +383,7 @@ int main(int argc, char **argv)
         graphics_mat4x4_type chunkMatrix({-8,0,-8},Quaternion<float>({0,0,0}), {1});
         pVoxelEntity->set_model_matrix(root * chunkMatrix);
 
-        pCamera->set_perspective_projection(90, 0.01, 30, window.getAspectRatio());
+        pCamera->set_perspective_projection(90, 0.01, 35, window.getAspectRatio());
         pCamera->set_world_matrix({0, 6, +10}, {0.1,0,0,1});
 
         pScene->draw(window.getWindowSize());

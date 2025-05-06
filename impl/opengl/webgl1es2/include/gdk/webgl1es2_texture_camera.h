@@ -44,7 +44,7 @@ namespace gdk
         virtual void set_world_matrix(const gdk::graphics_vector3_type& aWorldPos, 
             const gdk::graphics_quaternion_type& aRotation) override;
         
-        virtual const std::shared_ptr<gdk::texture> get_color_texture(size_t i) const override;
+        virtual const std::shared_ptr<gdk::texture> get_color_texture(const size_t i) const override;
 
         virtual const std::shared_ptr<gdk::texture> get_depth_texture() const override;
     ///@}

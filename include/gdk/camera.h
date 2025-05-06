@@ -6,15 +6,11 @@
 #include <gdk/color.h>
 #include <gdk/graphics_types.h>
 
-namespace gdk
-{
-    class camera
-    {
+namespace gdk {
+    class camera {
     public:
-        /// \brief Describes camera clear behaviour: which buffers in the current 
-        /// FBO should be cleared?
-        enum class clear_mode
-        {
+        /// \brief controls which buffers in the active frame buffer object to clear
+        enum class clear_mode {
             nothing, //!< Do not clear any buffers
             color_and_depth, //!< Clear the color and depth buffers
             depth_only //!< Clear the Depth buffer

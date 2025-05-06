@@ -53,7 +53,7 @@ namespace gdk
         ) const override;
 
         [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture(
-            const image_data_2d_view &imageView
+            const texture_data::view &imageView
         ) const override;
 
         [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture() const override;

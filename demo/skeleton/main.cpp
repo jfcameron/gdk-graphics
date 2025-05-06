@@ -48,10 +48,10 @@ int main(int argc, char **argv)
         0xff, 0xff, 0xff, 0xff,
         0x00, 0x00, 0x00, 0xff,
     });
-    image_data_2d_view view;
+    texture_data::view view;
     view.width = 2;
     view.height = 2;
-    view.format = texture::data_format::rgba;
+    view.format = texture::format::rgba;
     view.data = reinterpret_cast<std::byte *>(&imageData.front());
     auto pTexture = pContext->make_texture(view);
     

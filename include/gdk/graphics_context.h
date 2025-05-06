@@ -3,8 +3,6 @@
 #ifndef GDK_GFX_CONTEXT_H
 #define GDK_GFX_CONTEXT_H
 
-#include <memory>
-
 #include <gdk/entity.h>
 #include <gdk/material.h>
 #include <gdk/model.h>
@@ -12,12 +10,13 @@
 #include <gdk/screen_camera.h>
 #include <gdk/shader_program.h>
 #include <gdk/texture.h>
-#include <gdk/image_data.h>
 #include <gdk/texture_camera.h>
+#include <gdk/texture_data.h>
 #include <gdk/vertex_data.h>
 
-namespace gdk::graphics
-{
+#include <memory>
+
+namespace gdk::graphics {
     class entity_owner;
 
     //! entry point for gdk-graphics
@@ -28,8 +27,7 @@ namespace gdk::graphics
     /// \warn The context does not know about the windowing system (or lack thereof)
     /// \warn Initializing OpenGL etc. to the correct standard, managing & swapping 
     /// buffers etc., creating and managing X11 windows, etc. must be done independently
-    class context
-    {
+    class context {
     public:
         //! ptr type returned by factory method
         using context_ptr_type = std::shared_ptr<context>;
@@ -61,15 +59,6 @@ namespace gdk::graphics
         using model_shared_ptr_type = std::shared_ptr<model>;
         //! shared ptr to a texture
         using texture_shared_ptr_type = std::shared_ptr<texture>;
-
-        //! specifies implementation to use in context construction
-        enum class implementation
-        {
-            //! limited subset of OpenGL API available on a wide variety of desktop, 
-            /// mobile devices and browsers
-            opengl_webgl1_gles2,
-            null
-        };
 
     /// \name factory methods
     ///@{
@@ -120,7 +109,7 @@ namespace gdk::graphics
 
         //! make a texture using a 2d image view
         [[nodiscard]] virtual texture_ptr_type make_texture(
-            const image_data_2d_view &imageView
+            const texture_data::view &imageView
         ) const = 0;
 
         //! make an empty texture 

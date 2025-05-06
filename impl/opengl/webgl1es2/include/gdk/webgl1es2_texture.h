@@ -5,7 +5,7 @@
 
 #include <gdk/opengl.h>
 #include <gdk/texture.h>
-#include <gdk/image_data.h>
+#include <gdk/texture_data.h>
 #include <jfc/unique_handle.h>
 
 #include <array>
@@ -15,22 +15,20 @@
 
 namespace gdk
 {
-    /// \brief a texture generally represents the color of a surface
     class webgl1es2_texture final : public texture
     {
     public:
     /// \name external interface
     ///@{
     //
-        virtual void update_data(const image_data_2d_view &) override;
+        virtual void update_data(const texture_data::view &) override;
         
-        virtual void update_data(const image_data_2d_view &, const size_t offsetX, const size_t offsetY) override;
+        virtual void update_data(const texture_data::view &, const size_t offsetX, const size_t offsetY) override;
     ///@}
 
         /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture 
         /// data within the gl
         ///
-        /// from the perspective of shaders, texel data always appears to be 4channel (rgba).
         enum class format
         {
             rgba, //!< 4channel input: red, green, blue, alpha channels
@@ -106,34 +104,14 @@ namespace gdk
             /// coordinate is set to 1 - frac ⁡ s , wherefrac ⁡ s represents the fractional part of s.
             mirrored_repeat
         };
-
-        //! GLES2.0/Web1.0 defines 2 bind targets
-        enum class bind_target
-        {
-            texture_2d, //!< 2 dimensional image, generally used for coloring surfaces
-            cube_map //!< 6 2d images, generally used for coloring a skybox, reflection map etc.
-        };
-
-        //! description of a cubic image
-        //TODO make use of this
-        /// \warn a view does not own its data.
-        struct webgl1es2_texture_cubic_data_view_type
-        {
-            size_t width; //!< width of a single image in the cube (all must be same)
-            size_t height; //!< height of a single image in the cube (all must be same)
-
-            webgl1es2_texture::format format; //!< format of the image data. must be same for all surfaces
-
-            //! image data for the 6 surfaces of the cube
-            /// \warwning non-owning pointer
-            std::array<std::byte *, 6> data; 
-        };
     
     public:
         /// \brief returns the handle to the webgl1es2_texture in the opengl context
-        //TODO consider abstracting this away. Currently only used by Shader, to bind the webgl1es2_texture. Exposing the raw handle
-        // like this makes it trivial to put a webgl1es2_texture into an unintended state for example by getting the handle and deleting it.)
-        GLuint getHandle() const;
+        [[nodiscard]] GLuint getHandle() const;
+
+        /// \brief activates the texture in given unit and binds it to GL_TEXTURE_2D, 
+        /// so that it can be manipulated by other opengl calls
+        void activateAndBind(const GLint aUnit) const;
 
         /// \brief equality semantics
         bool operator==(const webgl1es2_texture &) const;
@@ -145,40 +123,21 @@ namespace gdk
         /// \brief move semantics
         webgl1es2_texture(webgl1es2_texture &&) = default;
 
-        //TODO: consider supporting copy semantics. How useful are they to a user? they are expensive. need to read about usecases.
-
         /// \brief creates a 2d webgl1es2_texture from decoded image data.
         /// \exception length, width of the webgl1es2_texture must be power of 2
-        webgl1es2_texture(const image_data_2d_view &,
+        webgl1es2_texture(const texture_data::view &,
             const minification_filter minFilter = minification_filter::linear,
             const magnification_filter magFilter = magnification_filter::nearest,
             const wrap_mode wrapMode = wrap_mode::repeat);
-
-        //webgl1es2_texture(
-
-        //TODO cubic ctor
-        /// \brief creates a cubic webgl1es2_texture from decoded image data.
-        /// \exception dimensions must be power of 2
-        /// webgl1es2_texture(const cubic_image_data &data, min, max, wrap)
-        /// struct cubic_image_data{ array<6, vec<byte>> data, w, h, format}
 
         /// \brief webgl1es2_texture useful for indicating webgl1es2_texture related failure
         /// lazily instantiated.
         static const std::shared_ptr<gdk::webgl1es2_texture> GetCheckerboardOfDeath(); 
 
-        //TODO: should move this to gdk_graphics. doesnt need to be implementation specific to gles2
-        /// \brief constructs a 2d webgl1es2_texture from png rgba32 encoded file data
-        /// \throws invalid_argument if the image could not be decoded 
-        /// (badly formed or not a PNG with component format RGBA32.)
-        static webgl1es2_texture make_from_png_rgba32(const std::vector<std::underlying_type<std::byte>::type> aRGBA32PNGData);
-
         /// \brief gets the max texture size supported by the current graphics device 
         static const GLint getMaxTextureSize();
 
     private:
-        //! the target type. Cannot be changed after construction. Decides whether the webgl1es2_texture data is 2d or cubic
-        GLenum m_BindTarget;
-
         //! handle to the webgl1es2_texture buffer
         jfc::unique_handle<GLuint> m_Handle;
 

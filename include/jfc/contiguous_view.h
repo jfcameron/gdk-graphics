@@ -3,8 +3,7 @@
 #ifndef JFC_CONTIGUOUS_VIEW_H
 #define JFC_CONTIGUOUS_VIEW_H
 
-namespace jfc
-{
+namespace jfc {
 /// \brief provides an interface to a contiguous sequence of values
 /// without exposing the interface of the underlying collection and
 /// without copying or moving its data.
@@ -19,8 +18,7 @@ namespace jfc
 ///   since the view will only have access to the collection's constant interface.
 ///
 template<class value_type_param>
-class contiguous_view final
-{
+class contiguous_view final {
 public:
     using size_type = size_t;
     using value_type = value_type_param;
@@ -55,16 +53,14 @@ public:
     /// - sequence to be viewed, pEnd points to one element after the last
     template<class Pointer>
     contiguous_view(Pointer *pBegin, Pointer *pEnd)
-    : contiguous_view(static_cast<value_type_param *>(&(*pBegin)), 
-        [pBegin, pEnd]()
-        {
-            size_type size(0);
+    : contiguous_view(static_cast<value_type_param *>(&(*pBegin)), [pBegin, pEnd]() {
+        size_type size(0);
 
-            for(auto iter(pBegin); iter != pEnd; ++iter) 
-                ++size;
+        for(auto iter(pBegin); iter != pEnd; ++iter) 
+            ++size;
 
-            return size;
-        }())
+        return size;
+    }())
     {}
 
     /// construct from a pair of iterators.
@@ -90,50 +86,42 @@ public:
     constexpr contiguous_view &operator=(contiguous_view &&rhv) = default;
 
     /// \brief access an element by index
-    [[nodiscard]] constexpr value_type &operator[](const size_type index)
-    {
+    [[nodiscard]] constexpr value_type &operator[](const size_type index) {
         return *(m_pBegin + index);
     }
 
     /// \brief access an element by index, constant
-    [[nodiscard]] constexpr const value_type &operator[](const size_type index) const
-    {
+    [[nodiscard]] constexpr const value_type &operator[](const size_type index) const {
         return *(m_pBegin + index);
     }
 
     /// \brief pointer to the beginning of the data
-    [[nodiscard]] constexpr value_type_param *begin() 
-    {
+    [[nodiscard]] constexpr value_type_param *begin() {
         return m_pBegin;
     }
     
     /// \brief pointer to the beginning of the data, constant
-    [[nodiscard]] constexpr value_type_param *begin() const  
-    { 
+    [[nodiscard]] constexpr value_type_param *begin() const  { 
         return static_cast<const value_type *>(m_pBegin);
     }
 
     /// \brief pointer to the element following the last
-    [[nodiscard]] constexpr value_type_param *end() 
-    {
+    [[nodiscard]] constexpr value_type_param *end() {
         return m_pEnd;
     }
 
     /// \brief pointer to the element following the last, constant
-    [[nodiscard]] constexpr value_type_param *end() const  
-    { 
+    [[nodiscard]] constexpr value_type_param *end() const  { 
         return static_cast<const value_type *>(m_pEnd);
     }
 
     /// \brief number of elements accessible through the view
-    [[nodiscard]] constexpr size_t size() const 
-    {
+    [[nodiscard]] constexpr size_t size() const {
         return m_Size;
     }
 
     /// \brief whether or not size is 0
-    [[nodiscard]] constexpr bool empty() const
-    {
+    [[nodiscard]] constexpr bool empty() const {
         return m_Size == 0;
     }
 

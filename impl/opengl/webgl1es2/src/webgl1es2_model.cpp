@@ -1,8 +1,8 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include <gdk/glh.h>
+#include <gdk/graphics_exception.h>
 #include <gdk/opengl.h>
-
 #include <gdk/webgl1es2_model.h>
 
 #include <iostream>
@@ -12,8 +12,7 @@ using namespace gdk;
 
 static constexpr char TAG[] = "webgl1es2_model";
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
-{
+const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
     std::vector<webgl1es2_model::attribute_component_data_type> pos({
         // x,    y,    z
         1.0f, 1.0f, 0.0f, // 1--0
@@ -25,8 +24,7 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
     });
     
     // Center the quad
-    for (size_t i(0); i < (pos.size()); i += 3)
-    {
+    for (size_t i(0); i < (pos.size()); i += 3) {
         pos[i + 0] -= 0.5f;
         pos[i + 1] -= 0.5f;
     }
@@ -58,8 +56,7 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]()
     }});
 });
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
-{
+const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
     float size(1.f);
     float hsize(size/2.f);
 
@@ -224,34 +221,28 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]()
     }});
 });
 
-static inline GLenum webgl1es2_modelTypeToOpenGLDrawType(const webgl1es2_model::Type aType)
-{
-    switch (aType)
-    {
+static inline GLenum webgl1es2_modelTypeToOpenGLDrawType(const webgl1es2_model::Type aType) {
+    switch (aType) {
         case webgl1es2_model::Type::Dynamic: return GL_DYNAMIC_DRAW;        
         case webgl1es2_model::Type::Static: return GL_STATIC_DRAW;
         case webgl1es2_model::Type::Stream: return GL_STREAM_DRAW;        
+        default: break;
     }
-
-    throw std::invalid_argument("unhandled vertex data type");
+    throw graphics_exception("unhandled vertex data type");
 }
 
-static inline webgl1es2_model::Type vertexDataUsageHint_to_webgl1es2ModelType(const model::UsageHint aUsageHint)
-{
-    switch (aUsageHint)
-    {
+static inline webgl1es2_model::Type vertexDataUsageHint_to_webgl1es2ModelType(const model::UsageHint aUsageHint) {
+    switch (aUsageHint) {
         case model::UsageHint::Static: return webgl1es2_model::Type::Dynamic;
         case model::UsageHint::Dynamic: return webgl1es2_model::Type::Static;
         case model::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
+        default: break;
     }
-    
-    throw std::invalid_argument("unhandled usage hint type");
+    throw graphics_exception("unhandled usage hint type");
 }
 
-static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const webgl1es2_model::PrimitiveMode aPrimitiveMode)
-{
-    switch (aPrimitiveMode)
-    {
+static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const webgl1es2_model::PrimitiveMode aPrimitiveMode) {
+    switch (aPrimitiveMode) {
         case webgl1es2_model::PrimitiveMode::Points: return GL_POINTS;
         case webgl1es2_model::PrimitiveMode::Lines: return GL_LINES;
         case webgl1es2_model::PrimitiveMode::LineStrip: return GL_LINE_STRIP; 
@@ -259,33 +250,29 @@ static inline GLenum PrimitiveModeToOpenGLPrimitiveType(const webgl1es2_model::P
         case webgl1es2_model::PrimitiveMode::Triangles: return GL_TRIANGLES;            
         case webgl1es2_model::PrimitiveMode::TriangleStrip: return GL_TRIANGLE_STRIP;
         case webgl1es2_model::PrimitiveMode::TriangleFan: return GL_TRIANGLE_FAN;
+        default: break;
     }
-    
-    throw std::invalid_argument("unhandled vertex primitive mode");
+    throw graphics_exception("unhandled vertex primitive mode");
 }
 
 static inline webgl1es2_model::PrimitiveMode vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(
-    const vertex_data::PrimitiveMode aPrimitiveMode)
-{
-    switch (aPrimitiveMode)
-    {
-        case vertex_data::PrimitiveMode::Triangles: 
-            return webgl1es2_model::PrimitiveMode::Triangles;
+    const vertex_data::PrimitiveMode aPrimitiveMode) {
+    switch (aPrimitiveMode) {
+        case vertex_data::PrimitiveMode::Triangles: return webgl1es2_model::PrimitiveMode::Triangles;
+        default: break;
     }
-    
-    throw std::invalid_argument("unhandled vertex_data::PrimitiveMode");
+    throw graphics_exception("unhandled vertex_data::PrimitiveMode");
 }
 
 static inline webgl1es2_model::Type VertexDataViewUsageHintToType(model::UsageHint usageHint)
 {
-    switch (usageHint)
-    {
+    switch (usageHint) {
         case model::UsageHint::Dynamic: return webgl1es2_model::Type::Dynamic;
         case model::UsageHint::Static: return webgl1es2_model::Type::Static;
         case model::UsageHint::Streaming: return webgl1es2_model::Type::Stream;
+        default: break;
     }
-
-    throw std::invalid_argument("unhandled usageHint");
+    throw graphics_exception("unhandled usageHint");
 }
 
 static inline void update_index_data(
@@ -293,23 +280,17 @@ static inline void update_index_data(
     size_t index_count, 
     const GLushort *pIndexBegin, 
     GLenum aUsageHint,
-    GLsizei &m_IndexCount
-    )
-{
-    if (m_IndexCount = index_count > 0)
-    {
-        if (!handle.has_value())
-        {
-            handle.emplace([&]()
-            {
+    GLsizei &m_IndexCount) {
+    if (m_IndexCount = index_count > 0) {
+        if (!handle.has_value()) {
+            handle.emplace([&]() {
                 GLuint ibo(0);
                 
                 glGenBuffers(1, &ibo);
                 
                 return ibo;
             }(),
-            [](const GLuint handle)
-            {
+            [](const GLuint handle) {
                 glDeleteBuffers(1, &handle);
             });
         }
@@ -325,19 +306,16 @@ static inline void update_index_data(
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
-        if (std::string errorCode; glh::GetError(&errorCode)) 
-            throw std::runtime_error(std::string(TAG).append(errorCode));
+        if (const auto error = glh::GetError()) 
+            throw graphics_exception(std::string(TAG).append(*error));
     }
     else handle.reset();
 }
 
-void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
-{
-    for (const auto &[name, current_attribute] : m_Attributes)
-    {
+void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const {
+    for (const auto &[name, current_attribute] : m_Attributes) {
         if (auto activeAttribute = aShaderProgram.tryGetActiveAttribute(name); 
-            activeAttribute.has_value())
-        {
+            activeAttribute.has_value()) {
             glBindBuffer(GL_ARRAY_BUFFER, 
                 m_VertexBufferHandles[current_attribute.buffer_handle_index].get());
             
@@ -355,12 +333,10 @@ void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
     }
 }
 
-void webgl1es2_model::draw() const
-{
+void webgl1es2_model::draw() const {
     const GLenum primitiveMode(PrimitiveModeToOpenGLPrimitiveType(m_PrimitiveMode));
 
-    if (m_IndexBufferHandle.has_value())
-    {
+    if (m_IndexBufferHandle.has_value()) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.value().get());
 
         glDrawElements(primitiveMode,
@@ -372,8 +348,7 @@ void webgl1es2_model::draw() const
 }
 
 void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
-    const vertex_data &aData)
-{
+    const vertex_data &aData) {
     //Primitive mode
     {
         m_PrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(
@@ -394,30 +369,25 @@ void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
     {
         const auto &newAttibuteData(aData.data());
 
-        if (m_VertexBufferHandles.size() < newAttibuteData.size())
-        {
+        if (m_VertexBufferHandles.size() < newAttibuteData.size()) {
             m_VertexBufferHandles.reserve(newAttibuteData.size());
 
-            while (m_VertexBufferHandles.size() < newAttibuteData.size())
-            {
-                m_VertexBufferHandles.push_back({[&]()
-                {
+            while (m_VertexBufferHandles.size() < newAttibuteData.size()) {
+                m_VertexBufferHandles.push_back({[&]() {
                     GLuint vbo(0);
                     glGenBuffers(1, &vbo);
 
-                    if (std::string errorCode; glh::GetError(&errorCode)) 
-                    throw std::runtime_error(std::string(TAG).append(errorCode));
+                    if (const auto error = glh::GetError()) 
+                        throw graphics_exception(std::string(TAG).append(*error));
 
                     return vbo;
                 }(),
-                [](const GLuint handle)
-                {
+                [](const GLuint handle) {
                     glDeleteBuffers(1, &handle);
                 }});
             }
         }
-        else if (m_VertexBufferHandles.size() > newAttibuteData.size())
-        {
+        else if (m_VertexBufferHandles.size() > newAttibuteData.size()) {
             while (m_VertexBufferHandles.size() > newAttibuteData.size())
                 m_VertexBufferHandles.pop_back();
         }
@@ -426,8 +396,7 @@ void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
 
         size_t i(0);
         
-        for (const auto &[name, data] : newAttibuteData)
-        {
+        for (const auto &[name, data] : newAttibuteData) {
             glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandles[i].get());
 
             glBufferData (GL_ARRAY_BUFFER, 
@@ -438,8 +407,7 @@ void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-            attribute newAttribute =
-            {
+            attribute newAttribute = {
                 .buffer_handle_index = i,
                 .components = data.component_count(),
                 .size = data.components().size()
@@ -460,8 +428,7 @@ void webgl1es2_model::update_vertex_data(const UsageHint &aUsage,
 webgl1es2_model::webgl1es2_model(const UsageHint &aUsage,
     const vertex_data &aData)
 : m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.primitive_mode()))
-, m_IndexCount((GLsizei)aData.getIndexData().size())
-{
+, m_IndexCount((GLsizei)aData.getIndexData().size()) {
     update_vertex_data(aUsage, aData);
 }
 

@@ -7,18 +7,15 @@
 #include <functional>
 #include <thread>
 
-namespace gdk
-{
+namespace gdk {
     void game_loop(const float aMaxFramesPerSecond, 
-        std::function<bool /*shouldClose*/(const double /*time*/, const double /*delta time*/)> aLoopBehavior)
-    {
+        std::function<bool /*shouldClose*/(const double /*time*/, const double /*delta time*/)> aLoopBehavior) {
         bool shouldClose(false);
         double time(0);
         double deltaTime(0);
         double frameTime(1.0 / aMaxFramesPerSecond);
 
-        while (!shouldClose)
-        {
+        while (!shouldClose) {
             using namespace std::chrono;
 
             steady_clock::time_point currentFrameStartTimePoint(steady_clock::now());
@@ -27,8 +24,7 @@ namespace gdk
 
             time += deltaTime;
 
-            while (true)
-            {
+            while (true) {
                 steady_clock::time_point currentTimePoint(steady_clock::now());
 
                 duration<double> timeSpentOnCurrentFrame = duration_cast<duration<double>>(currentTimePoint - currentFrameStartTimePoint);
