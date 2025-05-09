@@ -1,2 +1,0 @@
-png conveninece shouldnt output a texture, it should output a pair<vector<byte>,image_view2d>
-this means that the raw data can be manipulated andor kept in sytem memory for rewrites, rather than just immediately uploading and cleaning.

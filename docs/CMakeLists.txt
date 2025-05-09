@@ -1,4 +1,4 @@
-# © 2018 Joseph Cameron - All Rights Reserved
+# © Joseph Cameron - All Rights Reserved
 
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
@@ -11,8 +11,4 @@ jfc_generate_documentation_doxygen(
         ../include/
         ../impl/opengl/webgl1es2/include
 )
-
-#jfc_generate_readme_md(
-#    BRIEF "3D graphics rendering library. Current implementation supports GLES2.0. Plan to extend support for vulkan."
-#)
 

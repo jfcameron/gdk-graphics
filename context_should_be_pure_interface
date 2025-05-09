@@ -1,7 +1,0 @@
-Context should be a pure interface, remove the static implementation factory:
-in order to construct an implementation, solve this using CMAKE:
-
-if (JFC_WEBGL1ES2_IMPLEMENTATION)
-	include webgl1es2 source...
-	include public header dir -> this JUST provides a single function: `auto pContext = gdk::graphics::webgl1es2::make_context();`
-endif()
