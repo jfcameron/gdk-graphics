@@ -29,12 +29,18 @@ namespace gdk {
             const float aFarClippingPlane,
             const float aViewportAspectRatio) = 0;
 
+        //TODO: consider removing set_ortho, set_perspective. graphics_mat4x4_type already has methods for those
         // sets projection matrix from an arbitrary 4x4
         //virtual void set_projection(const gdk::graphics_matrix_type &aMatrix) = 0;
 
-        /// \brief sets the world and view matrix from a 3d position and rotation
+        /// \brief checks whether a point in world space is within the camera's frustum 
+        //[[nodiscard]] virtual void is_within_frustum(const gdk::graphics_vector3_type &aOtherWorldPosition) = 0;
+        //[[nodiscard]] virtual void is_within_frustum(const gdk::graphics_matrix_type &aOtherWorldTransform) = 0;
+
+        /// \brief sets the camera's world and view matrix 
         virtual void set_world_matrix(const gdk::graphics_vector3_type &aWorldPos,
             const gdk::graphics_quaternion_type &aRotation) = 0;
+        virtual void set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) = 0;
 
         /// \brief sets the clear color, used to fill color buffer after it is cleared.
         virtual void set_clear_color(const gdk::color &acolor) = 0;

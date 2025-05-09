@@ -7,7 +7,6 @@
 #include <gdk/color.h>
 #include <gdk/graphics_types.h>
 #include <gdk/webgl1es2_texture.h>
-
 #include <jfc/unique_handle.h>
 
 #include <memory>
@@ -71,10 +70,12 @@ namespace gdk
 
         void set_world_matrix(const gdk::graphics_vector3_type& aWorldPos, 
             const gdk::graphics_quaternion_type& aRotation);
+        void set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix);
    
         void activate_clear_mode() const;
 
         camera::clear_mode get_clearmode() const;
+
         gdk::color get_clearcolor() const;
     ///@}
 

@@ -9,21 +9,15 @@
 #include <memory>
 
 namespace gdk::texture_data {
-    /// \brief pod struct representing a view on decoded image data 
-    /// + metadata that describes its size, format and usage info
+    /// \brief provides a pointer to the start of decoded texture data + 
+    /// metadata that contains its size, format and usage info
     /// \warn a view does not own its data.
     struct view {
         size_t width; //!< number of texels wide
         size_t height; //!< number of texels tall
         texture::format format; //!< format of the data
-
-        //wrapmodes should probably be removed from image view, this information is not part of image data
-        texture::wrap_mode horizontal_wrap_mode = texture::wrap_mode::repeat;
-        texture::wrap_mode vertical_wrap_mode = texture::wrap_mode::repeat;
-
-        //! raw image data
         /// \warn non-owning pointer
-        std::byte *data;
+        std::byte *data; //!< ptr to decoded texture data
     };
 
     using byte_underlying_type = std::underlying_type<std::byte>::type;

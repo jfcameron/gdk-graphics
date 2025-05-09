@@ -72,9 +72,9 @@ text_renderer::text_renderer(std::shared_ptr<gdk::graphics::context> pContext)
 
     auto [image_view, image_data] = texture_data::decode_from_png(GLYPH_PNG_DATA);
 
-    image_view.horizontal_wrap_mode = texture::wrap_mode::mirrored;
-
-    auto pTexture = pContext->make_texture(image_view);
+    auto pTexture = pContext->make_texture(image_view,
+        texture::wrap_mode::mirrored,
+        texture::wrap_mode::mirrored);
 
     m_pMaterial->setTexture("_Texture", pTexture);
     m_pMaterial->setVector2("_UVScale", {1.f, 1.f});

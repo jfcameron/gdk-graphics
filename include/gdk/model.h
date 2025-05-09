@@ -9,16 +9,17 @@ namespace gdk {
     /// \brief Vertex data representing a 3D graphical object
     class model {
     public:
-        enum class UsageHint {
-            Static,
-            Dynamic,
-            Streaming
+        enum class usage_hint {
+            dynamic,   //!< data will be rewritten 
+            streaming, //!< data will be rewritten extremely frequently
+            write_once //!< data will only be written once
         };
 
         /// \brief replace vertex data held by this model
-        virtual void update_vertex_data(const UsageHint &, const vertex_data &vertexDataView) = 0;
+        virtual void update_vertex_data(const usage_hint &, const vertex_data &vertexDataView) = 0;
 
-        //TODO: virtual void update_vertex_data(data, range or index) = 0;
+        /// \brief update a section of vertex data
+        //virtual void update_vertex_data(const usage_hint &, const vertex_data &vertexDataView, const size_t offset) = 0;
 
         virtual ~model() = default;
 

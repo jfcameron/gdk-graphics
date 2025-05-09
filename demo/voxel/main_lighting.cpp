@@ -6,6 +6,7 @@
 #include <gdk/graphics_context.h>
 #include <gdk/graphics_exception.h>
 #include <gdk/scene.h>
+#include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
 #include <gdk/webgl1es2_texture.h>
 #include <jfc/glfw_window.h>
@@ -173,8 +174,6 @@ int main(int argc, char **argv) {
         view.width = 2;
         view.height = 2;
         view.format = texture::format::rgba;
-        view.horizontal_wrap_mode = texture::wrap_mode::mirrored;
-        view.vertical_wrap_mode = texture::wrap_mode::mirrored;
         view.data = reinterpret_cast<std::byte *>(&imageData.front());
 
         return pGraphics->make_texture(view);
@@ -322,7 +321,7 @@ int main(int argc, char **argv) {
     voxelModeler.set_voxel_data(8,3,8,1);
 
     voxelModeler.update_vertex_data(); 
-    pVoxelModel->update_vertex_data(model::UsageHint::Streaming, voxelModeler.vertex_data());
+    pVoxelModel->update_vertex_data(model::usage_hint::streaming, voxelModeler.vertex_data());
 
     auto pSkyboxShader = [&](){
         const std::string vertexShaderSource(R"V0G0N(

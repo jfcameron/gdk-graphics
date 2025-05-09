@@ -2,6 +2,7 @@
 
 #include <gdk/glh.h>
 #include <gdk/graphics_exception.h>
+#include <gdk/texture_data.h>
 #include <gdk/webgl1es2_texture.h>
 #include <gdk/webgl1es2_texture_camera.h>
 
@@ -70,6 +71,10 @@ void webgl1es2_texture_camera::set_world_matrix(const gdk::graphics_vector3_type
     webgl1es2_camera::set_world_matrix(aWorldPos, aRotation); 
 }
 
+void webgl1es2_texture_camera::set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) {
+    webgl1es2_camera::set_world_matrix(aMatrix);
+}
+
 const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_color_texture(const size_t i) const {
     if (i) throw graphics_exception("webgl1es2_texture_camera: "
         "only supports a single texture bound to the color "
@@ -80,10 +85,10 @@ const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_color_texture(
                 static_cast<size_t>(m_TextureSize.x), 
                 static_cast<size_t>(m_TextureSize.y), 
                 texture::format::rgb, 
-                texture::wrap_mode::repeat,
-                texture::wrap_mode::repeat,
                 nullptr
             },
+            texture::wrap_mode::repeat,
+            texture::wrap_mode::repeat,
             webgl1es2_texture::minification_filter::nearest,
             webgl1es2_texture::magnification_filter::nearest);
 
@@ -109,17 +114,15 @@ const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_color_texture(
 
 const std::shared_ptr<gdk::texture> webgl1es2_texture_camera::get_depth_texture() const {
     if (!m_DepthBufferTexture.has_value()) m_DepthBufferTexture = {[&]() {
-        auto p = new webgl1es2_texture({
-                static_cast<size_t>(m_TextureSize.x), 
-                static_cast<size_t>(m_TextureSize.y), 
-                texture::format::depth, 
-                texture::wrap_mode::clamped,
-                texture::wrap_mode::clamped,
-                nullptr
-            },
+        auto p = new webgl1es2_texture(
+            webgl1es2_texture::format::depth, 
+            static_cast<size_t>(m_TextureSize.x), 
+            static_cast<size_t>(m_TextureSize.y), 
+            nullptr,
+            texture::wrap_mode::clamped,
+            texture::wrap_mode::clamped,
             webgl1es2_texture::minification_filter::nearest,
-            webgl1es2_texture::magnification_filter::nearest,
-            webgl1es2_texture::wrap_mode::clamp_to_edge);
+            webgl1es2_texture::magnification_filter::nearest);
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferHandle.get());
 

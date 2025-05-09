@@ -4,9 +4,10 @@
 
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
+#include <gdk/scene.h>
+#include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
 #include <gdk/webgl1es2_texture.h>
-#include <gdk/scene.h>
 
 #include <jfc/glfw_window.h>
 
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
 
     voxelModeler.update_vertex_data(); 
 
-    pVoxelModel->update_vertex_data(model::UsageHint::Streaming, voxelModeler.vertex_data());
+    pVoxelModel->update_vertex_data(model::usage_hint::write_once, voxelModeler.vertex_data());
 
     game_loop(60, [&](const float time, const float deltaTime)
     {

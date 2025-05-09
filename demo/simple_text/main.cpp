@@ -57,7 +57,7 @@ int main(int argc, char **argv)
         glfwPollEvents();
 
         textRenderer.set_text("this is not a test,\n\tthis is rock and roll!\n____<blar>\ntime: " + std::to_string((int)time));
-        pTextModel->update_vertex_data(model::UsageHint::Streaming, textRenderer.vertex_data());
+        pTextModel->update_vertex_data(model::usage_hint::streaming, textRenderer.vertex_data());
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera->set_world_matrix({std::sin(time), 0, -10}, {});

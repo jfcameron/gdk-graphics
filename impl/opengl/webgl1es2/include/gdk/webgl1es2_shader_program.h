@@ -15,27 +15,22 @@
 #include <string>
 #include <unordered_map>
 
-namespace gdk
-{
+namespace gdk {
     /// \brief Specifies drawing behaviours at the two programmable stages in the OpenGL ES 2.0/WebGL 1.0 pipeline 
     /// (the vertex shader stage and fragment shader stage)
     //TODO: consider a "pipeline" abstraction, which specifies all fixed options, then takes a program to specify programmable ones.
     //TODO: pipline abstraction is required to properly support blend-based transparencies, since frag order matters when blending.
-    class webgl1es2_shader_program final : public shader_program
-    {
+    class webgl1es2_shader_program final : public shader_program {
     public:
         /// \brief index, size, type of an active attribute used in the shader program
-        struct active_attribute_info
-        {
+        struct active_attribute_info {
             GLint location; //!< location of the attribute
             GLenum type; //!< type of the attribute's components, e.g: float
-            //TODO this is not component count. this is number of types (vec2 is 1 not 2)
-            GLint count; //!< number of components in the attribute, e.g: 2
+            GLint count; //!< number of attributes
         };
 
         /// \brief index. size. type o an active uniform used in the shader program
-        struct active_uniform_info
-        {
+        struct active_uniform_info {
             GLint location; //!< location of the uniform  e.g: 1
             GLenum type; //!< type of the uniform e.g: Texture
             GLint size; //!< size of the uniform e.g: 1

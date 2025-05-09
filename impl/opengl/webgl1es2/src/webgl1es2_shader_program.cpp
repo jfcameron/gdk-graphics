@@ -461,23 +461,19 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 }
 
-/*bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat2x2_type &avalue) const 
-{
+/*bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat2x2_type &avalue) const {
 
 } 
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat2x2_type> &avalue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat2x2_type> &avalue) const {
 
 } 
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat3x3_type &avalue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat3x3_type &avalue) const {
 
 } 
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat3x3_type> &avalue) const 
-{
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_mat3x3_type> &avalue) const {
 
 }*/
 

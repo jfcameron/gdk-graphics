@@ -3,24 +3,21 @@
 #ifndef GDK_GFX_WEBGL1ES2_SCREEN_CAMERA_H
 #define GDK_GFX_WEBGL1ES2_SCREEN_CAMERA_H
 
-#include <gdk/screen_camera.h>
 #include <gdk/color.h>
 #include <gdk/graphics_types.h>
-#include <gdk/webgl1es2_texture.h>
+#include <gdk/screen_camera.h>
 #include <gdk/webgl1es2_camera.h>
-
+#include <gdk/webgl1es2_texture.h>
 #include <jfc/unique_handle.h>
 
 #include <memory>
 #include <vector>
 
-namespace gdk
-{
+namespace gdk {
     class entity;
 
     /// \brief webgl1es2_screen_camera implementation of camera
-    class webgl1es2_screen_camera final : public screen_camera, public webgl1es2_camera
-    {
+    class webgl1es2_screen_camera final : public screen_camera, public webgl1es2_camera {
     public:
     /// \name external interface
     ///@{
@@ -47,6 +44,7 @@ namespace gdk
         /// \brief rebuilds the view matrix from a 3d position and rotation
         virtual void set_world_matrix(const gdk::graphics_vector3_type &aWorldPos,
             const gdk::graphics_quaternion_type &aRotation) override;
+        virtual void set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) override;
 
         /// \brief sets the clear color, used to fill color buffer after it is cleared.
         virtual void set_clear_color(const gdk::color &acolor) override;

@@ -12,7 +12,8 @@ namespace gdk {
     namespace texture_data {
         struct view;
     }
-
+    //class texture_data;
+    //class texture_data::view;
     /// \brief 2d color data, usually used to color the surfaces of a 3d model.
     /// more accurately: used to color fragments produced from the rasterization of primitive surfaces.
     /// ultimately textures are just a uniform type, they can be used in any number of ways and may not contribute to the color of any fragments,
@@ -24,7 +25,6 @@ namespace gdk {
             rgba, //!< a sequence of 4 channels, single byte colors: red, green, blue, alpha, ...
             rgb,  //!< a sequence of 3 channels, single byte colors: red, green, blue, ...
             grey, //!< a sequence of 1 channel, single byte color: grey, ...
-            depth //!< special format used to store values from a depth buffer when attached to a texture_camera
         };
 
         /// \brief behavior when sampling outside of the normalized texture range (u0-1, v0-1)

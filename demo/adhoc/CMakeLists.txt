@@ -1,7 +1,7 @@
 # © Joseph Cameron - All Rights Reserved
 
 jfc_project(executable
-    NAME "demo"
+    NAME "adhoc_demo"
     VERSION 1.0
     DESCRIPTION "demo gdk-graphics app"
     C++_STANDARD 17

@@ -2,6 +2,7 @@
 
 #include <gdk/glh.h>
 #include <gdk/graphics_exception.h>
+#include <gdk/texture_data.h>
 #include <gdk/webgl1es2_texture.h>
 
 #include <stb/stb_image.h>
@@ -20,9 +21,19 @@ static inline bool isPowerOfTwo(const long aNumber) {
     return aNumber > 0 && pow(2, static_cast<int>(log2(aNumber))) == aNumber;
 }
 
-static inline GLint textureFormatToGLint(const texture::format a) {
+static inline webgl1es2_texture::format textureFormatToWebGL1ES2TextureFormat(const texture::format a) {
     switch(a) {
-        case texture::format::depth: {
+        case texture::format::grey: return webgl1es2_texture::format::alpha;
+        case texture::format::rgb: return webgl1es2_texture::format::rgb;
+        case texture::format::rgba: return webgl1es2_texture::format::rgba;
+        default: break;
+    }
+    throw graphics_exception("unhandled format type");
+}
+
+static inline GLint webGL1ES2TextureFormatToToGLint(const webgl1es2_texture::format a) {
+    switch(a) {
+        case webgl1es2_texture::format::depth: {
 #if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
             if (!GLEW_ARB_depth_texture) throw graphics_exception(
                 "webgl1es2_texture: use of depth textures requires the "
@@ -31,9 +42,9 @@ static inline GLint textureFormatToGLint(const texture::format a) {
 #endif
             return GL_DEPTH_COMPONENT;
         }
-        case texture::format::grey: return GL_ALPHA;
-        case texture::format::rgb: return GL_RGB;
-        case texture::format::rgba: return GL_RGBA;
+        case webgl1es2_texture::format::rgb: return GL_RGB;
+        case webgl1es2_texture::format::rgba: return GL_RGBA;
+        case webgl1es2_texture::format::alpha: return GL_ALPHA;
         default: break;
     }
     throw graphics_exception("unhandled format type");
@@ -104,27 +115,45 @@ const GLint webgl1es2_texture::getMaxTextureSize() {
     return max_texture_2d_size;
 }
 
-static void verify_image_view(const texture_data::view &imageView) {
-    if ((imageView.width > 0 && !isPowerOfTwo(imageView.width)) || 
-        imageView.height > 0 && !isPowerOfTwo((imageView.height)))
-        throw graphics_exception(std::string(TAG).append(
-            ": webgl1es2_texture dimensions must be power of 2"));
+webgl1es2_texture::webgl1es2_texture(
+    const texture_data::view &aTextureView,
+    const wrap_mode aWrapModeU, 
+    const wrap_mode aWrapModeV,
+    const minification_filter minFilter,
+    const magnification_filter magFilter)
+: webgl1es2_texture(
+    textureFormatToWebGL1ES2TextureFormat(aTextureView.format),
+    aTextureView.width,
+    aTextureView.height,
+    aTextureView.data,
+    aWrapModeU,
+    aWrapModeV,
+    minFilter,
+    magFilter) 
+{}
 
-    const auto MAX_TEXTURE_2D_SIZE(webgl1es2_texture::getMaxTextureSize());
+static inline void validate_texture_size(const size_t aWidthInTexels, const size_t aHeightInTexels) {
+    if ((aWidthInTexels > 0 && !isPowerOfTwo(aWidthInTexels)) || 
+        aHeightInTexels > 0 && !isPowerOfTwo((aHeightInTexels)))
+        throw graphics_exception("webgl1es2_texture dimensions must be power of 2");
 
-    if (imageView.width > MAX_TEXTURE_2D_SIZE || 
-        imageView.height > MAX_TEXTURE_2D_SIZE)
-        throw graphics_exception(std::string(TAG).append(
-            ": webgl1es2_texture too large for this platform. max: " + 
-            MAX_TEXTURE_2D_SIZE));
+    if (const auto MAX_TEXTURE_2D_SIZE(webgl1es2_texture::getMaxTextureSize());
+        aWidthInTexels > MAX_TEXTURE_2D_SIZE || 
+        aHeightInTexels > MAX_TEXTURE_2D_SIZE)
+        throw graphics_exception(": webgl1es2_texture too large for this platform. max: " + MAX_TEXTURE_2D_SIZE);
 }
 
-webgl1es2_texture::webgl1es2_texture(const texture_data::view &imageView,
+webgl1es2_texture::webgl1es2_texture(
+    const webgl1es2_texture::format aFormat,
+    const size_t aWidthInTexels,
+    const size_t aHeightInTexels,
+    std::byte *aData,
+    const wrap_mode aWrapModeU,
+    const wrap_mode aWrapModeV,
     const minification_filter minFilter,
-    const magnification_filter magFilter,
-    const wrap_mode wrapMode)
+    const magnification_filter magFilter)
 : m_Handle([&]() {
-    verify_image_view(imageView);
+    validate_texture_size(aWidthInTexels, aHeightInTexels);
 
     GLuint handle;
     glGenTextures(1, &handle);
@@ -132,17 +161,17 @@ webgl1es2_texture::webgl1es2_texture(const texture_data::view &imageView,
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, handle);
 
-    auto format = textureFormatToGLint(imageView.format);
+    auto format = webGL1ES2TextureFormatToToGLint(aFormat);
 
     glTexImage2D(GL_TEXTURE_2D, 
         0, 
         format,
-        imageView.width, 
-        imageView.height, 
+        aWidthInTexels, 
+        aHeightInTexels, 
         0, 
         format,
         GL_UNSIGNED_BYTE, 
-        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&imageView.data[0])));
+        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&aData[0])));
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -152,17 +181,17 @@ webgl1es2_texture::webgl1es2_texture(const texture_data::view &imageView,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
         minification_filter_to_glint(minFilter));
    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(imageView.horizontal_wrap_mode));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(imageView.vertical_wrap_mode));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode_to_glint(aWrapModeU));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode_to_glint(aWrapModeV));
 
     return handle;
 }(),
 [](const GLuint handle) {
     glDeleteTextures(1, &handle);
 })
-, m_CurrentDataFormat(textureFormatToGLint(imageView.format))
-, m_CurrentDataHeight(imageView.height)
-, m_CurrentDataWidth(imageView.width)
+, m_CurrentDataFormat(webGL1ES2TextureFormatToToGLint(aFormat))
+, m_CurrentDataHeight(aHeightInTexels)
+, m_CurrentDataWidth(aWidthInTexels)
 {}
 
 GLuint webgl1es2_texture::getHandle() const {
@@ -175,12 +204,12 @@ void webgl1es2_texture::activateAndBind(const GLint aUnit) const {
 }
 
 void webgl1es2_texture::update_data(const texture_data::view &imageView) {
-    verify_image_view(imageView);
+    validate_texture_size(imageView.width, imageView.height);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_Handle.get());
 
-    auto format = textureFormatToGLint(imageView.format);
+    auto format = webGL1ES2TextureFormatToToGLint(textureFormatToWebGL1ES2TextureFormat(imageView.format));
 
     glTexImage2D(GL_TEXTURE_2D, 
         0, 
@@ -207,10 +236,10 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView,
             "when updating a subsection of texture data, the incoming "
             "data must be within the bounds of the existing data");
 
-    if (textureFormatToGLint(imageView.format) != m_CurrentDataFormat)
+    /*if (webGL1ES2TextureFormatToToGLint(imageView.format) != m_CurrentDataFormat) //TODO: reenable check
         throw graphics_exception("webgl1es2_texture::update_data: "
             "when updating a subsection of texture data, the incoming data "
-            "must match the existing data's format");
+            "must match the existing data's format");*/
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_Handle.get());

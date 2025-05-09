@@ -12,6 +12,7 @@ using namespace gdk;
 
 void webgl1es2_scene::remove(const std::shared_ptr<const entity> &pEntity) {
     //TODO: implement
+    throw graphics_exception("webgl1es2_scene::remove is unimplemented");
 }
 
 void webgl1es2_scene::add(const std::shared_ptr<const screen_camera> &pCamera) {

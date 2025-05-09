@@ -4,19 +4,17 @@
 #define GDK_GFX_WEBGL1ES2_SCENE
 
 #include <gdk/scene.h>
-#include <gdk/webgl1es2_screen_camera.h>
-#include <gdk/webgl1es2_texture_camera.h>
 #include <gdk/webgl1es2_material.h>
 #include <gdk/webgl1es2_model.h>
+#include <gdk/webgl1es2_screen_camera.h>
+#include <gdk/webgl1es2_texture_camera.h>
 
 #include <unordered_set>
 
 // TODO handle entity material & model changes. -> Will need to implement signals... vec<functor> likely. Maybe. This adds bookkeeping complexity, runtime complexity. it may be preferrable for the user to "change" an entities properties by removing the one you no longer want and inserting a new one with new properties.
-namespace gdk
-{
+namespace gdk {
     //! set of objects to render
-    class render_set
-    {
+    class render_set {
     public:
         using entity_ptr_type = std::shared_ptr<const entity>;
         using material_ptr_type = std::shared_ptr<webgl1es2_material>;
@@ -38,8 +36,7 @@ namespace gdk
         std::unordered_set<entity_ptr_type> m_unique_entities;
     };
 
-    class sorted_render_set final : public render_set
-    {
+    class sorted_render_set final : public render_set {
     public:
         virtual void draw(const webgl1es2_camera *r) const;
 
@@ -52,8 +49,7 @@ namespace gdk
     };
 
     //! render scene.
-    class webgl1es2_scene final : public scene
-    {
+    class webgl1es2_scene final : public scene {
     public:
         //! materials can be shared across webgl1es2_scenes
         using material_ptr_type = std::shared_ptr<webgl1es2_material>;

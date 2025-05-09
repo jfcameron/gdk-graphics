@@ -3,7 +3,6 @@
 #ifndef GDK_GRAPHICS_TYPES_H
 #define GDK_GRAPHICS_TYPES_H
 
-#include <gdk/intvector2.h>
 #include <gdk/mat4x4.h>
 #include <gdk/quaternion.h>
 #include <gdk/vector2.h>
@@ -27,7 +26,7 @@ namespace gdk
 ///@{
 //
     using graphics_signed_integral_type = int;
-    using graphics_intvector2_type = IntVector2<graphics_signed_integral_type>;
+    using graphics_intvector2_type = Vector2<graphics_signed_integral_type>;
 ///@}
 }
 

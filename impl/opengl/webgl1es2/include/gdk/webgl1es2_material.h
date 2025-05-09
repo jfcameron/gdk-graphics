@@ -6,16 +6,14 @@
 #include <gdk/material.h>
 #include <gdk/webgl1es2_shader_program.h>
 
-#include <unordered_map>
 #include <array>
 #include <optional>
+#include <unordered_map>
 
-namespace gdk
-{
+namespace gdk {
     /// \todo think about how to model blend functionality. 
     /// subclass that provides blend func related state , in opaque case force opaque options?
-    class webgl1es2_material : public material
-    {
+    class webgl1es2_material : public material {
     public:
     /// \name external interface
     ///@{
@@ -30,8 +28,7 @@ namespace gdk
         virtual void setInteger(const std::string& aName, int aValue) override;
         virtual void setInteger2(const std::string& aName, int aValue1, int aValue2) override;
         virtual void setInteger3(const std::string& aName, int aValue1, int aValue2, int aValue3) override;
-        virtual void setInteger4(const std::string& aName, int aValue1, int aValue2, 
-            int aValue3, int aValue4) override;
+        virtual void setInteger4(const std::string& aName, int aValue1, int aValue2, int aValue3, int aValue4) override;
     ///@}
         
         //! shaders can be shared among many webgl1es2_materials

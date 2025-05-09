@@ -4,7 +4,6 @@
 #define GDK_GFX_VERTEX_DATA_H
 
 #include <gdk/graphics_types.h>
-#include <jfc/contiguous_view.h>
 
 #include <array>
 #include <functional>
@@ -39,33 +38,28 @@ namespace gdk {
             
             attribute_data &operator+=(const attribute_data &rhs);
             
-            //TODO: create from view
-            //attribute_data(const attribute_data::view)
-
             size_t component_count() const;
 
             std::vector<component_type> &components();
             
             const std::vector<component_type> &components() const;
 
-        private://TODO: write getters
-            //! collections of all the components for all of this attribute
+        private:
             std::vector<component_type> m_Components;
             
-            //! number of components in a single attribute
             size_t m_ComponentCount;
         };
-        
+
+        enum class primitive_mode {
+            triangles
+        };
+
         using attribute_collection_type = std::unordered_map<std::string, attribute_data>;
         
         using index_value_type = unsigned short;
 
-        enum class PrimitiveMode {
-            Triangles
-        };
-
         /// \brief gets the primitive mode
-        PrimitiveMode primitive_mode() const;
+        primitive_mode get_primitive_mode() const;
 
         size_t attribute_offset(const std::string &aName) const;
 
@@ -155,10 +149,9 @@ namespace gdk {
     private:
         size_t m_VertexCount = 0;
 
-        //! primitive type to emit at primitive stage
-        PrimitiveMode m_PrimitiveMode = PrimitiveMode::Triangles; 
-        
         attribute_collection_type m_NonInterleavedData;
+
+        primitive_mode m_PrimitiveMode = primitive_mode::triangles; 
     };
 }
 

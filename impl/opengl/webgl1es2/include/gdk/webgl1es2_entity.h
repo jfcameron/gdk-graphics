@@ -3,11 +3,11 @@
 #ifndef GDK_GFX_WEBGL1ES2_ENTITY_H
 #define GDK_GFX_WEBGL1ES2_ENTITY_H
 
-#include <gdk/graphics_types.h>
-#include <gdk/webgl1es2_texture.h>
-#include <gdk/webgl1es2_material.h>
-#include <jfc/default_ptr.h>
 #include <gdk/entity.h>
+#include <gdk/graphics_types.h>
+#include <gdk/webgl1es2_material.h>
+#include <gdk/webgl1es2_texture.h>
+#include <jfc/default_ptr.h>
 
 #include <iosfwd>
 #include <memory>
@@ -22,8 +22,7 @@ namespace gdk
     ///
     /// \detailed Has a position/rotation/scale, a polygonal shape (model), a material (shader, uniforms)
     ///
-    class webgl1es2_entity final : public entity
-    {
+    class webgl1es2_entity final : public entity {
     public:
     /// \name external interface
     ///@{
@@ -54,7 +53,6 @@ namespace gdk
         /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
         /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity 
         /// via a camera.
-        //TODO throw if drwa is called and the currently bound model is not m_model?
         void draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const;
 		
         /// \brief returns a const ref to the model matrix

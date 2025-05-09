@@ -17,10 +17,7 @@ vertex_data::attribute_data::attribute_data(
 , m_ComponentCount(aComponentCount)
 {}
 
-vertex_data::attribute_data &vertex_data::attribute_data::operator+=(const attribute_data &rhs)
-{
-    //TODO: THROW IF m_ComponentCount != rhs.m_ComponentCount
-
+vertex_data::attribute_data &vertex_data::attribute_data::operator+=(const attribute_data &rhs) {
     m_Components.reserve(m_Components.size() + rhs.m_Components.size());
     m_Components.insert(m_Components.end(), rhs.m_Components.begin(), rhs.m_Components.end());
 
@@ -33,10 +30,8 @@ std::vector<vertex_data::component_type> &vertex_data::attribute_data::component
 
 const std::vector<vertex_data::component_type> &vertex_data::attribute_data::components() const { return m_Components; }
 
-void vertex_data::overwrite(const size_t index, const vertex_data &other)
-{
-    for (const auto &[other_name, other_attribute_data] : other.data())
-    {
+void vertex_data::overwrite(const size_t index, const vertex_data &other) {
+    for (const auto &[other_name, other_attribute_data] : other.data()) {
         auto &this_attribute_data = m_NonInterleavedData[other_name];
 
         if (this_attribute_data.component_count() != other_attribute_data.component_count())
@@ -56,15 +51,12 @@ void vertex_data::overwrite(const size_t index, const vertex_data &other)
     }
 }
 
-void vertex_data::overwrite(const std::string &aAttributeName, const size_t vertexOffset, const vertex_data &other)
-{
+void vertex_data::overwrite(const std::string &aAttributeName, const size_t vertexOffset, const vertex_data &other) {
     auto search(m_NonInterleavedData.find(aAttributeName));
     
     if (search == m_NonInterleavedData.end()) throw graphics_exception("attribute not present");
 
     auto &thisAttributeData = search->second;
-
-    //
 
     auto search2(other.m_NonInterleavedData.find(aAttributeName));
     
@@ -87,8 +79,7 @@ void vertex_data::overwrite(const std::string &aAttributeName, const size_t vert
 }
 
 //TODO: unify push_back and vertex_data::vertex_data. likely need a data to view converter etc.
-size_t vertex_data::push_back(const vertex_data &other)
-{
+size_t vertex_data::push_back(const vertex_data &other) {
     if (other.m_NonInterleavedData.empty()) return m_VertexCount;
 
     if (m_NonInterleavedData.empty()) 
@@ -98,9 +89,9 @@ size_t vertex_data::push_back(const vertex_data &other)
         return m_VertexCount;
     }
 
-    if (other.m_PrimitiveMode != m_PrimitiveMode) throw 
+    /*if (other.m_PrimitiveMode != m_PrimitiveMode) throw 
         graphics_exception("vertex_data: "
-            "incoming primitive modes must match");
+            "incoming primitive modes must match");*/
 
     //TODO: Assert that the vertex_data's attribute names and components per attrib match
     /*if (other.m_Format != m_Format) throw 
@@ -120,8 +111,7 @@ size_t vertex_data::push_back(const vertex_data &other)
     return indexToHeadOfNewData;
 }
 
-vertex_data::vertex_data(attribute_collection_type &&aAttributeData)
-{
+vertex_data::vertex_data(attribute_collection_type &&aAttributeData) {
     const size_t vertexCount(aAttributeData.begin()->second.components().size() /
         aAttributeData.begin()->second.component_count());
 
@@ -129,28 +119,22 @@ vertex_data::vertex_data(attribute_collection_type &&aAttributeData)
     {
         const size_t currentAttribVertexCount = current_attribute_data_view.components().size() / current_attribute_data_view.component_count();
 
-        if (currentAttribVertexCount != vertexCount) throw graphics_exception(
-            "attribute data must contribute to the same number of vertexes");
+        if (currentAttribVertexCount != vertexCount) throw graphics_exception("attribute data must contribute to the same number of vertexes");
     }
 
     m_NonInterleavedData = aAttributeData;
     m_VertexCount = vertexCount;
 }
 
-vertex_data::PrimitiveMode vertex_data::primitive_mode() const 
-{ 
-    return m_PrimitiveMode; 
-}
+vertex_data::primitive_mode vertex_data::get_primitive_mode() const { return m_PrimitiveMode; }
 
-vertex_data &vertex_data::operator+=(const vertex_data &other) 
-{ 
+vertex_data &vertex_data::operator+=(const vertex_data &other) { 
     push_back(other); 
 
     return *this;
 }
 
-vertex_data vertex_data::operator+(const vertex_data &aRightHand)
-{
+vertex_data vertex_data::operator+(const vertex_data &aRightHand) {
     vertex_data newVertexData(*this);
 
     newVertexData += aRightHand;
@@ -158,13 +142,11 @@ vertex_data vertex_data::operator+(const vertex_data &aRightHand)
     return newVertexData;
 }
 
-void vertex_data::clear()
-{
+void vertex_data::clear() {
     m_NonInterleavedData.clear();
 }
 
-const std::vector<vertex_data::index_value_type> &vertex_data::getIndexData() const 
-{ 
+const std::vector<vertex_data::index_value_type> &vertex_data::getIndexData() const { 
     //TODO: need to add "index_data_view" as an optional param for vertex_data
     static const std::vector<vertex_data::index_value_type> index_data;
     return index_data;
@@ -178,19 +160,16 @@ struct triangle {
 void sort_by_triangle(
     std::function<bool(triangle, triangle)> aSort,
     vertex_data &aVertexData,
-    const std::string &aPositionAttributeName)
-{
+    const std::string &aPositionAttributeName) {
     auto m_NonInterleavedData = aVertexData.data();
 
-    if (auto search = m_NonInterleavedData.find(aPositionAttributeName); search != m_NonInterleavedData.end())
-    {
+    if (auto search = m_NonInterleavedData.find(aPositionAttributeName); search != m_NonInterleavedData.end()) {
         auto &position_attribute_data = search->second.components();
 
         std::vector<triangle> triangles;
 
         size_t i(0);
-        for (auto p = position_attribute_data.begin(); p != position_attribute_data.end(); p += 9)
-        {
+        for (auto p = position_attribute_data.begin(); p != position_attribute_data.end(); p += 9) {
             auto x1(p + 0), y1(p + 1), z1(p + 2);
             auto x2(p + 3), y2(p + 4), z2(p + 5);
             auto x3(p + 6), y3(p + 7), z3(p + 8);
@@ -211,8 +190,7 @@ void sort_by_triangle(
 
         decltype(m_NonInterleavedData) newNonInterleavedData;
 
-        for (auto &[key, value] : m_NonInterleavedData)
-        {
+        for (auto &[key, value] : m_NonInterleavedData) {
             const auto currentComponentCount = value.component_count();
             auto &currentAttributeData = value.components();
 
@@ -220,12 +198,10 @@ void sort_by_triangle(
             new_attribute_data.reserve(currentAttributeData.size());
        
             size_t triangleIndex = 0;
-            for (auto triangle : triangles)
-            {
+            for (auto triangle : triangles) {
                 auto pSortedTriangle = currentAttributeData.begin() + (triangle.index * currentComponentCount);
 
-                for (size_t componentIndex = 0; componentIndex < 3 * currentComponentCount; ++componentIndex)
-                {
+                for (size_t componentIndex = 0; componentIndex < 3 * currentComponentCount; ++componentIndex) {
                     auto newComponentPtr = pSortedTriangle + componentIndex;
 
                     new_attribute_data.push_back(*newComponentPtr);
@@ -247,8 +223,7 @@ void sort_by_triangle(
 void vertex_data::sort_by_nearest_triangle(
     const graphics_vector3_type &aObserverWorldPosition,
     graphics_mat4x4_type aEntityInstanceWorldMatrix,
-    const std::string &aObserverWorldPositionAttributeName)
-{
+    const std::string &aObserverWorldPositionAttributeName) {
     //TODO: name becomes misleading at this point. 
     aEntityInstanceWorldMatrix.inverse(); 
 
@@ -277,8 +252,7 @@ void vertex_data::sort_by_nearest_triangle(
 void vertex_data::sort_by_furthest_triangle(
     const graphics_vector3_type &aObserverWorldPosition,
     graphics_mat4x4_type aEntityInstanceWorldMatrix,
-    const std::string &aObserverWorldPositionAttributeName)
-{
+    const std::string &aObserverWorldPositionAttributeName) {
     //TODO: name becomes misleading at this point. maybe require teh inverse in the method param
     aEntityInstanceWorldMatrix.inverse(); 
 
@@ -308,8 +282,7 @@ void vertex_data::transform_position(
     const graphics_vector3_type &aPos,
     const graphics_quaternion_type &aRot,
     const graphics_vector3_type &aScale,
-    const std::string &aPositionAttributeName)
-{
+    const std::string &aPositionAttributeName) {
     //TODO: throw if attribname isnt there
     //TODO: throw if size isnt 3
     auto rot_euler(aRot.toEuler());
@@ -360,8 +333,7 @@ void vertex_data::transform_position(
 void vertex_data::transform_uv(
     const graphics_vector2_type &aPos,
     const graphics_vector2_type &aScale,
-    const std::string &aUVAttributeName)
-{
+    const std::string &aUVAttributeName) {
     //TODO: throw if attribname isnt there
     //TODO: throw if size isnt 2
     if (auto search = m_NonInterleavedData.find(aUVAttributeName); search != m_NonInterleavedData.end())
@@ -391,13 +363,7 @@ void vertex_data::transform_uv(
     }
 }
 
-const vertex_data::attribute_collection_type &vertex_data::data() const
-{
-    return m_NonInterleavedData;
-}
+const vertex_data::attribute_collection_type &vertex_data::data() const { return m_NonInterleavedData; }
 
-size_t vertex_data::vertex_count() const
-{
-    return m_VertexCount;
-}
+size_t vertex_data::vertex_count() const { return m_VertexCount; }
 

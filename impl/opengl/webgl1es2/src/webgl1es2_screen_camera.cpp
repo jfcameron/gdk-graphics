@@ -27,8 +27,8 @@ void webgl1es2_screen_camera::set_viewport(const float aX, const float aY,
 void webgl1es2_screen_camera::activate(const gdk::graphics_intvector2_type &aFrameBufferSize) const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    decltype(aFrameBufferSize) viewportPixelPosition(aFrameBufferSize * m_ViewportPosition);
-    decltype(aFrameBufferSize) viewportPixelSize(aFrameBufferSize * m_ViewportSize);
+    decltype(aFrameBufferSize) viewportPixelPosition(aFrameBufferSize.elementwise_product(m_ViewportPosition));
+    decltype(aFrameBufferSize) viewportPixelSize(aFrameBufferSize.elementwise_product(m_ViewportSize));
     
     glh::Viewport(viewportPixelPosition, viewportPixelSize);
     glh::Scissor(viewportPixelPosition, viewportPixelSize);
@@ -69,5 +69,9 @@ void webgl1es2_screen_camera::set_clear_mode(const gdk::camera::clear_mode aClea
 void webgl1es2_screen_camera::set_world_matrix(const gdk::graphics_vector3_type &aWorldPos, 
     const gdk::graphics_quaternion_type &aRotation) {
     webgl1es2_camera::set_world_matrix(aWorldPos, aRotation);
+}
+
+void webgl1es2_screen_camera::set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) {
+    webgl1es2_camera::set_world_matrix(aMatrix);
 }
 

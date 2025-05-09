@@ -7,15 +7,15 @@
 
 namespace gdk
 {
+    class vertex_data;
+
     //! brief webgl1/gles2.0 context implementation
     class webgl1es2_context final : public graphics::context
     {
     public: 
-        /// \brief context factory method
         [[nodiscard]] static context_ptr_type make();
 
-        /// \brief make a shader program containing a user-defined vertex shader stage and fragment shader stage
-        [[nodiscard]] virtual shader_program_ptr_type make_shader(
+        [[nodiscard]] virtual shader_ptr_type make_shader(
             const std::string &aVertexShaderStageSourceCodeGLSL, 
             const std::string &aFragmentShaderStageSourceCodeGLSL
         ) const;
@@ -24,23 +24,15 @@ namespace gdk
 
         [[nodiscard]] virtual std::shared_ptr<screen_camera> make_camera() const override;
 
-        [[nodiscard]] virtual std::shared_ptr<screen_camera> make_camera(
-            const camera &other
-        ) const override;
-
         [[nodiscard]] virtual std::shared_ptr<texture_camera> make_texture_camera() const override;
 
         [[nodiscard]] virtual entity_ptr_type make_entity(
-            model_shared_ptr_type pModel, 
-            material_shared_ptr_type pMaterial
-        ) const override;
-
-        [[nodiscard]] virtual entity_ptr_type make_entity(
-            const entity& other
+            model_ptr_type pModel, 
+            material_ptr_type pMaterial
         ) const override;
 
         [[nodiscard]] virtual graphics::context::material_ptr_type make_material(
-            shader_program_shared_ptr_type pShader,
+            shader_ptr_type pShader,
             material::render_mode aRenderMode,
             material::FaceCullingMode aFaceCullingMode
         ) const override;
@@ -48,23 +40,25 @@ namespace gdk
         [[nodiscard]] virtual graphics::context::model_ptr_type make_model() const override;
 
         [[nodiscard]] virtual graphics::context::model_ptr_type make_model(
-            const gdk::model::UsageHint &, 
+            const gdk::model::usage_hint, 
             const vertex_data &vertexDataView
         ) const override;
 
         [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture(
-            const texture_data::view &imageView
+            const texture_data::view &imageView,
+            const texture::wrap_mode,
+            const texture::wrap_mode
         ) const override;
 
         [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture() const override;
 
-        [[nodiscard]] virtual graphics::context::built_in_shader_ptr_type get_alpha_cutoff_shader() const override;
+        [[nodiscard]] virtual graphics::context::shader_ptr_type get_alpha_cutoff_shader() const override;
 
-        [[nodiscard]] virtual built_in_shader_ptr_type get_pink_shader_of_death() const override;
+        [[nodiscard]] virtual shader_ptr_type get_pink_shader_of_death() const override;
 
-        [[nodiscard]] virtual built_in_model_ptr_type get_cube_model() const override;
+        [[nodiscard]] virtual model_ptr_type get_cube_model() const override;
         
-        [[nodiscard]] virtual built_in_model_ptr_type get_quad_model() const override;
+        [[nodiscard]] virtual model_ptr_type get_quad_model() const override;
 
         virtual ~webgl1es2_context() override = default;
 
@@ -74,3 +68,4 @@ namespace gdk
 }
 
 #endif
+

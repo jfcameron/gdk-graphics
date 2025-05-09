@@ -7,4 +7,3 @@ add_subdirectory(simple_text)
 add_subdirectory(skeleton)
 add_subdirectory(translucency)
 add_subdirectory(voxel)
-

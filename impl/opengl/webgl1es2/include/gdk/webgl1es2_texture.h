@@ -5,7 +5,6 @@
 
 #include <gdk/opengl.h>
 #include <gdk/texture.h>
-#include <gdk/texture_data.h>
 #include <jfc/unique_handle.h>
 
 #include <array>
@@ -13,36 +12,21 @@
 #include <string>
 #include <vector>
 
-namespace gdk
-{
-    class webgl1es2_texture final : public texture
-    {
+namespace gdk {
+    namespace texture_data { struct view; }
+
+    class webgl1es2_texture final : public texture {
     public:
     /// \name external interface
     ///@{
     //
         virtual void update_data(const texture_data::view &) override;
-        
         virtual void update_data(const texture_data::view &, const size_t offsetX, const size_t offsetY) override;
     ///@}
 
-        /// \brief format of uncompressed image data provided to the ctor & format of the webgl1es2_texture 
-        /// data within the gl
-        ///
-        enum class format
-        {
-            rgba, //!< 4channel input: red, green, blue, alpha channels
-            rgb, //!< 3 channel input: red, green, blue channels only, alpha is set to 1
-            luminance_alpha, //!< 2 channel input: rgb = luminance, a = alpha
-            luminance, //!< 1 channel input: rgb = luminance, a = 1
-            a, //!< 1 channel input: rgb=0, a=alpha
-            depth_component, //!< Used to attach a texture to one of an FBO's buffers
-        };
-
         //! The webgl1es2_texture minifying function is used whenever the pixel being 
         /// webgl1es2_textured maps to an area greater than one webgl1es2_texture element.
-        enum class minification_filter
-        {
+        enum class minification_filter {
             //! Returns the value of the webgl1es2_texture element that is nearest 
             /// (in Manhattan distance) to the center of the pixel being webgl1es2_textured.
             linear,
@@ -77,8 +61,7 @@ namespace gdk
 
         //! The webgl1es2_texture magnification function is used when the pixel being webgl1es2_textured maps to an 
         /// area less than or equal to one webgl1es2_texture element
-        enum class magnification_filter
-        {
+        enum class magnification_filter {
             //! Returns the value of the webgl1es2_texture element that is nearest 
             /// (in Manhattan distance) to the center of the pixel being webgl1es2_textured.
             nearest,
@@ -88,21 +71,11 @@ namespace gdk
             linear
         };
 
-        //! affects behaviour of sampling a texel outside of the normal range (0 - 1) along a 
-        /// webgl1es2_texture dimension
-        enum class wrap_mode
-        {
-            //! sampling above 1 will sample 1, sampling below 0 will sample 0
-            clamp_to_edge, 
-
-            //! causes the integer part of the s coordinate to be ignored; the GL uses only the fractional 
-            /// part, thereby creating a repeating pattern.
-            repeat,
-
-            //! causes the s coordinate to be set to the fractional part of the webgl1es2_texture coordinate 
-            /// if the integer part of s is even;  if the integer part of s is odd, then the s webgl1es2_texture 
-            /// coordinate is set to 1 - frac ⁡ s , wherefrac ⁡ s represents the fractional part of s.
-            mirrored_repeat
+        enum class format {
+            rgba,
+            rgb,
+            alpha,
+            depth
         };
     
     public:
@@ -125,10 +98,22 @@ namespace gdk
 
         /// \brief creates a 2d webgl1es2_texture from decoded image data.
         /// \exception length, width of the webgl1es2_texture must be power of 2
-        webgl1es2_texture(const texture_data::view &,
+        webgl1es2_texture(
+            const texture_data::view &aTextureView,
+            const wrap_mode aWrapModeU = wrap_mode::repeat,
+            const wrap_mode aWrapModeV = wrap_mode::repeat,
             const minification_filter minFilter = minification_filter::linear,
-            const magnification_filter magFilter = magnification_filter::nearest,
-            const wrap_mode wrapMode = wrap_mode::repeat);
+            const magnification_filter magFilter = magnification_filter::nearest);
+
+        webgl1es2_texture(
+            const webgl1es2_texture::format aFormat, 
+            const size_t aWidthInTexels,
+            const size_t aHeightInTexels,
+            std::byte *aData,
+            const wrap_mode aWrapModeU = wrap_mode::repeat,
+            const wrap_mode aWrapModeV = wrap_mode::repeat,
+            const minification_filter minFilter = minification_filter::linear,
+            const magnification_filter magFilter = magnification_filter::nearest);
 
         /// \brief webgl1es2_texture useful for indicating webgl1es2_texture related failure
         /// lazily instantiated.
@@ -148,3 +133,4 @@ namespace gdk
 }
 
 #endif
+

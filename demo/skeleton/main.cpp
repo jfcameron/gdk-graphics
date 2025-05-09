@@ -5,6 +5,7 @@
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
+#include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
 #include <jfc/contiguous_view.h>
 #include <jfc/glfw_window.h>

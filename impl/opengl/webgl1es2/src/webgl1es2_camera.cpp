@@ -2,6 +2,7 @@
 
 #include <gdk/glh.h>
 #include <gdk/graphics_exception.h>
+#include <gdk/texture_data.h>
 #include <gdk/webgl1es2_camera.h>
 #include <gdk/webgl1es2_texture.h>
 
@@ -38,6 +39,10 @@ void webgl1es2_camera::set_world_matrix(const gdk::graphics_vector3_type &aWorld
     m_ViewMatrix.setToIdentity();
     m_ViewMatrix.rotate({aRotation.toEuler() * -1});
     m_ViewMatrix.translate(aWorldPos * -1);
+}
+
+void webgl1es2_camera::set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) {
+    set_world_matrix(aMatrix.translation(), aMatrix.rotation());
 }
 
 void webgl1es2_camera::set_perspective_projection(const float aFieldOfView,

@@ -3,9 +3,9 @@
 #ifndef GDK_GFX_EXCEPTION_H
 #define GDK_GFX_EXCEPTION_H
 
-#include <exception>
-
 #include <gdk/graphics_types.h>
+
+#include <exception>
 
 namespace gdk {
     /// \brief root exception type for this project

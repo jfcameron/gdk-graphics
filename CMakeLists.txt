@@ -49,12 +49,6 @@ jfc_project(library
         "simpleglfw"
 
     SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/graphics_context.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/scene.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture_data.cpp
-                
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp  
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_context.cpp
@@ -66,6 +60,10 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_shader_program.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/scene.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/texture_data.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data.cpp
 )
 
 if (JFC_BUILD_DEMO)
