@@ -16,10 +16,10 @@ namespace gdk {
         };
 
         /// \brief replace vertex data held by this model
-        virtual void update_vertex_data(const usage_hint &, const vertex_data &vertexDataView) = 0;
+        virtual void upload_vertex_data(const usage_hint &, const vertex_data &vertexDataView) = 0;
 
-        /// \brief update a section of vertex data
-        //virtual void update_vertex_data(const usage_hint &, const vertex_data &vertexDataView, const size_t offset) = 0;
+        /// \brief upload a section of vertex data
+        //virtual void upload_vertex_data(const usage_hint &, const vertex_data &vertexDataView, const size_t offset) = 0;
 
         virtual ~model() = default;
 

@@ -5,42 +5,31 @@
 
 #include <gdk/graphics_context.h>
 
-namespace gdk::graphics::ext 
-{
+namespace gdk::graphics::ext {
+    /// TODO: parameterize vertex data, get neighbour chunks working etc
     /// \brief generates a volumetic-pixel model of a 3D array
     ///
-    /// TODO:
-    ///  implement greedy meshing in update_vertex_data
-    ///
     template<size_t data_size = 16>
-    class voxel_modeler final
-    {
+    class voxel_modeler final {
     public:
-        void set_voxel_data(size_t aX, size_t aY, size_t aZ, size_t aValue)
-        {
+        void set_voxel_data(size_t aX, size_t aY, size_t aZ, size_t aValue) {
             m_VoxelData[aX][aY][aZ] = aValue;
         }
         
-        size_t value_at(size_t aX, size_t aY, size_t aZ) const
-        {
+        size_t value_at(size_t aX, size_t aY, size_t aZ) const {
             return m_VoxelData[aX][aY][aZ];
         }
 
         // Per voxel rendering. works but should replace with greedy meshing implementation
-        void update_vertex_data()
-        {
+        void update_vertex_data() {
             m_VertexBuffer.clear();
 
             gdk::vertex_data buffer;
                             
-            for (size_t x(0); x < data_size; ++x)
-            {
-                for (size_t y(0); y < data_size; ++y) 
-                {
-                    for (size_t z(0); z < data_size; ++z)
-                    {
-                        if (m_VoxelData[x][y][z] > 0) 
-                        {
+            for (size_t x(0); x < data_size; ++x) {
+                for (size_t y(0); y < data_size; ++y) {
+                    for (size_t z(0); z < data_size; ++z) {
+                        if (m_VoxelData[x][y][z] > 0) {
                             auto pNorthNeighbour = m_pNorthNeighbour.lock(); 
                             size_t northNeighbourValue = z == data_size - 1 
                                 ? pNorthNeighbour
@@ -87,67 +76,61 @@ namespace gdk::graphics::ext
                             auto fY(static_cast<graphics_floating_point_type>(y));
                             auto fZ(static_cast<graphics_floating_point_type>(z));
 
-                            if (!northNeighbourValue)
-                            {
+                            if (!northNeighbourValue) {
                                 gdk::vertex_data data(northData);
 
-                                data.transform_position({fX, fY, fZ});
-                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
+                                data.transform("a_Position", {fX, fY, fZ});
+                                data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
                             }
 
-                            if (!southNeighbourValue)
-                            {
+                            if (!southNeighbourValue) {
                                 gdk::vertex_data data(southData);
 
-                                data.transform_position({fX, fY, fZ});
-                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
+                                data.transform("a_Position", {fX, fY, fZ});
+                                data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
                             }
 
-                            if (!eastNeighbourValue)
-                            {
+                            if (!eastNeighbourValue) {
                                 gdk::vertex_data data(eastData);
 
-                                data.transform_position({fX, fY, fZ});
-                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
+                                data.transform("a_Position", {fX, fY, fZ});
+                                data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
                             }
                             
-                            if (!westNeighbourValue)
-                            {
+                            if (!westNeighbourValue) {
                                 gdk::vertex_data data(westData);
 
-                                data.transform_position({fX, fY, fZ});
-                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
+                                data.transform("a_Position", {fX, fY, fZ});
+                                data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
                             }
                            
-                            if (!topNeighbourValue)
-                            {
+                            if (!topNeighbourValue) {
                                 gdk::vertex_data data(topData);
 
-                                data.transform_position({fX, fY, fZ});
-                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
+                                data.transform("a_Position", {fX, fY, fZ});
+                                data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
                             }
 
-                            if (!bottomNeighbourValue)
-                            {
+                            if (!bottomNeighbourValue) {
                                 gdk::vertex_data data(bottomData);
 
-                                data.transform_position({fX, fY, fZ});
-                                data.transform_position({0}, {}, {fX, fY, fZ}, "a_VoxelPosition");
+                                data.transform("a_Position", {fX, fY, fZ});
+                                data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
 
                                 buffer += data;
                                 m_VertexBuffer.push_back(data);
@@ -158,44 +141,41 @@ namespace gdk::graphics::ext
             }
         }
 
-        const gdk::vertex_data &vertex_data() const
-        {
+        const gdk::vertex_data &vertex_data() const {
             return m_VertexBuffer;
         }
 
-        void set_north_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
-        {
+        void set_north_neighbour(std::weak_ptr<voxel_modeler> aNeighbour) {
             m_pNorthNeighbour = aNeighbour;
         }
 
-        void set_south_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
-        {
+        void set_south_neighbour(std::weak_ptr<voxel_modeler> aNeighbour) {
             m_pSouthNeighbour = aNeighbour;
         }
 
-        void set_east_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
-        {
+        void set_east_neighbour(std::weak_ptr<voxel_modeler> aNeighbour) {
             m_pEastNeighbour = aNeighbour;
         }
         
-        void set_west_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
-        {
+        void set_west_neighbour(std::weak_ptr<voxel_modeler> aNeighbour) {
             m_pWestNeighbour = aNeighbour;
         }
 
-        void set_top_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
-        {
+        void set_top_neighbour(std::weak_ptr<voxel_modeler> aNeighbour) {
             m_pTopNeighbour = aNeighbour;
         ;}
         
-        void set_bottom_neighbour(std::weak_ptr<voxel_modeler> aNeighbour)
-        {
+        void set_bottom_neighbour(std::weak_ptr<voxel_modeler> aNeighbour) {
             m_pBottomNeighbour = aNeighbour;
         }
 
-        //! constructs a voxel modeler
-        voxel_modeler(std::shared_ptr<gdk::graphics::context> pContext)
-        {}
+        //! default constructor
+        voxel_modeler() = default;
+
+        //! move semantics
+        voxel_modeler(voxel_modeler &&) = default;
+        //! move semantics
+        voxel_modeler &operator=(voxel_modeler &&) = default;
 
     private:
         gdk::vertex_data m_VertexBuffer;

@@ -66,12 +66,12 @@ void webgl1es2_screen_camera::set_clear_mode(const gdk::camera::clear_mode aClea
     webgl1es2_camera::set_clear_mode(aClearMode);
 }
 
-void webgl1es2_screen_camera::set_world_matrix(const gdk::graphics_vector3_type &aWorldPos, 
+void webgl1es2_screen_camera::set_transform(const gdk::graphics_vector3_type &aWorldPos, 
     const gdk::graphics_quaternion_type &aRotation) {
-    webgl1es2_camera::set_world_matrix(aWorldPos, aRotation);
+    webgl1es2_camera::set_transform(aWorldPos, aRotation);
 }
 
-void webgl1es2_screen_camera::set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) {
-    webgl1es2_camera::set_world_matrix(aMatrix);
+void webgl1es2_screen_camera::set_transform(const gdk::graphics_mat4x4_type &aMatrix) {
+    webgl1es2_camera::set_transform(aMatrix);
 }
 

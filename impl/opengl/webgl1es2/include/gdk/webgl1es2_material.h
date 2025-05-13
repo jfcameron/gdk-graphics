@@ -22,8 +22,8 @@ namespace gdk {
         
         virtual void setFloat(const std::string& aName, float aValue) override;
         virtual void setVector2(const std::string& aName, graphics_vector2_type aValue) override;
-        virtual void setVector3(const std::string &aName, graphics_vector3_type aValue) override;
-        virtual void setVector4(const std::string &aName, graphics_vector4_type aValue) override;
+        virtual void setvector3(const std::string &aName, graphics_vector3_type aValue) override;
+        virtual void setvector4(const std::string &aName, graphics_vector4_type aValue) override;
 
         virtual void setInteger(const std::string& aName, int aValue) override;
         virtual void setInteger2(const std::string& aName, int aValue1, int aValue2) override;
@@ -62,7 +62,7 @@ namespace gdk {
         /// a pipeline without a programmable vertex shader stage nor a 
         /// programmable fragment shader stage, which is not a valid pipeline
         webgl1es2_material(shader_ptr_type pShader,
-            material::FaceCullingMode aFaceCullingMode,
+            material::face_culling_mode aface_culling_mode,
             material::render_mode aRenderMode);
 
         //! trivial destructor
@@ -79,7 +79,7 @@ namespace gdk {
         shader_ptr_type m_pShaderProgram;
         
         //! Whether or not to discard polygons based on [entity space] normal direction
-        material::FaceCullingMode m_FaceCullMode = material::FaceCullingMode::None;
+        material::face_culling_mode m_FaceCullMode = material::face_culling_mode::none;
 
         //! render mode or opaque
         material::render_mode m_RenderMode = material::render_mode::opaque;
@@ -94,10 +94,10 @@ namespace gdk {
         std::unordered_map<std::string, graphics_vector2_type> m_Vector2s;
 
         //! vector3 data provided to the shader stages
-        std::unordered_map<std::string, graphics_vector3_type> m_Vector3s;
+        std::unordered_map<std::string, graphics_vector3_type> m_vector3s;
         
         //! vector4 data provided to the shader stages
-        std::unordered_map<std::string, graphics_vector4_type> m_Vector4s;
+        std::unordered_map<std::string, graphics_vector4_type> m_vector4s;
 
         //! integer data provided to the shader stages
         std::unordered_map<std::string, int> m_Integers;

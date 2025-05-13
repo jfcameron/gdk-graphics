@@ -29,9 +29,9 @@ void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graph
     const auto mvp = p * v * m;
     
     auto pShader = m_Material->getShaderProgram();
-    pShader->try_set_uniform("_Model", mvp); 
-    pShader->try_set_uniform("_View", mvp);
-    pShader->try_set_uniform("_Projection", mvp);
+    pShader->try_set_uniform("_Model", m); 
+    pShader->try_set_uniform("_View", v);
+    pShader->try_set_uniform("_Projection", p);
     pShader->try_set_uniform("_MVP", mvp);
 
     m_model->draw();
@@ -42,10 +42,9 @@ const graphics_mat4x4_type &webgl1es2_entity::getModelMatrix() const {
 }
 
 void webgl1es2_entity::set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale) {
-    m_ModelMatrix.setToIdentity();
-    m_ModelMatrix.translate(aWorldPos);
-    m_ModelMatrix.rotate(aRotation);
-    m_ModelMatrix.scale(aScale);
+    m_ModelMatrix.set_to_identity();
+    m_ModelMatrix.set_translation(aWorldPos);
+    m_ModelMatrix.set_rotation(aRotation, aScale);
 }
 
 void webgl1es2_entity::set_model_matrix(const graphics_mat4x4_type& a) {
@@ -68,6 +67,6 @@ void webgl1es2_entity::show() {
     m_IsHidden = false;
 }
 
-bool webgl1es2_entity::isHidden() const {
+bool webgl1es2_entity::is_hidden() const {
     return m_IsHidden;
 }

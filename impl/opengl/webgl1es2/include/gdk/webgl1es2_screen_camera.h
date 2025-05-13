@@ -42,9 +42,9 @@ namespace gdk {
                 const float aViewportAspectRatio) override;
 
         /// \brief rebuilds the view matrix from a 3d position and rotation
-        virtual void set_world_matrix(const gdk::graphics_vector3_type &aWorldPos,
+        virtual void set_transform(const gdk::graphics_vector3_type &aWorldPos,
             const gdk::graphics_quaternion_type &aRotation) override;
-        virtual void set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) override;
+        virtual void set_transform(const gdk::graphics_mat4x4_type &aMatrix) override;
 
         /// \brief sets the clear color, used to fill color buffer after it is cleared.
         virtual void set_clear_color(const gdk::color &acolor) override;

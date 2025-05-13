@@ -19,7 +19,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-#include <iostream>
 #include <map>
 #include <set>
 #include <thread>
@@ -61,9 +60,9 @@ void clearLighting() {
 }
 
 gdk::color getLighting(const int aX, const int aY, const int aZ) {
-    if (aX < 0 || aX >= 16) throw std::invalid_argument("parameter out of range");
-    if (aY < 0 || aY >= 16) throw std::invalid_argument("parameter out of range");
-    if (aZ < 0 || aZ >= 16) throw std::invalid_argument("parameter out of range");
+    if (aX < 0 || aX >= 16) throw graphics_exception("parameter out of range");
+    if (aY < 0 || aY >= 16) throw graphics_exception("parameter out of range");
+    if (aZ < 0 || aZ >= 16) throw graphics_exception("parameter out of range");
 
     return {mData[aX][aY][aZ]};
 }
@@ -79,9 +78,7 @@ void addLighting(int aX, int aY, int aZ, gdk::color aColor) {
     lightVoxel.g += aColor.g;
     lightVoxel.b += aColor.b;
 
-    lightVoxel.r = std::clamp<float>(lightVoxel.r, 0.f, 1.f);
-    lightVoxel.g = std::clamp<float>(lightVoxel.g, 0.f, 1.f);
-    lightVoxel.b = std::clamp<float>(lightVoxel.b, 0.f, 1.f);
+    lightVoxel.clamp();
 
     setLighting(aX, aY, aZ, lightVoxel);
 }
@@ -104,8 +101,8 @@ void addGlobalLight(const gdk::color &aColor) {
 //  - lighting with occulsion will require a grid or a bsp or something passed as a const ref, to perform the check
 //  - should start treating all position values as world space positions. currently its all local space
 void addPointLight(int aX, int aY, int aZ, const float aSize, const gdk::color aColor) {
-    const gdk::Vector3<float> CENTRE(aSize/2.f); 
-    const float HALF(aSize/2.f);
+    const gdk::vector3<float> CENTRE(aSize/2.f); 
+    const auto HALF(aSize/2.f);
 
     aX -= HALF;
     aY -= HALF;
@@ -114,7 +111,7 @@ void addPointLight(int aX, int aY, int aZ, const float aSize, const gdk::color a
     for (int x(0); x < aSize; ++x) 
         for (int y(0); y < aSize; ++y) 
             for (int z(0); z < aSize; ++z) {
-                float distanceFromCentre = CENTRE.distance(gdk::Vector3<float>(x,y,z));
+                float distanceFromCentre = CENTRE.distance(gdk::vector3<float>(x,y,z));
                 float normalizedHalfDistanceFromCentre = distanceFromCentre / HALF; 
                 float intensity = (1.0f / std::sqrt(normalizedHalfDistanceFromCentre)) - 1.0f; 
                 intensity = std::clamp(intensity, 0.0f, 1.0f);
@@ -156,12 +153,15 @@ void updateLightingTexture(std::shared_ptr<texture> aTexture) {
 int main(int argc, char **argv) {
     glfw_window window("Voxel rendering with lighting");
 
-    //throw graphics_exception();
-
     auto pGraphics = webgl1es2_context::make();
+
     auto pScene = pGraphics->make_scene();
-    auto pCamera = pGraphics->make_camera();
-    pScene->add(pCamera);
+
+    auto pCamera = [&]() {
+        auto pCamera = pGraphics->make_camera();
+        pScene->add(pCamera);
+        return pCamera;
+    }();
 
     auto pTexture = ([&]() {
         std::vector<std::underlying_type<std::byte>::type> imageData({
@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
 
     auto pLightingTexture = pGraphics->make_texture();
 
-    auto pShader = [&](){
+    auto pShader = [&]() {
         const std::string vertexShaderSource(R"V0G0N(
         uniform mat4 _MVP;
 
@@ -246,8 +246,6 @@ int main(int argc, char **argv) {
                 gl_FragColor.rgb = vec3(position);
             */
      
-            //Sampling section is incomplete, currently only uses thislight.
-            //TODO: need to think about how to blend this light with neighbours correctly  
             highp vec3 thisLight =   getLightVoxel(ivec3(voxelPosition) + ivec3( 0, 0, 0));
             highp vec3 topLight =    getLightVoxel(ivec3(voxelPosition) + ivec3( 0, 1, 0));
             highp vec3 bottomLight = getLightVoxel(ivec3(voxelPosition) + ivec3( 0,-1, 0));
@@ -256,6 +254,9 @@ int main(int argc, char **argv) {
             highp vec3 eastLight =   getLightVoxel(ivec3(voxelPosition) + ivec3(-1, 0, 0));
             highp vec3 westLight =   getLightVoxel(ivec3(voxelPosition) + ivec3( 1, 0, 0));
 
+// -------------------------------------------------------------------------------------------------------------------------------------
+            //Sampling section is incomplete, currently only uses thislight.
+            //TODO: need to think about how to blend this light with neighbours correctly  
             highp vec3 subVoxelPosition = mod(v_Position, 1.);
             highp vec3 bias = subVoxelPosition; 
             //centering it so 0,0,0 is center of voxel
@@ -277,53 +278,66 @@ int main(int argc, char **argv) {
             light += thisLight * (1.0 - bias.y) + (eastLight * bias.y);
             light += thisLight * (1.0 - bias.y) + (westLight * bias.y);*/
 
-            gl_FragColor = vec4(texel.xyz * light.xyz, 1.); 
+            gl_FragColor = vec4(texel.xyz * light.xyz, 1.); //need to blend. currently only uses current voxel so the effect is very aliasy
             //gl_FragColor = vec4(light.xyz, 1.); //enable this line to see just lighting data
-            //gl_FragColor = vec4(bias.x, bias.x, bias.x, 1.);
+            //gl_FragColor = vec4(bias.x, bias.x, bias.x, 1.); //see bias values on fragments
+// -------------------------------------------------------------------------------------------------------------------------------------
         }
         )V0G0N");
 
         return std::static_pointer_cast<webgl1es2_context>(pGraphics)->make_shader(vertexShaderSource,fragmentShaderSource);
     }();
     
-    auto pMaterial = pGraphics->make_material(pShader);
-    pMaterial->setTexture("_LightTexture", pLightingTexture);
-    pMaterial->setTexture("_Texture", pTexture);
-    pMaterial->setVector2("_UVOffset", {0, 0});
-    pMaterial->setVector2("_UVScale", {1, 1});
+    auto pMaterial = [&]() {
+        auto pMaterial = pGraphics->make_material(pShader);
+        pMaterial->setTexture("_LightTexture", pLightingTexture);
+        pMaterial->setTexture("_Texture", pTexture);
+        pMaterial->setVector2("_UVOffset", {0, 0});
+        pMaterial->setVector2("_UVScale", {1, 1});
+        return pMaterial;
+    }();
 
-    voxel_modeler voxelModeler(pGraphics);
+    voxel_modeler voxelModeler = [&]() {
+        voxel_modeler voxelModeler;
+        
+        for (size_t x(0); x < 16; ++x) for (size_t y(0); y < 16; ++y) {
+            voxelModeler.set_voxel_data(x,0,y,1);
+        }
 
-    auto pVoxelModel(pGraphics->make_model());
-    
-    auto pVoxelEntity = pGraphics->make_entity(pVoxelModel, pMaterial);
-    pScene->add(pVoxelEntity);
-    
-    for (size_t x(0); x < 16; ++x) for (size_t y(0); y < 16; ++y) {
-        voxelModeler.set_voxel_data(x,0,y,1);
-    }
+        for (size_t x(1); x < 14; ++x) for (size_t z(1); z < 12; ++z) {
+            voxelModeler.set_voxel_data(x,1,z,1);
+        }
 
-    for (size_t x(1); x < 14; ++x) for (size_t z(1); z < 12; ++z) {
-        voxelModeler.set_voxel_data(x,1,z,1);
-    }
+        voxelModeler.set_voxel_data(1,7,0,1);
+        voxelModeler.set_voxel_data(1,6,0,1);
+        voxelModeler.set_voxel_data(3,7,0,1);
+        voxelModeler.set_voxel_data(3,6,0,1);
+        voxelModeler.set_voxel_data(0,4,0,1);
+        voxelModeler.set_voxel_data(1,3,0,1);
+        voxelModeler.set_voxel_data(2,3,0,1);
+        voxelModeler.set_voxel_data(3,3,0,1);
+        voxelModeler.set_voxel_data(4,4,0,1);
+        voxelModeler.set_voxel_data(7,7,7,1);
+        voxelModeler.set_voxel_data(8,3,8,1);
 
-    voxelModeler.set_voxel_data(1,7,0,1);
-    voxelModeler.set_voxel_data(1,6,0,1);
-    voxelModeler.set_voxel_data(3,7,0,1);
-    voxelModeler.set_voxel_data(3,6,0,1);
-    voxelModeler.set_voxel_data(0,4,0,1);
-    voxelModeler.set_voxel_data(1,3,0,1);
-    voxelModeler.set_voxel_data(2,3,0,1);
-    voxelModeler.set_voxel_data(3,3,0,1);
-    voxelModeler.set_voxel_data(4,4,0,1);
-    voxelModeler.set_voxel_data(7,7,7,1);
+        voxelModeler.update_vertex_data(); 
 
-    voxelModeler.set_voxel_data(8,3,8,1);
+        return voxelModeler;
+    }();
 
-    voxelModeler.update_vertex_data(); 
-    pVoxelModel->update_vertex_data(model::usage_hint::streaming, voxelModeler.vertex_data());
-
-    auto pSkyboxShader = [&](){
+    auto pVoxelModel = [&]() {
+        auto pVoxelModel(pGraphics->make_model());
+        pVoxelModel->upload_vertex_data(model::usage_hint::streaming, voxelModeler.vertex_data());
+        return pVoxelModel;
+    }();
+   
+    auto pVoxelEntity = [&]() {
+        auto pVoxelEntity = pGraphics->make_entity(pVoxelModel, pMaterial);
+        pScene->add(pVoxelEntity);
+        return pVoxelEntity;
+    }();
+ 
+    auto pSkyboxShader = [&]() {
         const std::string vertexShaderSource(R"V0G0N(
         uniform mat4 _MVP;
         attribute highp vec3 a_Position;
@@ -352,38 +366,43 @@ int main(int argc, char **argv) {
         )V0G0N");
 
         return std::static_pointer_cast<webgl1es2_context>(pGraphics)->make_shader(vertexShaderSource,fragmentShaderSource);
-    }();
-    auto pSkyboxMaterial = pGraphics->make_material(pSkyboxShader);
-    auto pSkyboxModel(pGraphics->get_cube_model());
-    auto pSkyboxEntity = pGraphics->make_entity(pSkyboxModel, pSkyboxMaterial);
-    pScene->add(pSkyboxEntity);
-    pSkyboxEntity->set_model_matrix({0,5,0}, {}, {30,30,30});
+    }();   
 
-    game_loop(60, [&](const float time, const float deltaTime)
-    {
+    auto pSkyboxMaterial = pGraphics->make_material(pSkyboxShader);
+
+    auto pSkyboxModel(pGraphics->get_cube_model());
+
+    auto pSkyboxEntity = [&]() {
+        auto pSkyboxEntity = pGraphics->make_entity(pSkyboxModel, pSkyboxMaterial);
+        pScene->add(pSkyboxEntity);
+        pSkyboxEntity->set_model_matrix({0, 5, 0}, {}, {30, 30, 30});
+        return pSkyboxEntity; 
+    }();
+
+    game_loop(60, [&](const float time, const float deltaTime) {
         glfwPollEvents();
 
         clearLighting();
-        addGlobalLight({0.1f,0.1f,0.1f});
+        addGlobalLight({0.1f, 0.1f, 0.1f});
 
-        addPointLight(0,2,0, 20, {0.0,0.0,1.0});
-        addPointLight(14,2,14, 10, {1.0,0.0,1.0});
-        addPointLight(0,2,14, 10, {0.0,1.0,0.0});
+        addPointLight(0, 2, 0, 20, {0.0, 0.0, 1.0});
+        addPointLight(14, 2, 14, 10, {1.0, 0.0, 1.0});
+        addPointLight(0, 2, 14, 10, {0.0, 1.0, 0.0});
 
-        addPointLight(8,1,8, std::abs(std::sin(time)) * 10, {1.0,1.0,1.0});
+        addPointLight(8, 1, 8, std::abs(std::sin(time)) * 10, {1.0, 1.0, 1.0});
 
         static int x = 8;
         static int z = 8;
-        addPointLight(std::sin(time) * 8 + x,-2,std::cos(time) * 8 + z, 10, {1.0,1.0,1.0});
+        addPointLight(std::sin(time) * 8 + x, -2, std::cos(time) * 8 + z, 10, {1.0, 1.0, 1.0});
 
         updateLightingTexture(pLightingTexture);
 
-        graphics_mat4x4_type root({0,0,0},Quaternion<float>({0,time,0}), {1});
-        graphics_mat4x4_type chunkMatrix({-8,0,-8},Quaternion<float>({0,0,0}), {1});
+        graphics_mat4x4_type root({0,0,0}, {{0, time*0.5f, 0}});
+        graphics_mat4x4_type chunkMatrix({-8, 0, -8}, {{0, 0, 0}});
         pVoxelEntity->set_model_matrix(root * chunkMatrix);
 
         pCamera->set_perspective_projection(90, 0.01, 35, window.getAspectRatio());
-        pCamera->set_world_matrix({0, 6, +10}, {0.1,0,0,1});
+        pCamera->set_transform({0, +6, +9}, {{+0.4f, 0, 0}});
 
         pScene->draw(window.getWindowSize());
 

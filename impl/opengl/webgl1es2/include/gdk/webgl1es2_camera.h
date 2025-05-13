@@ -68,9 +68,9 @@ namespace gdk
 
         void set_clear_mode(const gdk::camera::clear_mode aClearMode);
 
-        void set_world_matrix(const gdk::graphics_vector3_type& aWorldPos, 
+        void set_transform(const gdk::graphics_vector3_type& aWorldPos, 
             const gdk::graphics_quaternion_type& aRotation);
-        void set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix);
+        void set_transform(const gdk::graphics_mat4x4_type &aMatrix);
    
         void activate_clear_mode() const;
 
@@ -80,12 +80,12 @@ namespace gdk
     ///@}
 
     private:
-        graphics_mat4x4_type m_WorldMatrix = graphics_mat4x4_type::Identity; 
-        graphics_mat4x4_type m_ViewMatrix = graphics_mat4x4_type::Identity; 
-        graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::Identity; 
+        graphics_mat4x4_type m_WorldMatrix = graphics_mat4x4_type::identity; 
+        graphics_mat4x4_type m_ViewMatrix = graphics_mat4x4_type::identity; 
+        graphics_mat4x4_type m_ProjectionMatrix = graphics_mat4x4_type::identity; 
 
         gdk::camera::clear_mode m_ClearMode = gdk::camera::clear_mode::color_and_depth;
-        gdk::color m_ClearColor = color::CornflowerBlue;
+        gdk::color m_ClearColor = color::cornflower_blue;
     };
 }
 

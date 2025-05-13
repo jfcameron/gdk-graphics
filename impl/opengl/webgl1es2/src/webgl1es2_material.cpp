@@ -7,17 +7,17 @@
 
 using namespace gdk;
 
-static inline void setFaceCullingMode(const material::FaceCullingMode a) {
-    if (a == material::FaceCullingMode::None) {
+static inline void setface_culling_mode(const material::face_culling_mode a) {
+    if (a == material::face_culling_mode::none) {
         glDisable(GL_CULL_FACE);
         return;
     }
 
     glEnable(GL_CULL_FACE);
     switch(a) {
-        case material::FaceCullingMode::Front: glCullFace(GL_FRONT); return;
-        case material::FaceCullingMode::Back: glCullFace(GL_BACK); return;
-        case material::FaceCullingMode::FrontAndBack: glCullFace(GL_FRONT_AND_BACK); return;
+        case material::face_culling_mode::front: glCullFace(GL_FRONT); return;
+        case material::face_culling_mode::back: glCullFace(GL_BACK); return;
+        case material::face_culling_mode::front_and_back: glCullFace(GL_FRONT_AND_BACK); return;
         default: break;
     }
     throw graphics_exception("unhandled faceculling mode");
@@ -39,10 +39,10 @@ static inline void setRenderMode(const material::render_mode aRenderMode) {
 }
 
 webgl1es2_material::webgl1es2_material(shader_ptr_type pShader,
-    material::FaceCullingMode aFaceCullingMode,
+    material::face_culling_mode aface_culling_mode,
     material::render_mode aRenderMode)
 : m_pShaderProgram(pShader)
-, m_FaceCullMode(aFaceCullingMode)
+, m_FaceCullMode(aface_culling_mode)
 , m_RenderMode(aRenderMode)
 {}
 
@@ -51,7 +51,7 @@ material::render_mode webgl1es2_material::get_render_mode() const {
 }
 
 void webgl1es2_material::activate() {
-    setFaceCullingMode(m_FaceCullMode);
+    setface_culling_mode(m_FaceCullMode);
     setRenderMode(m_RenderMode);
 	m_pShaderProgram->useProgram();
 
@@ -61,8 +61,8 @@ void webgl1es2_material::activate() {
 	for (const auto& [name, a] : m_Integers) m_pShaderProgram->try_set_uniform(name, a);
 	for (const auto& [name, a] : m_Textures) m_pShaderProgram->try_set_uniform(name, *a);
 	for (const auto& [name, a] : m_Vector2s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Vector3s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Vector4s) m_pShaderProgram->try_set_uniform(name, a);
+	for (const auto& [name, a] : m_vector3s) m_pShaderProgram->try_set_uniform(name, a);
+	for (const auto& [name, a] : m_vector4s) m_pShaderProgram->try_set_uniform(name, a);
     for (const auto& [name, a] : m_Floats) m_pShaderProgram->try_set_uniform(name, a);
 }
 
@@ -82,12 +82,12 @@ void webgl1es2_material::setVector2(const std::string &aName, graphics_vector2_t
     m_Vector2s[aName] = aValue;
 }
 
-void webgl1es2_material::setVector3(const std::string &aName, graphics_vector3_type aValue) {
-    m_Vector3s[aName] = aValue;
+void webgl1es2_material::setvector3(const std::string &aName, graphics_vector3_type aValue) {
+    m_vector3s[aName] = aValue;
 }
 
-void webgl1es2_material::setVector4(const std::string &aName, graphics_vector4_type aValue) {
-    m_Vector4s[aName] = aValue;
+void webgl1es2_material::setvector4(const std::string &aName, graphics_vector4_type aValue) {
+    m_vector4s[aName] = aValue;
 }
 
 void webgl1es2_material::setInteger(const std::string& aName, int aValue) {

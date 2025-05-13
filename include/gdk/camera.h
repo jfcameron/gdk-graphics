@@ -38,9 +38,9 @@ namespace gdk {
         //[[nodiscard]] virtual void is_within_frustum(const gdk::graphics_matrix_type &aOtherWorldTransform) = 0;
 
         /// \brief sets the camera's world and view matrix 
-        virtual void set_world_matrix(const gdk::graphics_vector3_type &aWorldPos,
+        virtual void set_transform(const gdk::graphics_vector3_type &aWorldPos,
             const gdk::graphics_quaternion_type &aRotation) = 0;
-        virtual void set_world_matrix(const gdk::graphics_mat4x4_type &aMatrix) = 0;
+        virtual void set_transform(const gdk::graphics_mat4x4_type &aMatrix) = 0;
 
         /// \brief sets the clear color, used to fill color buffer after it is cleared.
         virtual void set_clear_color(const gdk::color &acolor) = 0;

@@ -19,11 +19,11 @@ namespace gdk {
     class material {
     public:
         //! specify whether front- or back-facing polygons can be culled
-        enum class FaceCullingMode {
-            Front, //!< cull front facing polygons
-            Back, //!< cull back facing polygons
-            FrontAndBack, //!< cull front and back facing polygons
-            None //!< do not cull any polygons
+        enum class face_culling_mode {
+            front, //!< cull front facing polygons
+            back, //!< cull back facing polygons
+            front_and_back, //!< cull front and back facing polygons
+            none //!< do not cull any polygons
         };
 
         //! render mode decides transparency etc
@@ -46,10 +46,10 @@ namespace gdk {
         virtual void setVector2(const std::string &aName, graphics_vector2_type aValue) = 0;
 
         /// \brief assigns a 3 component vector
-        virtual void setVector3(const std::string &aName, graphics_vector3_type aValue) = 0;
+        virtual void setvector3(const std::string &aName, graphics_vector3_type aValue) = 0;
         
         /// \brief assigns a 4 component vector
-        virtual void setVector4(const std::string &aName, graphics_vector4_type aValue) = 0;
+        virtual void setvector4(const std::string &aName, graphics_vector4_type aValue) = 0;
         
         /// \brief assigns an integer to the material.
         virtual void setInteger(const std::string& aName, int aValue) = 0;

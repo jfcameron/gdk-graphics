@@ -19,7 +19,8 @@ namespace gdk {
         virtual void add(const std::shared_ptr<const screen_camera> &pCamera) = 0;
         //! remove a screen camera from the scene
         virtual void remove(const std::shared_ptr<const screen_camera> &pCamera) = 0;
-        
+
+        //TODO: why cant all cameras be treated the same? Look into whether or not this is necessary 2025_05_13        
         //! add a texture camera to the scene
         virtual void add(const std::shared_ptr<const texture_camera> &pCamera) = 0;
         //! remove a texture camera from the scene
@@ -27,7 +28,7 @@ namespace gdk {
         
         //! add an entity to the scene
         virtual void add(const std::shared_ptr<const entity> &pEntity) = 0;
-        //! remove an entity to the scene
+        //! remove an entity from the scene
         virtual void remove(const std::shared_ptr<const entity> &pEntity) = 0;
 
         //! draws the scene

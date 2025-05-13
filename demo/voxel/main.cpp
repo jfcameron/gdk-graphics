@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     pMaterial3->setVector2("_UVScale", {1, 1});
     pMaterial3->setVector2("_UVOffset", {0, 0});
 
-    voxel_modeler voxelModeler(pGraphics);
+    voxel_modeler voxelModeler;
 
     auto pVoxelModel(pGraphics->make_model());
     
@@ -93,18 +93,18 @@ int main(int argc, char **argv)
 
     voxelModeler.update_vertex_data(); 
 
-    pVoxelModel->update_vertex_data(model::usage_hint::write_once, voxelModeler.vertex_data());
+    pVoxelModel->upload_vertex_data(model::usage_hint::write_once, voxelModeler.vertex_data());
 
     game_loop(60, [&](const float time, const float deltaTime)
     {
         glfwPollEvents();
 
-        graphics_mat4x4_type root({0,0,0},Quaternion<float>({0,time,0}), {1});
-        graphics_mat4x4_type chunkMatrix({-4,0,-4},Quaternion<float>({0,0,0}), {1});
+        graphics_mat4x4_type root({0,0,0},{{0,time,0}});
+        graphics_mat4x4_type chunkMatrix({-4,0,-4},{{0,0,0}});
         pVoxelEntity->set_model_matrix(root * chunkMatrix);
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pCamera->set_world_matrix({0, 6, +10}, {0.1,0,0,1});
+        pCamera->set_transform({0, 6, +10}, {0.1,0,0,1});
 
         pScene->draw(window.getWindowSize());
 

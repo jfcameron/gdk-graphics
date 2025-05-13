@@ -12,6 +12,9 @@ namespace gdk {
         using channel_type = float;
 
         channel_type r = 0, g = 0, b = 0, a = 1;
+
+        /// \brief clamp each channel to the [0 - 1] range
+        void clamp(); 
         
         /// \brief equality semantics
         bool operator==(const color &aOther) const;
@@ -42,22 +45,22 @@ namespace gdk {
     ///@{
     //
         //! opaque black color
-        static const color Black;
+        static const color black;
         //! opaque white color
-        static const color White;
+        static const color white;
         //! opaque red color
-        static const color Red;
+        static const color red;
         //! opaque green color
-        static const color Green;
+        static const color green;
         //! opaque dark green color
-        static const color DarkGreen;
+        static const color dark_green;
         //! opaque blue color
-        static const color Blue;
+        static const color blue;
         //! opaque bright pink color, useful for indicating 
         /// color-related errors (stands out against most palettes)
-        static const color DeathlyPink;
+        static const color deathly_pink;
         //! an opaque pastel blue color
-        static const color CornflowerBlue;
+        static const color cornflower_blue;
     ///@}
     };
         

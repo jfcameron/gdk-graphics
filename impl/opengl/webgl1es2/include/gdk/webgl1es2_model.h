@@ -5,7 +5,7 @@
 
 #include <gdk/model.h>
 #include <gdk/webgl1es2_shader_program.h>
-#include <jfc/shared_proxy_ptr.h>
+#include <jfc/lazy_ptr.h>
 #include <jfc/unique_handle.h>
 
 #include <iosfwd>
@@ -39,7 +39,7 @@ namespace gdk {
         //! replace current data in the vbo and ibo with new data
         //TODO: optional vector to selectively update data,
         //TODO if vertex_count is different in selective mode, throw
-        virtual void update_vertex_data(const usage_hint &, const vertex_data& vertexDataView) override;
+        virtual void upload_vertex_data(const usage_hint &, const vertex_data& vertexDataView) override;
 
         //! support move semantics
         webgl1es2_model &operator=(webgl1es2_model &&) = default;
@@ -54,10 +54,10 @@ namespace gdk {
         webgl1es2_model(const usage_hint &aUsage, const vertex_data &aData);
         
         //! a quad with format pos3uv2
-        static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Quad;
+        static const jfc::lazy_ptr<gdk::webgl1es2_model> Quad;
         
         //! a cube with format pos3uv2norm3
-        static const jfc::shared_proxy_ptr<gdk::webgl1es2_model> Cube; 
+        static const jfc::lazy_ptr<gdk::webgl1es2_model> Cube; 
 
     private:
         //! stores component data for a single attribute

@@ -205,9 +205,11 @@ void text_renderer::set_text(const std::string &string)
                 }
             });
         
-            data.transform_position({x * 1.1f, -y * 1.1f, z});
+            data.transform("a_Position", 
+                {x * 1.1f, -y * 1.1f, z});
             
-            data.transform_uv(CHAR_TO_UV.at(character),{GLYPH_UV_SIZE});
+            data.transform("a_UV", 
+                CHAR_TO_UV.at(character),{GLYPH_UV_SIZE});
             
             m_VertexBuffer.push_back(data);
 

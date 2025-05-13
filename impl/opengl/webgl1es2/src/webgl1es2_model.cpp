@@ -13,7 +13,7 @@ using namespace gdk;
 
 static constexpr auto TAG("webgl1es2_model");
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
+const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
     std::vector<webgl1es2_model::attribute_component_data_type> pos({
         // x,    y,    z
         1.0f, 1.0f, 0.0f, // 1--0
@@ -57,7 +57,7 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
     }});
 });
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
+const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
     float size(1.f);
     float hsize(size/2.f);
 
@@ -310,20 +310,20 @@ void webgl1es2_model::draw() const {
     else glDrawArrays(m_PrimitiveMode, 0, m_VertexCount);
 }
 
-void webgl1es2_model::update_vertex_data(const usage_hint &aUsage,
+void webgl1es2_model::upload_vertex_data(const usage_hint &aUsage,
     const vertex_data &aData) {
     m_PrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode());
 
     update_index_data(m_IndexBufferHandle, 
-        aData.getIndexData().size(), 
-        &aData.getIndexData()[0], 
+        aData.indexes().size(), 
+        &aData.indexes().front(), 
         dataUsageToGLenum(aUsage),
         m_IndexCount
     );
 
     //Vertex buffer objects
     {
-        const auto &newAttibuteData(aData.data());
+        const auto &newAttibuteData(aData.attributes());
 
         if (m_VertexBufferHandles.size() < newAttibuteData.size()) {
             m_VertexBufferHandles.reserve(newAttibuteData.size());
@@ -364,7 +364,7 @@ void webgl1es2_model::update_vertex_data(const usage_hint &aUsage,
 
             attribute newAttribute = {
                 .buffer_handle_index = i,
-                .components = data.component_count(),
+                .components = data.number_of_components_per_attribute(),
                 .size = data.components().size()
             };
 
@@ -380,7 +380,7 @@ void webgl1es2_model::update_vertex_data(const usage_hint &aUsage,
 webgl1es2_model::webgl1es2_model(const usage_hint &aUsage,
     const vertex_data &aData)
 : m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode()))
-, m_IndexCount((GLsizei)aData.getIndexData().size()) {
-    update_vertex_data(aUsage, aData);
+, m_IndexCount((GLsizei)aData.indexes().size()) {
+    upload_vertex_data(aUsage, aData);
 }
 

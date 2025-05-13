@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
     auto pCamera = pContext->make_camera();
     pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-    pCamera->set_world_matrix({0, 0, 5}, {});
+    pCamera->set_transform({0, 0, 5}, {});
     pScene->add(pCamera);
 
     auto pAlpha = pContext->get_alpha_cutoff_shader();
@@ -63,22 +63,22 @@ int main(int argc, char **argv)
 
     skeleton characterSkeleton({
         bone_data("head", 
-            {{0,1,0},{{0,0,0}},{1,1,1}}, 
+            {{0,1,0},{{0,0,0}}}, 
             {}),
         bone_data("chest", 
-            {{0,0,0},{{0,0,0}},{1,1,1}}, 
+            {{0,0,0},{{0,0,0}}}, 
             {"head", "armLeft", "armRight", "legLeft", "legRight"}),
         bone_data("armLeft", 
-            {{1,0,0},{{0,0,0}},{1,1,1}}, 
+            {{1,0,0},{{0,0,0}}}, 
             {}),
         bone_data("armRight", 
-            {{-1,0,0},{{0,0,0}},{1,1,1}}, 
+            {{-1,0,0},{{0,0,0}}}, 
             {}),
         bone_data("legLeft", 
-            {{0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+            {{0.5,-1,0},{{0,0,0}}}, 
             {}),
         bone_data("legRight", 
-            {{-0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+            {{-0.5,-1,0},{{0,0,0}}}, 
             {}),
     });
     
@@ -100,22 +100,22 @@ int main(int argc, char **argv)
             0,
             skeleton({
                 bone_data("head", 
-                    {{0,1,0},{{0,0,0}},{1,1,1}}, 
+                    {{0,1,0},{{0,0,0}}}, 
                     {}),
                 bone_data("chest", 
-                    {{0,0,0},{{0,0,0}},{1,1,1}}, 
+                    {{0,0,0},{{0,0,0}}}, 
                     {"head", "armLeft", "armRight", "legLeft", "legRight"}),
                 bone_data("armLeft", 
-                    {{1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {{1,0,0},{{0,0,0}}}, 
                     {}),
                 bone_data("armRight", 
-                    {{-1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {{-1,0,0},{{0,0,0}}}, 
                     {}),
                 bone_data("legLeft", 
-                    {{0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {{0.5,-1,0},{{0,0,0}}}, 
                     {}),
                 bone_data("legRight", 
-                    {{-0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {{-0.5,-1,0},{{0,0,0}}}, 
                     {}),
             })
         },
@@ -123,29 +123,29 @@ int main(int argc, char **argv)
             2.1f,
             skeleton({
                 bone_data("head", 
-                    {{0,1,0},{{0,0,0}},{1,1,1}}, 
+                    {{0,1,0},{{0,0,0}}}, 
                     {}),
                 bone_data("chest", 
-                    {{2,0,0},{{0,0,0}},{1,1,1}}, 
+                    {{2,0,0},{{0,0,0}}}, 
                     {"head", "armLeft", "armRight", "legLeft", "legRight"}),
                 bone_data("armLeft", 
-                    {{1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {{1,0,0},{{0,0,0}}}, 
                     {}),
                 bone_data("armRight", 
-                    {{-1,0,0},{{0,0,0}},{1,1,1}}, 
+                    {{-1,0,0},{{0,0,0}}}, 
                     {}),
                 bone_data("legLeft", 
-                    {{0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {{0.5,-1,0},{{0,0,0}}}, 
                     {}),
                 bone_data("legRight", 
-                    {{-0.5,-1,0},{{0,0,0}},{1,1,1}}, 
+                    {{-0.5,-1,0},{{0,0,0}}}, 
                     {}),
             })
         },
     });
 
-    /*Vector3<float> eulers(3.14,3.14/2.,3.14/3);
-    Quaternion<float> quat(eulers);
+    /*vector3<float> eulers(3.14,3.14/2.,3.14/3);
+    quaternion<float> quat(eulers);
     auto eulers2 = quat.toEuler();
 
     std::cout << eulers << ", " << eulers2 << "\n";*/
@@ -159,13 +159,13 @@ int main(int argc, char **argv)
         auto d = t*2;
         auto h = t/2;
         auto q = t/2;
-        Vector3<float> eulers(time/2,time/4,0);
-        Quaternion<float> quat(eulers);
+        vector3<float> eulers(time/2,time/4,0);
+        quaternion<float> quat(eulers);
         auto eulers2 = quat.toEuler();
         
         //25-04-22: matrix multiplication is working correctly 
-        graphics_mat4x4_type m1({ 0,  0, 0},Quaternion<float>({d,0,0}), {2*std::abs(std::cos(t))});
-        graphics_mat4x4_type m2({ std::cos(t),  1, 0},Quaternion<float>({0,q,0}), {1});
+        graphics_mat4x4_type m1({ 0,  0, 0},{{d,0,0}});
+        graphics_mat4x4_type m2({ std::cos(t),  1, 0},{{0,q,0}});
         boneVisualizers["head"]->set_model_matrix(m1);
         boneVisualizers["chest"]->set_model_matrix(m1 * m2);
 
@@ -173,8 +173,8 @@ int main(int argc, char **argv)
         characterSkeleton.set_local_transform("chest", {{0,0,0},{{0,0,0}},{1}});*/
         
         /*graphics_mat4x4_type m3;
-        //graphics_mat4x4_type m3({  1,  0,1.5},Quaternion<float>({0,0,0}), {1});
-        graphics_mat4x4_type m4({  1,  1,1.5},Quaternion<float>({d,d,t}), {1});
+        //graphics_mat4x4_type m3({  1,  0,1.5},quaternion<float>({0,0,0}), {1});
+        graphics_mat4x4_type m4({  1,  1,1.5},quaternion<float>({d,d,t}), {1});
         boneVisualizers["chest"]->set_model_matrix(m4);*/
 
         /*for (auto &[key, value] : boneVisualizers)

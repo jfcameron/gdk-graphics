@@ -7,8 +7,8 @@
 #include <gdk/opengl.h>
 #include <gdk/shader_program.h>
 #include <gdk/webgl1es2_texture.h>
-#include <jfc/shared_proxy_ptr.h>
 #include <jfc/unique_handle.h>
+#include <jfc/lazy_ptr.h>
 
 #include <array>
 #include <optional>
@@ -156,11 +156,11 @@ namespace gdk {
         webgl1es2_shader_program(std::string aVertexSource, std::string aFragmentSource);
 
         //! shader useful for indicating some kind of failure. Performs MVP mul then colors all frags bright pink.
-        static const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> PinkShaderOfDeath;
+        static const jfc::lazy_ptr<gdk::webgl1es2_shader_program> PinkShaderOfDeath;
 
         //! shader for drawing unlit surfaces with alpha channel based fragment discard. Suitable for text rendering, 
         /// GUI element rendering, 2D Sprite rendering. Extremely lightweight.
-        static const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> AlphaCutOff;
+        static const jfc::lazy_ptr<gdk::webgl1es2_shader_program> AlphaCutOff;
 
         //! 8 is the guaranteed minimum across all es2/web1 implementations. 
         /// Can check against max but that invites the possibility of shaders working on some impls 

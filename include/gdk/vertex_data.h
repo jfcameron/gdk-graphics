@@ -3,6 +3,7 @@
 #ifndef GDK_GFX_VERTEX_DATA_H
 #define GDK_GFX_VERTEX_DATA_H
 
+#include <gdk/attribute_data.h>
 #include <gdk/graphics_types.h>
 
 #include <array>
@@ -15,101 +16,66 @@
 #include <vector>
 
 namespace gdk {
-    /// \brief A sequence of vertexes stored in system memory.
+    /// \brief vertex data stored in system memory. 
     ///
-    /// when given to a model, vertex data is used to create the polygonal surfaces of that model
-    ///
-    /// interleaved data, best for data that does not need to be updated
-    ///
+    /// vertex data is comprised of a collection of attributes, which in turn are a collection of components
     class vertex_data final {
     public:
-        /// \brief type of a single vertex attribute component.
-        using component_type = graphics_floating_point_type;
-
-        //TODO: separate this from vertex_data? maybe
-        //TODO: unify atttribute_data and attribute_data_view: attribute_data::view.
-        //TODO: create methods to convert them, to simplify impl
-        class attribute_data {
-        public:
-            attribute_data() = default;
-
-            attribute_data(const std::vector<component_type> &m_Components, 
-                const size_t aComponentCount);
-            
-            attribute_data &operator+=(const attribute_data &rhs);
-            
-            size_t component_count() const;
-
-            std::vector<component_type> &components();
-            
-            const std::vector<component_type> &components() const;
-
-        private:
-            std::vector<component_type> m_Components;
-            
-            size_t m_ComponentCount;
-        };
+        using attribute_collection_type = std::unordered_map<std::string, attribute_data>;
+        using index_value_type = unsigned short;
 
         enum class primitive_mode {
             triangles
         };
 
-        using attribute_collection_type = std::unordered_map<std::string, attribute_data>;
-        
-        using index_value_type = unsigned short;
-
-        /// \brief gets the primitive mode
+        //! get the primitive mode
         primitive_mode get_primitive_mode() const;
 
-        size_t attribute_offset(const std::string &aName) const;
+        //! get list of indexes
+        const std::vector<index_value_type> &indexes() const;
 
-        const std::vector<index_value_type> &getIndexData() const;
+        //! get collection of all attribute data
+        const attribute_collection_type &attributes() const;
+
+        //! get attribute data by name, e.g: "a_Position"
+        const attribute_data &get_attribute_data(const std::string &aAttributeName) const;
+        //! get attribute data by name, e.g: "a_Position"
+        attribute_data &get_attribute_data(const std::string &aAttributeName);
 
         //! clears all state from this vertex_data instance
         void clear();
 
-        /// \name convenience methods, should probably be moved out of the class
-        // TODO: these should be able to work directly on uniform_data & nonconst uniform_data_view
-        // So maybe this should be moved to a function not a method
-        ///@{
-        //
-        //! Convenience method, applies a transformation to a 3 component attribute
-        //TODO: 
-        // - rename "transform"
-        // - provide overloads for 2 and 3 component attributes "transform"
-        // - instead of pos, rot, sca, just require a mat4x4
-        void transform_position(
+        //! applies a transformation to a 3 component attribute
+        void transform(const std::string &aPositionAttributeName, 
             const graphics_vector3_type &aPos,
             const graphics_quaternion_type &aRot = {},
-            const graphics_vector3_type &aSca = {1},
-            const std::string &aPositionAttributeName = "a_Position");
-            
-        //! applies a transformation to a 2 component attribute
-        void transform_uv(
-            const graphics_vector2_type &aPos,
-            //TODO: float aRot,
-            const graphics_vector2_type &aSca = {1},
-            const std::string &aUVAttributeName = "a_UV");
+            const graphics_vector3_type &aSca = {1});
+        //transform(mat4x4) ^
+        void transform(const std::string &aPositionAttributeName, graphics_mat4x4_type &aTransform);
 
-        //! sorts all attribute data by distance of an entity to an observer
+        //! applies a transformation to a 2 component attribute
+        void transform(const std::string &aUVAttributeName,
+            const graphics_vector2_type &aPos,
+            //rotation float?
+            const graphics_vector2_type &aSca = {1});
+        //transform(mat3x3) ?
+
+        //! sorts verticies from nearest to furthest based on the distance between the centroid 
+        /// of the triangles they form and a given position in world space
         void sort_by_nearest_triangle(
             const graphics_vector3_type &aObserverWorldPosition,
             graphics_mat4x4_type aEntityInstanceWorldMatrix,
             const std::string &aPositionAttributeName = "a_Position");
         
+        //! sorts verticies from furthest to nearest based on the distance between the centroid 
+        /// of the triangles they form and a given position in world space
         void sort_by_furthest_triangle(
             const graphics_vector3_type &aObserverWorldPosition,
             graphics_mat4x4_type aEntityInstanceWorldMatrix,
             const std::string &aPositionAttributeName = "a_Position");
-        ///@}
-
-        const attribute_collection_type &data() const;
 
         /// \brief append a different vertex_data to this vertex_data
-        ///
-        /// returns the index to the start of the newly added data
-        //TODO: allow new attribute_datas to be introduced, but be sure vertexcount is same etc.
-        size_t push_back(const vertex_data &other);
+        void push_back(const vertex_data &other);
 
         /// \brief overwrite a section of vertex data using another vertex data instance
         ///
@@ -122,6 +88,7 @@ namespace gdk {
         /// the same # of components
         void overwrite(const std::string &aAttributeName, const size_t vertexOffset, const vertex_data &other);
 
+        //! get number of verticies in the data
         size_t vertex_count() const;
 
         //! create a new instance that is a concatenation of two separate datas
@@ -131,26 +98,26 @@ namespace gdk {
         /// \warn must be same format
         vertex_data &operator+=(const vertex_data &other);
 
-        //! assignment by const ref
-        vertex_data &operator=(const vertex_data &other) = default;
-
-        //! assignment by rvalue
+        //! support move semantics
         vertex_data &operator=(vertex_data &&other) = default;
-
-        vertex_data(const vertex_data &) = default;
-        
+        //! support move semantics
         vertex_data(vertex_data &&) = default;
+
+        //! support copy semantics
+        vertex_data(const vertex_data &) = default;
+        //! support copy semantics
+        vertex_data &operator=(const vertex_data &other) = default;
 
         //! default inited vertex_data is very useful for procedurally generated data
         vertex_data() = default;
 
         vertex_data(attribute_collection_type &&aAttributeData);
 
+        ~vertex_data() = default;
+
     private:
-        size_t m_VertexCount = 0;
-
-        attribute_collection_type m_NonInterleavedData;
-
+        size_t m_VertexCount{};
+        attribute_collection_type m_Attributes{};
         primitive_mode m_PrimitiveMode = primitive_mode::triangles; 
     };
 }

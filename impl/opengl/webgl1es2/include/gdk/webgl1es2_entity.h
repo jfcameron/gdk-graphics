@@ -34,12 +34,12 @@ namespace gdk
         virtual void show() override;
 
         //! check if the entity is hidden
-        virtual bool isHidden() const override;
+        virtual bool is_hidden() const override;
 
         /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
         virtual void set_model_matrix(const graphics_vector3_type &aWorldPos, 
             const graphics_quaternion_type &aRotation, 
-            const graphics_vector3_type &aScale = graphics_vector3_type::One) override;
+            const graphics_vector3_type &aScale = graphics_vector3_type::one) override;
 
         virtual void set_model_matrix(const graphics_mat4x4_type& a) override;
     ///@}

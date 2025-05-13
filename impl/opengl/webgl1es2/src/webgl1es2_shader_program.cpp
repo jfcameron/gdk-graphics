@@ -19,7 +19,7 @@ static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
 
 static short s_ActiveTextureUnitCounter(0);
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]() {
+const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::PinkShaderOfDeath([]() {
     const std::string vertexShaderSource(R"V0G0N(
     uniform mat4 _MVP;
     attribute highp vec3 a_Position;
@@ -38,7 +38,7 @@ const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_prog
     return new gdk::webgl1es2_shader_program(vertexShaderSource, fragmentShaderSource);
 });
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::AlphaCutOff([]() {
+const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::AlphaCutOff([]() {
     const std::string vertexShaderSource(R"V0G0N(
     uniform mat4 _MVP;
     uniform mat4 _Model;
@@ -479,7 +479,9 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
 
 bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_mat4x4_type &a) const {
     if (const auto& search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &a.m[0][0]);
+        auto b = a;
+        //b.transpose();
+        glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &b.m[0][0]);
         return true;
     }
 

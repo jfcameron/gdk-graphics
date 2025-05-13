@@ -31,37 +31,36 @@ namespace gdk
             material_ptr_type pMaterial
         ) const override;
 
-        [[nodiscard]] virtual graphics::context::material_ptr_type make_material(
+        [[nodiscard]] virtual material_ptr_type make_material(
             shader_ptr_type pShader,
             material::render_mode aRenderMode,
-            material::FaceCullingMode aFaceCullingMode
+            material::face_culling_mode aface_culling_mode
         ) const override;
 
-        [[nodiscard]] virtual graphics::context::model_ptr_type make_model() const override;
+        [[nodiscard]] virtual model_ptr_type make_model() const override;
 
-        [[nodiscard]] virtual graphics::context::model_ptr_type make_model(
+        [[nodiscard]] virtual model_ptr_type make_model(
             const gdk::model::usage_hint, 
             const vertex_data &vertexDataView
         ) const override;
 
-        [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture(
+        [[nodiscard]] virtual texture_ptr_type make_texture(
             const texture_data::view &imageView,
             const texture::wrap_mode,
             const texture::wrap_mode
         ) const override;
 
-        [[nodiscard]] virtual graphics::context::texture_ptr_type make_texture() const override;
+        [[nodiscard]] virtual texture_ptr_type make_texture() const override;
 
-        [[nodiscard]] virtual graphics::context::shader_ptr_type get_alpha_cutoff_shader() const override;
-
-        [[nodiscard]] virtual shader_ptr_type get_pink_shader_of_death() const override;
+        [[nodiscard]] virtual shader_ptr_type get_alpha_cutoff_shader() const override;
 
         [[nodiscard]] virtual model_ptr_type get_cube_model() const override;
         
         [[nodiscard]] virtual model_ptr_type get_quad_model() const override;
 
-        virtual ~webgl1es2_context() override = default;
+        virtual ~webgl1es2_context() override;
 
+        webgl1es2_context(webgl1es2_context &&);
     private:
         webgl1es2_context(); 
     };

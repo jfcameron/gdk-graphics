@@ -39,14 +39,15 @@ jfc_project(library
     LIBRARIES
         ${gdkmath_LIBRARIES}
         ${stb_LIBRARIES}
-        
-        ${simpleglfw_LIBRARIES} # TODO: wrong. Split this up. gfx depend on OpenGL headers, not on glfw 
-        # ^ need to move the demo into a separate repo. gdk-graphics knows nothing about windowing systems
+
+        # this is here because of the demos, it is not required by the graphics project itself.
+        # it would be cleaner to move the demos into a separate repo
+        ${simpleglfw_LIBRARIES} 
 
     DEPENDENCIES
         "stb"
         "gdkmath"
-        "simpleglfw"
+        "simpleglfw" # ^
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
@@ -60,8 +61,8 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_shader_program.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/attribute_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/scene.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data.cpp
 )

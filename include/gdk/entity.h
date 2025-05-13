@@ -19,12 +19,12 @@ namespace gdk {
         virtual void show() = 0;
 
         /// \brief check if the entity is hidden
-        virtual bool isHidden() const = 0;
+        virtual bool is_hidden() const = 0;
         
         /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
         virtual void set_model_matrix(const graphics_vector3_type &aWorldPos, 
             const graphics_quaternion_type &aRotation, 
-            const graphics_vector3_type &aScale = graphics_vector3_type::One) = 0;
+            const graphics_vector3_type &aScale = graphics_vector3_type::one) = 0;
 
         /// \brief set the model matrix using a matrix
         virtual void set_model_matrix(const graphics_mat4x4_type& a) = 0;
