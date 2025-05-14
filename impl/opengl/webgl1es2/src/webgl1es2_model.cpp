@@ -4,7 +4,7 @@
 #include <gdk/graphics_exception.h>
 #include <gdk/opengl.h>
 #include <gdk/webgl1es2_model.h>
-#include <gdk/vertex_data.h>
+#include <gdk/model_data.h>
 
 #include <iostream>
 #include <stdexcept>
@@ -30,7 +30,7 @@ const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
         pos[i + 1] -= 0.5f;
     }
 
-    return new gdk::webgl1es2_model(model::usage_hint::write_once, {
+    return new gdk::webgl1es2_model(model::usage_hint::upload_once_, {
     {
         { 
             "a_Position",
@@ -196,7 +196,7 @@ const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
         +0.0, +1.0, +0.0, // 1--2             
     });
     
-    return new gdk::webgl1es2_model(model::usage_hint::write_once, {
+    return new gdk::webgl1es2_model(model::usage_hint::upload_once_, {
     {
         { 
             "a_Position",
@@ -226,18 +226,18 @@ static inline GLenum dataUsageToGLenum(const model::usage_hint aUsageHint) {
     switch (aUsageHint) {
         case model::usage_hint::dynamic: return GL_DYNAMIC_DRAW;
         case model::usage_hint::streaming: return GL_STREAM_DRAW;
-        case model::usage_hint::write_once: return GL_STATIC_DRAW;
+        case model::usage_hint::upload_once_: return GL_STATIC_DRAW;
         default: break;
     }
     throw graphics_exception("unhandled usage hint type");
 }
 
-static inline GLenum vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(const vertex_data::primitive_mode aPrimitiveMode) {
+static inline GLenum vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(const model_data::primitive_mode aPrimitiveMode) {
     switch (aPrimitiveMode) {
-        case vertex_data::primitive_mode::triangles: return GL_TRIANGLES;
+        case model_data::primitive_mode::triangles: return GL_TRIANGLES;
         default: break;
     }
-    throw graphics_exception("unhandled vertex_data::PrimitiveMode");
+    throw graphics_exception("unhandled model_data::PrimitiveMode");
 }
 
 static inline void update_index_data(
@@ -310,8 +310,8 @@ void webgl1es2_model::draw() const {
     else glDrawArrays(m_PrimitiveMode, 0, m_VertexCount);
 }
 
-void webgl1es2_model::upload_vertex_data(const usage_hint &aUsage,
-    const vertex_data &aData) {
+void webgl1es2_model::upload(const usage_hint &aUsage,
+    const model_data &aData) {
     m_PrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode());
 
     update_index_data(m_IndexBufferHandle, 
@@ -378,9 +378,9 @@ void webgl1es2_model::upload_vertex_data(const usage_hint &aUsage,
 }
 
 webgl1es2_model::webgl1es2_model(const usage_hint &aUsage,
-    const vertex_data &aData)
+    const model_data &aData)
 : m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode()))
 , m_IndexCount((GLsizei)aData.indexes().size()) {
-    upload_vertex_data(aUsage, aData);
+    upload(aUsage, aData);
 }
 

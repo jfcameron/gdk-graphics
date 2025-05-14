@@ -24,8 +24,8 @@
 
 using namespace gdk;
 
-vertex_data make_quad() {
-    const vertex_data quadData({
+model_data make_quad() {
+    const model_data quadData({
         { 
             "a_Position",
             {
@@ -65,9 +65,9 @@ int main(int argc, char **argv) {
     auto pScene = pContext->make_scene();
 
     auto [pBatchModel, batchModelVertexData] = [&]() {
-        vertex_data batchModelVertexData;
+        model_data batchModelVertexData;
         return std::make_tuple(
-            pContext->make_model(model::usage_hint::write_once, batchModelVertexData),
+            pContext->make_model(model::usage_hint::upload_once_, batchModelVertexData),
             std::move(batchModelVertexData)
         );
     }();
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
             1, 1
         });
 
-        const vertex_data userdefined_quad_vertex_data({
+        const model_data userdefined_quad_model_data({
             { 
                 "a_Position",
                 {
@@ -127,8 +127,8 @@ int main(int argc, char **argv) {
             }
         });
 
-        return pContext->make_model(model::usage_hint::write_once, 
-            userdefined_quad_vertex_data);
+        return pContext->make_model(model::usage_hint::upload_once_, 
+            userdefined_quad_model_data);
     }();
 
     auto pTexture = [&]() {
@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
         view.width = 2;
         view.height = 2;
         view.format = texture::format::rgba;
-        view.data = reinterpret_cast<std::byte *>(&imageData.front());
+        view.data = &imageData.front();
         return pContext->make_texture(view);
     }();
 
@@ -156,7 +156,7 @@ int main(int argc, char **argv) {
 
     auto pEntity = [&]() {
         auto pEntity = pContext->make_entity(pBatchModel, pMaterial);
-        pEntity->set_model_matrix(vector3<float>{2., 0., -11.}, quaternion<float>());
+        pEntity->set_transform(vector3<float>{2., 0., -11.}, quaternion<float>());
         pScene->add(pEntity);
         return pEntity;
     }();
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
             view.width = 2;
             view.height = 2;
             view.format = texture::format::rgba;
-            view.data = reinterpret_cast<std::byte *>(&textureData.front());
+            view.data = &textureData.front();
             return pContext->make_texture(view);
         }();
 
@@ -186,7 +186,7 @@ int main(int argc, char **argv) {
         }();
 
         auto pEntity = pContext->make_entity(pContext->get_cube_model(), pMaterial);
-        pEntity->set_model_matrix({2., 0., -12.5}, {{0, 0, 0}}, {1.0, 1.0, 1});
+        pEntity->set_transform({2., 0., -12.5}, {{0, 0, 0}}, {1.0, 1.0, 1});
         pScene->add(pEntity);
         return pEntity;
     }();
@@ -201,7 +201,7 @@ int main(int argc, char **argv) {
         }();
 
         auto pEntity(pContext->make_entity(pContext->get_cube_model(), pMaterial));
-        pEntity->set_model_matrix({2., 0., -14.5}, {{0, 2, 0.6}}, {6.5, 0.5, 3});
+        pEntity->set_transform({2., 0., -14.5}, {{0, 2, 0.6}}, {6.5, 0.5, 3});
         pScene->add(pEntity);
 
         return pEntity;
@@ -211,18 +211,18 @@ int main(int argc, char **argv) {
         glfwPollEvents();
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        graphics_mat4x4_type matCamera;
+        graphics_matrix4x4_type matCamera;
         matCamera.set_translation({0, 0, -10});
         matCamera.set_rotation({{0,0,0}});
         pCamera->set_transform(matCamera);
 
-        pEntity->set_model_matrix( {std::cos(time), -0., -11.}, {{0, 4 * ( 1/ 2), 4}});
-        pEntity2->set_model_matrix( {2., std::sin(time) * 2.f, -12.5}, {{time *0.9f, time *0.5f, 0}}, {1.0, 1.0, 1});
+        pEntity->set_transform( {std::cos(time), -0., -11.}, {{0, 4 * ( 1/ 2), 4}});
+        pEntity2->set_transform( {2., std::sin(time) * 2.f, -12.5}, {{time *0.9f, time *0.5f, 0}}, {1.0, 1.0, 1});
         
         pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pTextureCamera->set_transform({std::sinf(time), 0, -10}, {});
 
-        vertex_data newData = make_quad();
+        model_data newData = make_quad();
         newData.transform("a_Position", 
             {0.5,0,(float)sin(time)*0.5f}, {{0,0,0}}, {0.5});
 
@@ -230,35 +230,18 @@ int main(int argc, char **argv) {
         auto quad = make_quad();
         batchModelVertexData.push_back(quad);
 
-        graphics_mat4x4_type quadMat; {
+        graphics_matrix4x4_type quadMat; {
             graphics_vector3_type tran(std::cos(time*0.25)*0.5,0.0,0); quadMat.set_translation({tran});
             graphics_vector3_type rot(time,0,0); 
             graphics_vector3_type sca(0.5);
             quadMat.set_rotation({rot}, sca);
-
-            //quad.transform("a_Position", quadMat.translation(), quadMat.rotation(), extractScale(quadMat));
-            //quad.transform("a_Position", tran, rot, sca);
-
-            //quad.transform("a_Position",  tran,  {}, {1});//This is the correct baseline
-            //quad.transform("a_Position",    {}, rot, {1});//This is the correct baseline
-            //quad.transform("a_Position",    {},  {}, sca);//This is the correct baseline
-
-            //quad.transform("a_Position",  tran,  {}, sca);//This is the correct baseline
-
-            //quad.transform("a_Position",    {}, rot, sca);//This is the correct baseline
-            //quad.transform("a_Position",  tran, rot, {1});//This is the correct baseline
-            //quad.transform("a_Position",  tran, rot, sca);//This is the correct baseline
-            //quad.transform("a_Position",  quadMat.translation(), quadMat.rotation(), extractScale(quadMat));
-
-            //quad.transform("a_Position",  tran,  {}, sca);//This is the correct baseline
-            //quad.transform("a_Position",  quadMat.translation(), quadMat.rotation(), extractScale(quadMat));
-            quad.transform("a_Position", quadMat); //???
+            quad.transform("a_Position", quadMat);
         }
 
         quad.transform("a_UV", {0.2f, 0}, {2.f, 2.f});
         batchModelVertexData.push_back(quad);
-        batchModelVertexData.sort_by_nearest_triangle( {0,0,-20}, graphics_mat4x4_type::identity);
-        pBatchModel->upload_vertex_data(model::usage_hint::streaming, batchModelVertexData);
+        batchModelVertexData.sort_by_nearest_triangle( {0,0,-20}, graphics_matrix4x4_type::identity);
+        pBatchModel->upload(model::usage_hint::streaming, batchModelVertexData);
 
         pScene->draw(window.getWindowSize());
 

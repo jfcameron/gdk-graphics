@@ -11,7 +11,7 @@ namespace gdk {
     /// \brief type of a single vertex attribute component.
     using component_type = graphics_floating_point_type; 
 
-    /// \brief attribute_data represents one of the lists of components that comprise a vertex_data object
+    /// \brief attribute_data represents one of the lists of components that comprise a model_data object
     class attribute_data final {
     public:
         //! number of components that per attribute

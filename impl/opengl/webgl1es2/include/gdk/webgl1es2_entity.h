@@ -37,11 +37,11 @@ namespace gdk
         virtual bool is_hidden() const override;
 
         /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
-        virtual void set_model_matrix(const graphics_vector3_type &aWorldPos, 
+        virtual void set_transform(const graphics_vector3_type &aWorldPos, 
             const graphics_quaternion_type &aRotation, 
             const graphics_vector3_type &aScale = graphics_vector3_type::one) override;
 
-        virtual void set_model_matrix(const graphics_mat4x4_type& a) override;
+        virtual void set_transform(const graphics_matrix4x4_type& a) override;
     ///@}
 
         //! get the model
@@ -53,10 +53,10 @@ namespace gdk
         /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
         /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity 
         /// via a camera.
-        void draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const;
+        void draw(const graphics_matrix4x4_type &aViewMatrix, const graphics_matrix4x4_type &aProjectionMatrix) const;
 		
         /// \brief returns a const ref to the model matrix
-        const graphics_mat4x4_type &getModelMatrix() const;
+        const graphics_matrix4x4_type &getModelMatrix() const;
 
         /// \brief copy semantics
         webgl1es2_entity(const webgl1es2_entity &) = default;
@@ -82,7 +82,7 @@ namespace gdk
         std::shared_ptr<webgl1es2_material> m_Material;
 
         //! Position in the world
-        graphics_mat4x4_type m_ModelMatrix;
+        graphics_matrix4x4_type m_ModelMatrix;
 
         //! Whether or not to respect draw calls
         bool m_IsHidden = false;

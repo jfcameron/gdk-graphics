@@ -126,9 +126,9 @@ namespace gdk {
         bool try_set_uniform(const std::string &aName, const std::vector<graphics_mat3x3_type> &avalue) const;*/
 
         //! assign a mat4x4 uniform from a mat4x4
-        bool try_set_uniform(const std::string &aName, const graphics_mat4x4_type &avalue) const; 
+        bool try_set_uniform(const std::string &aName, const graphics_matrix4x4_type &avalue) const; 
         //! assign a mat4x4 uniform array from a vector of mat4x4s
-        bool try_set_uniform(const std::string &aName, const std::vector<graphics_mat4x4_type> &avalue) const; 
+        bool try_set_uniform(const std::string &aName, const std::vector<graphics_matrix4x4_type> &avalue) const; 
 
         //TODO: texture needs to support more than tex2d!
         //! bind a texture to the context then assign it to a texture uniform

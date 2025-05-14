@@ -10,7 +10,7 @@
 #include <unordered_set>
 
 #include <gdk/graphics_context.h>
-#include <gdk/vertex_data.h>
+#include <gdk/model_data.h>
 #include <gdk/graphics_types.h>
 
 namespace gdk
@@ -18,12 +18,12 @@ namespace gdk
     struct bone_data
     {
         std::string name;
-        graphics_mat4x4_type transform;
+        graphics_matrix4x4_type transform;
         std::vector<std::string> children;
         
         bone_data(
             std::string aName,
-            graphics_mat4x4_type aTransform,
+            graphics_matrix4x4_type aTransform,
             std::vector<std::string> aChildren)
         :name(aName)
         ,transform(aTransform)
@@ -33,8 +33,8 @@ namespace gdk
     
     struct bone
     {
-        graphics_mat4x4_type localTransform;
-        graphics_mat4x4_type transform;
+        graphics_matrix4x4_type localTransform;
+        graphics_matrix4x4_type transform;
 
         std::unordered_set<bone *> children;
 
@@ -49,7 +49,7 @@ namespace gdk
         bone *rootBone;
 
         //This works but proably should be removed? Its expensive and shouldnt be used excessively
-        void set_local_transform(std::string aBoneName, graphics_mat4x4_type aTransform);
+        void set_local_transform(std::string aBoneName, graphics_matrix4x4_type aTransform);
 
         skeleton(const std::vector<bone_data> &aBoneData);
     };

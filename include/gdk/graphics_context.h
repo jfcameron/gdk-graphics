@@ -24,54 +24,54 @@ namespace gdk {
         ///@{
         //
             //! makes a scene
-            [[nodiscard]] virtual scene_ptr_type make_scene() const = 0;
+            [[nodiscard]] virtual scene_ptr_type make_scene() = 0;
 
             //! makes a camera 
-            [[nodiscard]] virtual camera_ptr_type make_camera() const = 0;
+            [[nodiscard]] virtual camera_ptr_type make_camera() = 0;
             
             //! makes a texture_camera
-            [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera() const = 0;
+            [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera() = 0;
            
             //! make an entity
             [[nodiscard]] virtual entity_ptr_type make_entity(
-                model_ptr_type pModel, 
-                material_ptr_type pMaterial 
-            ) const = 0;
+                const const_model_ptr_type pModel, 
+                const const_material_ptr_type pMaterial 
+            ) = 0;
             
             //! make a model
             [[nodiscard]] virtual model_ptr_type make_model(
                 const gdk::model::usage_hint,
-                const vertex_data &vertexData
-            ) const = 0;
+                const model_data &vertexData
+            ) = 0;
             //! make an empty model
-            [[nodiscard]] virtual model_ptr_type make_model() const = 0;
+            [[nodiscard]] virtual model_ptr_type make_model() = 0;
 
             //! make a material. 
             [[nodiscard]] virtual material_ptr_type make_material(
-                shader_ptr_type pShader,
-                material::render_mode aRenderMode = material::render_mode::opaque,
-                material::face_culling_mode aface_culling_mode = material::face_culling_mode::none
-            ) const = 0;
+                const const_shader_ptr_type pShader,
+                const material::render_mode aRenderMode = material::render_mode::opaque,
+                const material::face_culling_mode aFaceCullingMode = material::face_culling_mode::none
+            ) = 0;
 
             //! make a texture 
             [[nodiscard]] virtual texture_ptr_type make_texture(
                 const texture_data::view &aTextureDataView,
                 const texture::wrap_mode aWrapModeU = texture::wrap_mode::repeat,
                 const texture::wrap_mode aWrapModeV = texture::wrap_mode::repeat
-            ) const = 0;
+            ) = 0;
             //! make an empty texture 
-            [[nodiscard]] virtual texture_ptr_type make_texture() const = 0;
+            [[nodiscard]] virtual texture_ptr_type make_texture() = 0;
         ///@}
 
         /// \name special resources provided by the implementation
         ///@{
         //
-            //TODO: get_cube and get_quad dont need to rely on impl anymore. move these to statics on vertex_data
+            //TODO: get_cube and get_quad dont need to rely on impl anymore. move these to statics on model_data
             /// \brief a 1x1x1 cube model
             /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
             [[nodiscard]] virtual model_ptr_type get_cube_model() const = 0;
 
-            //TODO: get_cube and get_quad dont need to rely on impl anymore. move these to statics on vertex_data
+            //TODO: get_cube and get_quad dont need to rely on impl anymore. move these to statics on model_data
             /// \brief a 1x1 quad model
             /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
             [[nodiscard]] virtual model_ptr_type get_quad_model() const = 0;

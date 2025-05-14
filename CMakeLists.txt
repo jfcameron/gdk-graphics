@@ -63,8 +63,9 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/attribute_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/model_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture_data.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/vertex_data.cpp
 )
 
 if (JFC_BUILD_DEMO)

@@ -1,11 +1,11 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include "text_renderer.h"
+#include "text_modeler.h"
 
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
-#include <gdk/webgl1es2_context.h>
 #include <gdk/scene.h>
+#include <gdk/webgl1es2_context.h>
 
 #include <jfc/glfw_window.h>
 
@@ -25,39 +25,41 @@
 
 using namespace gdk;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     glfw_window window("basic rendering demo");
 
-    auto pContext = webgl1es2_context::make();
+    auto pGraphics = webgl1es2_context::make();
 
-    auto pScene = pContext->make_scene();
+    auto pScene = pGraphics->make_scene();
 
-    auto pCamera = pContext->make_camera();
-    pCamera->set_clear_color(color::dark_green);
-    pScene->add(pCamera);
+    auto pCamera = [&]() {
+        auto pCamera = pGraphics->make_camera();
+        pCamera->set_clear_color(color::dark_green);
+        pScene->add(pCamera);
+        return pCamera;
+    }();
 
-    text_renderer textRenderer(pContext);
-    auto pTextModel(pContext->make_model());
-    
-    auto pTextEntity(pContext->make_entity(pTextModel, textRenderer.material()));
-    pScene->add(pTextEntity);
-    pTextEntity->set_model_matrix(vector3<float>{-2., 0., -11}, 
-        quaternion<float>{{0, 0, 0.0}},
-        {0.2, 0.2, 0.2});
+    text_modeler textModeler(pGraphics);
 
-    auto pTextEntity2(pContext->make_entity(pTextModel, textRenderer.material()));
-    pScene->add(pTextEntity2);
-    pTextEntity2->set_model_matrix(vector3<float>{-2., 2., -12}, 
-        quaternion<float>{{0, 0, 0.0}},
-        {0.2, 0.2, 0.2});
+    const auto pTextEntity = [&]() {
+        auto pTextEntity(pGraphics->make_entity(textModeler.model(), textModeler.material()));
+        pScene->add(pTextEntity);
+        pTextEntity->set_transform({-2., 0., -11}, {{0, 0, 0.0}}, {0.2, 0.2, 0.2});
+        return pTextEntity;
+    }();
 
-    game_loop(60, [&](const float time, const float deltaTime)
-    {
+    auto pTextEntity2 = [&]() {
+        auto pTextEntity2(pGraphics->make_entity(textModeler.model(), textModeler.material()));
+        pScene->add(pTextEntity2);
+        pTextEntity2->set_transform({-2., 2., -12}, {{0, 0, 0.0}}, {0.2, 0.2, 0.2});
+        return pTextEntity2;
+    }();
+
+    game_loop(60, [&](const float time, const float deltaTime) {
         glfwPollEvents();
 
-        textRenderer.set_text("this is not a test,\n\tthis is rock and roll!\n____<blar>\ntime: " + std::to_string((int)time));
-        pTextModel->upload_vertex_data(model::usage_hint::streaming, textRenderer.vertex_data());
+        textModeler.set_text("this is not a test,\n\tthis is rock and roll!\n<blar>\ntime: " + std::to_string((int)time));
+        textModeler.upload();
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera->set_transform({std::sin(time), 0, -10}, {});

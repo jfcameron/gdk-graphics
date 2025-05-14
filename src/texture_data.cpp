@@ -19,46 +19,56 @@ static inline decltype(STBI_rgb_alpha) textureFormatToSTBImageFormat(const textu
         case texture::format::grey: return STBI_grey;
         default: break;
     }
-    throw graphics_exception("unhandled format type");
+    throw graphics_exception("unhandled texture format to STBI format case");
+}
+
+static inline char textureFormatToChannelCount(const texture::format a) {
+    switch(a) {
+        case texture::format::rgba: return 4;
+        case texture::format::rgb:  return 3;
+        case texture::format::grey: return 1;
+        default: break;
+    }
+    throw graphics_exception("unhandled texture format to channel count case");
 }
    
-static inline std::pair<view, std::shared_ptr<decoded_data>> decodePNG(
-    const byte_underlying_type *aDataStart, const size_t aLength, const texture::format aFormat = texture::format::rgba) {
+static inline std::pair<view, std::shared_ptr<channel_data>> decodePNG(
+    const encoded_byte *aDataStart, const size_t aLength, const texture::format aFormat = texture::format::rgba) {
     int width, height, components;
-    if (std::unique_ptr<byte_underlying_type, std::function<void(byte_underlying_type *)>> decodedData(
-        stbi_load_from_memory(aDataStart
+    if (std::unique_ptr<channel_type, std::function<void(channel_type *)>> decodedData(
+        stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(aDataStart)
             , static_cast<int>(aLength)
             , &width
             , &height
             , &components
             , textureFormatToSTBImageFormat(aFormat))
-        , [](byte_underlying_type *p)
+        , [](channel_type *p)
         {
             stbi_image_free(p);
-        }); decodedData)
-    {
+        }); decodedData) {
         texture_data::view data;
         data.width = width;
         data.height = height;
         data.format = texture::format::rgba;
 
-        std::pair<view, std::shared_ptr<decoded_data>> imageData;
-        imageData.second = std::make_shared<decoded_data>(decodedData.get(), decodedData.get() + (width * height * 4));
+        std::pair<view, std::shared_ptr<channel_data>> imageData;
+        imageData.second = std::make_shared<channel_data>(decodedData.get(), 
+            decodedData.get() + (width * height * textureFormatToChannelCount(aFormat)));
         imageData.first = data;
-        imageData.first.data = reinterpret_cast<std::byte *>(&imageData.second->front());
+        imageData.first.data = static_cast<channel_type *>(&imageData.second->front());
         
         return imageData;
     }
     
-    throw graphics_exception("failed to decode provided PNG");
+    throw graphics_exception("failed to decode PNG");
 }
 
-std::pair<view, std::shared_ptr<decoded_data>> gdk::texture_data::decode_from_png(const byte_underlying_type *aDataStart, const size_t aLength, 
-    const texture::format aFormat) {
+std::pair<view, std::shared_ptr<channel_data>> gdk::texture_data::decode_from_png(const encoded_byte* aDataStart, 
+    const size_t aLength, const texture::format aFormat) {
     return decodePNG(aDataStart, aLength, aFormat);
 }
 
-std::pair<view, std::shared_ptr<decoded_data>> gdk::texture_data::decode_from_png(const std::vector<byte_underlying_type> &aPNGBuffer, 
+std::pair<view, std::shared_ptr<channel_data>> gdk::texture_data::decode_from_png(const std::vector<encoded_byte>& aPNGBuffer, 
     const texture::format aFormat) {
     return gdk::texture_data::decode_from_png(&aPNGBuffer.front(), aPNGBuffer.size(), aFormat);
 }

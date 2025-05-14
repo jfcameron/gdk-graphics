@@ -1,7 +1,7 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include <gdk/glh.h>
-#include <gdk/mat4x4.h>
+#include <gdk/matrix4x4.h>
 #include <gdk/opengl.h>
 #include <gdk/webgl1es2_entity.h>
 #include <gdk/webgl1es2_model.h>
@@ -19,12 +19,12 @@ webgl1es2_entity::webgl1es2_entity(const std::shared_ptr<webgl1es2_model> amodel
 , m_Material(aMaterial)
 {}
 
-void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graphics_mat4x4_type &aProjectionMatrix) const {
+void webgl1es2_entity::draw(const graphics_matrix4x4_type &aViewMatrix, const graphics_matrix4x4_type &aProjectionMatrix) const {
     if (m_IsHidden) return;
 
-    const graphics_mat4x4_type p = aProjectionMatrix;
-    const graphics_mat4x4_type v = aViewMatrix;
-    const graphics_mat4x4_type m = getModelMatrix();
+    const graphics_matrix4x4_type p = aProjectionMatrix;
+    const graphics_matrix4x4_type v = aViewMatrix;
+    const graphics_matrix4x4_type m = getModelMatrix();
 
     const auto mvp = p * v * m;
     
@@ -37,17 +37,17 @@ void webgl1es2_entity::draw(const graphics_mat4x4_type &aViewMatrix, const graph
     m_model->draw();
 }
 
-const graphics_mat4x4_type &webgl1es2_entity::getModelMatrix() const {
+const graphics_matrix4x4_type &webgl1es2_entity::getModelMatrix() const {
     return m_ModelMatrix;
 }
 
-void webgl1es2_entity::set_model_matrix(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale) {
+void webgl1es2_entity::set_transform(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale) {
     m_ModelMatrix.set_to_identity();
     m_ModelMatrix.set_translation(aWorldPos);
     m_ModelMatrix.set_rotation(aRotation, aScale);
 }
 
-void webgl1es2_entity::set_model_matrix(const graphics_mat4x4_type& a) {
+void webgl1es2_entity::set_transform(const graphics_matrix4x4_type& a) {
 	m_ModelMatrix = a;
 }
 

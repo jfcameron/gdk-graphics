@@ -71,7 +71,7 @@ void webgl1es2_screen_camera::set_transform(const gdk::graphics_vector3_type &aW
     webgl1es2_camera::set_transform(aWorldPos, aRotation);
 }
 
-void webgl1es2_screen_camera::set_transform(const gdk::graphics_mat4x4_type &aMatrix) {
+void webgl1es2_screen_camera::set_transform(const gdk::graphics_matrix4x4_type &aMatrix) {
     webgl1es2_camera::set_transform(aMatrix);
 }
 

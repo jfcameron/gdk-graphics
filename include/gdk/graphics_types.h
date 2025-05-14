@@ -3,7 +3,7 @@
 #ifndef GDK_GRAPHICS_TYPES_H
 #define GDK_GRAPHICS_TYPES_H
 
-#include <gdk/mat4x4.h>
+#include <gdk/matrix4x4.h>
 #include <gdk/quaternion.h>
 #include <gdk/vector2.h>
 #include <gdk/vector3.h>
@@ -37,6 +37,16 @@ namespace gdk {
     using shader_ptr_type = std::shared_ptr<shader_program>;
     using texture_camera_ptr_type = std::shared_ptr<texture_camera>;
     using texture_ptr_type = std::shared_ptr<texture>;
+
+    using const_camera_ptr_type = std::shared_ptr<const screen_camera>;
+    using const_context_ptr_type = std::shared_ptr<const graphics::context>;
+    using const_entity_ptr_type = std::shared_ptr<const entity>;
+    using const_material_ptr_type = std::shared_ptr<const material>;
+    using const_model_ptr_type = std::shared_ptr<const model>;
+    using const_scene_ptr_type = std::shared_ptr<const scene>;
+    using const_shader_ptr_type = std::shared_ptr<const shader_program>;
+    using const_texture_camera_ptr_type = std::shared_ptr<const texture_camera>;
+    using const_texture_ptr_type = std::shared_ptr<const texture>;
 ///@}
 
 /// \name Floating point types
@@ -44,7 +54,7 @@ namespace gdk {
 //
     using graphics_floating_point_type = float;
 
-    using graphics_mat4x4_type = matrix4x4<graphics_floating_point_type>;
+    using graphics_matrix4x4_type = matrix4x4<graphics_floating_point_type>;
     using graphics_quaternion_type = quaternion<graphics_floating_point_type>;
     using graphics_vector2_type = Vector2<graphics_floating_point_type>;
     using graphics_vector3_type = vector3<graphics_floating_point_type>;

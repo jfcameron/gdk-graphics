@@ -21,10 +21,10 @@ namespace gdk::graphics::ext {
         }
 
         // Per voxel rendering. works but should replace with greedy meshing implementation
-        void update_vertex_data() {
+        void update_model_data() {
             m_VertexBuffer.clear();
 
-            gdk::vertex_data buffer;
+            gdk::model_data buffer;
                             
             for (size_t x(0); x < data_size; ++x) {
                 for (size_t y(0); y < data_size; ++y) {
@@ -77,7 +77,7 @@ namespace gdk::graphics::ext {
                             auto fZ(static_cast<graphics_floating_point_type>(z));
 
                             if (!northNeighbourValue) {
-                                gdk::vertex_data data(northData);
+                                gdk::model_data data(northData);
 
                                 data.transform("a_Position", {fX, fY, fZ});
                                 data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
@@ -87,7 +87,7 @@ namespace gdk::graphics::ext {
                             }
 
                             if (!southNeighbourValue) {
-                                gdk::vertex_data data(southData);
+                                gdk::model_data data(southData);
 
                                 data.transform("a_Position", {fX, fY, fZ});
                                 data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
@@ -97,7 +97,7 @@ namespace gdk::graphics::ext {
                             }
 
                             if (!eastNeighbourValue) {
-                                gdk::vertex_data data(eastData);
+                                gdk::model_data data(eastData);
 
                                 data.transform("a_Position", {fX, fY, fZ});
                                 data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
@@ -107,7 +107,7 @@ namespace gdk::graphics::ext {
                             }
                             
                             if (!westNeighbourValue) {
-                                gdk::vertex_data data(westData);
+                                gdk::model_data data(westData);
 
                                 data.transform("a_Position", {fX, fY, fZ});
                                 data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
@@ -117,7 +117,7 @@ namespace gdk::graphics::ext {
                             }
                            
                             if (!topNeighbourValue) {
-                                gdk::vertex_data data(topData);
+                                gdk::model_data data(topData);
 
                                 data.transform("a_Position", {fX, fY, fZ});
                                 data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
@@ -127,7 +127,7 @@ namespace gdk::graphics::ext {
                             }
 
                             if (!bottomNeighbourValue) {
-                                gdk::vertex_data data(bottomData);
+                                gdk::model_data data(bottomData);
 
                                 data.transform("a_Position", {fX, fY, fZ});
                                 data.transform("a_VoxelPosition", {0}, {}, {fX, fY, fZ});
@@ -141,7 +141,7 @@ namespace gdk::graphics::ext {
             }
         }
 
-        const gdk::vertex_data &vertex_data() const {
+        const gdk::model_data &model_data() const {
             return m_VertexBuffer;
         }
 
@@ -178,7 +178,7 @@ namespace gdk::graphics::ext {
         voxel_modeler &operator=(voxel_modeler &&) = default;
 
     private:
-        gdk::vertex_data m_VertexBuffer;
+        gdk::model_data m_VertexBuffer;
 
         std::weak_ptr<voxel_modeler> m_pNorthNeighbour;
         std::weak_ptr<voxel_modeler> m_pSouthNeighbour;
@@ -198,7 +198,7 @@ namespace gdk::graphics::ext {
             1, 1,
         };
 
-        const gdk::vertex_data northData {
+        const gdk::model_data northData {
             {
                 { 
                     "a_Position",
@@ -238,7 +238,7 @@ namespace gdk::graphics::ext {
             }
         };
 
-        const gdk::vertex_data southData {
+        const gdk::model_data southData {
             {
                 { 
                     "a_Position",
@@ -278,7 +278,7 @@ namespace gdk::graphics::ext {
             }
         };
         
-        const gdk::vertex_data eastData {
+        const gdk::model_data eastData {
             {
                 { 
                     "a_Position",
@@ -318,7 +318,7 @@ namespace gdk::graphics::ext {
             }
         };
         
-        const gdk::vertex_data westData {
+        const gdk::model_data westData {
             {
                 { 
                     "a_Position",
@@ -358,7 +358,7 @@ namespace gdk::graphics::ext {
             }
         };
         
-        const gdk::vertex_data bottomData {
+        const gdk::model_data bottomData {
             {
                 { 
                     "a_Position",
@@ -398,7 +398,7 @@ namespace gdk::graphics::ext {
             }
         };
 
-        const gdk::vertex_data topData {
+        const gdk::model_data topData {
             {
                 { 
                     "a_Position",

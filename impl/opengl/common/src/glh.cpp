@@ -52,7 +52,7 @@ namespace glh {
 			agraphics_vector4_type.w);
     }
 
-    void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_mat4x4_type &aMatrix4x4) {
+    void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_matrix4x4_type &aMatrix4x4) {
         glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.m[0][0]);
     }
 

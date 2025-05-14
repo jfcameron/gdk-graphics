@@ -63,7 +63,7 @@ skeleton::skeleton(const std::vector<bone_data> &aBoneData)
     }
 }
 
-void skeleton::set_local_transform(std::string aBoneName, graphics_mat4x4_type aTransform)
+void skeleton::set_local_transform(std::string aBoneName, graphics_matrix4x4_type aTransform)
 {
     if (boneMap.find(aBoneName) == boneMap.end()) throw std::runtime_error("could not find bone");
 
@@ -72,13 +72,13 @@ void skeleton::set_local_transform(std::string aBoneName, graphics_mat4x4_type a
     // Calculate transform from root to this
     {
         bone *pCurrentBone = targetBone.parent;
-        std::vector<graphics_mat4x4_type> trunkMatrices;
+        std::vector<graphics_matrix4x4_type> trunkMatrices;
         while (pCurrentBone != nullptr)
         {
             trunkMatrices.push_back(pCurrentBone->transform);
             pCurrentBone = pCurrentBone->parent;
         }
-        graphics_mat4x4_type trunkMatrix;
+        graphics_matrix4x4_type trunkMatrix;
         for (auto it = trunkMatrices.rbegin(); it != trunkMatrices.rend(); ++it)
         {
             trunkMatrix *= *it;

@@ -86,7 +86,7 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboard
     static std::shared_ptr<gdk::webgl1es2_texture> ptr;
     static std::once_flag initFlag;
     std::call_once(initFlag, []() {
-        std::vector<std::underlying_type<std::byte>::type> imageData({
+        std::vector<texture_data::channel_type> imageData({
             0x00, 0xff, 0xff, 0xff,                                    
             0xff, 0xff, 0xff, 0xff,                                    
             0xff, 0xff, 0xff, 0xff,
@@ -96,7 +96,7 @@ const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboard
         view.width = 2;
         view.height = 2;
         view.format = texture::format::rgba;
-        view.data = reinterpret_cast<std::byte *>(&imageData.front());
+        view.data = &imageData.front();
 
         ptr = std::make_shared<gdk::webgl1es2_texture>(view);
     });
@@ -147,7 +147,7 @@ webgl1es2_texture::webgl1es2_texture(
     const webgl1es2_texture::format aFormat,
     const size_t aWidthInTexels,
     const size_t aHeightInTexels,
-    std::byte *aData,
+    texture_data::channel_type *aData,
     const wrap_mode aWrapModeU,
     const wrap_mode aWrapModeV,
     const minification_filter minFilter,

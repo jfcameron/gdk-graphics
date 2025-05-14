@@ -45,13 +45,13 @@ void webgl1es2_camera::set_transform(const gdk::graphics_vector3_type &aWorldPos
     }};
     m_ViewMatrix.set_rotation(negativeRotation);
 
-    graphics_mat4x4_type matrixPosition;
+    graphics_matrix4x4_type matrixPosition;
     matrixPosition.set_translation(aWorldPos * -1.f);
 
     m_ViewMatrix *= matrixPosition;
 }
 
-void webgl1es2_camera::set_transform(const gdk::graphics_mat4x4_type &aMatrix) {
+void webgl1es2_camera::set_transform(const gdk::graphics_matrix4x4_type &aMatrix) {
     set_transform(aMatrix.translation(), aMatrix.rotation());
 }
 
@@ -72,15 +72,15 @@ void webgl1es2_camera::set_orthographic_projection(const float aWidth,
         aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
 }
 
-graphics_mat4x4_type webgl1es2_camera::get_view_matrix() const { 
+graphics_matrix4x4_type webgl1es2_camera::get_view_matrix() const { 
     return m_ViewMatrix; 
 }
 
-graphics_mat4x4_type webgl1es2_camera::get_world_matrix() const {
+graphics_matrix4x4_type webgl1es2_camera::get_world_matrix() const {
     return m_WorldMatrix;
 }
 
-graphics_mat4x4_type webgl1es2_camera::get_projection_matrix() const { 
+graphics_matrix4x4_type webgl1es2_camera::get_projection_matrix() const { 
     return m_ProjectionMatrix; 
 }
 

@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     view.width = 2;
     view.height = 2;
     view.format = texture::format::rgba;
-    view.data = reinterpret_cast<std::byte *>(&imageData.front());
+    view.data = &imageData.front();
     auto pTexture = pContext->make_texture(view);
     
     auto pMaterial = pContext->make_material(pAlpha);
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
         
         pScene->add(pEntity);
 
-        pEntity->set_model_matrix(bone.transform);
+        pEntity->set_transform(bone.transform);
 
         boneVisualizers[name] = pEntity;
     }
@@ -164,22 +164,22 @@ int main(int argc, char **argv)
         auto eulers2 = quat.toEuler();
         
         //25-04-22: matrix multiplication is working correctly 
-        graphics_mat4x4_type m1({ 0,  0, 0},{{d,0,0}});
-        graphics_mat4x4_type m2({ std::cos(t),  1, 0},{{0,q,0}});
-        boneVisualizers["head"]->set_model_matrix(m1);
-        boneVisualizers["chest"]->set_model_matrix(m1 * m2);
+        graphics_matrix4x4_type m1({ 0,  0, 0},{{d,0,0}});
+        graphics_matrix4x4_type m2({ std::cos(t),  1, 0},{{0,q,0}});
+        boneVisualizers["head"]->set_transform(m1);
+        boneVisualizers["chest"]->set_transform(m1 * m2);
 
         /*characterSkeleton.set_local_transform("head",  {{0,1,0},{{time,time,0}},{1}});
         characterSkeleton.set_local_transform("chest", {{0,0,0},{{0,0,0}},{1}});*/
         
-        /*graphics_mat4x4_type m3;
-        //graphics_mat4x4_type m3({  1,  0,1.5},quaternion<float>({0,0,0}), {1});
-        graphics_mat4x4_type m4({  1,  1,1.5},quaternion<float>({d,d,t}), {1});
-        boneVisualizers["chest"]->set_model_matrix(m4);*/
+        /*graphics_matrix4x4_type m3;
+        //graphics_matrix4x4_type m3({  1,  0,1.5},quaternion<float>({0,0,0}), {1});
+        graphics_matrix4x4_type m4({  1,  1,1.5},quaternion<float>({d,d,t}), {1});
+        boneVisualizers["chest"]->set_transform(m4);*/
 
         /*for (auto &[key, value] : boneVisualizers)
         {
-            value->set_model_matrix(characterSkeleton.boneMap[key].transform);
+            value->set_transform(characterSkeleton.boneMap[key].transform);
         }*/
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());

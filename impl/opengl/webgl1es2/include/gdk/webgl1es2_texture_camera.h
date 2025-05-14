@@ -41,7 +41,7 @@ namespace gdk {
 
         virtual void set_transform(const gdk::graphics_vector3_type& aWorldPos, 
             const gdk::graphics_quaternion_type& aRotation) override;
-        virtual void set_transform(const gdk::graphics_mat4x4_type &aMatrix) override;
+        virtual void set_transform(const gdk::graphics_matrix4x4_type &aMatrix) override;
         
         virtual const std::shared_ptr<gdk::texture> get_color_texture(const size_t i) const override;
 

@@ -22,7 +22,7 @@
 
 using namespace gdk;
 
-const std::vector<std::underlying_type<std::byte>::type> PNG {
+const std::vector<texture_data::encoded_byte> PNG {
     0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
     0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x40,
     0x08, 0x06, 0x00, 0x00, 0x00, 0xaa, 0x69, 0x71, 0xde, 0x00, 0x00, 0x00,
@@ -133,7 +133,7 @@ const std::vector<std::underlying_type<std::byte>::type> PNG {
     0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
 };
 
-static inline gdk::vertex_data make_quad() { 
+static inline gdk::model_data make_quad() { 
     return {{
         { 
             "a_Position",
@@ -202,27 +202,27 @@ int main(int argc, char **argv) {
 
     auto pEntity = [&]() {
         auto p = pContext->make_entity(pModel, pMaterial);
-        p->set_model_matrix({0., 0., 0.}, {});
+        p->set_transform({0., 0., 0.}, {});
         pScene->add(p);
         return p;
     }();
 
     pCamera->set_transform({0}, {});
-    pEntity->set_model_matrix({0,0,0}, {{0,0,0}}, {1,1,1});
+    pEntity->set_transform({0,0,0}, {{0,0,0}}, {1,1,1});
 
     int animationTimer(0);
 
     game_loop(60, [&](const float time, const float deltaTime) {
         glfwPollEvents();
 
-        pCamera->set_orthographic_projection(1., 1., -0.1, 10., window.getAspectRatio());
+        pCamera->set_orthographic_projection(1.0, 1.0, -0.1, 10., window.getAspectRatio());
 
         float fraction = floor(fmod(time, 4));
 
         auto vertexData = make_quad();
         vertexData.transform("a_Position", {-0.5, -0.5, 0});
         vertexData.transform("a_UV", {fraction * 0.25f, 0.0}, {0.25, 0.2655});
-        pModel->upload_vertex_data(model::usage_hint::streaming, vertexData);
+        pModel->upload(model::usage_hint::streaming, vertexData);
        
         pScene->draw(window.getWindowSize());
         window.swapBuffer(); 

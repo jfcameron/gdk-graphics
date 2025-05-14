@@ -59,7 +59,7 @@ namespace glh {
 
     //! assigns mat4x4 value to a mat4x4 uniform at uniform handle within the currently 
     /// used program
-    void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_mat4x4_type &aMatrix4x4);
+    void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_matrix4x4_type &aMatrix4x4);
 }
 
 #endif

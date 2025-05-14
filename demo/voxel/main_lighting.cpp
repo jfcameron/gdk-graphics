@@ -145,7 +145,7 @@ void updateLightingTexture(std::shared_ptr<texture> aTexture) {
     view.width = LIGHT_2D_TEXTURE_LENGTH;
     view.height = LIGHT_2D_TEXTURE_LENGTH;
     view.format = texture::format::rgb;
-    view.data = reinterpret_cast<std::byte *>(&imageData.front());
+    view.data = &imageData.front();
 
     aTexture->update_data(view);
 }
@@ -153,9 +153,9 @@ void updateLightingTexture(std::shared_ptr<texture> aTexture) {
 int main(int argc, char **argv) {
     glfw_window window("Voxel rendering with lighting");
 
-    auto pGraphics = webgl1es2_context::make();
+    const auto pGraphics = webgl1es2_context::make();
 
-    auto pScene = pGraphics->make_scene();
+    const auto pScene = pGraphics->make_scene();
 
     auto pCamera = [&]() {
         auto pCamera = pGraphics->make_camera();
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
         view.width = 2;
         view.height = 2;
         view.format = texture::format::rgba;
-        view.data = reinterpret_cast<std::byte *>(&imageData.front());
+        view.data = &imageData.front();
 
         return pGraphics->make_texture(view);
     }());
@@ -320,14 +320,14 @@ int main(int argc, char **argv) {
         voxelModeler.set_voxel_data(7,7,7,1);
         voxelModeler.set_voxel_data(8,3,8,1);
 
-        voxelModeler.update_vertex_data(); 
+        voxelModeler.update_model_data(); 
 
         return voxelModeler;
     }();
 
     auto pVoxelModel = [&]() {
         auto pVoxelModel(pGraphics->make_model());
-        pVoxelModel->upload_vertex_data(model::usage_hint::streaming, voxelModeler.vertex_data());
+        pVoxelModel->upload(model::usage_hint::streaming, voxelModeler.model_data());
         return pVoxelModel;
     }();
    
@@ -375,7 +375,7 @@ int main(int argc, char **argv) {
     auto pSkyboxEntity = [&]() {
         auto pSkyboxEntity = pGraphics->make_entity(pSkyboxModel, pSkyboxMaterial);
         pScene->add(pSkyboxEntity);
-        pSkyboxEntity->set_model_matrix({0, 5, 0}, {}, {30, 30, 30});
+        pSkyboxEntity->set_transform({0, 5, 0}, {}, {30, 30, 30});
         return pSkyboxEntity; 
     }();
 
@@ -397,9 +397,9 @@ int main(int argc, char **argv) {
 
         updateLightingTexture(pLightingTexture);
 
-        graphics_mat4x4_type root({0,0,0}, {{0, time*0.5f, 0}});
-        graphics_mat4x4_type chunkMatrix({-8, 0, -8}, {{0, 0, 0}});
-        pVoxelEntity->set_model_matrix(root * chunkMatrix);
+        graphics_matrix4x4_type root({0,0,0}, {{0, time*0.5f, 0}});
+        graphics_matrix4x4_type chunkMatrix({-8, 0, -8}, {{0, 0, 0}});
+        pVoxelEntity->set_transform(root * chunkMatrix);
 
         pCamera->set_perspective_projection(90, 0.01, 35, window.getAspectRatio());
         pCamera->set_transform({0, +6, +9}, {{+0.4f, 0, 0}});

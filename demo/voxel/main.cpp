@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     view.width = 2;
     view.height = 2;
     view.format = texture::format::rgba;
-    view.data = reinterpret_cast<std::byte *>(&imageData.front());
+    view.data = &imageData.front();
 
     auto pTexture = pGraphics->make_texture(view);
     
@@ -91,17 +91,17 @@ int main(int argc, char **argv)
 
     voxelModeler.set_voxel_data(7,7,7,1);
 
-    voxelModeler.update_vertex_data(); 
+    voxelModeler.update_model_data(); 
 
-    pVoxelModel->upload_vertex_data(model::usage_hint::write_once, voxelModeler.vertex_data());
+    pVoxelModel->upload(model::usage_hint::upload_once_, voxelModeler.model_data());
 
     game_loop(60, [&](const float time, const float deltaTime)
     {
         glfwPollEvents();
 
-        graphics_mat4x4_type root({0,0,0},{{0,time,0}});
-        graphics_mat4x4_type chunkMatrix({-4,0,-4},{{0,0,0}});
-        pVoxelEntity->set_model_matrix(root * chunkMatrix);
+        graphics_matrix4x4_type root({0,0,0},{{0,time,0}});
+        graphics_matrix4x4_type chunkMatrix({-4,0,-4},{{0,0,0}});
+        pVoxelEntity->set_transform(root * chunkMatrix);
 
         pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pCamera->set_transform({0, 6, +10}, {0.1,0,0,1});

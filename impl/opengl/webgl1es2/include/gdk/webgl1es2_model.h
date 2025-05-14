@@ -14,7 +14,7 @@
 #include <unordered_map>
 
 namespace gdk {
-    class vertex_data;
+    class model_data;
 
     /// \brief Vertex data representing a 3D graphical object
     class webgl1es2_model final : public model {
@@ -39,7 +39,7 @@ namespace gdk {
         //! replace current data in the vbo and ibo with new data
         //TODO: optional vector to selectively update data,
         //TODO if vertex_count is different in selective mode, throw
-        virtual void upload_vertex_data(const usage_hint &, const vertex_data& vertexDataView) override;
+        virtual void upload(const usage_hint &, const model_data& vertexDataView) override;
 
         //! support move semantics
         webgl1es2_model &operator=(webgl1es2_model &&) = default;
@@ -51,7 +51,7 @@ namespace gdk {
         //! disable copy semantics
         webgl1es2_model(const webgl1es2_model &) = delete;
       
-        webgl1es2_model(const usage_hint &aUsage, const vertex_data &aData);
+        webgl1es2_model(const usage_hint &aUsage, const model_data &aData);
         
         //! a quad with format pos3uv2
         static const jfc::lazy_ptr<gdk::webgl1es2_model> Quad;
@@ -73,7 +73,7 @@ namespace gdk {
         std::optional<jfc::unique_handle<GLuint>> m_IndexBufferHandle;
         std::vector<jfc::unique_handle<GLuint>> m_VertexBufferHandles;
         
-        GLenum m_PrimitiveMode;// = gdk::vertex_data::primitive_mode::triangles; 
+        GLenum m_PrimitiveMode;// = gdk::model_data::primitive_mode::triangles; 
 
         std::unordered_map<std::string, attribute> m_Attributes;
     };

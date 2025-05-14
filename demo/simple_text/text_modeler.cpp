@@ -1,12 +1,13 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include "text_renderer.h"
+#include "text_modeler.h"
 
 #include <gdk/texture_data.h>
+#include <jfc/to_array.h>
 
 using namespace gdk;
 
-static const std::vector<std::underlying_type<std::byte>::type> GLYPH_PNG_DATA({
+static const auto GLYPH_PNG_DATA = jfc::to_array<texture_data::encoded_byte>({
     0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
     0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x20,
     0x08, 0x06, 0x00, 0x00, 0x00, 0x73, 0x7a, 0x7a, 0xf4, 0x00, 0x00, 0x00,
@@ -56,36 +57,52 @@ static const std::vector<std::underlying_type<std::byte>::type> GLYPH_PNG_DATA({
     0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
 });
 
-const gdk::vertex_data &text_renderer::vertex_data() const
-{
-    return m_VertexBuffer;
-}
+text_modeler::text_modeler(gdk::context_ptr_type pContext, gdk::material_ptr_type aMaterial) 
+: m_BatchModeler(pContext, aMaterial ? aMaterial : [&]() {
+    auto pTexture = pContext->make_texture(texture_data::decode_from_png(GLYPH_PNG_DATA).first);
+    auto pMaterial(pContext->make_material(pContext->get_alpha_cutoff_shader(), material::render_mode::opaque));
+    pMaterial->setTexture("_Texture", pTexture);
+    pMaterial->setVector2("_UVScale", {1, 1});
+    pMaterial->setVector2("_UVOffset", {0, 0});
+    return pMaterial;
+}()) {}
 
-std::shared_ptr<gdk::material> text_renderer::material() const
-{
-    return m_pMaterial;
-}
-    
-text_renderer::text_renderer(std::shared_ptr<gdk::graphics::context> pContext)
-{
-    m_pMaterial = pContext->make_material(pContext->get_alpha_cutoff_shader());
-
-    auto [image_view, image_data] = texture_data::decode_from_png(GLYPH_PNG_DATA);
-
-    auto pTexture = pContext->make_texture(image_view,
-        texture::wrap_mode::mirrored,
-        texture::wrap_mode::mirrored);
-
-    m_pMaterial->setTexture("_Texture", pTexture);
-    m_pMaterial->setVector2("_UVScale", {1.f, 1.f});
-    m_pMaterial->setVector2("_UVOffset", {0, 0});
-}
-
-void text_renderer::set_text(const std::string &string)
-{
+void text_modeler::set_text(const std::string &string) {
     static const auto GLYPH_PER_ROW_OR_COLUMN(8);
     static const auto GLYPH_UV_SIZE(1/8.f);
     static const std::unordered_map<char, graphics_vector2_type> CHAR_TO_UV({
+        {'!', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 4}},
+        {'"', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 5}},
+        {'%', {GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 4}},
+        {'(', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 6}}, 
+        {')', {-GLYPH_UV_SIZE * 8, GLYPH_UV_SIZE * 6}},
+        {'*', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 4}},
+        {'+', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 5}},
+        {',', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 5}},
+        {'-', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 4}},
+        {'.', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 5}},
+        {'/', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 6}}, 
+        {'0', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 1}},
+        {'1', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 3}},
+        {'2', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 3}},
+        {'3', {GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 3}},
+        {'4', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 3}},
+        {'5', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 3}},
+        {'6', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 3}},
+        {'7', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 4}},
+        {'8', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 4}},
+        {'9', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 4}},
+        {':', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 6}},
+        {';', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 6}},
+        {'<', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 6}}, 
+        {'=', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 5}},
+        {'>', {-GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 6}},
+        {'?', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 6}},
+        {'\'',{GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 5}},
+        {'\\',{-GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 6}},
+        {'^', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 4}},
+        {'_', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 5}},
+        {'`', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 6}},
         {'a', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 0}},
         {'b', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 0}},
         {'c', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 0}},
@@ -94,16 +111,14 @@ void text_renderer::set_text(const std::string &string)
         {'f', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 0}},
         {'g', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 0}},
         {'h', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 0}},
-        
         {'i', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 1}},
         {'j', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 1}},
         {'k', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 1}},
         {'l', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 1}},
         {'m', {GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 1}},
         {'n', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 1}},
-        {'o', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 1}}, {'0', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 1}},
+        {'o', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 1}}, 
         {'p', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 1}},
-        
         {'q', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 2}},
         {'r', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 2}},
         {'s', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 2}},
@@ -112,69 +127,30 @@ void text_renderer::set_text(const std::string &string)
         {'v', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 2}},
         {'w', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 2}},
         {'x', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 2}},
-
         {'y', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 3}},
         {'z', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 3}},
-        {'1', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 3}},
-        {'2', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 3}},
-        {'3', {GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 3}},
-        {'4', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 3}},
-        {'5', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 3}},
-        {'6', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 3}},
-        
-        {'7', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 4}},
-        {'8', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 4}},
-        {'9', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 4}},
-        {'!', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 4}},
-        {'%', {GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 4}},
-        {'^', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 4}},
-        {'*', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 4}},
-        {'-', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 4}},
-
-        {'_', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 5}},
-        {'+', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 5}},
-        {'=', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 5}},
-        {'"', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 5}},
-        {'\'',{GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 5}},
         {'|', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 5}},
-        {'.', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 5}},
-        {',', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 5}},
-
-        {'?', {GLYPH_UV_SIZE * 0, GLYPH_UV_SIZE * 6}},
-        {';', {GLYPH_UV_SIZE * 1, GLYPH_UV_SIZE * 6}},
-        {':', {GLYPH_UV_SIZE * 2, GLYPH_UV_SIZE * 6}},
-        {'`', {GLYPH_UV_SIZE * 3, GLYPH_UV_SIZE * 6}},
         {'~', {GLYPH_UV_SIZE * 4, GLYPH_UV_SIZE * 6}},
-        {'/', {GLYPH_UV_SIZE * 5, GLYPH_UV_SIZE * 6}}, {'\\',{-GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 6}},
-        {'<', {GLYPH_UV_SIZE * 6, GLYPH_UV_SIZE * 6}}, {'>', {-GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 6}},
-        {'(', {GLYPH_UV_SIZE * 7, GLYPH_UV_SIZE * 6}}, {')', {-GLYPH_UV_SIZE * 8, GLYPH_UV_SIZE * 6}},
     });
 
-    m_VertexBuffer.clear();
-    
     float x(0), y(0), z(0);
 
-    for (const auto character : string)
-    {
-        if (character == '\r' || character == '\n')
-        {
+    for (const auto character : string) {
+        if (character == '\r' || character == '\n') {
             x = 0;
             y++;
         }
-        else if (character == ' ')
-        {
+        else if (character == ' ') {
             x++;
         }
-        else if (character == '\t')
-        {
+        else if (character == '\t') {
             x += 2;
         }
-        else
-        {
+        else {
             float uvMarginLow = 0.01f;
             float uvMarginHigh = 1 - uvMarginLow;
 
-            gdk::vertex_data data({
+            gdk::model_data data({
                 { 
                     "a_Position",
                     {
@@ -205,16 +181,16 @@ void text_renderer::set_text(const std::string &string)
                 }
             });
         
-            data.transform("a_Position", 
-                {x * 1.1f, -y * 1.1f, z});
+            data.transform("a_Position", {x * 1.1f, -y * 1.1f, z});
+            data.transform("a_UV", CHAR_TO_UV.at(character),{GLYPH_UV_SIZE});
             
-            data.transform("a_UV", 
-                CHAR_TO_UV.at(character),{GLYPH_UV_SIZE});
-            
-            m_VertexBuffer.push_back(data);
+            m_BatchModeler.push_back(data); //m_ModelData.push_back(data);
 
             x++;
         }
     }
 }
 
+const gdk::const_model_ptr_type text_modeler::model() const { return m_BatchModeler.model(); }
+const gdk::const_material_ptr_type text_modeler::material() const { return m_BatchModeler.material(); }
+void text_modeler::upload() { m_BatchModeler.upload(); }

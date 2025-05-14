@@ -1,7 +1,7 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include <gdk/graphics_exception.h>
-#include <gdk/vertex_data.h>
+#include <gdk/model_data.h>
 
 #include <algorithm>
 #include <iostream>
@@ -13,7 +13,7 @@ using namespace gdk;
 static constexpr auto COMPONENTS_PER_2D_ATTRIBUTE(2);
 static constexpr auto COMPONENTS_PER_3D_ATTRIBUTE(3);
 
-attribute_data &vertex_data::get_attribute_data(const std::string &aAttributeName) {
+attribute_data &model_data::get_attribute_data(const std::string &aAttributeName) {
     auto result(m_Attributes.find(aAttributeName));
     
     if (result == m_Attributes.end()) throw graphics_exception("attribute not present");
@@ -21,25 +21,25 @@ attribute_data &vertex_data::get_attribute_data(const std::string &aAttributeNam
     return result->second;
 }
 
-void vertex_data::overwrite(const size_t index, const vertex_data &otherVertexData) {
+void model_data::overwrite(const size_t index, const model_data &otherVertexData) {
     for (const auto &[otherAttributeName, otherAttributeData] : otherVertexData.attributes()) {
         auto &thisAttributeData = get_attribute_data(otherAttributeName);
         thisAttributeData.overwrite(index, otherAttributeData);
     }
 }
 
-const attribute_data &vertex_data::get_attribute_data(const std::string &aAttributeName) const {
+const attribute_data &model_data::get_attribute_data(const std::string &aAttributeName) const {
     return get_attribute_data(aAttributeName);
 }
 
-void vertex_data::overwrite(const std::string &aAttributeName, const size_t vertexOffset, const vertex_data &other) {
+void model_data::overwrite(const std::string &aAttributeName, const size_t vertexOffset, const model_data &other) {
     auto thisAttributeData = get_attribute_data(aAttributeName);
     auto thatAttributeData = other.get_attribute_data(aAttributeName);
 
     thisAttributeData.overwrite(vertexOffset, thatAttributeData);
 }
 
-void vertex_data::push_back(const vertex_data &other) {
+void model_data::push_back(const model_data &other) {
     if (other.m_Attributes.empty()) return;
 
     if (m_Attributes.empty()) {   
@@ -54,7 +54,7 @@ void vertex_data::push_back(const vertex_data &other) {
         m_Attributes.begin()->second.number_of_components_per_attribute();
 }
 
-vertex_data::vertex_data(attribute_collection_type &&aAttributeData) {
+model_data::model_data(attribute_collection_type &&aAttributeData) {
     const size_t numberOfUniformsFoundInFirstEntry(aAttributeData.begin()->second.number_of_attributes_in_component_data());
     for (const auto &[name, data] : aAttributeData) 
         if (data.number_of_attributes_in_component_data() != numberOfUniformsFoundInFirstEntry) 
@@ -65,28 +65,28 @@ vertex_data::vertex_data(attribute_collection_type &&aAttributeData) {
     m_VertexCount = numberOfUniformsFoundInFirstEntry;
 }
 
-vertex_data::primitive_mode vertex_data::get_primitive_mode() const { return m_PrimitiveMode; }
+model_data::primitive_mode model_data::get_primitive_mode() const { return m_PrimitiveMode; }
 
-vertex_data &vertex_data::operator+=(const vertex_data &other) { 
+model_data &model_data::operator+=(const model_data &other) { 
     push_back(other); 
 
     return *this;
 }
 
-vertex_data vertex_data::operator+(const vertex_data &aRightHand) {
-    vertex_data newVertexData(*this);
+model_data model_data::operator+(const model_data &aRightHand) {
+    model_data newVertexData(*this);
 
     newVertexData += aRightHand;
 
     return newVertexData;
 }
 
-void vertex_data::clear() {
-    *this = vertex_data();
+void model_data::clear() {
+    *this = model_data();
 }
 
-const std::vector<vertex_data::index_value_type> &vertex_data::indexes() const { 
-    static const std::vector<vertex_data::index_value_type> INDEX_DATA;
+const std::vector<model_data::index_value_type> &model_data::indexes() const { 
+    static const std::vector<model_data::index_value_type> INDEX_DATA;
     return INDEX_DATA;
 }
 
@@ -97,7 +97,7 @@ struct triangle {
 
 void sort_by_triangle(
     std::function<bool(triangle, triangle)> aSorter,
-    vertex_data &aVertexData,
+    model_data &aVertexData,
     const std::string &aPositionAttributeName) {
     auto m_Attributes = aVertexData.attributes();
 
@@ -154,21 +154,21 @@ void sort_by_triangle(
             };
         }
 
-        aVertexData = vertex_data(std::move(newAttributes));
+        aVertexData = model_data(std::move(newAttributes));
     }
 }
 
-void vertex_data::sort_by_nearest_triangle(
+void model_data::sort_by_nearest_triangle(
     const graphics_vector3_type &aObserverWorldPosition,
-    graphics_mat4x4_type aEntityInstanceWorldMatrix,
+    graphics_matrix4x4_type aEntityInstanceWorldMatrix,
     const std::string &aObserverWorldPositionAttributeName) {
     //TODO: name becomes misleading at this point. 
     aEntityInstanceWorldMatrix.inverse_affine(); 
 
-    graphics_mat4x4_type observerWorldMatrix;
+    graphics_matrix4x4_type observerWorldMatrix;
     observerWorldMatrix.set_translation(aObserverWorldPosition);
     
-    graphics_mat4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
+    graphics_matrix4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
     graphics_vector3_type observerLocalPostion(localObserver.m[3][0], localObserver.m[3][1], localObserver.m[3][2]);
 
     sort_by_triangle(
@@ -186,17 +186,17 @@ void vertex_data::sort_by_nearest_triangle(
         aObserverWorldPositionAttributeName);
 }
 
-void vertex_data::sort_by_furthest_triangle(
+void model_data::sort_by_furthest_triangle(
     const graphics_vector3_type &aObserverWorldPosition,
-    graphics_mat4x4_type aEntityInstanceWorldMatrix,
+    graphics_matrix4x4_type aEntityInstanceWorldMatrix,
     const std::string &aObserverWorldPositionAttributeName) {
     //TODO: name becomes misleading at this point. maybe require teh inverse in the method param
     aEntityInstanceWorldMatrix.inverse_affine(); 
 
-    graphics_mat4x4_type observerWorldMatrix;
+    graphics_matrix4x4_type observerWorldMatrix;
     observerWorldMatrix.set_translation(aObserverWorldPosition);
     
-    graphics_mat4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
+    graphics_matrix4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
     graphics_vector3_type observerLocalPostion(localObserver.m[3][0], localObserver.m[3][1], localObserver.m[3][2]);
 
     sort_by_triangle(
@@ -214,10 +214,10 @@ void vertex_data::sort_by_furthest_triangle(
         aObserverWorldPositionAttributeName);
 }
 
-void vertex_data::transform(const std::string &aPositionAttributeName, graphics_mat4x4_type &aTransform) {
+void model_data::transform(const std::string &aPositionAttributeName, graphics_matrix4x4_type &aTransform) {
     auto &attributeData = get_attribute_data(aPositionAttributeName);
     if (attributeData.number_of_components_per_attribute() != COMPONENTS_PER_3D_ATTRIBUTE) 
-        throw graphics_exception("vertex_data::transform expected 3 components per uniform");
+        throw graphics_exception("model_data::transform expected 3 components per uniform");
 
     auto &components = attributeData.components();
 
@@ -237,12 +237,12 @@ void vertex_data::transform(const std::string &aPositionAttributeName, graphics_
     }
 }
 
-void vertex_data::transform(const std::string &aPositionAttributeName,
+void model_data::transform(const std::string &aPositionAttributeName,
     const graphics_vector3_type &aPos,
     const graphics_quaternion_type &aRot,
     const graphics_vector3_type &aScale) {
 
-    /*graphics_mat4x4_type mat;
+    /*graphics_matrix4x4_type mat;
     mat.scale(aScale);
     mat.rotate(aRot);
     mat.translate(aPos);
@@ -252,7 +252,7 @@ void vertex_data::transform(const std::string &aPositionAttributeName,
     //
     auto &attributeData = get_attribute_data(aPositionAttributeName);
     if (attributeData.number_of_components_per_attribute() != COMPONENTS_PER_3D_ATTRIBUTE) 
-        throw graphics_exception("vertex_data::transform expected 3 components per uniform");
+        throw graphics_exception("model_data::transform expected 3 components per uniform");
 
     auto &components = attributeData.components();
 
@@ -294,12 +294,12 @@ void vertex_data::transform(const std::string &aPositionAttributeName,
     }
 }
 
-void vertex_data::transform(const std::string &a2DAttributeName,
+void model_data::transform(const std::string &a2DAttributeName,
     const graphics_vector2_type &aPos,
     const graphics_vector2_type &aScale) {
     auto &attributeData = get_attribute_data(a2DAttributeName);
     if (attributeData.number_of_components_per_attribute() != COMPONENTS_PER_2D_ATTRIBUTE) 
-        throw graphics_exception("vertex_data::transform expected 2 components per uniform");
+        throw graphics_exception("model_data::transform expected 2 components per uniform");
 
     auto &components = attributeData.components();
 
@@ -324,7 +324,7 @@ void vertex_data::transform(const std::string &a2DAttributeName,
     }
 }
 
-const vertex_data::attribute_collection_type &vertex_data::attributes() const { return m_Attributes; }
+const model_data::attribute_collection_type &model_data::attributes() const { return m_Attributes; }
 
-size_t vertex_data::vertex_count() const { return m_VertexCount; }
+size_t model_data::vertex_count() const { return m_VertexCount; }
 
