@@ -2,9 +2,14 @@
 
 #include <gdk/game_loop.h>
 #include <gdk/graphics_context.h>
+#include <gdk/graphics_types.h>
+#include <gdk/model_data.h>
+#include <gdk/ext/sprite_animation.h>
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
+#include <jfc/event.h>
 #include <jfc/glfw_window.h>
+#include <jfc/to_array.h>
 
 #include <GLFW/glfw3.h>
 
@@ -22,7 +27,7 @@
 
 using namespace gdk;
 
-const std::vector<texture_data::encoded_byte> PNG {
+static const auto PNG = jfc::to_array<texture_data::encoded_byte>({
     0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
     0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x40,
     0x08, 0x06, 0x00, 0x00, 0x00, 0xaa, 0x69, 0x71, 0xde, 0x00, 0x00, 0x00,
@@ -131,7 +136,7 @@ const std::vector<texture_data::encoded_byte> PNG {
     0x54, 0x52, 0x49, 0x25, 0x95, 0x54, 0x52, 0x49, 0xc5, 0x4e, 0xfe, 0x02,
     0x69, 0x91, 0xab, 0x8d, 0x60, 0x33, 0x68, 0x89, 0x00, 0x00, 0x00, 0x00,
     0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
-};
+});
 
 static inline gdk::model_data make_quad() { 
     return {{
@@ -169,39 +174,43 @@ static inline gdk::model_data make_quad() {
 int main(int argc, char **argv) {
     glfw_window window("basic rendering demo");
 
-    auto pContext = webgl1es2_context::make();
+    jfc::event<float, float> update_event;
 
-    auto pScene = pContext->make_scene();
+    const auto pGraphics = webgl1es2_context::make();
+    const auto pScene = pGraphics->make_scene();
 
-    auto pCamera = [&]() {
-        auto p(pContext->make_camera());
-        p->set_clear_color(color::cornflower_blue);
-        pScene->add(p);
-        return p;
+    const auto pCamera = [&]() {
+        auto pCamera = pGraphics->make_camera();
+        pCamera->set_clear_color(color::cornflower_blue);
+        pScene->add(pCamera);
+        update_event.subscribe([pCamera, &window](float time, float deltaTime) {
+            pCamera->set_orthographic_projection(1.0, 1.0, -0.1, 10., window.getAspectRatio());
+        });
+        return pCamera;
     }();
 
-    auto pTexture = [&]() {
+    const auto pTexture = [&]() {
         auto [view, data] = texture_data::decode_from_png(PNG);
-        auto p = pContext->make_texture(view,
+        auto p = pGraphics->make_texture(view,
             texture::wrap_mode::clamped,
             texture::wrap_mode::clamped);
         return p;
     }();
 
-    auto pShader = pContext->get_alpha_cutoff_shader();
+    const auto pShader = pGraphics->get_alpha_cutoff_shader();
 
-    auto pMaterial = [&]() {
-        auto p(pContext->make_material(pShader, material::render_mode::opaque));
+    const auto pMaterial = [&]() {
+        auto p(pGraphics->make_material(pShader, material::render_mode::opaque));
         p->setTexture("_Texture", pTexture);
         p->setVector2("_UVScale", {1, 1});
         p->setVector2("_UVOffset", {0, 0});
         return p;
     }();
 
-    auto pModel = pContext->make_model();
+    const auto pModel = pGraphics->make_model();
 
-    auto pEntity = [&]() {
-        auto p = pContext->make_entity(pModel, pMaterial);
+    const auto pEntity = [&]() {
+        auto p = pGraphics->make_entity(pModel, pMaterial);
         p->set_transform({0., 0., 0.}, {});
         pScene->add(p);
         return p;
@@ -210,18 +219,20 @@ int main(int argc, char **argv) {
     pCamera->set_transform({0}, {});
     pEntity->set_transform({0,0,0}, {{0,0,0}}, {1,1,1});
 
-    int animationTimer(0);
+    gdk::sprite_animation walk({
+        {0.0f, { 0, 0, 16, 17}},
+        {0.5f, {16, 0, 16, 17}},
+    });
 
     game_loop(60, [&](const float time, const float deltaTime) {
         glfwPollEvents();
+        update_event.notify(time, deltaTime);
 
-        pCamera->set_orthographic_projection(1.0, 1.0, -0.1, 10., window.getAspectRatio());
-
-        float fraction = floor(fmod(time, 4));
+        auto frame = walk.at(time, 64, 64);
 
         auto vertexData = make_quad();
         vertexData.transform("a_Position", {-0.5, -0.5, 0});
-        vertexData.transform("a_UV", {fraction * 0.25f, 0.0}, {0.25, 0.2655});
+        vertexData.transform("a_UV", {frame.u, frame.v}, 0, {frame.w, frame.h});
         pModel->upload(model::usage_hint::streaming, vertexData);
        
         pScene->draw(window.getWindowSize());

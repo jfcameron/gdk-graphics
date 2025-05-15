@@ -95,7 +95,8 @@ struct triangle {
     graphics_vector3_type centroid;
 };
 
-void sort_by_triangle(
+//TODO: this should be part of the public interface, so users can do their own triangle based sorting if needed
+static void sort_by_triangle(
     std::function<bool(triangle, triangle)> aSorter,
     model_data &aVertexData,
     const std::string &aPositionAttributeName) {
@@ -242,15 +243,12 @@ void model_data::transform(const std::string &aPositionAttributeName,
     const graphics_quaternion_type &aRot,
     const graphics_vector3_type &aScale) {
 
-    /*graphics_matrix4x4_type mat;
-    mat.scale(aScale);
-    mat.rotate(aRot);
-    mat.translate(aPos);
-    transform(aPositionAttributeName, mat);*/
+    graphics_matrix4x4_type mat;
+    mat.set_rotation(aRot, aScale);
+    mat.set_translation(aPos);
+    transform(aPositionAttributeName, mat);
 
-    //All this works, but im proving theres something wrong with my matrix path
-    //
-    auto &attributeData = get_attribute_data(aPositionAttributeName);
+    /*auto &attributeData = get_attribute_data(aPositionAttributeName);
     if (attributeData.number_of_components_per_attribute() != COMPONENTS_PER_3D_ATTRIBUTE) 
         throw graphics_exception("model_data::transform expected 3 components per uniform");
 
@@ -291,11 +289,11 @@ void model_data::transform(const std::string &aPositionAttributeName,
         *x += aPos.x;
         *y += aPos.y;
         *z += aPos.z;
-    }
+    }*/
 }
 
 void model_data::transform(const std::string &a2DAttributeName,
-    const graphics_vector2_type &aPos,
+    const graphics_vector2_type &aPos, const float aRotation,
     const graphics_vector2_type &aScale) {
     auto &attributeData = get_attribute_data(a2DAttributeName);
     if (attributeData.number_of_components_per_attribute() != COMPONENTS_PER_2D_ATTRIBUTE) 
@@ -310,13 +308,12 @@ void model_data::transform(const std::string &a2DAttributeName,
         *x *= aScale.x;
         *y *= aScale.y;
 
-        /*// rotate around z, centered.
-        *x -= 0.5f; *y -= 0.5f;
-        auto q = aRot;
-        auto _x = *x, _y = *y;
-        *x = (_x * std::cos(q)) - (_y * std::sin(q));
-        *y = (_y * std::cos(q)) + (_x * std::sin(q));
-        *x += 0.5f; *y += 0.5f;*/
+        // rotate around z
+        if (aRotation != 0) {
+            auto _x = *x, _y = *y;
+            *x = (_x * std::cos(aRotation)) - (_y * std::sin(aRotation));
+            *y = (_y * std::cos(aRotation)) + (_x * std::sin(aRotation));
+        }
 
         // translate
         *x += aPos.x;

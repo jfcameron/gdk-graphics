@@ -238,7 +238,7 @@ int main(int argc, char **argv) {
             quad.transform("a_Position", quadMat);
         }
 
-        quad.transform("a_UV", {0.2f, 0}, {2.f, 2.f});
+        quad.transform("a_UV", {0.2f, 0}, 0, {2.f, 2.f});
         batchModelVertexData.push_back(quad);
         batchModelVertexData.sort_by_nearest_triangle( {0,0,-20}, graphics_matrix4x4_type::identity);
         pBatchModel->upload(model::usage_hint::streaming, batchModelVertexData);

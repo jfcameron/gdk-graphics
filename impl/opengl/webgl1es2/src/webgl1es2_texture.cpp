@@ -147,7 +147,7 @@ webgl1es2_texture::webgl1es2_texture(
     const webgl1es2_texture::format aFormat,
     const size_t aWidthInTexels,
     const size_t aHeightInTexels,
-    texture_data::channel_type *aData,
+    const texture_data::channel_type *aData,
     const wrap_mode aWrapModeU,
     const wrap_mode aWrapModeV,
     const minification_filter minFilter,

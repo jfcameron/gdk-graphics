@@ -64,7 +64,7 @@ const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::Alp
     varying lowp vec2 v_UV;
 
     void main() {
-        lowp vec2 uv = v_UV + _UVOffset * _UVScale;  
+        lowp vec2 uv = (v_UV + _UVOffset) * _UVScale;  
 
         vec4 texel = texture2D(_Texture, uv);
         if (texel[3] < 1.0) discard;

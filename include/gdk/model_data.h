@@ -56,7 +56,7 @@ namespace gdk {
         //! applies a transformation to a 2 component attribute
         void transform(const std::string &aUVAttributeName,
             const graphics_vector2_type &aPos,
-            //rotation float?
+            const float aRotation = 0,
             const graphics_vector2_type &aSca = {1});
         //transform(mat3x3) ?
 

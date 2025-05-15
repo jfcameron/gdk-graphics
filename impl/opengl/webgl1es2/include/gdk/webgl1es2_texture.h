@@ -110,7 +110,7 @@ namespace gdk {
             const webgl1es2_texture::format aFormat, 
             const size_t aWidthInTexels,
             const size_t aHeightInTexels,
-            texture_data::channel_type *aData,
+            const texture_data::channel_type *aData,
             const wrap_mode aWrapModeU = wrap_mode::repeat,
             const wrap_mode aWrapModeV = wrap_mode::repeat,
             const minification_filter minFilter = minification_filter::linear,

@@ -64,6 +64,7 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/attribute_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/sprite_animation.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/model_data.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/texture_data.cpp
 )

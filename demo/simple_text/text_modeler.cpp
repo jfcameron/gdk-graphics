@@ -184,7 +184,7 @@ void text_modeler::set_text(const std::string &string) {
             data.transform("a_Position", {x * 1.1f, -y * 1.1f, z});
             data.transform("a_UV", CHAR_TO_UV.at(character),{GLYPH_UV_SIZE});
             
-            m_BatchModeler.push_back(data); //m_ModelData.push_back(data);
+            m_BatchModeler.push_back(data);
 
             x++;
         }
@@ -194,3 +194,4 @@ void text_modeler::set_text(const std::string &string) {
 const gdk::const_model_ptr_type text_modeler::model() const { return m_BatchModeler.model(); }
 const gdk::const_material_ptr_type text_modeler::material() const { return m_BatchModeler.material(); }
 void text_modeler::upload() { m_BatchModeler.upload(); }
+

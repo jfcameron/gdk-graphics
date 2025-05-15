@@ -21,7 +21,7 @@ namespace gdk::texture_data {
         size_t width; //!< number of texels wide
         size_t height; //!< number of texels tall
         texture::format format; //!< format of the data
-        channel_type *data; //!< ptr to the start of decoded texture data
+        const channel_type *data; //!< ptr to the start of decoded texture data
     };
 
     /// \brief decode PNG formatted data to channel data and a texture_data::view
