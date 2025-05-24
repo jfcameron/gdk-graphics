@@ -8,9 +8,8 @@
 #include <gdk/model_data.h>
 
 namespace gdk {
-    ///\brief a batch modeler assembles a single model out of a list of different model data.
-    /// batching is typically used to put together a large number of low vertex-count data into a single model with a more
-    /// reasonable vertex count, like in the case of particles
+    ///\brief a batch modeler assembles merges provided model data into a single set of data and then uploads it all to a single model
+    /// typical use-cases of batching includes particles, sprites
     class batch_modeler final {
     public:
         //! get the model, contains the uploaded model data for the batch

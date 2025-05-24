@@ -14,6 +14,26 @@ using namespace gdk;
 
 static constexpr char TAG[] = "shader_program";
 
+const size_t webgl1es2_shader_program::MAX_TEXTURE_UNITS() {
+    //! 8 is the guaranteed minimum across all es2/web1 implementations. 
+    /// Can check against max but that invites the possibility of shaders working on some impls 
+    /// and not others.. want to avoid that, 
+    /// therefore define the "max" as the guaranteed minimum.
+    ///TODO: ask the api for the number, return 8 if it says something less than that.
+    return 8;
+}
+const size_t webgl1es2_shader_program::MAX_FRAGMENT_SHADER_INSTRUCTIONS() {
+    GLint instructionLimit;
+    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &instructionLimit);
+    return instructionLimit; 
+}
+
+const size_t webgl1es2_shader_program::MAX_VERTEX_SHADER_INSTRUCTIONS() {
+    GLint instructionLimit;
+    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &instructionLimit);
+    return instructionLimit; 
+}
+
 //! map of active textures. Allows to overwrite textures with the same names to the same units, since units are very limited.
 static std::unordered_map<std::string, GLint> s_ActiveTextureUniformNameToUnit;
 
@@ -77,12 +97,33 @@ const jfc::lazy_ptr<gdk::webgl1es2_shader_program> webgl1es2_shader_program::Alp
 });
 
 static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(std::string &aSource) {
+    aSource.insert(0, R"V0G0N(
+        // access volumetric data using a 3d index that has been packed into a 2d texture
+        // WARN: the length, width and height of the volumetric data must be equal and must be a power of 2!
+        // aIndexOffset2d: nudge where the sampling takes place. initially set to 0,0 but if you see color issues at
+        // the edges between voxels, playing with this will help to hide them
+        // 
+        lowp vec3 gdk_texture3D(sampler2D aSampler2D, float aVolumetricDataLength, vec2 aIndexOffset2d, ivec3 aIndex3d) {
+            highp float oneDimensionIndex = float(aIndex3d.x) +
+                (float(aIndex3d.y) * aVolumetricDataLength) +
+                (float(aIndex3d.z) * aVolumetricDataLength * aVolumetricDataLength);
+
+            float size2D = sqrt(aVolumetricDataLength * aVolumetricDataLength * aVolumetricDataLength);
+
+            lowp vec2 normalizedLightVoxelCoordinates = vec2(
+                (mod(oneDimensionIndex, size2D) + aIndexOffset2d.x) / size2D,
+                (floor(oneDimensionIndex / size2D) + aIndexOffset2d.y) / size2D
+            );
+            return texture2D(aSampler2D, normalizedLightVoxelCoordinates).xyz;
+        }
+    )V0G0N");
+
     aSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
 #if defined JFC_TARGET_PLATFORM_Emscripten 
     // version must be the first line in source. version must be present for WebGL platforms
     aSource.insert(0, std::string("#version 100\n"));
 #else
-   // remove precison prefixes (required by wasm)
+   // remove precison prefixes (required by wasm but not needed by GLES2)
    aSource.insert(0, std::string("#define highp\n"));
    aSource.insert(0, std::string("#define mediump\n"));
    aSource.insert(0, std::string("#define lowp\n"));
@@ -523,7 +564,7 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const g
             }()
             : activeTextureSearch->second;
 
-        if (s_ActiveTextureUnitCounter < webgl1es2_shader_program::MAX_TEXTURE_UNITS) {
+        if (s_ActiveTextureUnitCounter < webgl1es2_shader_program::MAX_TEXTURE_UNITS()) {
             aTexture.activateAndBind(unit);
             glUniform1i(activeUniformSearch->second.location, unit);
         }

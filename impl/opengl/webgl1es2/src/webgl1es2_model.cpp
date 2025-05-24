@@ -14,46 +14,25 @@ using namespace gdk;
 static constexpr auto TAG("webgl1es2_model");
 
 const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
-    std::vector<webgl1es2_model::attribute_component_data_type> pos({
-        // x,    y,    z
-        1.0f, 1.0f, 0.0f, // 1--0
-        0.0f, 1.0f, 0.0f, // | /
-        0.0f, 0.0f, 0.0f, // 2
-        1.0f, 1.0f, 0.0f, //    0
-        0.0f, 0.0f, 0.0f, //  / |
-        1.0f, 0.0f, 0.0f, // 1--2
-    });
-    
-    // Center the quad
-    for (size_t i(0); i < (pos.size()); i += 3) {
-        pos[i + 0] -= 0.5f;
-        pos[i + 1] -= 0.5f;
-    }
+    return new gdk::webgl1es2_model(model::usage_hint::upload_once, {{ 
+        { "a_Position", { {
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
 
-    return new gdk::webgl1es2_model(model::usage_hint::upload_once_, {
-    {
-        { 
-            "a_Position",
-            {
-                pos,
-                3
-            }
-        },
-        { 
-            "a_UV",
-            {
-                {
-                    // u,    v
-                    1.0f, 0.0f, // 1--0
-                    0.0f, 0.0f, // | /
-                    0.0f, 1.0f, // 2
-                    1.0f, 0.0f, //    0
-                    0.0f, 1.0f, //  / |
-                    1.0f, 1.0f, // 1--2
-                },
-                2
-            }
-        }
+            1.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+        }, 3 } },
+        { "a_UV", { {
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+        }, 2 } }
     }});
 });
 
@@ -196,29 +175,16 @@ const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
         +0.0, +1.0, +0.0, // 1--2             
     });
     
-    return new gdk::webgl1es2_model(model::usage_hint::upload_once_, {
-    {
-        { 
-            "a_Position",
-            {
-                pos,
-                3
-            }
-        },
-        { 
-            "a_UV",
-            {
-                uv,
-                2
-            }
-        },
-        { 
-            "a_Normal",
-            {
-                normal,
-                3
-            }
-        }
+    return new gdk::webgl1es2_model(model::usage_hint::upload_once, {{
+        { "a_Position", { {
+            pos,
+        }, 3 } },
+        { "a_UV", { {
+            uv,
+        }, 2 } },
+        { "a_Normal", { {
+            normal,
+        }, 3 } }
     }});
 });
 
@@ -226,7 +192,7 @@ static inline GLenum dataUsageToGLenum(const model::usage_hint aUsageHint) {
     switch (aUsageHint) {
         case model::usage_hint::dynamic: return GL_DYNAMIC_DRAW;
         case model::usage_hint::streaming: return GL_STREAM_DRAW;
-        case model::usage_hint::upload_once_: return GL_STATIC_DRAW;
+        case model::usage_hint::upload_once: return GL_STATIC_DRAW;
         default: break;
     }
     throw graphics_exception("unhandled usage hint type");

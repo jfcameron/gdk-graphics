@@ -1,6 +1,7 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include <gdk/glh.h>
+#include <gdk/graphics_constraints.h>
 #include <gdk/graphics_exception.h>
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_texture.h>
@@ -16,10 +17,6 @@
 using namespace gdk;
 
 static constexpr char TAG[] = "texture";
-
-static inline bool isPowerOfTwo(const long aNumber) {
-    return aNumber > 0 && pow(2, static_cast<int>(log2(aNumber))) == aNumber;
-}
 
 static inline webgl1es2_texture::format textureFormatToWebGL1ES2TextureFormat(const texture::format a) {
     switch(a) {
@@ -133,8 +130,8 @@ webgl1es2_texture::webgl1es2_texture(
 {}
 
 static inline void validate_texture_size(const size_t aWidthInTexels, const size_t aHeightInTexels) {
-    if ((aWidthInTexels > 0 && !isPowerOfTwo(aWidthInTexels)) || 
-        aHeightInTexels > 0 && !isPowerOfTwo((aHeightInTexels)))
+    if ((aWidthInTexels > 0 && !is_power_of_two(aWidthInTexels)) || 
+        aHeightInTexels > 0 && !is_power_of_two((aHeightInTexels)))
         throw graphics_exception("webgl1es2_texture dimensions must be power of 2");
 
     if (const auto MAX_TEXTURE_2D_SIZE(webgl1es2_texture::getMaxTextureSize());

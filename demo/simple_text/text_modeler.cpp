@@ -59,7 +59,7 @@ static const auto GLYPH_PNG_DATA = jfc::to_array<texture_data::encoded_byte>({
 
 text_modeler::text_modeler(gdk::context_ptr_type pContext, gdk::material_ptr_type aMaterial) 
 : m_BatchModeler(pContext, aMaterial ? aMaterial : [&]() {
-    auto pTexture = pContext->make_texture(texture_data::decode_from_png(GLYPH_PNG_DATA).first);
+    auto pTexture = pContext->make_texture(texture_data::make_from_png(GLYPH_PNG_DATA).first);
     auto pMaterial(pContext->make_material(pContext->get_alpha_cutoff_shader(), material::render_mode::opaque));
     pMaterial->setTexture("_Texture", pTexture);
     pMaterial->setVector2("_UVScale", {1, 1});
@@ -182,7 +182,7 @@ void text_modeler::set_text(const std::string &string) {
             });
         
             data.transform("a_Position", {x * 1.1f, -y * 1.1f, z});
-            data.transform("a_UV", CHAR_TO_UV.at(character),{GLYPH_UV_SIZE});
+            data.transform("a_UV", CHAR_TO_UV.at(character), 0, {GLYPH_UV_SIZE});
             
             m_BatchModeler.push_back(data);
 

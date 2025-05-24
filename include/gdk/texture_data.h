@@ -14,7 +14,7 @@ namespace gdk::texture_data {
     using channel_data = std::vector<channel_type>;
     using encoded_byte = unsigned char;
 
-    /// \brief provides a pointer to the start of decoded texture data + 
+    /// \brief provides a pointer a contiguous list of channel data representing 2D texture
     /// metadata that contains its size, format and usage info
     /// \warn a view does not own its data.
     struct view {
@@ -24,18 +24,27 @@ namespace gdk::texture_data {
         const channel_type *data; //!< ptr to the start of decoded texture data
     };
 
+    /*/// \brief provides a pointer a contiguous list of channel data representing 3D texture
+    /// metadata that contains its size, format and usage info
+    /// \warn a view does not own its data.
+    struct view3d {
+        size_t width; //!< number of texels wide
+        size_t height; //!< number of texels tall
+        size_t length; //!< number of texels long 
+        texture::format format; //!< format of the data
+        const channel_type *data; //!< ptr to the start of decoded texture data
+    };*/
+
     /// \brief decode PNG formatted data to channel data and a texture_data::view
-    std::pair<view, std::shared_ptr<channel_data>> decode_from_png(
+    std::pair<view, std::shared_ptr<channel_data>> make_from_png(
         const encoded_byte* aDataStart, const size_t aLength,
         const texture::format aFormat = texture::format::rgba );
-
-    std::pair<view, std::shared_ptr<channel_data>> decode_from_png(
+    std::pair<view, std::shared_ptr<channel_data>> make_from_png(
         const std::vector<encoded_byte>& aPNGBuffer, const texture::format aFormat = texture::format::rgba );
-
     template <std::size_t N>
-    std::pair<view, std::shared_ptr<channel_data>> decode_from_png(
+    std::pair<view, std::shared_ptr<channel_data>> make_from_png(
         const std::array<encoded_byte, N>& data, const texture::format aFormat = texture::format::rgba) {
-        return decode_from_png(data.data(), N, aFormat);
+        return make_from_png(data.data(), N, aFormat);
     }
 }
 

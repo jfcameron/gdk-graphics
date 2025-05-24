@@ -30,6 +30,13 @@ void color::clamp() {
     a = std::clamp<channel_type>(a, 0.f, 1.f);
 }
 
+void color::operator+=(const color &aOther) {
+    r += aOther.r;
+    g += aOther.g;
+    b += aOther.b;
+    a += aOther.a;
+}
+
 std::ostream &gdk::operator<<(std::ostream &s, const color &a) {
     std::stringstream ss;
 

@@ -15,6 +15,10 @@
 /// \brief very simple ASCII text modeler.
 ///
 /// glyph rasters and character map are hardcoded for simplicity
+/// TODO: generalize this into a rasterized text class, support for multiple resolutions.
+/// TODO: think about font rasterizing. sibling class "font_modeler" or something.
+/// logographic writing requires this (rasterizing glyphs just in time to a buffer) simply too many characters to prerasterize them all.
+///
 class text_modeler final {
 public:
     //! get the model, contains the uploaded model data for the batch

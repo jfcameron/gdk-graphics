@@ -56,7 +56,7 @@ namespace gdk {
 
     using graphics_matrix4x4_type = matrix4x4<graphics_floating_point_type>;
     using graphics_quaternion_type = quaternion<graphics_floating_point_type>;
-    using graphics_vector2_type = Vector2<graphics_floating_point_type>;
+    using graphics_vector2_type = vector2<graphics_floating_point_type>;
     using graphics_vector3_type = vector3<graphics_floating_point_type>;
     using graphics_vector4_type = vector4<graphics_floating_point_type>;
 ///@}
@@ -66,7 +66,8 @@ namespace gdk {
 //
     using graphics_signed_integral_type = int;
 
-    using graphics_intvector2_type = Vector2<graphics_signed_integral_type>;
+    using graphics_intvector2_type = vector2<graphics_signed_integral_type>;
+    using graphics_intvector3_type = vector3<graphics_signed_integral_type>;
 ///@}
 }
 

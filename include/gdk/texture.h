@@ -12,15 +12,11 @@ namespace gdk {
     namespace texture_data {
         struct view;
     }
-    //class texture_data;
-    //class texture_data::view;
-    /// \brief 2d color data, usually used to color the surfaces of a 3d model.
-    /// more accurately: used to color fragments produced from the rasterization of primitive surfaces.
-    /// ultimately textures are just a uniform type, they can be used in any number of ways and may not contribute to the color of any fragments,
-    /// Example: being used as a "heightmap", to displace vertex position in the programmable vertex stage. 
+    /// \brief uniform color data, usually used to color the surface of a 3d model, but also used for height maps, volumetric lights etc.
+    ///
     class texture {
     public:
-        /// \brief format of data in the byte array
+        /// \brief format of data in the component_type array
         enum class format {
             rgba, //!< a sequence of 4 channels, single byte colors: red, green, blue, alpha, ...
             rgb,  //!< a sequence of 3 channels, single byte colors: red, green, blue, ...

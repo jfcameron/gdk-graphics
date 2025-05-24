@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
         pMaterial->setVector2("_UVScale", {4});
         pMaterial->setVector2("_UVOffset", {0.0, 0});
 
-        const auto pModel = pGraphics->get_quad_model();
+        const auto pModel = pGraphics->get_quad_model(); //TODO: remove get_quad_model, move it to model_data
 
         const auto pEntity = pGraphics->make_entity(pModel, pMaterial);
         pEntity->set_transform({0,0,-4},{{0,0,0}},{25});

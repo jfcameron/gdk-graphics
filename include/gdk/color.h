@@ -15,6 +15,10 @@ namespace gdk {
 
         /// \brief clamp each channel to the [0 - 1] range
         void clamp(); 
+
+        /// \brief add two colors together.
+        /// \warn does not clamp values within the normalized range
+        void operator+=(const color &aOther);
         
         /// \brief equality semantics
         bool operator==(const color &aOther) const;

@@ -218,7 +218,7 @@ void model_data::sort_by_furthest_triangle(
 void model_data::transform(const std::string &aPositionAttributeName, graphics_matrix4x4_type &aTransform) {
     auto &attributeData = get_attribute_data(aPositionAttributeName);
     if (attributeData.number_of_components_per_attribute() != COMPONENTS_PER_3D_ATTRIBUTE) 
-        throw graphics_exception("model_data::transform expected 3 components per uniform");
+        throw graphics_exception(std::string("model_data::transform expected 3 components per uniform: ") + aPositionAttributeName);
 
     auto &components = attributeData.components();
 

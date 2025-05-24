@@ -63,13 +63,13 @@ static inline std::pair<view, std::shared_ptr<channel_data>> decodePNG(
     throw graphics_exception("failed to decode PNG");
 }
 
-std::pair<view, std::shared_ptr<channel_data>> gdk::texture_data::decode_from_png(const encoded_byte* aDataStart, 
+std::pair<view, std::shared_ptr<channel_data>> gdk::texture_data::make_from_png(const encoded_byte* aDataStart, 
     const size_t aLength, const texture::format aFormat) {
     return decodePNG(aDataStart, aLength, aFormat);
 }
 
-std::pair<view, std::shared_ptr<channel_data>> gdk::texture_data::decode_from_png(const std::vector<encoded_byte>& aPNGBuffer, 
+std::pair<view, std::shared_ptr<channel_data>> gdk::texture_data::make_from_png(const std::vector<encoded_byte>& aPNGBuffer, 
     const texture::format aFormat) {
-    return gdk::texture_data::decode_from_png(&aPNGBuffer.front(), aPNGBuffer.size(), aFormat);
+    return gdk::texture_data::make_from_png(&aPNGBuffer.front(), aPNGBuffer.size(), aFormat);
 }
 

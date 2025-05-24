@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
     auto [pBatchModel, batchModelVertexData] = [&]() {
         model_data batchModelVertexData;
         return std::make_tuple(
-            pContext->make_model(model::usage_hint::upload_once_, batchModelVertexData),
+            pContext->make_model(model::usage_hint::upload_once, batchModelVertexData),
             std::move(batchModelVertexData)
         );
     }();
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
             }
         });
 
-        return pContext->make_model(model::usage_hint::upload_once_, 
+        return pContext->make_model(model::usage_hint::upload_once, 
             userdefined_quad_model_data);
     }();
 

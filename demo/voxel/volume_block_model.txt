@@ -1,0 +1,450 @@
+// © Joseph Cameron - All Rights Reserved
+
+#ifndef GDK_GFX_EXT_VOLUME
+#define GDK_GFX_EXT_VOLUME
+
+#include <gdk/graphics_constraints.h>
+#include <gdk/model_data.h>
+
+#include <array>
+
+//TODO: marching cubes
+//TODO: heighmap stuff -> separate file actually. ext::planar? 2d tile rendering etc
+namespace gdk::ext::volume {
+    template<typename data_type, size_t x_size_param, size_t y_size_param, size_t z_size_param>
+    class volumetric_data_view final {
+    public:
+        const data_type at(const size_t aX, const size_t aY, const size_t aZ) const {
+            return m_pData[index(aX, aY, aZ)];
+        }
+
+        data_type &at(const size_t aX, const size_t aY, const size_t aZ) {
+            return m_pData[index(aX, aY, aZ)];
+        }
+
+        volumetric_data_view(data_type *pData) : m_pData(pData) {}
+    private:
+        constexpr size_t index(const size_t aX, const size_t aY, const size_t aZ) const noexcept {
+            return aX + y_size_param * aY + x_size_param * y_size_param * aZ;
+        }
+
+        data_type *m_pData;
+    };
+
+    template<typename data_type>
+    using per_voxel_generator_type = std::function<model_data/*returns model data for the current voxel*/(
+        const size_t /*x*/, const size_t/*y*/, const size_t/*z*/, const data_type &/*currentVoxel*/, 
+        const data_type &/*northVoxel*/, const data_type &/*southVoxel*/, const data_type &/*eastVoxel*/, 
+        const data_type &/*westVoxel*/, const data_type &/*aboveVoxel*/, const data_type &/*belowVoxel*/)>;
+
+    /// \brief visit each voxel in a volume + cardinal neighbour values
+    template<typename data_type, data_type data_type_empty_value, size_t size_x, size_t size_y, size_t size_z>
+    model_data make_per_voxel_model_data(const volumetric_data_view<data_type, size_x, size_y, size_z> aData, 
+        per_voxel_generator_type<data_type> aVisitor,
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aNorthNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aSouthNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aEastNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aWestNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aTopNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aBottomNeighbouringDataVolume = {}) { 
+        model_data output;
+        for (size_t x(0); x < size_x; ++x) {
+            for (size_t y(0); y < size_y; ++y) {
+                for (size_t z(0); z < size_z; ++z) {
+                    if (aData.at(x, y, z) != data_type_empty_value) { 
+                        const auto &east = x + 1 < size_x ? aData.at(x + 1, y, z) 
+                            : aEastNeighbouringDataVolume ? (*aEastNeighbouringDataVolume).at(0, y, z) 
+                                : data_type_empty_value;
+
+                        const auto &top = y + 1 < size_y ? aData.at(x, y + 1, z) 
+                            : aTopNeighbouringDataVolume ? (*aTopNeighbouringDataVolume).at(x, 0, z) 
+                                : data_type_empty_value;
+
+                        const auto &north = z + 1 < size_z ? aData.at(x, y, z + 1) 
+                            : aNorthNeighbouringDataVolume ? (*aNorthNeighbouringDataVolume).at(x, y, 0) 
+                                : data_type_empty_value;
+
+                        const auto &west = x > 0 ? aData.at(x - 1, y, z)
+                            : aWestNeighbouringDataVolume ? (*aWestNeighbouringDataVolume).at(size_x - 1, y, z)
+                                : data_type_empty_value;
+
+                        const auto &bottom = y > 0 ? aData.at(x, y - 1, z)
+                            : aBottomNeighbouringDataVolume ? (*aBottomNeighbouringDataVolume).at(x, size_y - 1, z)
+                                : data_type_empty_value;
+
+                        const auto &south = z > 0 ? aData.at(x, y, z - 1)
+                            : aSouthNeighbouringDataVolume ? (*aSouthNeighbouringDataVolume).at(x, y, size_z - 1)
+                                : data_type_empty_value;
+
+                        output += aVisitor(x, y, z, aData.at(x, y, z), north, south, east, west, top, bottom);
+                    }
+                }
+            }
+        }
+        return output;
+    }
+
+    using optimized_block_face_generator_type = std::function<model_data/*returns model_data for the surface at a given position & direction*/(
+        const graphics_floating_point_type/*origin of the optimized surface in the x axis*/, 
+        const graphics_floating_point_type/*origin of the optimized surface in the y axis*/, 
+        const graphics_floating_point_type/*origin of the optimized surface in the z axis*/, 
+        const graphics_floating_point_type/*width of the optimized surface*/, 
+        const graphics_floating_point_type/*length of the optimized surface*/)>;
+
+    /// \brief creates a block-based mesh from volumetric data that is optimized to minimize the # of vertexes via the "greeding-meshing" algorithm
+    ///
+    template<typename data_type, data_type data_type_empty_value, size_t size_x, size_t size_y, size_t size_z>
+    model_data make_optimized_block_model_data(const volumetric_data_view<data_type, size_x, size_y, size_z> aData, 
+        const optimized_block_face_generator_type aNorthFaceGenerator, const optimized_block_face_generator_type aSouthFaceGenerator,
+        const optimized_block_face_generator_type aEastFaceGenerator, const optimized_block_face_generator_type aWestFaceGenerator,
+        const optimized_block_face_generator_type aTopFaceGenerator, const optimized_block_face_generator_type aBottomFaceGenerator,
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aNorthNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aSouthNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aEastNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aWestNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aTopNeighbouringDataVolume = {},
+        const std::optional<volumetric_data_view<data_type, size_x, size_y, size_z>> aBottomNeighbouringDataVolume = {}) {
+        gdk::model_data buffer;
+
+        // finding and generating all north-facing (+Z) surfaces in the XY plane
+        for (size_t z = 0; z < size_z; ++z) {
+            std::array<bool, size_x * size_y> mask{false};
+            for (size_t x = 0; x < size_x; ++x) {
+                for (size_t y = 0; y < size_y; ++y) {
+                    if (aData.at(x, y, z) != data_type_empty_value) {
+                        bool visible = false;
+                        if (z == size_z - 1) {
+                            if (aNorthNeighbouringDataVolume)
+                                visible = ((*aNorthNeighbouringDataVolume).at(x, y, 0) == data_type_empty_value);
+                            else
+                                visible = true;
+                        } else {
+                            visible = (aData.at(x, y, z + 1) == data_type_empty_value);
+                        }
+                        mask[y * size_x + x] = visible;
+                    }
+                }
+            }
+            for (size_t y = 0; y < size_y; ++y) {
+                for (size_t x = 0; x < size_x; ) {
+                    if (!mask[y * size_x + x]) {
+                        ++x;
+                        continue;
+                    }
+                    size_t w = 1;
+                    while ((x + w) < size_x && mask[y * size_x + (x + w)]) {
+                        ++w;
+                    }
+                    size_t h = 1;
+                    bool done = false;
+                    while ((y + h) < size_y && !done) {
+                        for (size_t k = 0; k < w; ++k) {
+                            if (!mask[(y + h) * size_x + (x + k)]) {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done) ++h;
+                    }
+                    for (size_t dy = 0; dy < h; ++dy) {
+                        for (size_t dx = 0; dx < w; ++dx) {
+                            mask[(y + dy) * size_x + (x + dx)] = false;
+                        }
+                    }
+                    buffer += aNorthFaceGenerator(
+                        static_cast<graphics_floating_point_type>(x),
+                        static_cast<graphics_floating_point_type>(y),
+                        static_cast<graphics_floating_point_type>(z),
+                        static_cast<graphics_floating_point_type>(w),
+                        static_cast<graphics_floating_point_type>(h));
+                    x += w;
+                }
+            }
+        }
+
+        // finding and generating all south-facing (-Z) surfaces in the XY plane
+        for (size_t z = 0; z < size_z; ++z) {
+            std::array<bool, size_x * size_y> mask{false};
+            for (size_t x = 0; x < size_x; ++x) {
+                for (size_t y = 0; y < size_y; ++y) {
+                    if (aData.at(x, y, z) != data_type_empty_value) {
+                        bool visible = false;
+                        if (z == 0) {
+                            if (aSouthNeighbouringDataVolume)
+                                visible = ((*aSouthNeighbouringDataVolume).at(x, y, size_z - 1) == data_type_empty_value);
+                            else
+                                visible = true;
+                        } else {
+                            visible = (aData.at(x, y, z - 1) == data_type_empty_value);
+                        }
+                        mask[y * size_x + x] = visible;
+                    }
+                }
+            }
+            for (size_t y = 0; y < size_y; ++y) {
+                for (size_t x = 0; x < size_x; ) {
+                    if (!mask[y * size_x + x]) {
+                        ++x;
+                        continue;
+                    }
+                    size_t w = 1;
+                    while ((x + w) < size_x && mask[y * size_x + (x + w)]) {
+                        ++w;
+                    }
+                    size_t h = 1;
+                    bool done = false;
+                    while ((y + h) < size_y && !done) {
+                        for (size_t k = 0; k < w; ++k) {
+                            if (!mask[(y + h) * size_x + (x + k)]) {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done) ++h;
+                    }
+                    for (size_t dy = 0; dy < h; ++dy) {
+                        for (size_t dx = 0; dx < w; ++dx) {
+                            mask[(y + dy) * size_x + (x + dx)] = false;
+                        }
+                    }
+                    buffer += aSouthFaceGenerator(
+                        static_cast<graphics_floating_point_type>(x),
+                        static_cast<graphics_floating_point_type>(y),
+                        static_cast<graphics_floating_point_type>(z),
+                        static_cast<graphics_floating_point_type>(w),
+                        static_cast<graphics_floating_point_type>(h));
+                    x += w;
+                }
+            }
+        }
+
+        // finding and generating all east-facing (+X) surfaces in the ZY plane
+        for (size_t x = 0; x < size_x; ++x) {
+            std::array<bool, size_y * size_z> mask{false};
+            for (size_t y = 0; y < size_y; ++y) {
+                for (size_t z = 0; z < size_z; ++z) {
+                    if (aData.at(x, y, z) != data_type_empty_value) {
+                        bool visible = false;
+                        if (x == size_x - 1) {
+                            if (aEastNeighbouringDataVolume)
+                                visible = ((*aEastNeighbouringDataVolume).at(0, y, z) == data_type_empty_value);
+                            else
+                                visible = true;
+                        } else {
+                            visible = (aData.at(x + 1, y, z) == data_type_empty_value);
+                        }
+                        mask[z * size_y + y] = visible;
+                    }
+                }
+            }
+            for (size_t z = 0; z < size_z; ++z) {
+                for (size_t y = 0; y < size_y; ) {
+                    if (!mask[z * size_y + y]) {
+                        ++y;
+                        continue;
+                    }
+                    size_t w = 1;
+                    while ((y + w) < size_y && mask[z * size_y + (y + w)]) {
+                        ++w;
+                    }
+                    size_t h = 1;
+                    bool done = false;
+                    while ((z + h) < size_z && !done) {
+                        for (size_t k = 0; k < w; ++k) {
+                            if (!mask[(z + h) * size_y + (y + k)]) {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done) ++h;
+                    }
+                    for (size_t dz = 0; dz < h; ++dz) {
+                        for (size_t dy = 0; dy < w; ++dy) {
+                            mask[(z + dz) * size_y + (y + dy)] = false;
+                        }
+                    }
+                    buffer += aEastFaceGenerator(
+                        static_cast<graphics_floating_point_type>(x),
+                        static_cast<graphics_floating_point_type>(y),
+                        static_cast<graphics_floating_point_type>(z),
+                        static_cast<graphics_floating_point_type>(w),
+                        static_cast<graphics_floating_point_type>(h));
+                    y += w;
+                }
+            }
+        }
+
+        // finding and generating all east-facing (-X) surfaces in the ZY plane
+        for (size_t x = 0; x < size_x; ++x) {
+            std::array<bool, size_y * size_z> mask{false};
+            for (size_t y = 0; y < size_y; ++y) {
+                for (size_t z = 0; z < size_z; ++z) {
+                    if (aData.at(x, y, z) != data_type_empty_value) {
+                        bool visible = false;
+                        if (x == 0) {
+                            if (aWestNeighbouringDataVolume)
+                                visible = ((*aWestNeighbouringDataVolume).at(size_x - 1, y, z) == data_type_empty_value);
+                            else
+                                visible = true;
+                        } else {
+                            visible = (aData.at(x - 1, y, z) == data_type_empty_value);
+                        }
+                        mask[z * size_y + y] = visible;
+                    }
+                }
+            }
+            for (size_t z = 0; z < size_z; ++z) {
+                for (size_t y = 0; y < size_y; ) {
+                    if (!mask[z * size_y + y]) {
+                        ++y;
+                        continue;
+                    }
+                    size_t w = 1;
+                    while ((y + w) < size_y && mask[z * size_y + (y + w)]) {
+                        ++w;
+                    }
+                    size_t h = 1;
+                    bool done = false;
+                    while ((z + h) < size_z && !done) {
+                        for (size_t k = 0; k < w; ++k) {
+                            if (!mask[(z + h) * size_y + (y + k)]) {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done) ++h;
+                    }
+                    for (size_t dz = 0; dz < h; ++dz) {
+                        for (size_t dy = 0; dy < w; ++dy) {
+                            mask[(z + dz) * size_y + (y + dy)] = false;
+                        }
+                    }
+                    buffer += aWestFaceGenerator(
+                        static_cast<graphics_floating_point_type>(x),
+                        static_cast<graphics_floating_point_type>(y),
+                        static_cast<graphics_floating_point_type>(z),
+                        static_cast<graphics_floating_point_type>(w),
+                        static_cast<graphics_floating_point_type>(h));
+                    y += w;
+                }
+            }
+        }
+
+        // finding and generating all up-facing (+Y) surfaces in the XZ plane
+        for (size_t y = 0; y < size_y; ++y) {
+            std::array<bool, size_x * size_z> mask{false};
+            for (size_t x = 0; x < size_x; ++x) {
+                for (size_t z = 0; z < size_z; ++z) {
+                    if (aData.at(x, y, z) != data_type_empty_value) {
+                        bool visible = false;
+                        if (y == size_y - 1) {
+                            if (aTopNeighbouringDataVolume)
+                                visible = ((*aTopNeighbouringDataVolume).at(x, 0, z) == data_type_empty_value);
+                            else
+                                visible = true;
+                        } else {
+                            visible = (aData.at(x, y + 1, z) == data_type_empty_value);
+                        }
+                        mask[z * size_x + x] = visible;
+                    }
+                }
+            }
+            for (size_t z = 0; z < size_z; ++z) {
+                for (size_t x = 0; x < size_x; ) {
+                    if (!mask[z * size_x + x]) {
+                        ++x;
+                        continue;
+                    }
+                    size_t w = 1;
+                    while ((x + w) < size_x && mask[z * size_x + (x + w)]) {
+                        ++w;
+                    }
+                    size_t h = 1;
+                    bool done = false;
+                    while ((z + h) < size_z && !done) {
+                        for (size_t k = 0; k < w; ++k) {
+                            if (!mask[(z + h) * size_x + (x + k)]) {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done) ++h;
+                    }
+                    for (size_t dz = 0; dz < h; ++dz) {
+                        for (size_t dx = 0; dx < w; ++dx) {
+                            mask[(z + dz) * size_x + (x + dx)] = false;
+                        }
+                    }
+                    buffer += aTopFaceGenerator(
+                        static_cast<graphics_floating_point_type>(x),
+                        static_cast<graphics_floating_point_type>(y),
+                        static_cast<graphics_floating_point_type>(z),
+                        static_cast<graphics_floating_point_type>(w),
+                        static_cast<graphics_floating_point_type>(h));
+                    x += w;
+                }
+            }
+        }
+
+        // finding and generating all up-facing (-Y) surfaces in the XZ plane
+        for (size_t y = 0; y < size_y; ++y) {
+            std::array<bool, size_x * size_z> mask{false};
+            for (size_t x = 0; x < size_x; ++x) {
+                for (size_t z = 0; z < size_z; ++z) {
+                    if (aData.at(x, y, z) != data_type_empty_value) {
+                        bool visible = false;
+                        if (y == 0) {
+                            if (aBottomNeighbouringDataVolume)
+                                visible = ((*aBottomNeighbouringDataVolume).at(x, size_y - 1, z) == data_type_empty_value);
+                            else
+                                visible = true;
+                        } else {
+                            visible = (aData.at(x, y - 1, z) == data_type_empty_value);
+                        }
+                        mask[z * size_x + x] = visible;
+                    }
+                }
+            }
+            for (size_t z = 0; z < size_z; ++z) {
+                for (size_t x = 0; x < size_x; ) {
+                    if (!mask[z * size_x + x]) {
+                        ++x;
+                        continue;
+                    }
+                    size_t w = 1;
+                    while ((x + w) < size_x && mask[z * size_x + (x + w)]) {
+                        ++w;
+                    }
+                    size_t h = 1;
+                    bool done = false;
+                    while ((z + h) < size_z && !done) {
+                        for (size_t k = 0; k < w; ++k) {
+                            if (!mask[(z + h) * size_x + (x + k)]) {
+                                done = true;
+                                break;
+                            }
+                        }
+                        if (!done) ++h;
+                    }
+                    for (size_t dz = 0; dz < h; ++dz) {
+                        for (size_t dx = 0; dx < w; ++dx) {
+                            mask[(z + dz) * size_x + (x + dx)] = false;
+                        }
+                    }
+                    buffer += aBottomFaceGenerator(
+                        static_cast<graphics_floating_point_type>(x),
+                        static_cast<graphics_floating_point_type>(y),
+                        static_cast<graphics_floating_point_type>(z),
+                        static_cast<graphics_floating_point_type>(w),
+                        static_cast<graphics_floating_point_type>(h));
+                    x += w;
+                }
+            }
+        }
+
+        return buffer;
+    }
+}
+
+#endif
+

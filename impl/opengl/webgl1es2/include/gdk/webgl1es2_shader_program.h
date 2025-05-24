@@ -162,11 +162,9 @@ namespace gdk {
         /// GUI element rendering, 2D Sprite rendering. Extremely lightweight.
         static const jfc::lazy_ptr<gdk::webgl1es2_shader_program> AlphaCutOff;
 
-        //! 8 is the guaranteed minimum across all es2/web1 implementations. 
-        /// Can check against max but that invites the possibility of shaders working on some impls 
-        /// and not others.. want to avoid that, 
-        /// therefore define the "max" as the guaranteed minimum.
-        static const size_t MAX_TEXTURE_UNITS = 8;
+        static const size_t MAX_TEXTURE_UNITS();
+        static const size_t MAX_FRAGMENT_SHADER_INSTRUCTIONS();
+        static const size_t MAX_VERTEX_SHADER_INSTRUCTIONS();
     
     private:
         //! handle to the  vertex shader

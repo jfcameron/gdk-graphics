@@ -106,13 +106,16 @@ texture_ptr_type webgl1es2_context::make_texture() {
 model_ptr_type webgl1es2_context::make_model(const model::usage_hint usage,
     const model_data &vertexDataView) {
     return model_ptr_type(new gdk::webgl1es2_model(
-        gdk::model::usage_hint::upload_once_, vertexDataView));
+        gdk::model::usage_hint::upload_once, vertexDataView));
 }
 
 model_ptr_type webgl1es2_context::make_model() {
-    std::vector<float> data({0, 0, 0});
-    return make_model(model::usage_hint::upload_once_, {{{"a_Position", {data, 1}}}});
     //TODO: should support not having a vbo at all. this works but leads to allocating tiny vbos for "empty" models
+    return make_model(model::usage_hint::upload_once, {{
+        { "nil", { {
+            0.0f, 0.0f, 0.0f,
+        }, 1 } },
+    }});
 }
 
 scene_ptr_type webgl1es2_context::make_scene() {

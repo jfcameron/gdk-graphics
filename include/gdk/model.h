@@ -12,7 +12,7 @@ namespace gdk {
         enum class usage_hint {
             dynamic,   //!< data will be rewritten 
             streaming, //!< data will be rewritten extremely frequently
-            upload_once_ //!< data will only be written once
+            upload_once //!< data will only be written once
         };
 
         /// \brief replace vertex data held by this model

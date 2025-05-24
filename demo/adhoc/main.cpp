@@ -190,7 +190,7 @@ int main(int argc, char **argv) {
     }();
 
     const auto pTexture = [&]() {
-        auto [view, data] = texture_data::decode_from_png(PNG);
+        auto [view, data] = texture_data::make_from_png(PNG);
         auto p = pGraphics->make_texture(view,
             texture::wrap_mode::clamped,
             texture::wrap_mode::clamped);
