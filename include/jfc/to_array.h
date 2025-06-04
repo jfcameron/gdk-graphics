@@ -18,8 +18,8 @@ namespace jfc {
     }
 
     template <typename T, typename... Args>
-    constexpr std::array<T, sizeof...(Args)> to_array(Args&&... args) {
-        return std::array<T, sizeof...(Args)>{std::forward<Args>(args)...};
+    constexpr std::array<T, sizeof...(Args)> to_array(T first, Args&&... args) {
+        return std::array<T, sizeof...(Args)>{first, std::forward<Args>(args)...};
     }
 }
 
