@@ -154,7 +154,7 @@ int main(int argc, char **argv)
     {
         glfwPollEvents();
 
-        using namespace std;
+        /*using namespace std;
         auto t = time;
         auto d = t*2;
         auto h = t/2;
@@ -163,11 +163,10 @@ int main(int argc, char **argv)
         quaternion<float> quat(eulers);
         auto eulers2 = quat.toEuler();
         
-        //25-04-22: matrix multiplication is working correctly 
         graphics_matrix4x4_type m1({ 0,  0, 0},{{d,0,0}});
         graphics_matrix4x4_type m2({ std::cos(t),  1, 0},{{0,q,0}});
         boneVisualizers["head"]->set_transform(m1);
-        boneVisualizers["chest"]->set_transform(m1 * m2);
+        boneVisualizers["chest"]->set_transform(m1 * m2);*/
 
         /*characterSkeleton.set_local_transform("head",  {{0,1,0},{{time,time,0}},{1}});
         characterSkeleton.set_local_transform("chest", {{0,0,0},{{0,0,0}},{1}});*/
