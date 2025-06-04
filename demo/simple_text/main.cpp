@@ -70,10 +70,10 @@ int main(int argc, char **argv) {
     }();
 
     [&]() {
-        static const auto background = jfc::to_array<texture_data::channel_type>({
+        static const std::vector<texture_data::encoded_byte> background { 
             0x2e, 0x2e, 0x2e, 0xff, 0x22, 0x22, 0x22, 0xff,                                    
             0x22, 0x22, 0x22, 0xff, 0x2e, 0x2e, 0x2e, 0xff, 
-        });
+        };
         gdk::texture_data::view view;
         view.format = gdk::texture::format::rgba;
         view.height = 2;
