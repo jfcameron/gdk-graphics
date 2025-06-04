@@ -68,6 +68,7 @@ namespace gdk {
 
     using graphics_intvector2_type = vector2<graphics_signed_integral_type>;
     using graphics_intvector3_type = vector3<graphics_signed_integral_type>;
+    using graphics_intvector4_type = vector4<graphics_signed_integral_type>;
 ///@}
 }
 

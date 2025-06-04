@@ -55,52 +55,60 @@ void webgl1es2_material::activate() {
     setRenderMode(m_RenderMode);
 	m_pShaderProgram->useProgram();
 
+	for (const auto& [name, a] : m_Integers) m_pShaderProgram->try_set_uniform(name, a);
 	for (const auto& [name, a] : m_Integer2s) m_pShaderProgram->try_set_uniform(name, a);
 	for (const auto& [name, a] : m_Integer3s) m_pShaderProgram->try_set_uniform(name, a);
 	for (const auto& [name, a] : m_Integer4s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Integers) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Textures) m_pShaderProgram->try_set_uniform(name, *a);
+   
+    for (const auto& [name, a] : m_Floats) m_pShaderProgram->try_set_uniform(name, a);
 	for (const auto& [name, a] : m_Vector2s) m_pShaderProgram->try_set_uniform(name, a);
 	for (const auto& [name, a] : m_vector3s) m_pShaderProgram->try_set_uniform(name, a);
 	for (const auto& [name, a] : m_vector4s) m_pShaderProgram->try_set_uniform(name, a);
-    for (const auto& [name, a] : m_Floats) m_pShaderProgram->try_set_uniform(name, a);
+
+	for (const auto& [name, a] : m_Textures) m_pShaderProgram->try_set_uniform(name, *a);
 }
 
 webgl1es2_material::shader_ptr_type webgl1es2_material::getShaderProgram() {
     return m_pShaderProgram;
 }
 
-void webgl1es2_material::setTexture(const std::string &aName, const texture_ptr_type aValue) {
-    m_Textures[aName] = std::static_pointer_cast<webgl1es2_texture>(aValue);
+void webgl1es2_material::set_texture(const std::string_view aName, const texture_ptr_type aValue) {
+    m_Textures[std::string(aName)] = std::static_pointer_cast<webgl1es2_texture>(aValue);
 }
 
-void webgl1es2_material::setFloat(const std::string &aName, float aValue) {
-    m_Floats[aName] = aValue;
+void webgl1es2_material::set_float(const std::string_view aName, float aValue) {
+    m_Floats[std::string(aName)] = aValue;
 }
 
-void webgl1es2_material::setVector2(const std::string &aName, graphics_vector2_type aValue) {
-    m_Vector2s[aName] = aValue;
+void webgl1es2_material::set_vector2(const std::string_view aName, graphics_vector2_type aValue) {
+    m_Vector2s[std::string(aName)] = aValue;
 }
 
-void webgl1es2_material::setvector3(const std::string &aName, graphics_vector3_type aValue) {
-    m_vector3s[aName] = aValue;
+void webgl1es2_material::set_vector3(const std::string_view aName, graphics_vector3_type aValue) {
+    m_vector3s[std::string(aName)] = aValue;
 }
 
-void webgl1es2_material::setvector4(const std::string &aName, graphics_vector4_type aValue) {
-    m_vector4s[aName] = aValue;
+void webgl1es2_material::set_vector4(const std::string_view aName, graphics_vector4_type aValue) {
+    m_vector4s[std::string(aName)] = aValue;
 }
 
-void webgl1es2_material::setInteger(const std::string& aName, int aValue) {
-    m_Integers[aName] = aValue;
-}
-void webgl1es2_material::setInteger2(const std::string& aName, int aValue1, int aValue2) {
-    m_Integer2s[aName] = {aValue1, aValue2};
-}
-void webgl1es2_material::setInteger3(const std::string& aName, int aValue1, int aValue2, int aValue3) {
-    m_Integer3s[aName] = {aValue1, aValue2, aValue3};
+void webgl1es2_material::set_integer(const std::string_view aName, int aValue) {
+    m_Integers[std::string(aName)] = aValue;
 }
 
-void webgl1es2_material::setInteger4(const std::string& aName, int aValue1, int aValue2, int aValue3, int aValue4) {
-    m_Integer4s[aName] = {aValue1, aValue2, aValue3, aValue4};
+void webgl1es2_material::set_integer2(const std::string_view aName, int aValue1, int aValue2) {
+    m_Integer2s[std::string(aName)] = {aValue1, aValue2};
+}
+
+void webgl1es2_material::set_integer3(const std::string_view aName, int aValue1, int aValue2, int aValue3) {
+    m_Integer3s[std::string(aName)] = {aValue1, aValue2, aValue3};
+}
+
+void webgl1es2_material::set_integer4(const std::string_view aName, int aValue1, int aValue2, int aValue3, int aValue4) {
+    m_Integer4s[std::string(aName)] = {aValue1, aValue2, aValue3, aValue4};
+}
+
+void webgl1es2_material::set_int_vector2_array(const std::string_view aName, const std::vector<graphics_intvector2_type> &aValue) {
+    m_IntVector2Arrays[std::string(aName)] = {aValue};
 }
 

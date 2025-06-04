@@ -56,8 +56,6 @@ namespace gdk {
 
         [[nodiscard]] virtual model_ptr_type get_cube_model() const override;
         
-        [[nodiscard]] virtual model_ptr_type get_quad_model() const override;
-
         webgl1es2_context(webgl1es2_context &&);
 
         virtual ~webgl1es2_context() override;

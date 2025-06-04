@@ -2,6 +2,7 @@
 
 #include "volume_block_model.h"
 
+#include <gdk/ext/volumetric_lighting.h>
 #include <gdk/game_loop.h>
 #include <gdk/graphics_constraints.h>
 #include <gdk/graphics_context.h>
@@ -251,96 +252,128 @@ static const auto PNG = jfc::to_array<texture_data::encoded_byte>({
 	0x82
 });
 
-/// \brief cubic volume of diffuse lighting data
+enum class blockType : uint16_t {
+    air,
+    dirt,
+    rock,
+    water,
+};
+
+/// \brief cubic volume of block data
 ///
 template<size_t size_param>
-class volumetric_lighting final {
+class volumetric_block_data final {
 public:
     static constexpr size_t size = size_param;
     static constexpr size_t size_1d = size * size * size;
     static constexpr size_t size_2d = std::sqrt(size_1d);
+
     static_assert(is_power_of_two(size));
     static_assert(is_power_of_two(size_1d));
     static_assert(is_power_of_two(size_2d));
-    using local_space_component_type = int;
+
+    static constexpr size_t CHANNELS_PER_COLOR = 2;
+    using texture_data_type = std::array<gdk::texture_data::channel_type, size_1d * CHANNELS_PER_COLOR>;
+    using texture_data_view_pair = std::pair<gdk::texture_data::view, std::shared_ptr<texture_data_type>>;
+
 private:
-    jfc::cube_array<gdk::color, size> m_Data;
-
-    void add(const local_space_component_type aX, const local_space_component_type aY, const local_space_component_type aZ, 
-        const gdk::color &aColor) {
-        if (aX < 0 || aX >= size) return;
-        if (aY < 0 || aY >= size) return;
-        if (aZ < 0 || aZ >= size) return;
-
-        auto &light = m_Data.at(aX, aY, aZ);
-        light += aColor;
-        light.clamp();
-    }
+    jfc::cube_array<blockType, size> m_Data;
 
 public:
-    /// \brief clears the data
-    void clear() { m_Data.clear(); }
-
-    // \brief applies a uniform light to the whole volume
-    void add_global(const gdk::color &aColor) {
-        for (size_t i(0); i < decltype(m_Data)::size_1d; ++i)
-            m_Data.data()[i] = aColor;
+    const blockType &at(const size_t aX, const size_t aY, const size_t aZ) const {
+        return m_Data.at(aX, aY, aZ);
     }
 
-    /// \brief add a pointlight to the light volume
-    void add_point_light(graphics_intvector3_type aLightPosition, const float aSize, const gdk::color &aColor) {
-        const gdk::vector3<float> CENTRE(aSize/2.f); 
-        const auto HALF(aSize/2.f);
-
-        aLightPosition.x -= HALF;
-        aLightPosition.y -= HALF;
-        aLightPosition.z -= HALF;
-
-        for (int x(0); x < aSize; ++x) for (int y(0); y < aSize; ++y) for (int z(0); z < aSize; ++z) {
-            float distanceFromCentre = CENTRE.distance(gdk::vector3<float>(x,y,z));
-            float normalizedHalfDistanceFromCentre = distanceFromCentre / HALF; 
-            float intensity = (1.0f / std::sqrt(normalizedHalfDistanceFromCentre)) - 1.0f; 
-            intensity = std::clamp(intensity, 0.0f, 1.0f);
-
-            auto color(aColor);
-            color.r *= intensity;
-            color.g *= intensity;
-            color.b *= intensity;
-
-            add(aLightPosition.x + x, aLightPosition.y + y, aLightPosition.z + z, color);   
-        }    
+    blockType &at(const size_t aX, const size_t aY, const size_t aZ) {
+        return m_Data.at(aX, aY, aZ);
     }
 
-    static constexpr size_t CHANNELS_PER_COLOR = 3;
-
-    /// \brief writes lighting data into texture data
-    //TODO: should provide a 3d texture alternative, which requires a texture_data::view_3d, etc.
-    std::pair<gdk::texture_data::view, std::shared_ptr<std::array<gdk::texture_data::channel_type, size_1d * CHANNELS_PER_COLOR>>> to_2d_texture_data() const {
-        std::array<gdk::texture_data::channel_type, size_1d * CHANNELS_PER_COLOR> textureData;
+    texture_data_view_pair to_texture_data() const {
+        texture_data_type textureData;
 
         size_t i(0);
         for (size_t j(0); j < size_1d; ++j) {
-            textureData[i + 0] = m_Data.data()[j].r * 255; //Converting normalized floating-point light values
-            textureData[i + 1] = m_Data.data()[j].g * 255; //to unsigned int values (so they fit in a single byte) 
-            textureData[i + 2] = m_Data.data()[j].b * 255; //([0-1] to [0-255])
+            auto currentBlock = m_Data.data()[j];
+
+            static_assert(std::is_same_v<std::underlying_type_t<decltype(currentBlock)>, uint16_t>, 
+                "required assumption that underlying type is a 2byte unsigned int");
+
+            //TODO: test this with values beyond the 0-255 range
+            uint16_t underlyingValue = static_cast<uint16_t>(currentBlock);
+            textureData[i + 0] = underlyingValue & 0xFF;
+            textureData[i + 1] = (underlyingValue >> 8) & 0xFF;
+
             i += CHANNELS_PER_COLOR;
         }
 
-        auto pTextureData = std::make_shared<std::array<gdk::texture_data::channel_type, 
-            size_1d * CHANNELS_PER_COLOR>>(std::move(textureData));
+        auto pTextureData = std::make_shared<texture_data_type>(std::move(textureData));
 
         texture_data::view view;
         view.width = size_2d;
         view.height = size_2d;
-        view.format = texture::format::rgb;
+        view.format = texture::format::rg;
         view.data = &(pTextureData->front());
 
         return { view, pTextureData };
     }
 };
 
+volumetric_block_data<64> blockData;
 volumetric_lighting<64> staticLights;
 volumetric_lighting<64> lighting;
+
+std::array<texture_data::channel_type, 64 * 64> blockTypeToUVTextureMapData = []() {
+    std::array<texture_data::channel_type, 64 * 64> blockTypeToUVTextureMapData;
+
+    auto setFaceUVsForABlockType = [&blockTypeToUVTextureMapData](const blockType aBlockType, 
+        const graphics_vector2_type &aNorth,
+        const graphics_vector2_type &aSouth,
+        const graphics_vector2_type &aEast,
+        const graphics_vector2_type &aWest,
+        const graphics_vector2_type &aTop,
+        const graphics_vector2_type &aBottom) {
+        size_t i(static_cast<std::underlying_type<decltype(aBlockType)>::type>(aBlockType) 
+            * 6 //faces
+            * 2 //channels
+        );
+        blockTypeToUVTextureMapData[i++] = aNorth.x * 255; 
+        blockTypeToUVTextureMapData[i++] = aNorth.y * 255;
+        blockTypeToUVTextureMapData[i++] = aSouth.x * 255;
+        blockTypeToUVTextureMapData[i++] = aSouth.y * 255;
+        blockTypeToUVTextureMapData[i++] = aEast.x * 255;
+        blockTypeToUVTextureMapData[i++] = aEast.y * 255;
+        blockTypeToUVTextureMapData[i++] = aWest.x * 255;
+        blockTypeToUVTextureMapData[i++] = aWest.y * 255;
+        blockTypeToUVTextureMapData[i++] = aTop.x * 255; 
+        blockTypeToUVTextureMapData[i++] = aTop.y * 255;
+        blockTypeToUVTextureMapData[i++] = aBottom.x * 255;
+        blockTypeToUVTextureMapData[i++] = aBottom.y * 255;
+    };
+
+    setFaceUVsForABlockType(blockType::dirt, 
+        {0.5f,0.0f},
+        {0.5f,0.0f},
+        {0.5f,0.0f},
+        {0.5f,0.0f},
+        {0.0f,0.0f},
+        {0.5f,0.0f});
+    setFaceUVsForABlockType(blockType::rock,
+        {0.0f,0.5f},
+        {0.0f,0.5f},
+        {0.0f,0.5f},
+        {0.0f,0.5f},
+        {0.0f,0.5f},
+        {0.0f,0.5f});
+    setFaceUVsForABlockType(blockType::water,
+        {0.5f,0.5f},
+        {0.5f,0.5f},
+        {0.5f,0.5f},
+        {0.5f,0.5f},
+        {0.5f,0.5f},
+        {0.5f,0.5f});
+
+    return blockTypeToUVTextureMapData;
+}();
 
 int main(int argc, char **argv) {
     glfw_window window("volumetric blocks + volumetric lighting");
@@ -368,25 +401,33 @@ int main(int argc, char **argv) {
     view.format = texture::format::rgba;
     view.data = {};
     auto pLightingTexture = pGraphics->make_texture(view, texture::wrap_mode::clamped, texture::wrap_mode::clamped);
+    auto pBlockTypeVolumeTexture = pGraphics->make_texture(view, texture::wrap_mode::clamped, texture::wrap_mode::clamped);
+
+    texture_data::view blockUVTextureView;
+    blockUVTextureView.width = 64;
+    blockUVTextureView.height = 64;
+    blockUVTextureView.format = texture::format::rg;
+    blockUVTextureView.data = &blockTypeToUVTextureMapData.front();
+    auto pBlockTypeToUVTextureMap = pGraphics->make_texture(blockUVTextureView, texture::wrap_mode::clamped, texture::wrap_mode::clamped);
 
     auto pShader = [&]() {
         const std::string vertexShaderSource(R"V0G0N(
         uniform mat4 _MVP;
 
         attribute highp vec2 a_UV;
-        attribute highp vec2 a_UVOffset;
         attribute highp vec3 a_Position;
         attribute lowp float a_BlockDirection;
+        attribute highp vec3 a_BlockOffset;
 
-        varying highp vec2 v_UVOffset;
+        varying highp vec2 v_UV;
         varying highp vec3 v_Position;
         varying lowp float v_BlockDirection;
-        varying mediump vec2 v_UV;
+        varying highp vec3 v_BlockOffset;
 
         void main () {
             v_UV = a_UV;
-            v_UVOffset = a_UVOffset;
             v_BlockDirection = a_BlockDirection;
+            v_BlockOffset = a_BlockOffset;
 
             // Since we know block vertex position data should only ever be integer values (with respect to its localspace),
             // removing the fractional component will prevent any rounding issues that could create gaps between edges
@@ -398,47 +439,59 @@ int main(int argc, char **argv) {
         )V0G0N");
 
         const std::string fragmentShaderSource(R"V0G0N(
-        uniform lowp float _NormalizedTileSize;
-        uniform lowp float _VolumeTextureSize;
-        uniform sampler2D _BlockTypeVolumeTexture;
-        uniform sampler2D _LightVolumeTexture;
-        uniform sampler2D _Texture;
+        uniform lowp float _VolumetricTextureSize;
+        uniform sampler2D _BlockTypeToUVMappingTexture;
+        uniform sampler2D _BlockTypeVolumetricTexture;
+        uniform sampler2D _LightingVolumetricTexture;
+        uniform sampler2D _TilesetTexture;
 
-        varying highp vec2 v_UVOffset;
+        uniform lowp float _NormalizedTileSize; //maybe not normalized?
+        uniform highp float _BlockTypeToUVMappingTextureSize;
+
+        varying highp vec2 v_UV;
         varying highp vec3 v_Position;
         varying lowp float v_BlockDirection;
-        varying mediump vec2 v_UV;
-
-        const float BLOCK_DIRECTION_NORTH = 0.;
-        const float BLOCK_DIRECTION_SOUTH = 1.;
-        const float BLOCK_DIRECTION_EAST  = 2.;
-        const float BLOCK_DIRECTION_WEST  = 3.;
-        const float BLOCK_DIRECTION_UP    = 4.;
-        const float BLOCK_DIRECTION_DOWN  = 5.;
+        varying highp vec3 v_BlockOffset;
 
         void main() {
-            lowp vec2 uv = fract(v_UV);
-            uv = clamp(uv, 0.1, 0.9); //hiding UV seams
-            uv *= _NormalizedTileSize;
-            uv += v_UVOffset * _NormalizedTileSize;
-            vec4 texel = texture2D(_Texture, uv);
-
             ivec3 positionInVolumetricData = ivec3(floor(v_Position));
 
-            lowp vec3 blockType = gdk_texture3D(_BlockTypeVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData);
-            if (blockType == vec3(0,0,0)) {
-                //blahblah
-            }
-            
-            lowp vec3 l000 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData);
-            lowp vec3 l100 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,0,0));
-            lowp vec3 l010 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(0,1,0));
-            lowp vec3 l110 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,1,0));
-            lowp vec3 l001 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(0,0,1));
-            lowp vec3 l101 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,0,1));
-            lowp vec3 l011 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(0,1,1));
-            lowp vec3 l111 = gdk_texture3D(_LightVolumeTexture, _VolumeTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,1,1));
+            //TODO: v_BlockOffset negates position in +Z, +X, +Y. Maybe just write this right into
+            // the attribute data, rename it v_BlockPosition. Dont need to calculate it
+            ivec3 blockPosition = ivec3(floor(v_Position)) + ivec3(v_BlockOffset);
 
+            highp vec2 uv = fract(v_UV);
+            uv = clamp(uv, 0.1, 0.9); //hiding UV seams
+            uv *= _NormalizedTileSize;
+
+            vec2 texColor = gdk_texture3D(_BlockTypeVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), blockPosition).ra;
+            int lowByte = int(texColor.x * 255.);
+            int highByte = int(texColor.y * 255.);
+            int blockType = highByte * 256 + lowByte;
+
+            // TODO: turn this into a gdk_ function. indexes a 2d texture as though tis 1d. gdk_texture1D? seems generally useful
+            float texWidth = _BlockTypeToUVMappingTextureSize;  
+            float texHeight = _BlockTypeToUVMappingTextureSize; 
+            int lookupIndex = blockType * 6 + int(v_BlockDirection);
+            float xIndex = mod(float(lookupIndex), texWidth);
+            float yIndex = floor(float(lookupIndex) / texWidth);
+            vec2 texCoord = vec2((xIndex + 0.5) / texWidth, (yIndex + 0.5) / texHeight);
+            vec2 uvOffset = texture2D(_BlockTypeToUVMappingTexture, texCoord).ra; 
+
+            uv += uvOffset;
+            vec4 texel = texture2D(_TilesetTexture, uv);
+
+            //TODO: prevent sample wrapping 
+            lowp vec3 l000 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData).xyz;
+            lowp vec3 l100 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,0,0)).xyz;
+            lowp vec3 l010 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(0,1,0)).xyz;
+            lowp vec3 l110 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,1,0)).xyz;
+            lowp vec3 l001 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(0,0,1)).xyz;
+            lowp vec3 l101 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,0,1)).xyz;
+            lowp vec3 l011 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(0,1,1)).xyz;
+            lowp vec3 l111 = gdk_texture3D(_LightingVolumetricTexture, _VolumetricTextureSize, vec2(0.5, 0.5), positionInVolumetricData + ivec3(1,1,1)).xyz;
+
+            // TODO: refactor into gdk_texture3D_trilinear?
             // interpolation has to be done manually since GLES2 does not support 3d textures and i got around that by packing the
             // volumetric data into a 2d texture.  
             // TODO: uniform to choose none/bi/tri? offer 3 separate shaders? I dont really want to go down the rabbit hole of
@@ -457,26 +510,27 @@ int main(int argc, char **argv) {
             lowp vec3 finalLight = mix(lightY0, lightY1, subVoxelPosition.z); 
             finalLight = l000; //enable this to see lighting with zero interpolation
 
-            gl_FragColor = vec4(texel.rgb * finalLight, 1.0);
+            gl_FragColor = vec4(texel.rgb * finalLight, 1.0); 
         }
         )V0G0N");
 
         return std::static_pointer_cast<webgl1es2_context>(pGraphics)->make_shader(vertexShaderSource,fragmentShaderSource);
     }();
 
-    std::cout << "Limit: " << webgl1es2_shader_program::MAX_FRAGMENT_SHADER_INSTRUCTIONS() << "\n";
-    
     auto pMaterial = [&]() {
         auto pMaterial = pGraphics->make_material(pShader,
             material::render_mode::opaque,
             material::face_culling_mode::back
         );
-        pMaterial->setFloat("_NormalizedTileSize", 0.5);
-        pMaterial->setFloat("_VolumeTextureSize", 64);
-        pMaterial->setTexture("_LightVolumeTexture", pLightingTexture);
-        pMaterial->setTexture("_Texture", pTexture);
-        pMaterial->setVector2("_UVOffset", {0, 0});
-        pMaterial->setVector2("_UVScale", {1, 1});
+        pMaterial->set_float("_BlockTypeToUVMappingTextureSize", 64.);
+        pMaterial->set_float("_NormalizedTileSize", 0.5);
+        pMaterial->set_float("_VolumetricTextureSize", 64.);
+        pMaterial->set_texture("_BlockTypeToUVMappingTexture", pBlockTypeToUVTextureMap);
+        pMaterial->set_texture("_BlockTypeVolumetricTexture", pBlockTypeVolumeTexture);
+        pMaterial->set_texture("_LightingVolumetricTexture", pLightingTexture);
+        pMaterial->set_texture("_TilesetTexture", pTexture);
+        pMaterial->set_vector2("_UVOffset", {0, 0});
+        pMaterial->set_vector2("_UVScale", {1, 1});
 
         return pMaterial;
     }();
@@ -496,16 +550,15 @@ int main(int argc, char **argv) {
         const std::string fragmentShaderSource(R"V0G0N(
         varying highp vec3 v_Position;
 
-        const vec3 spaceColor = vec3(0.8,1.0,1.0);
+        const vec3 spaceColor = vec3(0.8, 1.0, 1.0);
         const vec3 horizonColor = vec3(0.4, 0.5, 0.8);
 
-        float dist(vec3 a, vec3 b) {
-            return sqrt(dot(a, b));
-        }
-
         void main() {
-            vec3 color = mix(horizonColor, spaceColor, abs(normalize(v_Position).y)); 
-            gl_FragColor.xyz = vec3(color);
+            float altitudeFactor = dot(normalize(v_Position), vec3(0.0, 1.0, 0.0));
+            float t = smoothstep(-0.2, 1.0, altitudeFactor); 
+            vec3 color = mix(horizonColor, spaceColor, t); 
+            
+            gl_FragColor = vec4(color, 1.0);
         }
         )V0G0N");
 
@@ -523,54 +576,28 @@ int main(int argc, char **argv) {
         return pSkyboxEntity; 
     }();
 
-    enum class blockType {
-        air = 0,
-        dirt,
-        rock,
-        water,
-    };
-    std::array<blockType, 64*64*64> data{};
-    gdk::ext::volume::volumetric_data_view<blockType, 64,64,64> dataView(&data.front());
+    for (size_t x(0); x < 16; ++x) for (size_t y(0); y < 16; ++y) blockData.at(x,0,y) = blockType::water;
+    for (size_t x(1); x < 14; ++x) for (size_t z(1); z < 12; ++z) blockData.at(x,1,z) = blockType::dirt;
 
-    struct uvOffsets {
-        graphics_vector2_type n;
-        graphics_vector2_type s;
-        graphics_vector2_type e;
-        graphics_vector2_type w;
-        graphics_vector2_type u;
-        graphics_vector2_type d;
-    };
-    const auto blockTypeToUVOffset = [](blockType type) -> uvOffsets {
-        switch(type) {
-            case blockType::dirt:  return { .n={1,0}, .s={1,0}, .e={1,0}, .w={1,0}, .u={0,0}, .d={1,0} };
-            case blockType::rock:  return { .n={0,1}, .s={0,1}, .e={0,1}, .w={0,1}, .u={0,1}, .d={0,1} };
-            case blockType::water: return { .n={1,1}, .s={1,1}, .e={1,1}, .w={1,1}, .u={1,1}, .d={1,1} };
-        }
-        throw graphics_exception("unhandled blocktype");
-    };
+    blockData.at(1,7,0) = blockType::dirt;
+    blockData.at(1,6,0) = blockType::dirt;
+    blockData.at(3,7,0) = blockType::dirt;
+    blockData.at(3,6,0) = blockType::dirt;
+    blockData.at(0,4,0) = blockType::dirt;
+    blockData.at(1,3,0) = blockType::dirt;
+    blockData.at(2,3,0) = blockType::dirt;
+    blockData.at(3,3,0) = blockType::dirt;
+    blockData.at(4,4,0) = blockType::dirt;
+    blockData.at(7,7,7) = blockType::dirt;
+    blockData.at(8,3,8) = blockType::dirt;
 
-    for (size_t x(0); x < 16; ++x) for (size_t y(0); y < 16; ++y) dataView.at(x,0,y) = blockType::water;
-    for (size_t x(1); x < 14; ++x) for (size_t z(1); z < 12; ++z) dataView.at(x,1,z) = blockType::dirt;
-
-    dataView.at(1,7,0) = blockType::dirt;
-    dataView.at(1,6,0) = blockType::dirt;
-    dataView.at(3,7,0) = blockType::dirt;
-    dataView.at(3,6,0) = blockType::dirt;
-    dataView.at(0,4,0) = blockType::dirt;
-    dataView.at(1,3,0) = blockType::dirt;
-    dataView.at(2,3,0) = blockType::dirt;
-    dataView.at(3,3,0) = blockType::dirt;
-    dataView.at(4,4,0) = blockType::dirt;
-    dataView.at(7,7,7) = blockType::dirt;
-    dataView.at(8,3,8) = blockType::dirt;
-
-    dataView.at(05,0,15) = blockType::rock;
-    dataView.at(05,1,15) = blockType::rock;
-    dataView.at(05,2,15) = blockType::rock;
-    dataView.at(05,3,15) = blockType::rock;
-    dataView.at(06,0,15) = blockType::rock;
-    dataView.at(06,1,15) = blockType::rock;
-    dataView.at(06,2,15) = blockType::rock;
+    blockData.at(05,0,15) = blockType::rock;
+    blockData.at(05,1,15) = blockType::rock;
+    blockData.at(05,2,15) = blockType::rock;
+    blockData.at(05,3,15) = blockType::rock;
+    blockData.at(06,0,15) = blockType::rock;
+    blockData.at(06,1,15) = blockType::rock;
+    blockData.at(06,2,15) = blockType::rock;
 
     const gdk::model_data NORTH_FACE {{
         { "a_Position", { {
@@ -582,6 +609,15 @@ int main(int argc, char **argv) {
             0.0f, 0.0f, 1.0f,
             1.0f, 0.0f, 1.0f,
         }, 3 } },
+        { "a_BlockOffset", { {
+            -1.0f, -1.0f, -1.0f,
+            0.0f, -1.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+
+            -1.0f, -1.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            -1.0f, 0.0f, -1.0f,
+        }, 3 } },
         { "a_UV", { {
             1, 1,
             0, 1,
@@ -590,14 +626,6 @@ int main(int argc, char **argv) {
             1, 1,
             0, 0,
             1, 0,
-        }, 2 } },
-        { "a_UVOffset", { {
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
         }, 2 } },
         { "a_BlockDirection", { {
             0.0f,
@@ -619,6 +647,15 @@ int main(int argc, char **argv) {
             1.0f, 0.0f, 0.0f,
             0.0f, 0.0f, 0.0f,
         }, 3 } },
+        { "a_BlockOffset", { {
+            1.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+
+            1.0f, 1.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+        }, 3 } },
         { "a_UV", { {
             1, 1,
             0, 0,
@@ -626,14 +663,6 @@ int main(int argc, char **argv) {
 
             1, 1,
             1, 0,
-            0, 0,
-        }, 2 } },
-        { "a_UVOffset", { {
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
             0, 0,
         }, 2 } },
         { "a_BlockDirection", { {
@@ -656,6 +685,15 @@ int main(int argc, char **argv) {
             1.0f, 1.0f, 1.0f,
             1.0f, 0.0f, 1.0f,
         }, 3 } },
+        { "a_BlockOffset", { {
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,
+            -1.0f, -1.0f, -1.0f,
+
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, 0.0f, -1.0f,
+        }, 3 } },
         { "a_UV", { {
             0, 0,
             1, 0,
@@ -664,14 +702,6 @@ int main(int argc, char **argv) {
             0, 0,
             1, 1,
             0, 1,
-        }, 2 } },
-        { "a_UVOffset", { {
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
         }, 2 } },
         { "a_BlockDirection", { {
             2.0f,
@@ -693,6 +723,15 @@ int main(int argc, char **argv) {
             0.0f, 0.0f, 1.0f,
             0.0f, 1.0f, 1.0f,
         }, 3 } },
+        { "a_BlockOffset", { {
+            0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 0.0f,
+
+            0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 1.0f,
+        }, 3 } },
         { "a_UV", { {
             0, 0,
             1, 1,
@@ -701,14 +740,6 @@ int main(int argc, char **argv) {
             0, 0,
             0, 1,
             1, 1,
-        }, 2 } },
-        { "a_UVOffset", { {
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
         }, 2 } },
         { "a_BlockDirection", { {
             3.0f,
@@ -730,6 +761,15 @@ int main(int argc, char **argv) {
             0.0f, 1.0f, 1.0f,
             1.0f, 1.0f, 1.0f,
         }, 3 } },
+        { "a_BlockOffset", { {
+            0.0f, -1.0f, 0.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f, 0.0f,
+
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+        }, 3 } },
         { "a_UV", { {
             0, 0,
             1, 1,
@@ -738,14 +778,6 @@ int main(int argc, char **argv) {
             0, 0,
             0, 1,
             1, 1,
-        }, 2 } },
-        { "a_UVOffset", { {
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
         }, 2 } },
         { "a_BlockDirection", { {
             4.0f,
@@ -767,6 +799,15 @@ int main(int argc, char **argv) {
             1.0f, 0.0f, 1.0f,
             0.0f, 0.0f, 1.0f,
         }, 3 } },
+        { "a_BlockOffset", { {
+            0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 1.0f,
+
+            0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+        }, 3 } },
         { "a_UV", { {
             0, 0,
             1, 0,
@@ -775,14 +816,6 @@ int main(int argc, char **argv) {
             0, 0,
             1, 1,
             0, 1,
-        }, 2 } },
-        { "a_UVOffset", { {
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
-            0, 0,
         }, 2 } },
         { "a_BlockDirection", { {
             5.0f,
@@ -794,46 +827,21 @@ int main(int argc, char **argv) {
         }, 1 } },
     }};
 
-    auto blockModelData = gdk::ext::volume::make_per_voxel_model_data<blockType, blockType::air, 64, 64, 64>(&data.front(), [&](
+    auto blockModelData = gdk::ext::volume::make_per_voxel_model_data<blockType, blockType::air, 64, 64, 64>(&blockData.at(0,0,0), [&](
         const size_t x, const size_t y, const size_t z, const blockType &c, const blockType &n, const blockType &s, const blockType &e, 
         const blockType &w, const blockType &u, const blockType &d) {
-        model_data voxel;
-        auto offsets = blockTypeToUVOffset(c);
-        if (n == blockType::air) {  
-            auto face = NORTH_FACE;
-            face.transform("a_UVOffset", offsets.n); 
-            voxel += face;
-        }
-        if (s == blockType::air) {
-            auto face = SOUTH_FACE;
-            face.transform("a_UVOffset", offsets.s); 
-            voxel += face;
-        }
-        if (e == blockType::air) {
-            auto face = EAST_FACE;
-            face.transform("a_UVOffset", offsets.e); 
-            voxel += face;
-        }
-        if (w == blockType::air) {
-            auto face = WEST_FACE;
-            face.transform("a_UVOffset", offsets.w); 
-            voxel += face;
-        }
-        if (u == blockType::air) { 
-            auto face = TOP_FACE;
-            face.transform("a_UVOffset", offsets.u); 
-            voxel += face;
-        }
-        if (d == blockType::air) {
-            auto face = BOTTOM_FACE;
-            face.transform("a_UVOffset", offsets.d); 
-            voxel += face;
-        }
-        voxel.transform("a_Position", {x, y, z});
-        return voxel;
+        model_data currentVoxelModelData;
+        if (n == blockType::air) currentVoxelModelData += NORTH_FACE;
+        if (s == blockType::air) currentVoxelModelData += SOUTH_FACE;
+        if (e == blockType::air) currentVoxelModelData += EAST_FACE;
+        if (w == blockType::air) currentVoxelModelData += WEST_FACE;
+        if (u == blockType::air) currentVoxelModelData += TOP_FACE;
+        if (d == blockType::air) currentVoxelModelData += BOTTOM_FACE;
+        currentVoxelModelData.transform("a_Position", {x, y, z});
+        return currentVoxelModelData;
     });
 
-    auto blockModelDataGREED = gdk::ext::volume::make_optimized_block_model_data<blockType, blockType::air, 64, 64, 64>(&data.front(), 
+    auto blockModelDataOptimized = gdk::ext::volume::make_optimized_block_model_data<blockType, blockType::air, 64, 64, 64>(&blockData.at(0,0,0), 
         [&](float x, float y, float z, float w, float h) {
             gdk::model_data face = NORTH_FACE;
             face.transform("a_Position", {x, y, z}, {}, {static_cast<graphics_floating_point_type>(w), static_cast<graphics_floating_point_type>(h), 1.0f});
@@ -873,8 +881,8 @@ int main(int argc, char **argv) {
     );
 
     auto pVolumetricModel(pGraphics->make_model());
-    pVolumetricModel->upload(model::usage_hint::streaming, blockModelData);
-    //pVolumetricModel->upload(model::usage_hint::streaming, blockModelDataGREED);
+    //pVolumetricModel->upload(model::usage_hint::streaming, blockModelData);
+    pVolumetricModel->upload(model::usage_hint::streaming, blockModelDataOptimized);
 
     auto pVolumetricEntity = [&]() {
         auto pVolumetricEntity = pGraphics->make_entity(pVolumetricModel, pMaterial);
@@ -887,6 +895,12 @@ int main(int argc, char **argv) {
     staticLights.add_point_light({14, 2, 14}, 10, {1.0, 0.0, 1.0});
     staticLights.add_point_light({0, 2, 14}, 10, {0.0, 1.0, 0.0});
 
+    auto [lightingVolumeTextureView, _] = staticLights.to_texture_data();
+    pLightingTexture->update_data(lightingVolumeTextureView);
+
+    auto [blockTypeVolumeTextureView, __] = blockData.to_texture_data();
+    pBlockTypeVolumeTexture->update_data(blockTypeVolumeTextureView);
+
     game_loop(60, [&](const float time, const float deltaTime) {
         glfwPollEvents();
 
@@ -895,13 +909,12 @@ int main(int argc, char **argv) {
         static int x = 8;
         static int z = 8;
         lighting.add_point_light({std::sin(time) * 8 + x, -2, std::cos(time) * 8 + z}, 10, {1.0, 1.0, 1.0});
-        auto [lightingTextureView, _] = lighting.to_2d_texture_data();
-        pLightingTexture->update_data(lightingTextureView);
+        
+        auto [lightingVolumeTextureView, _] = lighting.to_texture_data();
+        pLightingTexture->update_data(lightingVolumeTextureView);
 
         graphics_matrix4x4_type root({0,0,0}, {{0.f, +3.1415f + time*0.5f, 0}});
         graphics_matrix4x4_type chunkMatrix({-8, 0, -8}, {{0, 0, 0}});
-        //pVoxelEntity->set_transform(root * chunkMatrix);
-        //pVoxelEntity->hide();
 
         pVolumetricEntity->set_transform(root * chunkMatrix);
 

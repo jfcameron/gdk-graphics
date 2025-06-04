@@ -115,6 +115,9 @@ namespace gdk {
 
         ~model_data() = default;
 
+        //! creates model data for a unit sized quad with position and uv data
+        static model_data make_quad();
+
     private:
         size_t m_VertexCount{};
         attribute_collection_type m_Attributes{};

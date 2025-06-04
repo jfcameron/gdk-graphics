@@ -13,13 +13,13 @@
 #include <array>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace gdk {
     /// \brief Specifies drawing behaviours at the two programmable stages in the OpenGL ES 2.0/WebGL 1.0 pipeline 
     /// (the vertex shader stage and fragment shader stage)
-    //TODO: consider a "pipeline" abstraction, which specifies all fixed options, then takes a program to specify programmable ones.
-    //TODO: pipline abstraction is required to properly support blend-based transparencies, since frag order matters when blending.
+    /// TODO: array uniform methods currently force the use of vectors. should add support for c-style arrays and std::arrays.
     class webgl1es2_shader_program final : public shader_program {
     public:
         /// \brief index, size, type of an active attribute used in the shader program
@@ -44,11 +44,11 @@ namespace gdk {
         using active_uniform_collection_type = std::unordered_map<std::string, active_uniform_info>;
 
         //! type alias used for setting int2 uniform value
-        using integer2_uniform_type = std::array<GLint, 2>;
+        using integer2_uniform_type = graphics_intvector2_type;
         //! type alias used for setting int3 uniform value
-        using integer3_uniform_type = std::array<GLint, 3>;
+        using integer3_uniform_type = graphics_intvector3_type;
         //! type alias used for setting int4 uniform value
-        using integer4_uniform_type = std::array<GLint, 4>;
+        using integer4_uniform_type = graphics_intvector4_type;
 
     public:
         //! returns a nonnull optional to an attribute info if one with the given name exists
@@ -58,26 +58,19 @@ namespace gdk {
         //! assign a float1 uniform from a float
         bool try_set_uniform(const std::string &aName, const GLfloat aValue) const;
         //! assign a float2 uniform from a 2 component vector
-        bool try_set_uniform(const std::string &aName, 
-            const graphics_vector2_type &aValue) const;
+        bool try_set_uniform(const std::string &aName, const graphics_vector2_type &aValue) const;
         //! assign a float3 uniform from a 3 component vector
-        bool try_set_uniform(const std::string &aName, 
-            const graphics_vector3_type &aValue) const;
+        bool try_set_uniform(const std::string &aName, const graphics_vector3_type &aValue) const;
         //! assign a float4 uniform from a 4 component vector
-        bool try_set_uniform(const std::string &aName, 
-            const graphics_vector4_type &aValue) const;
+        bool try_set_uniform(const std::string &aName, const graphics_vector4_type &aValue) const;
         //! assign a float uniform array from an array of floats
-        bool try_set_uniform(const std::string &aName, 
-            const std::vector<GLfloat> &avalue) const;
+        bool try_set_uniform(const std::string &aName, const std::vector<GLfloat> &avalue) const;
         //! assign a float2 uniform array from an array of float2s
-        bool try_set_uniform(const std::string &aName, 
-            const std::vector<graphics_vector2_type> &avalue) const; 
+        bool try_set_uniform(const std::string &aName, const std::vector<graphics_vector2_type> &avalue) const; 
         //! assign a value to a float3 uniform array from a vector of float3s
-        bool try_set_uniform(const std::string &aName, 
-            const std::vector<graphics_vector3_type> &avalue) const;
+        bool try_set_uniform(const std::string &aName, const std::vector<graphics_vector3_type> &avalue) const;
         //! assign a value to a float4 uniform array from a vector of float4s
-        bool try_set_uniform(const std::string &aName, 
-            const std::vector<graphics_vector4_type> &avalue) const; 
+        bool try_set_uniform(const std::string &aName, const std::vector<graphics_vector4_type> &avalue) const; 
 
         //! assign a value to a integer uniform
         bool try_set_uniform(const std::string &aName, const GLint aValue) const;

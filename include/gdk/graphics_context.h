@@ -71,11 +71,6 @@ namespace gdk {
             /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
             [[nodiscard]] virtual model_ptr_type get_cube_model() const = 0;
 
-            //TODO: get_cube and get_quad dont need to rely on impl anymore. move these to statics on model_data
-            /// \brief a 1x1 quad model
-            /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
-            [[nodiscard]] virtual model_ptr_type get_quad_model() const = 0;
-
             /// \brief Basic unlit forward renderer program:
             /// Attributes: 
             /// - vec3 pos

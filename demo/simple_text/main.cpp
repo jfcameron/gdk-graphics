@@ -82,18 +82,22 @@ int main(int argc, char **argv) {
         const auto pTexture = pGraphics->make_texture(view);
 
         const auto pMaterial = pGraphics->make_material(pGraphics->get_alpha_cutoff_shader());
-        pMaterial->setTexture("_Texture", pTexture);
-        pMaterial->setVector2("_UVScale", {4});
-        pMaterial->setVector2("_UVOffset", {0.0, 0});
+        pMaterial->set_texture("_Texture", pTexture);
+        pMaterial->set_vector2("_UVScale", {4});
+        pMaterial->set_vector2("_UVOffset", {0.0, 0});
 
-        const auto pModel = pGraphics->get_quad_model(); //TODO: remove get_quad_model, move it to model_data
+        const auto pModel = [&]() {
+            auto quadData = model_data::make_quad();
+            quadData.transform("a_Position", {-0.5f, -0.5f, 0.f});
+            return pGraphics->make_model(gdk::model::usage_hint::upload_once, quadData);
+        }();
 
         const auto pEntity = pGraphics->make_entity(pModel, pMaterial);
         pEntity->set_transform({0,0,-4},{{0,0,0}},{25});
         pScene->add(pEntity);
 
         update_event.subscribe([pMaterial](float time, float deltaTime){
-            pMaterial->setVector2("_UVOffset", {time * 1.f / 12, time * 1.f / 24});
+            pMaterial->set_vector2("_UVOffset", {time * 1.f / 12, time * 1.f / 24});
         });
     }();
 

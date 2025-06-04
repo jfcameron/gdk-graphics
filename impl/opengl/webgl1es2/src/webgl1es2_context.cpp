@@ -83,11 +83,6 @@ model_ptr_type webgl1es2_context::get_cube_model() const {
         std::shared_ptr<webgl1es2_model>(webgl1es2_model::Cube));
 }
 
-model_ptr_type webgl1es2_context::get_quad_model() const {
-    return std::static_pointer_cast<model>(
-        std::shared_ptr<webgl1es2_model>(webgl1es2_model::Quad));
-}
-
 texture_ptr_type webgl1es2_context::make_texture(const texture_data::view &imageView, const texture::wrap_mode aWrapModeU,
     const texture::wrap_mode aWrapModeV) {
     return texture_ptr_type(new webgl1es2_texture(imageView, aWrapModeU, aWrapModeV));

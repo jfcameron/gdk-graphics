@@ -10,6 +10,29 @@
 
 using namespace gdk;
 
+model_data model_data::make_quad() {
+    return {{ 
+        { "a_Position", { {
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+
+            1.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+        }, 3 } },
+        { "a_UV", { {
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+        }, 2 } }
+    }};
+}
+
 static constexpr auto COMPONENTS_PER_2D_ATTRIBUTE(2);
 static constexpr auto COMPONENTS_PER_3D_ATTRIBUTE(3);
 

@@ -201,9 +201,9 @@ int main(int argc, char **argv) {
 
     const auto pMaterial = [&]() {
         auto p(pGraphics->make_material(pShader, material::render_mode::opaque));
-        p->setTexture("_Texture", pTexture);
-        p->setVector2("_UVScale", {1, 1});
-        p->setVector2("_UVOffset", {0, 0});
+        p->set_texture("_Texture", pTexture);
+        p->set_vector2("_UVScale", {1, 1});
+        p->set_vector2("_UVOffset", {0, 0});
         return p;
     }();
 

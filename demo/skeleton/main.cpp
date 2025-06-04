@@ -57,9 +57,9 @@ int main(int argc, char **argv)
     auto pTexture = pContext->make_texture(view);
     
     auto pMaterial = pContext->make_material(pAlpha);
-    pMaterial->setTexture("_Texture", pTexture);
-    pMaterial->setVector2("_UVScale", {1, 1});
-    pMaterial->setVector2("_UVOffset", {0, 0});
+    pMaterial->set_texture("_Texture", pTexture);
+    pMaterial->set_vector2("_UVScale", {1, 1});
+    pMaterial->set_vector2("_UVOffset", {0, 0});
 
     skeleton characterSkeleton({
         bone_data("head", 

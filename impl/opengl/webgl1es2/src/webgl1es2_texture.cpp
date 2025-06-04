@@ -21,9 +21,9 @@ static constexpr char TAG[] = "texture";
 static inline webgl1es2_texture::format textureFormatToWebGL1ES2TextureFormat(const texture::format a) {
     switch(a) {
         case texture::format::grey: return webgl1es2_texture::format::alpha;
+        case texture::format::rg: return webgl1es2_texture::format::luminance_alpha;
         case texture::format::rgb: return webgl1es2_texture::format::rgb;
         case texture::format::rgba: return webgl1es2_texture::format::rgba;
-        default: break;
     }
     throw graphics_exception("unhandled format type");
 }
@@ -39,10 +39,10 @@ static inline GLint webGL1ES2TextureFormatToToGLint(const webgl1es2_texture::for
 #endif
             return GL_DEPTH_COMPONENT;
         }
+        case webgl1es2_texture::format::alpha: return GL_ALPHA;
+        case webgl1es2_texture::format::luminance_alpha: return GL_LUMINANCE_ALPHA;
         case webgl1es2_texture::format::rgb: return GL_RGB;
         case webgl1es2_texture::format::rgba: return GL_RGBA;
-        case webgl1es2_texture::format::alpha: return GL_ALPHA;
-        default: break;
     }
     throw graphics_exception("unhandled format type");
 }
@@ -55,7 +55,6 @@ static inline GLint minification_filter_to_glint(const webgl1es2_texture::minifi
         case webgl1es2_texture::minification_filter::linear_mipmap_nearest: return GL_LINEAR_MIPMAP_NEAREST;
         case webgl1es2_texture::minification_filter::nearest_mipmap_linear: return GL_NEAREST_MIPMAP_LINEAR;
         case webgl1es2_texture::minification_filter::linear_mipmap_linear: return GL_LINEAR_MIPMAP_LINEAR;
-        default: break;
     }
     throw graphics_exception("unhandled minification filter");
 }
@@ -64,7 +63,6 @@ static inline GLint magnification_filter_to_glint(const webgl1es2_texture::magni
     switch(a) {
         case webgl1es2_texture::magnification_filter::linear: return GL_LINEAR;
         case webgl1es2_texture::magnification_filter::nearest: return GL_NEAREST;
-        default: break;
     }
     throw graphics_exception("unhandled magnification filter");
 }
@@ -74,7 +72,6 @@ static inline GLint wrap_mode_to_glint(const texture::wrap_mode a) {
         case texture::wrap_mode::clamped: return GL_CLAMP_TO_EDGE;
         case texture::wrap_mode::repeat: return GL_REPEAT;
         case texture::wrap_mode::mirrored: return GL_MIRRORED_REPEAT;
-        default: break;
     }
     throw graphics_exception("unhandled wrap mode");
 }

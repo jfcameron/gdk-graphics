@@ -18,17 +18,19 @@ namespace gdk {
     /// \name external interface
     ///@{
     //
-        virtual void setTexture(const std::string& aName, const texture_ptr_type aTexture) override;
+        virtual void set_texture(const std::string_view aName, const texture_ptr_type aTexture) override;
         
-        virtual void setFloat(const std::string& aName, float aValue) override;
-        virtual void setVector2(const std::string& aName, graphics_vector2_type aValue) override;
-        virtual void setvector3(const std::string &aName, graphics_vector3_type aValue) override;
-        virtual void setvector4(const std::string &aName, graphics_vector4_type aValue) override;
+        virtual void set_float(const std::string_view aName, float aValue) override;
+        virtual void set_vector2(const std::string_view aName, graphics_vector2_type aValue) override;
+        virtual void set_vector3(const std::string_view aName, graphics_vector3_type aValue) override;
+        virtual void set_vector4(const std::string_view aName, graphics_vector4_type aValue) override;
 
-        virtual void setInteger(const std::string& aName, int aValue) override;
-        virtual void setInteger2(const std::string& aName, int aValue1, int aValue2) override;
-        virtual void setInteger3(const std::string& aName, int aValue1, int aValue2, int aValue3) override;
-        virtual void setInteger4(const std::string& aName, int aValue1, int aValue2, int aValue3, int aValue4) override;
+        virtual void set_integer(const std::string_view aName, int aValue) override;
+        virtual void set_integer2(const std::string_view aName, int aValue1, int aValue2) override;
+        virtual void set_integer3(const std::string_view aName, int aValue1, int aValue2, int aValue3) override;
+        virtual void set_integer4(const std::string_view aName, int aValue1, int aValue2, int aValue3, int aValue4) override;
+
+        virtual void set_int_vector2_array(const std::string_view aName, const std::vector<graphics_intvector2_type> &aValue) override;
     ///@}
         
         //! shaders can be shared among many webgl1es2_materials
@@ -103,13 +105,15 @@ namespace gdk {
         std::unordered_map<std::string, int> m_Integers;
         
         //! integer data provided to the shader stages
-        std::unordered_map<std::string, std::array<int, 2>> m_Integer2s;
+        std::unordered_map<std::string, graphics_intvector2_type> m_Integer2s;
 
         //! integer data provided to the shader stages
-        std::unordered_map<std::string, std::array<int, 3>> m_Integer3s;
+        std::unordered_map<std::string, graphics_intvector3_type> m_Integer3s;
         
         //! integer data provided to the shader stages
-        std::unordered_map<std::string, std::array<int, 4>> m_Integer4s;
+        std::unordered_map<std::string, graphics_intvector4_type> m_Integer4s;
+
+        std::unordered_map<std::string, std::vector<graphics_intvector2_type>> m_IntVector2Arrays;
     };
 }
 

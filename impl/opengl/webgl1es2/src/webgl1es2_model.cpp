@@ -13,179 +13,140 @@ using namespace gdk;
 
 static constexpr auto TAG("webgl1es2_model");
 
-const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
-    return new gdk::webgl1es2_model(model::usage_hint::upload_once, {{ 
-        { "a_Position", { {
-            1.0f, 1.0f, 0.0f, 
-            0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-
-            1.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f,
-            1.0f, 0.0f, 0.0f,
-        }, 3 } },
-        { "a_UV", { {
-            1.0f, 0.0f,
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-        }, 2 } }
-    }});
-});
-
 const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
-    float size(1.f);
-    float hsize(size/2.f);
+    model_data data = {{
+        { "a_Position", {{
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 0.0f, 0.0f, 
+            0.0f, 1.0f, 0.0f, 
+            1.0f, 1.0f, 0.0f, 
+            1.0f, 0.0f, 0.0f, 
+            0.0f, 0.0f, 0.0f, 
 
-    std::vector<webgl1es2_model::attribute_component_data_type> pos({
-        //        x,           y,      z,
-        size -hsize, size -hsize, -hsize, // 2--0
-        0.0f -hsize, 0.0f -hsize, -hsize, // | /
-        0.0f -hsize, size -hsize, -hsize, // 1
-        size -hsize, size -hsize, -hsize, //    0
-        size -hsize, 0.0f -hsize, -hsize, //  / |
-        0.0f -hsize, 0.0f -hsize, -hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, size -hsize,  hsize, // 1--0
-        0.0f -hsize, size -hsize,  hsize, // | /
-        0.0f -hsize, 0.0f -hsize,  hsize, // 2
-        size -hsize, size -hsize,  hsize, //    0
-        0.0f -hsize, 0.0f -hsize,  hsize, //  / |
-        size -hsize, 0.0f -hsize,  hsize, // 1--2 
-        //        x,           y       z,
-        0.0f -hsize, size -hsize,  hsize, // 2--0
-        0.0f -hsize, size -hsize, -hsize, // | /
-        0.0f -hsize, 0.0f -hsize, -hsize, // 1
-        0.0f -hsize, size -hsize,  hsize, //    0
-        0.0f -hsize, 0.0f -hsize, -hsize, //  / |
-        0.0f -hsize, 0.0f -hsize,  hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, size -hsize,  hsize, // 2--0
-        size -hsize, 0.0f -hsize, -hsize, // | /
-        size -hsize, size -hsize, -hsize, // 1
-        size -hsize, size -hsize,  hsize, //    0
-        size -hsize, 0.0f -hsize,  hsize, //  / |
-        size -hsize, 0.0f -hsize, -hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, 0.0f -hsize, -hsize, // 2--0
-        0.0f -hsize, 0.0f -hsize,  hsize, // | /
-        0.0f -hsize, 0.0f -hsize, -hsize, // 1
-        size -hsize, 0.0f -hsize, -hsize, //    0
-        size -hsize, 0.0f -hsize,  hsize, //  / |
-        0.0f -hsize, 0.0f -hsize,  hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, 1.0f -hsize, -hsize, // 1--0
-        0.0f -hsize, 1.0f -hsize, -hsize, // | /
-        0.0f -hsize, 1.0f -hsize,  hsize, // 2
-        size -hsize, 1.0f -hsize, -hsize, //    0
-        0.0f -hsize, 1.0f -hsize,  hsize, //  / |
-        size -hsize, 1.0f -hsize,  hsize, // 1--2             
-    });
+            1.0f, 1.0f, 1.0f, 
+            0.0f, 1.0f, 1.0f, 
+            0.0f, 0.0f, 1.0f, 
+            1.0f, 1.0f, 1.0f, 
+            0.0f, 0.0f, 1.0f, 
+            1.0f, 0.0f, 1.0f, 
 
-    std::vector<webgl1es2_model::attribute_component_data_type> uv({
-        //u,   v,
-        0.0, 0.0, // 2--0
-        1.0, 1.0, // | /
-        1.0, 0.0, // 1
-        0.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 2--1 
-        //u,   v,
-        1.0, 0.0, // 1--0
-        0.0, 0.0, // | /
-        0.0, 1.0, // 2
-        1.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 1--2 
-        //u,   v,
-        1.0, 0.0, // 2--0
-        0.0, 0.0, // | /
-        0.0, 1.0, // 1
-        1.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 2--1 
-        //u,   v,
-        0.0, 0.0, // 2--0
-        1.0, 1.0, // | /
-        1.0, 0.0, // 1
-        0.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 2--1 
-        //u,   v,
-        1.0, 0.0, // 2--0
-        0.0, 1.0, // | /
-        0.0, 0.0, // 1
-        1.0, 0.0, //    0
-        1.0, 1.0, //  / |
-        0.0, 1.0, // 2--1 
-        //u,   v,
-        1.0, 0.0, // 1--0
-        0.0, 0.0, // | /
-        0.0, 1.0, // 2
-        1.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 1--2             
-    });
-    
-    std::vector<webgl1es2_model::attribute_component_data_type> normal({
-        //Nx,   Ny,   Nz, North
-        +0.0, +0.0, -1.0, // 2--0
-        +0.0, +0.0, -1.0, // | /
-        +0.0, +0.0, -1.0, // 1
-        +0.0, +0.0, -1.0, //    0
-        +0.0, +0.0, -1.0, //  / |
-        +0.0, +0.0, -1.0, // 2--1 
-        //Nx,   Ny,   Nz, South
-        +0.0, +0.0, +1.0, // 1--0
-        +0.0, +0.0, +1.0, // | /
-        +0.0, +0.0, +1.0, // 2
-        +0.0, +0.0, +1.0, //    0
-        +0.0, +0.0, +1.0, //  / |
-        +0.0, +0.0, +1.0, // 1--2 
-        //Nx,   Ny,   Nz, West
-        -1.0, +0.0, +0.0, // 2--0
-        -1.0, +0.0, +0.0, // | /
-        -1.0, +0.0, +0.0, // 1
-        -1.0, +0.0, +0.0, //    0
-        -1.0, +0.0, +0.0, //  / |
-        -1.0, +0.0, +0.0, // 2--1 
-        //Nx,   Ny,   Nz, East
-        +1.0, +0.0, +0.0, // 2--0
-        +1.0, +0.0, +0.0, // | /
-        +1.0, +0.0, +0.0, // 1
-        +1.0, +0.0, +0.0, //    0
-        +1.0, +0.0, +0.0, //  / |
-        +1.0, +0.0, +0.0, // 2--1 
-        //Nx,  Ny,    Nz, Down
-        +0.0, -1.0, +0.0, // 2--0
-        +0.0, -1.0, +0.0, // | /
-        +0.0, -1.0, +0.0, // 1
-        +0.0, -1.0, +0.0, //    0
-        +0.0, -1.0, +0.0, //  / |
-        +0.0, -1.0, +0.0, // 2--1 
-        //Nx,   Ny,   Nz, Up
-        +0.0, +1.0, +0.0, // 1--0
-        +0.0, +1.0, +0.0, // | /
-        +0.0, +1.0, +0.0, // 2
-        +0.0, +1.0, +0.0, //    0
-        +0.0, +1.0, +0.0, //  / |
-        +0.0, +1.0, +0.0, // 1--2             
-    });
-    
-    return new gdk::webgl1es2_model(model::usage_hint::upload_once, {{
-        { "a_Position", { {
-            pos,
-        }, 3 } },
-        { "a_UV", { {
-            uv,
-        }, 2 } },
-        { "a_Normal", { {
-            normal,
-        }, 3 } }
-    }});
+            0.0f, 1.0f, 1.0f, 
+            0.0f, 1.0f, 0.0f, 
+            0.0f, 0.0f, 0.0f, 
+            0.0f, 1.0f, 1.0f, 
+            0.0f, 0.0f, 0.0f, 
+            0.0f, 0.0f, 1.0f, 
+
+            1.0f, 1.0f, 1.0f, 
+            1.0f, 0.0f, 0.0f, 
+            1.0f, 1.0f, 0.0f, 
+            1.0f, 1.0f, 1.0f, 
+            1.0f, 0.0f, 1.0f, 
+            1.0f, 0.0f, 0.0f, 
+
+            1.0f, 0.0f, 0.0f, 
+            0.0f, 0.0f, 1.0f, 
+            0.0f, 0.0f, 0.0f, 
+            1.0f, 0.0f, 0.0f, 
+            1.0f, 0.0f, 1.0f, 
+            0.0f, 0.0f, 1.0f, 
+
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 1.0f, 
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 1.0f, 
+            1.0f, 1.0f, 1.0f, 
+        }, 3 }},
+        { "a_UV", {{
+            0.0, 0.0, 
+            1.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+            
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+           
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+          
+            0.0, 0.0, 
+            1.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+         
+            1.0, 0.0, 
+            0.0, 1.0, 
+            0.0, 0.0, 
+            1.0, 0.0, 
+            1.0, 1.0, 
+            0.0, 1.0, 
+        
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+        }, 2 }},
+        { "a_Normal", {{
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+        }, 3 }}
+    }};
+    data.transform("a_Position", {-0.5f,-0.5f,-0.5f});
+    return new gdk::webgl1es2_model(model::usage_hint::upload_once, data);
 });
 
 static inline GLenum dataUsageToGLenum(const model::usage_hint aUsageHint) {
@@ -193,7 +154,6 @@ static inline GLenum dataUsageToGLenum(const model::usage_hint aUsageHint) {
         case model::usage_hint::dynamic: return GL_DYNAMIC_DRAW;
         case model::usage_hint::streaming: return GL_STREAM_DRAW;
         case model::usage_hint::upload_once: return GL_STATIC_DRAW;
-        default: break;
     }
     throw graphics_exception("unhandled usage hint type");
 }
@@ -201,7 +161,6 @@ static inline GLenum dataUsageToGLenum(const model::usage_hint aUsageHint) {
 static inline GLenum vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(const model_data::primitive_mode aPrimitiveMode) {
     switch (aPrimitiveMode) {
         case model_data::primitive_mode::triangles: return GL_TRIANGLES;
-        default: break;
     }
     throw graphics_exception("unhandled model_data::PrimitiveMode");
 }

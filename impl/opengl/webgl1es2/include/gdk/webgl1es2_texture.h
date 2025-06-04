@@ -73,10 +73,11 @@ namespace gdk {
         };
 
         enum class format {
-            rgba,
-            rgb,
             alpha,
-            depth
+            depth,
+            luminance_alpha,
+            rgb,
+            rgba,
         };
     
     public:

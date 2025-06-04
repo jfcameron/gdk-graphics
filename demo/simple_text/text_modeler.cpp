@@ -61,9 +61,9 @@ text_modeler::text_modeler(gdk::context_ptr_type pContext, gdk::material_ptr_typ
 : m_BatchModeler(pContext, aMaterial ? aMaterial : [&]() {
     auto pTexture = pContext->make_texture(texture_data::make_from_png(GLYPH_PNG_DATA).first);
     auto pMaterial(pContext->make_material(pContext->get_alpha_cutoff_shader(), material::render_mode::opaque));
-    pMaterial->setTexture("_Texture", pTexture);
-    pMaterial->setVector2("_UVScale", {1, 1});
-    pMaterial->setVector2("_UVOffset", {0, 0});
+    pMaterial->set_texture("_Texture", pTexture);
+    pMaterial->set_vector2("_UVScale", {1, 1});
+    pMaterial->set_vector2("_UVOffset", {0, 0});
     return pMaterial;
 }()) {}
 
@@ -151,34 +151,22 @@ void text_modeler::set_text(const std::string &string) {
             float uvMarginHigh = 1 - uvMarginLow;
 
             gdk::model_data data({
-                { 
-                    "a_Position",
-                    {
-                        {
-                            1.0f, 1.0f, 0.0f,
-                            0.0f, 1.0f, 0.0f,
-                            0.0f, 0.0f, 0.0f,
-                            1.0f, 1.0f, 0.0f,
-                            0.0f, 0.0f, 0.0f,
-                            1.0f, 0.0f, 0.0f,
-                        },
-                        3
-                    }
-                },
-                { 
-                    "a_UV",
-                    {
-                        {
-                            uvMarginHigh, uvMarginLow, 
-                            uvMarginLow,  uvMarginLow,
-                            uvMarginLow,  uvMarginHigh, 
-                            uvMarginHigh, uvMarginLow,
-                            uvMarginLow,  uvMarginHigh,
-                            uvMarginHigh, uvMarginHigh,
-                        },
-                        2
-                    }
-                }
+                { "a_Position", {{
+                    1.0f, 1.0f, 0.0f,
+                    0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f,
+                    1.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f,
+                    1.0f, 0.0f, 0.0f,
+                }, 3 }},
+                { "a_UV", {{
+                    uvMarginHigh, uvMarginLow, 
+                    uvMarginLow,  uvMarginLow,
+                    uvMarginLow,  uvMarginHigh, 
+                    uvMarginHigh, uvMarginLow,
+                    uvMarginLow,  uvMarginHigh,
+                    uvMarginHigh, uvMarginHigh,
+                }, 2 }}
             });
         
             data.transform("a_Position", {x * 1.1f, -y * 1.1f, z});

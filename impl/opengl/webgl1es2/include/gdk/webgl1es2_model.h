@@ -53,9 +53,6 @@ namespace gdk {
       
         webgl1es2_model(const usage_hint &aUsage, const model_data &aData);
         
-        //! a quad with format pos3uv2
-        static const jfc::lazy_ptr<gdk::webgl1es2_model> Quad;
-        
         //! a cube with format pos3uv2norm3
         static const jfc::lazy_ptr<gdk::webgl1es2_model> Cube; 
 

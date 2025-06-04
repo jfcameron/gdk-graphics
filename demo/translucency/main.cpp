@@ -24,40 +24,6 @@
 
 using namespace gdk;
 
-model_data make_quad() {
-    const model_data quadData({
-        { 
-            "a_Position",
-            {
-                {
-                    1.0f, 1.0f, 0.0f,
-                    0.0f, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f,
-                    1.0f, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f,
-                    1.0f, 0.0f, 0.0f,
-                },
-                3
-            }
-        },
-        { 
-            "a_UV",
-            {
-                {
-                    1, 0,
-                    0, 0,
-                    0, 1,
-                    1, 0,
-                    0, 1,
-                    1, 1,
-                },
-                2
-            }
-        }
-    });
-    return quadData;
-}
-
 int main(int argc, char **argv) {
     glfw_window window("per entity and per triangle translucency");
 
@@ -81,7 +47,7 @@ int main(int argc, char **argv) {
 
     auto pCamera = [&]() {
         auto p(pContext->make_camera());
-        p->set_clear_color(color::dark_green);
+        p->set_clear_color(color::cornflower_blue);
         pScene->add(p);
         return p;
     }();
@@ -111,20 +77,8 @@ int main(int argc, char **argv) {
         });
 
         const model_data userdefined_quad_model_data({
-            { 
-                "a_Position",
-                {
-                    posData,
-                    3
-                }
-            },
-            { 
-                "a_UV",
-                {
-                    uvData,
-                    2
-                }
-            }
+            {"a_Position", { posData, 3 }},
+            {"a_UV", { uvData, 2 }}
         });
 
         return pContext->make_model(model::usage_hint::upload_once, 
@@ -148,9 +102,9 @@ int main(int argc, char **argv) {
 
     auto pMaterial = [&]() {
         auto pMaterial = pContext->make_material(pAlpha, material::render_mode::transparent);
-        pMaterial->setTexture("_Texture", pTextureCamera->get_color_texture());
-        pMaterial->setVector2("_UVScale", {1, 1});
-        pMaterial->setVector2("_UVOffset", {0, 0});
+        pMaterial->set_texture("_Texture", pTextureCamera->get_color_texture());
+        pMaterial->set_vector2("_UVScale", {1, 1});
+        pMaterial->set_vector2("_UVOffset", {0, 0});
         return pMaterial;
     }();
 
@@ -178,10 +132,12 @@ int main(int argc, char **argv) {
         }();
 
         auto pMaterial = [&]() {
-            auto p = pContext->make_material(pAlpha, material::render_mode::transparent);
-            p->setTexture("_Texture", pTexture);
-            p->setVector2("_UVScale", {1, 1});
-            p->setVector2("_UVOffset", {0, 0});
+            auto p = pContext->make_material(pAlpha, 
+                material::render_mode::transparent, 
+                material::face_culling_mode::back);
+            p->set_texture("_Texture", pTexture);
+            p->set_vector2("_UVScale", {1, 1});
+            p->set_vector2("_UVOffset", {0, 0});
             return p;
         }();
 
@@ -194,9 +150,9 @@ int main(int argc, char **argv) {
     auto pEntity3 = [&]() {    
         auto pMaterial = [&]() {
             auto pMaterial = pContext->make_material(pAlpha);
-            pMaterial->setTexture("_Texture", pTexture);
-            pMaterial->setVector2("_UVScale", {1, 1});
-            pMaterial->setVector2("_UVOffset", {0, 0});
+            pMaterial->set_texture("_Texture", pTexture);
+            pMaterial->set_vector2("_UVScale", {1, 1});
+            pMaterial->set_vector2("_UVOffset", {0, 0});
             return pMaterial;
         }();
 
@@ -222,21 +178,20 @@ int main(int argc, char **argv) {
         pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
         pTextureCamera->set_transform({std::sinf(time), 0, -10}, {});
 
-        model_data newData = make_quad();
+        model_data newData = model_data::make_quad();
         newData.transform("a_Position", 
             {0.5,0,(float)sin(time)*0.5f}, {{0,0,0}}, {0.5});
 
         batchModelVertexData.clear();
-        auto quad = make_quad();
+        auto quad = model_data::make_quad();
         batchModelVertexData.push_back(quad);
 
-        graphics_matrix4x4_type quadMat; {
-            graphics_vector3_type tran(std::cos(time*0.25)*0.5,0.0,0); quadMat.set_translation({tran});
-            graphics_vector3_type rot(time,0,0); 
-            graphics_vector3_type sca(0.5);
-            quadMat.set_rotation({rot}, sca);
-            quad.transform("a_Position", quadMat);
-        }
+        graphics_matrix4x4_type quadMat;
+        graphics_vector3_type tran(std::cos(time*0.25)*0.5,0.0,0); quadMat.set_translation({tran});
+        graphics_vector3_type rot(time,0,0); 
+        graphics_vector3_type sca(0.5);
+        quadMat.set_rotation({rot}, sca);
+        quad.transform("a_Position", quadMat);
 
         quad.transform("a_UV", {0.2f, 0}, 0, {2.f, 2.f});
         batchModelVertexData.push_back(quad);

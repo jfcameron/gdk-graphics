@@ -103,7 +103,7 @@ static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_s
         // aIndexOffset2d: nudge where the sampling takes place. initially set to 0,0 but if you see color issues at
         // the edges between voxels, playing with this will help to hide them
         // 
-        lowp vec3 gdk_texture3D(sampler2D aSampler2D, float aVolumetricDataLength, vec2 aIndexOffset2d, ivec3 aIndex3d) {
+        lowp vec4 gdk_texture3D(sampler2D aSampler2D, float aVolumetricDataLength, vec2 aIndexOffset2d, ivec3 aIndex3d) {
             highp float oneDimensionIndex = float(aIndex3d.x) +
                 (float(aIndex3d.y) * aVolumetricDataLength) +
                 (float(aIndex3d.z) * aVolumetricDataLength * aVolumetricDataLength);
@@ -114,7 +114,7 @@ static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_s
                 (mod(oneDimensionIndex, size2D) + aIndexOffset2d.x) / size2D,
                 (floor(oneDimensionIndex / size2D) + aIndexOffset2d.y) / size2D
             );
-            return texture2D(aSampler2D, normalizedLightVoxelCoordinates).xyz;
+            return texture2D(aSampler2D, normalizedLightVoxelCoordinates);
         }
     )V0G0N");
 
@@ -317,30 +317,30 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const g
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLfloat> &avalue) const {
-    if (!avalue.size()) return false;
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<GLfloat> &aValue) const {
+    if (!aValue.size()) return false;
 
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        glUniform1fv(search->second.location, avalue.size(), &avalue[0]);
+        glUniform1fv(search->second.location, aValue.size(), &aValue[0]);
         return true;
     }
 
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector2_type> &avalue) const {
-    if (!avalue.size()) return false;
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector2_type> &aValue) const {
+    if (!aValue.size()) return false;
     
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<graphics_vector2_type::component_type> data;
-        data.reserve(avalue.size() * 2);
+        data.reserve(aValue.size() * 2);
 
-        for (const auto &vec : avalue) {
+        for (const auto &vec : aValue) {
             data.push_back(vec.x);
             data.push_back(vec.y);
         }
 
-        glUniform2fv(search->second.location, avalue.size(), &data[0]);
+        glUniform2fv(search->second.location, aValue.size(), &data[0]);
 
         return true;
     }
@@ -348,21 +348,21 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 } 
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector3_type> &avalue) const {
-    if (!avalue.size()) return false;
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector3_type> &aValue) const {
+    if (!aValue.size()) return false;
     
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<graphics_vector3_type::component_type> data;
 
-        data.reserve(avalue.size() * 3);
+        data.reserve(aValue.size() * 3);
 
-        for (const auto &vec : avalue) {
+        for (const auto &vec : aValue) {
             data.push_back(vec.x);
             data.push_back(vec.y);
             data.push_back(vec.z);
         }
 
-        glUniform3fv(search->second.location, avalue.size(), &data[0]);
+        glUniform3fv(search->second.location, aValue.size(), &data[0]);
 
         return true;
     }
@@ -370,21 +370,21 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     return false;
 }
 
-bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector4_type> &avalue) const {
-    if (!avalue.size()) return false;
+bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const std::vector<graphics_vector4_type> &aValue) const {
+    if (!aValue.size()) return false;
 
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         std::vector<graphics_vector4_type::component_type> data;
-        data.reserve(avalue.size() * 4);
+        data.reserve(aValue.size() * 4);
 
-        for (const auto &vec : avalue) {
+        for (const auto &vec : aValue) {
             data.push_back(vec.x);
             data.push_back(vec.y);
             data.push_back(vec.z);
             data.push_back(vec.w);
         }
 
-        glUniform4fv(search->second.location, avalue.size(), &data[0]);
+        glUniform4fv(search->second.location, aValue.size(), &data[0]);
 
         return true;
     }
@@ -403,7 +403,7 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const G
 
 bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer2_uniform_type &a) const {
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        glUniform2i(search->second.location, a[0], a[1]);
+        glUniform2i(search->second.location, a.x, a.y);
         return true;
     }
 
@@ -412,7 +412,7 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const in
 
 bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer3_uniform_type &a) const {
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        glUniform3i(search->second.location, a[0], a[1], a[2]);
+        glUniform3i(search->second.location, a.x, a.y, a.z);
         return true;
     }
 
@@ -421,7 +421,7 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const in
 
 bool webgl1es2_shader_program::try_set_uniform(const std::string aName, const integer4_uniform_type &a) const {
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        glUniform4i(search->second.location, a[0], a[1], a[2], a[3]);
+        glUniform4i(search->second.location, a.x, a.y, a.z, a.w);
         return true;
     }
 
@@ -443,12 +443,12 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     if (!aValue.size()) return false;
 
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        std::vector<integer2_uniform_type::value_type> data;
+        std::vector<integer2_uniform_type::component_type> data;
         data.reserve(aValue.size() * 2);
 
         for (const auto &vec : aValue) {
-            data.push_back(vec[0]);
-            data.push_back(vec[1]);
+            data.push_back(vec.x);
+            data.push_back(vec.y);
         }
 
         glUniform2iv(search->second.location, aValue.size(), &data[0]);
@@ -463,13 +463,13 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     if (!aValue.size()) return false;
 
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        std::vector<integer3_uniform_type::value_type> data;
+        std::vector<integer3_uniform_type::component_type> data;
         data.reserve(aValue.size() * 3);
 
         for (const auto &vec : aValue) {
-            data.push_back(vec[0]);
-            data.push_back(vec[1]);
-            data.push_back(vec[2]);
+            data.push_back(vec.x);
+            data.push_back(vec.y);
+            data.push_back(vec.z);
         }
 
         glUniform3iv(search->second.location, aValue.size(), &data[0]);
@@ -484,14 +484,14 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
     if (!aValue.size()) return false;
 
     if (const auto &search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
-        std::vector<integer4_uniform_type::value_type> data;
+        std::vector<integer4_uniform_type::component_type> data;
         data.reserve(aValue.size() * 4);
 
         for (const auto &vec : aValue) {
-            data.push_back(vec[0]);
-            data.push_back(vec[1]);
-            data.push_back(vec[2]);
-            data.push_back(vec[3]);
+            data.push_back(vec.x);
+            data.push_back(vec.y);
+            data.push_back(vec.z);
+            data.push_back(vec.w);
         }
 
         glUniform3iv(search->second.location, aValue.size(), &data[0]);
