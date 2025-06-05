@@ -35,7 +35,7 @@ using namespace jfc;
 using namespace gdk;
 using namespace gdk::ext::volume;
 
-static const std::vector<texture_data::encoded_byte> PNG{ 
+static const std::vector<texture_data::encoded_byte> PNG { 
 	0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
 	0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x20,
 	0x08, 0x06, 0x00, 0x00, 0x00, 0x73, 0x7a, 0x7a, 0xf4, 0x00, 0x00, 0x00,
@@ -317,9 +317,9 @@ public:
     }
 };
 
-volumetric_block_data<64> blockData;
-volumetric_lighting<64> staticLights;
-volumetric_lighting<64> lighting;
+volumetric_block_data<16> blockData;
+volumetric_lighting<16> staticLights;
+volumetric_lighting<16> lighting;
 
 std::array<texture_data::channel_type, 64 * 64> blockTypeToUVTextureMapData = []() {
     std::array<texture_data::channel_type, 64 * 64> blockTypeToUVTextureMapData;
@@ -523,7 +523,7 @@ int main(int argc, char **argv) {
         );
         pMaterial->set_float("_BlockTypeToUVMappingTextureSize", 64.);
         pMaterial->set_float("_NormalizedTileSize", 0.5);
-        pMaterial->set_float("_VolumetricTextureSize", 64.);
+        pMaterial->set_float("_VolumetricTextureSize", 16.);
         pMaterial->set_texture("_BlockTypeToUVMappingTexture", pBlockTypeToUVTextureMap);
         pMaterial->set_texture("_BlockTypeVolumetricTexture", pBlockTypeVolumeTexture);
         pMaterial->set_texture("_LightingVolumetricTexture", pLightingTexture);
@@ -826,7 +826,7 @@ int main(int argc, char **argv) {
         }, 1 } },
     }};
 
-    auto blockModelData = gdk::ext::volume::make_per_voxel_model_data<blockType, blockType::air, 64, 64, 64>(&blockData.at(0,0,0), [&](
+    auto blockModelData = gdk::ext::volume::make_per_voxel_model_data<blockType, blockType::air, 16, 16, 16>(&blockData.at(0,0,0), [&](
         const size_t x, const size_t y, const size_t z, const blockType &c, const blockType &n, const blockType &s, const blockType &e, 
         const blockType &w, const blockType &u, const blockType &d) {
         model_data currentVoxelModelData;
@@ -840,7 +840,7 @@ int main(int argc, char **argv) {
         return currentVoxelModelData;
     });
 
-    auto blockModelDataOptimized = gdk::ext::volume::make_optimized_block_model_data<blockType, blockType::air, 64, 64, 64>(&blockData.at(0,0,0), 
+    auto blockModelDataOptimized = gdk::ext::volume::make_optimized_block_model_data<blockType, blockType::air, 16, 16, 16>(&blockData.at(0,0,0), 
         [&](float x, float y, float z, float w, float h) {
             gdk::model_data face = NORTH_FACE;
             face.transform("a_Position", {x, y, z}, {}, {static_cast<graphics_floating_point_type>(w), static_cast<graphics_floating_point_type>(h), 1.0f});
