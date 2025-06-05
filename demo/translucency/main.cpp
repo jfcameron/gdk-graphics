@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
         pEntity2->set_transform( {2., std::sin(time) * 2.f, -12.5}, {{time *0.9f, time *0.5f, 0}}, {1.0, 1.0, 1});
         
         pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pTextureCamera->set_transform({std::sinf(time), 0, -10}, {});
+        pTextureCamera->set_transform({std::sin(time), 0, -10}, {});
 
         model_data newData = model_data::make_quad();
         newData.transform("a_Position", 
