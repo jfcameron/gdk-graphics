@@ -1,4 +1,4 @@
-# © 2018 Joseph Cameron - All Rights Reserved
+# © Joseph Cameron - All Rights Reserved
 
 # generates the source file for the [header-only] projects in stb. Adds only the *IMPLEMENTATION defines and copies only the headers 
 # for the specific stb projects named in ARGV.
