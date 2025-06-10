@@ -834,7 +834,7 @@ int main(int argc, char **argv) {
         if (w == blockType::air) currentVoxelModelData += WEST_FACE;
         if (u == blockType::air) currentVoxelModelData += TOP_FACE;
         if (d == blockType::air) currentVoxelModelData += BOTTOM_FACE;
-        currentVoxelModelData.transform("a_Position", {x, y, z});
+        currentVoxelModelData.transform("a_Position", {static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)});
         return currentVoxelModelData;
     });
 
@@ -902,10 +902,10 @@ int main(int argc, char **argv) {
         glfw_window::poll_events();
 
         lighting = staticLights;
-        lighting.add_point_light({8, 1, 8}, std::abs(std::sin(time)) * 10, {1.0, 1.0, 1.0});
+        lighting.add_point_light({8, 1, 8}, std::abs(std::sin(time)) * 10., {1.0, 1.0, 1.0});
         static int x = 8;
         static int z = 8;
-        lighting.add_point_light({std::sin(time) * 8 + x, -2, std::cos(time) * 8 + z}, 10, {1.0, 1.0, 1.0});
+        lighting.add_point_light({static_cast<int>(std::sin(time) * 8 + x), -2, static_cast<int>(std::cos(time) * 8 + z)}, 10., {1.0, 1.0, 1.0});
         
         auto [lightingVolumeTextureView, _] = lighting.to_texture_data();
         pLightingTexture->update_data(lightingVolumeTextureView);
