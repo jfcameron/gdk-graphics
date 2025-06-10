@@ -39,15 +39,12 @@ jfc_project(library
     LIBRARIES
         ${gdkmath_LIBRARIES}
         ${stb_LIBRARIES}
-
-        # this is here because of the demos, it is not required by the graphics project itself.
-        # it would be cleaner to move the demos into a separate repo
-        ${simpleglfw_LIBRARIES} 
+        ${simpleglfw_LIBRARIES} # Required by provided webgl/gles2 implementation
 
     DEPENDENCIES
         "stb"
         "gdkmath"
-        "simpleglfw" # ^
+        "simpleglfw" # Required by provided webgl/gles2 implementation
 
     SOURCE_LIST
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
