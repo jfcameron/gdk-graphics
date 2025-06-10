@@ -3,12 +3,12 @@
 #include "text_modeler.h"
 
 #include <gdk/game_loop.h>
+#include <gdk/glfw_window.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
 
-#include <jfc/glfw_window.h>
 #include <jfc/to_array.h>
 #include <jfc/event.h>
 
@@ -29,7 +29,7 @@
 using namespace gdk;
 
 int main(int argc, char **argv) {
-    glfw_window window("basic rendering demo");
+    const auto pWindow = glfw_window::make("basic rendering demo");
 
     jfc::event<float, float> update_event;
 
@@ -40,8 +40,8 @@ int main(int argc, char **argv) {
         auto pCamera = pGraphics->make_camera();
         pCamera->set_clear_color(color::black);
         pScene->add(pCamera);
-        update_event.subscribe([pCamera, &window](float time, float deltaTime) {
-            pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+        update_event.subscribe([pCamera, &pWindow](float time, float deltaTime) {
+            pCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
             pCamera->set_transform({});
         });
         return pCamera;
@@ -102,11 +102,11 @@ int main(int argc, char **argv) {
     }();
 
     game_loop(60, [&](const float time, const float deltaTime) {
-        glfwPollEvents();
+        glfw_window::poll_events();
         update_event.notify(time, deltaTime);
-        pScene->draw(window.getWindowSize());
-        window.swapBuffer(); 
-        return window.shouldClose();
+        pScene->draw(pWindow->window_size());
+        pWindow->swap_buffers(); 
+        return pWindow->should_close();
     });
 
     return EXIT_SUCCESS;

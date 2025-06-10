@@ -1,16 +1,14 @@
 // © Joseph Cameron - All Rights Reserved
 
+#include <gdk/ext/sprite_animation.h>
 #include <gdk/game_loop.h>
+#include <gdk/glfw_window.h>
 #include <gdk/graphics_context.h>
 #include <gdk/graphics_types.h>
 #include <gdk/model_data.h>
-#include <gdk/ext/sprite_animation.h>
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
 #include <jfc/event.h>
-#include <jfc/glfw_window.h>
-
-#include <GLFW/glfw3.h>
 
 #include <array>
 #include <chrono>
@@ -171,7 +169,7 @@ static inline gdk::model_data make_quad() {
 }
 
 int main(int argc, char **argv) {
-    glfw_window window("basic rendering demo");
+    const auto pWindow = glfw_window::make("game");
 
     jfc::event<float, float> update_event;
 
@@ -182,8 +180,8 @@ int main(int argc, char **argv) {
         auto pCamera = pGraphics->make_camera();
         pCamera->set_clear_color(color::cornflower_blue);
         pScene->add(pCamera);
-        update_event.subscribe([pCamera, &window](float time, float deltaTime) {
-            pCamera->set_orthographic_projection(1.0, 1.0, -0.1, 10., window.getAspectRatio());
+        update_event.subscribe([pCamera, &pWindow](float time, float deltaTime) {
+            pCamera->set_orthographic_projection(1.0, 1.0, -0.1, 10., pWindow->aspect_ratio());
         });
         return pCamera;
     }();
@@ -224,7 +222,7 @@ int main(int argc, char **argv) {
     });
 
     game_loop(60, [&](const float time, const float deltaTime) {
-        glfwPollEvents();
+        glfw_window::poll_events();
         update_event.notify(time, deltaTime);
 
         auto frame = walk.at(time, 64, 64);
@@ -234,9 +232,9 @@ int main(int argc, char **argv) {
         vertexData.transform("a_UV", {frame.u, frame.v}, 0, {frame.w, frame.h});
         pModel->upload(model::usage_hint::streaming, vertexData);
        
-        pScene->draw(window.getWindowSize());
-        window.swapBuffer(); 
-        return window.shouldClose();
+        pScene->draw(pWindow->window_size());
+        pWindow->swap_buffers(); 
+        return pWindow->should_close();
     });
 
     return EXIT_SUCCESS;

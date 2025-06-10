@@ -37,7 +37,7 @@ void webgl1es2_camera::set_transform(const gdk::graphics_vector3_type &aWorldPos
 
     m_ViewMatrix.set_to_identity();
 
-    auto eulerRotation(aRotation.toEuler()); 
+    auto eulerRotation(aRotation.to_euler()); 
     graphics_quaternion_type negativeRotation{{ 
         eulerRotation.x * -1.f, 
         eulerRotation.y * -1.f, 

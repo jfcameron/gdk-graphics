@@ -1,14 +1,11 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include <gdk/game_loop.h>
+#include <gdk/glfw_window.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
-
-#include <jfc/glfw_window.h>
-
-#include <GLFW/glfw3.h>
 
 #include <array>
 #include <chrono>
@@ -25,7 +22,7 @@
 using namespace gdk;
 
 int main(int argc, char **argv) {
-    glfw_window window("per entity and per triangle translucency");
+    const auto pWindow = glfw_window::make("per entity and per triangle translucency");
 
     auto pContext = webgl1es2_context::make();
     auto pScene = pContext->make_scene();
@@ -164,9 +161,9 @@ int main(int argc, char **argv) {
     }();
     
     game_loop(60, [&](const float time, const float deltaTime) {
-        glfwPollEvents();
+        glfw_window::poll_events();
 
-        pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+        pCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
         graphics_matrix4x4_type matCamera;
         matCamera.set_translation({0, 0, -10});
         matCamera.set_rotation({{0,0,0}});
@@ -175,7 +172,7 @@ int main(int argc, char **argv) {
         pEntity->set_transform( {std::cos(time), -0., -11.}, {{0, 4 * ( 1/ 2), 4}});
         pEntity2->set_transform( {2., std::sin(time) * 2.f, -12.5}, {{time *0.9f, time *0.5f, 0}}, {1.0, 1.0, 1});
         
-        pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+        pTextureCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
         pTextureCamera->set_transform({std::sin(time), 0, -10}, {});
 
         model_data newData = model_data::make_quad();
@@ -198,11 +195,11 @@ int main(int argc, char **argv) {
         batchModelVertexData.sort_by_nearest_triangle( {0,0,-20}, graphics_matrix4x4_type::identity);
         pBatchModel->upload(model::usage_hint::streaming, batchModelVertexData);
 
-        pScene->draw(window.getWindowSize());
+        pScene->draw(pWindow->window_size());
 
-        window.swapBuffer(); 
+        pWindow->swap_buffers(); 
 
-        return window.shouldClose();
+        return pWindow->should_close();
     });
 
     return EXIT_SUCCESS;

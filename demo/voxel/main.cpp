@@ -4,6 +4,7 @@
 
 #include <gdk/ext/volumetric_lighting.h>
 #include <gdk/game_loop.h>
+#include <gdk/glfw_window.h>
 #include <gdk/graphics_constraints.h>
 #include <gdk/graphics_context.h>
 #include <gdk/graphics_exception.h>
@@ -13,9 +14,6 @@
 #include <gdk/webgl1es2_shader_program.h>
 #include <gdk/webgl1es2_texture.h>
 #include <jfc/cube_array.h>
-#include <jfc/glfw_window.h>
-
-#include <GLFW/glfw3.h>
 
 #include <algorithm>
 #include <array>
@@ -375,7 +373,7 @@ std::array<texture_data::channel_type, 64 * 64> blockTypeToUVTextureMapData = []
 }();
 
 int main(int argc, char **argv) {
-    glfw_window window("volumetric blocks + volumetric lighting");
+    const auto pWindow = glfw_window::make("volumetric blocks + volumetric lighting");
 
     const auto pGraphics = webgl1es2_context::make();
     const auto pScene = pGraphics->make_scene();
@@ -901,7 +899,7 @@ int main(int argc, char **argv) {
     pBlockTypeVolumeTexture->update_data(blockTypeVolumeTextureView);
 
     game_loop(60, [&](const float time, const float deltaTime) {
-        glfwPollEvents();
+        glfw_window::poll_events();
 
         lighting = staticLights;
         lighting.add_point_light({8, 1, 8}, std::abs(std::sin(time)) * 10, {1.0, 1.0, 1.0});
@@ -917,14 +915,14 @@ int main(int argc, char **argv) {
 
         pVolumetricEntity->set_transform(root * chunkMatrix);
 
-        pCamera->set_perspective_projection(90, 0.01, 35, window.getAspectRatio());
+        pCamera->set_perspective_projection(90, 0.01, 35, pWindow->aspect_ratio());
         pCamera->set_transform({0, +6, +9}, {{+0.6f, 0, 0}});
 
-        pScene->draw(window.getWindowSize());
+        pScene->draw(pWindow->window_size());
 
-        window.swapBuffer(); 
+        pWindow->swap_buffers(); 
 
-        return window.shouldClose();
+        return pWindow->should_close();
     });
 
     return EXIT_SUCCESS;

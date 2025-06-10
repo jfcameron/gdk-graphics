@@ -277,7 +277,7 @@ void model_data::transform(const std::string &aPositionAttributeName,
 
     auto &components = attributeData.components();
 
-    auto rot_euler(aRot.toEuler());
+    auto rot_euler(aRot.to_euler());
 
     for (auto p = components.begin(); p != components.end(); p += COMPONENTS_PER_3D_ATTRIBUTE) {
         auto x(p + 0), y(p + 1), z(p + 2);

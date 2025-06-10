@@ -14,7 +14,7 @@ add_subdirectory(thirdparty)
 
 jfc_project(library
     NAME "gdkgraphics"
-    VERSION 0.0
+    VERSION 0.9
     DESCRIPTION "game development kit graphics lib"
     C++_STANDARD 17
     C_STANDARD 90

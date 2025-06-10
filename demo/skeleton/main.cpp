@@ -3,14 +3,12 @@
 #include "skeleton_model.h"
 
 #include <gdk/game_loop.h>
+#include <gdk/glfw_window.h>
 #include <gdk/graphics_context.h>
 #include <gdk/scene.h>
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
 #include <jfc/contiguous_view.h>
-#include <jfc/glfw_window.h>
-
-#include <GLFW/glfw3.h>
 
 #include <array>
 #include <chrono>
@@ -30,14 +28,12 @@ using namespace gdk;
 
 int main(int argc, char **argv)
 {
-    glfw_window window("skeleton");
-
+    const auto pWindow = glfw_window::make("skeleton");
     auto pContext = webgl1es2_context::make();
-
     auto pScene = pContext->make_scene();
 
     auto pCamera = pContext->make_camera();
-    pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+    pCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
     pCamera->set_transform({0, 0, 5}, {});
     pScene->add(pCamera);
 
@@ -146,13 +142,13 @@ int main(int argc, char **argv)
 
     /*vector3<float> eulers(3.14,3.14/2.,3.14/3);
     quaternion<float> quat(eulers);
-    auto eulers2 = quat.toEuler();
+    auto eulers2 = quat.to_euler();
 
     std::cout << eulers << ", " << eulers2 << "\n";*/
 
     game_loop(60, [&](const float time, const float deltaTime)
     {
-        glfwPollEvents();
+        glfw_window::poll_events();
 
         /*using namespace std;
         auto t = time;
@@ -161,7 +157,7 @@ int main(int argc, char **argv)
         auto q = t/2;
         vector3<float> eulers(time/2,time/4,0);
         quaternion<float> quat(eulers);
-        auto eulers2 = quat.toEuler();
+        auto eulers2 = quat.to_euler();
         
         graphics_matrix4x4_type m1({ 0,  0, 0},{{d,0,0}});
         graphics_matrix4x4_type m2({ std::cos(t),  1, 0},{{0,q,0}});
@@ -181,13 +177,13 @@ int main(int argc, char **argv)
             value->set_transform(characterSkeleton.boneMap[key].transform);
         }*/
 
-        pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
+        pCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
         
-        pScene->draw(window.getWindowSize());
+        pScene->draw(pWindow->window_size());
         
-        window.swapBuffer(); 
+        pWindow->swap_buffers(); 
 
-        return window.shouldClose();
+        return pWindow->should_close();
     });
 
     return EXIT_SUCCESS;
