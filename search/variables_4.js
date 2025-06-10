@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['green',['Green',['../structgdk_1_1color.html#abe73c9e5b73cc536fce661104c8e0bcb',1,'gdk::color']]]
+  ['format_0',['format',['../structgdk_1_1texture__data_1_1view.html#ae670ed3fa4d803082968611c113527f7',1,'gdk::texture_data::view']]]
 ];

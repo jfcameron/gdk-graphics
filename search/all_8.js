@@ -1,14 +1,9 @@
 var searchData=
 [
-  ['m_5factiveattributes',['m_ActiveAttributes',['../classgdk_1_1shader__program.html#a03746211a57fe0b4519fa8541c110dc8',1,'gdk::shader_program']]],
-  ['m_5factiveuniforms',['m_ActiveUniforms',['../classgdk_1_1shader__program.html#aa6260db1cedcf3c99f669b2e3be0c448',1,'gdk::shader_program']]],
-  ['m_5ffacecullingmode',['m_FaceCullingMode',['../classgdk_1_1shader__program.html#adf6fe7f3ed0550c0ae1ea7dec956d407',1,'gdk::shader_program']]],
-  ['m_5ffragmentshaderhandle',['m_FragmentShaderHandle',['../classgdk_1_1shader__program.html#ad1281c8f062b7cbec9f5a6273f169c4d',1,'gdk::shader_program']]],
-  ['m_5fprogramhandle',['m_ProgramHandle',['../classgdk_1_1shader__program.html#a35e0da98f314961109bdf5bf85966a90',1,'gdk::shader_program']]],
-  ['m_5fvertexshaderhandle',['m_VertexShaderHandle',['../classgdk_1_1shader__program.html#a46dd7cfee9defe96880fa4e4ca7ffea5',1,'gdk::shader_program']]],
-  ['magnification_5ffilter',['magnification_filter',['../classgdk_1_1texture.html#a543015744b5a4b69a898973f14e395cc',1,'gdk::texture']]],
-  ['make_5ffrom_5fpng_5frgba32',['make_from_png_rgba32',['../classgdk_1_1texture.html#a53e38f3c994021c7199b03a34572dfd3',1,'gdk::texture']]],
-  ['minification_5ffilter',['minification_filter',['../classgdk_1_1texture.html#a3441e23b64654f6c048dee8fe67610e1',1,'gdk::texture']]],
-  ['mirrored_5frepeat',['mirrored_repeat',['../classgdk_1_1texture.html#a71992a44adbfb2e9122035a31e308b73a301defc6e7425fc63ef35c7827d43b44',1,'gdk::texture']]],
-  ['model',['model',['../classgdk_1_1model.html',1,'gdk::model'],['../classgdk_1_1model.html#aafaaf95280a5f80da7a9b411a06b01de',1,'gdk::model::model(const model &amp;)=default'],['../classgdk_1_1model.html#a99172bbc6e9699b9ea8e866fa10fb43c',1,'gdk::model::model(model &amp;&amp;)=default']]]
+  ['index_5fdata_5ftype_0',['index_data_type',['../classgdk_1_1webgl1es2__model.html#aacf473cb4dc7d1ab6cc383331c020e21',1,'gdk::webgl1es2_model']]],
+  ['indexes_1',['indexes',['../classgdk_1_1model__data.html#a9342057ea9efa993a06640d3054e6b10',1,'gdk::model_data']]],
+  ['integer2_5funiform_5ftype_2',['integer2_uniform_type',['../classgdk_1_1webgl1es2__shader__program.html#a6c94edb60786018d698976ce2b75128a',1,'gdk::webgl1es2_shader_program']]],
+  ['integer3_5funiform_5ftype_3',['integer3_uniform_type',['../classgdk_1_1webgl1es2__shader__program.html#ae4de86c6c018617cc6a97082f128866f',1,'gdk::webgl1es2_shader_program']]],
+  ['integer4_5funiform_5ftype_4',['integer4_uniform_type',['../classgdk_1_1webgl1es2__shader__program.html#a780a65988db04cac2bcf4dfd06c0617e',1,'gdk::webgl1es2_shader_program']]],
+  ['is_5fhidden_5',['is_hidden',['../classgdk_1_1entity.html#a7f79d8e1eba3c5ce47a66714887b650a',1,'gdk::entity::is_hidden()'],['../classgdk_1_1webgl1es2__entity.html#af0cf6affe9ecbad0509ac55798bb4406',1,'gdk::webgl1es2_entity::is_hidden()']]]
 ];

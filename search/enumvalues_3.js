@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['front',['Front',['../classgdk_1_1shader__program.html#a7b4361404feed73471b7f7aba1b8ac7da5835bab1ade0060909e31a06af2e2cde',1,'gdk::shader_program']]],
-  ['frontandback',['FrontAndBack',['../classgdk_1_1shader__program.html#a7b4361404feed73471b7f7aba1b8ac7da8be41da9b58e32ece35a2b5751f6aeb9',1,'gdk::shader_program']]]
+  ['front_0',['front',['../classgdk_1_1material.html#a8c5bbbdbb85055c769c95a0bd5a778efae6ec529ba185279aa0adcf93e645c7cd',1,'gdk::material']]],
+  ['front_5fand_5fback_1',['front_and_back',['../classgdk_1_1material.html#a8c5bbbdbb85055c769c95a0bd5a778efad46b3c78f91c7d43349252714bf07404',1,'gdk::material']]]
 ];

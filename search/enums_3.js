@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['primitivemode',['PrimitiveMode',['../classgdk_1_1vertex__data.html#a59e8328bcc4f9d570afad5a88cfdf242',1,'gdk::vertex_data']]]
+  ['render_5fmode_0',['render_mode',['../classgdk_1_1material.html#afd278ddf154dd258615183e3cbb3fc95',1,'gdk::material']]]
 ];

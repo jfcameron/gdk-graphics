@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['handle_5ftype',['handle_type',['../classjfc_1_1shared__handle.html#a1db630a0b619a07a3efa11bf8d323d94',1,'jfc::shared_handle::handle_type()'],['../classjfc_1_1unique__handle.html#aeed2d71c7656733edd7bfbc1ba9cc0cd',1,'jfc::unique_handle::handle_type()'],['../classjfc_1_1weak__handle.html#a6a30aa2301db46f78aed9fbaf777c8d3',1,'jfc::weak_handle::handle_type()']]]
+  ['index_5fdata_5ftype_0',['index_data_type',['../classgdk_1_1webgl1es2__model.html#aacf473cb4dc7d1ab6cc383331c020e21',1,'gdk::webgl1es2_model']]],
+  ['integer2_5funiform_5ftype_1',['integer2_uniform_type',['../classgdk_1_1webgl1es2__shader__program.html#a6c94edb60786018d698976ce2b75128a',1,'gdk::webgl1es2_shader_program']]],
+  ['integer3_5funiform_5ftype_2',['integer3_uniform_type',['../classgdk_1_1webgl1es2__shader__program.html#ae4de86c6c018617cc6a97082f128866f',1,'gdk::webgl1es2_shader_program']]],
+  ['integer4_5funiform_5ftype_3',['integer4_uniform_type',['../classgdk_1_1webgl1es2__shader__program.html#a780a65988db04cac2bcf4dfd06c0617e',1,'gdk::webgl1es2_shader_program']]]
 ];

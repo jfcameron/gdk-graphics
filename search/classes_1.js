@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['camera',['camera',['../classgdk_1_1camera.html',1,'gdk']]],
-  ['color',['color',['../structgdk_1_1color.html',1,'gdk']]]
+  ['batch_5fmodeler_0',['batch_modeler',['../classgdk_1_1batch__modeler.html',1,'gdk']]]
 ];

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['clamp_5fto_5fedge',['clamp_to_edge',['../classgdk_1_1texture.html#a71992a44adbfb2e9122035a31e308b73a7ff5ead6fef18ca5f63119754ac76c3e',1,'gdk::texture']]],
-  ['cube_5fmap',['cube_map',['../classgdk_1_1texture.html#abf7e55df48249ebef9f60357b7c8c6ffa4280eeff02064f6a93321a75eb531611',1,'gdk::texture']]]
+  ['clamped_0',['clamped',['../classgdk_1_1texture.html#a71992a44adbfb2e9122035a31e308b73a48d7d3c7878090d92994ab974cb29653',1,'gdk::texture']]],
+  ['color_5fand_5fdepth_1',['color_and_depth',['../classgdk_1_1camera.html#a77bfee62bcd5dc016e74412b52bac053a8f240ec33574c3cccdedb0451902f62c',1,'gdk::camera']]]
 ];

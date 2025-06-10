@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['type',['type',['../structgdk_1_1shader__program_1_1active__attribute__info.html#ae9158cae10c3433c8ec05c6ea06d2d8b',1,'gdk::shader_program::active_attribute_info::type()'],['../structgdk_1_1shader__program_1_1active__uniform__info.html#ab92271c1142a3e63e2dcaaf6444b66bf',1,'gdk::shader_program::active_uniform_info::type()']]]
+  ['white_0',['white',['../structgdk_1_1color.html#a8995957fe84e880b744b9ca08bd6edbc',1,'gdk::color']]],
+  ['width_1',['width',['../structgdk_1_1texture__data_1_1view.html#a0b08f4301376cc43c1da4f2b64d8e22c',1,'gdk::texture_data::view']]]
 ];

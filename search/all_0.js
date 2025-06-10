@@ -1,6 +1,16 @@
 var searchData=
 [
-  ['active_5fattribute_5finfo',['active_attribute_info',['../structgdk_1_1shader__program_1_1active__attribute__info.html',1,'gdk::shader_program']]],
-  ['active_5funiform_5finfo',['active_uniform_info',['../structgdk_1_1shader__program_1_1active__uniform__info.html',1,'gdk::shader_program']]],
-  ['alphacutoff',['AlphaCutOff',['../classgdk_1_1shader__program.html#acf3c5a7e94773a29b820bae99058e933',1,'gdk::shader_program']]]
+  ['activate_0',['activate',['../classgdk_1_1webgl1es2__material.html#acf8686854429e2e8a48b2b22a2424847',1,'gdk::webgl1es2_material::activate()'],['../classgdk_1_1webgl1es2__screen__camera.html#a1eb588157dc769dddfaa979d78e82e8d',1,'gdk::webgl1es2_screen_camera::activate()']]],
+  ['activateandbind_1',['activateAndBind',['../classgdk_1_1webgl1es2__texture.html#afced6253074cbac1f5b42d125acafbfb',1,'gdk::webgl1es2_texture']]],
+  ['active_5fattribute_5fcollection_5ftype_2',['active_attribute_collection_type',['../classgdk_1_1webgl1es2__shader__program.html#a88f3716dffb113cf4a5527c5d19dd6a2',1,'gdk::webgl1es2_shader_program']]],
+  ['active_5fattribute_5finfo_3',['active_attribute_info',['../structgdk_1_1webgl1es2__shader__program_1_1active__attribute__info.html',1,'gdk::webgl1es2_shader_program']]],
+  ['active_5funiform_5fcollection_5ftype_4',['active_uniform_collection_type',['../classgdk_1_1webgl1es2__shader__program.html#a043b0e872c3aa8396880e5f9fd480b78',1,'gdk::webgl1es2_shader_program']]],
+  ['active_5funiform_5finfo_5',['active_uniform_info',['../structgdk_1_1webgl1es2__shader__program_1_1active__uniform__info.html',1,'gdk::webgl1es2_shader_program']]],
+  ['add_6',['add',['../classgdk_1_1scene.html#ae92f11340e46a5d077ab3457b757cb74',1,'gdk::scene::add(const std::shared_ptr&lt; const screen_camera &gt; &amp;pCamera)=0'],['../classgdk_1_1scene.html#a727140445443df7cf7bcaa7dad0c7979',1,'gdk::scene::add(const std::shared_ptr&lt; const texture_camera &gt; &amp;pCamera)=0'],['../classgdk_1_1scene.html#a98f84d3a66a38073686106d3fc4e48f2',1,'gdk::scene::add(const std::shared_ptr&lt; const entity &gt; &amp;pEntity)=0'],['../classgdk_1_1webgl1es2__scene.html#a6c405906c00d8fee27158eefb268c453',1,'gdk::webgl1es2_scene::add(const std::shared_ptr&lt; const screen_camera &gt; &amp;pCamera) override'],['../classgdk_1_1webgl1es2__scene.html#aebba9c91284463da2440e05110ab00c2',1,'gdk::webgl1es2_scene::add(const std::shared_ptr&lt; const texture_camera &gt; &amp;pCamera) override'],['../classgdk_1_1webgl1es2__scene.html#a46226cae5af3546385dea351802d4365',1,'gdk::webgl1es2_scene::add(const std::shared_ptr&lt; const entity &gt; &amp;pEntity) override']]],
+  ['add_5fpoint_5flight_7',['add_point_light',['../classgdk_1_1volumetric__lighting.html#a0a11eec8fcae9397e00396d82b2b2461',1,'gdk::volumetric_lighting']]],
+  ['alphacutoff_8',['AlphaCutOff',['../classgdk_1_1webgl1es2__shader__program.html#ac5704b7a3755d880c05f1392bc79efa6',1,'gdk::webgl1es2_shader_program']]],
+  ['at_9',['at',['../classgdk_1_1sprite__animation.html#a61ccbbb77e0f8ac8b672059d67a4a87a',1,'gdk::sprite_animation']]],
+  ['attribute_5fcomponent_5fdata_5ftype_10',['attribute_component_data_type',['../classgdk_1_1webgl1es2__model.html#abd00c7b58ec2eb87b20e2737703bde0e',1,'gdk::webgl1es2_model']]],
+  ['attribute_5fdata_11',['attribute_data',['../classgdk_1_1attribute__data.html',1,'gdk::attribute_data'],['../classgdk_1_1attribute__data.html#a972106b108becc992fd42f5530c52192',1,'gdk::attribute_data::attribute_data(attribute_data &amp;&amp;)=default'],['../classgdk_1_1attribute__data.html#a7828a4167b419b53df8511c42cbd7761',1,'gdk::attribute_data::attribute_data(const attribute_data &amp;)=default']]],
+  ['attributes_12',['attributes',['../classgdk_1_1model__data.html#a4208f20c28c8e1457a43725ca877b80d',1,'gdk::model_data']]]
 ];

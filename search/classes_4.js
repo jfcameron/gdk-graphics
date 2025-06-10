@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['texture',['texture',['../classgdk_1_1texture.html',1,'gdk']]]
+  ['frame_0',['frame',['../structgdk_1_1sprite__animation_1_1frame.html',1,'gdk::sprite_animation']]]
 ];

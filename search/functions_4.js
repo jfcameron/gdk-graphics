@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['getcheckerboardofdeath',['GetCheckerboardOfDeath',['../classgdk_1_1texture.html#a310b05cf6ccee23e4c39af510a4b3a6e',1,'gdk::texture']]],
-  ['gethandle',['getHandle',['../classgdk_1_1texture.html#afb5126f613389a78b66d5e2bbd11f2ae',1,'gdk::texture']]],
-  ['getsumofattributecomponents',['getSumOfAttributeComponents',['../classgdk_1_1vertex__format.html#a0458ae5dadc4aab733df88a801992d3b',1,'gdk::vertex_format']]]
+  ['empty_0',['empty',['../classjfc_1_1contiguous__view.html#a3aeebd72ebd4bda00c4a0d11b1057cfb',1,'jfc::contiguous_view']]],
+  ['end_1',['end',['../classjfc_1_1contiguous__view.html#a5d41824ce078a081df8196f6e6702d02',1,'jfc::contiguous_view::end()'],['../classjfc_1_1contiguous__view.html#a69f73331df5bcb6c0e55becdde02c28c',1,'jfc::contiguous_view::end() const']]]
 ];
