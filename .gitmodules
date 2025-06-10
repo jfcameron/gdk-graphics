@@ -1,5 +1,5 @@
 [submodule "jfc-cmake"]
-	path = jfc-cmake
+	path = cmake/jfc-cmake
 	url = https://github.com/jfcameron/jfc-cmake.git
 [submodule "thirdparty/stb"]
 	path = extern/stb
