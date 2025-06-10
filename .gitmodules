@@ -2,20 +2,20 @@
 	path = jfc-cmake
 	url = https://github.com/jfcameron/jfc-cmake.git
 [submodule "thirdparty/stb"]
-	path = thirdparty/stb
+	path = extern/stb
 	url = https://github.com/nothings/stb.git
 [submodule "thirdparty/gdk-math"]
-	path = thirdparty/gdk-math
+	path = extern/gdk-math
 	url = https://github.com/jfcameron/gdk-math.git
 [submodule "thirdparty/jfc-memory"]
-	path = thirdparty/jfc-memory
+	path = extern/jfc-memory
 	url = https://github.com/jfcameron/jfc-memory.git
 [submodule "thirdparty/glfw"]
 	path = thirdparty/glfw
 	url = git://github.com/glfw/glfw.git
 [submodule "thirdparty/simple-glfw"]
-	path = thirdparty/simple-glfw
+	path = extern/simple-glfw
 	url = https://github.com/jfcameron/simple-glfw.git
 [submodule "thirdparty/jfc-smart_handles"]
-	path = thirdparty/jfc-smart_handles
+	path = extern/jfc-smart_handles
 	url = https://github.com/jfcameron/jfc-smart_handles.git
