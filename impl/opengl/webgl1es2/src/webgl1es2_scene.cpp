@@ -81,14 +81,14 @@ void sorted_render_set::draw(const webgl1es2_camera *pCamera) const {
     }
 }
 
-void sorted_render_set::try_add(entity_ptr_type pEntityInterface) {
+void sorted_render_set::try_add(graphics_entity_ptr_type pEntityInterface) {
     if (auto search = m_unique_entities.find(pEntityInterface); 
         search != m_unique_entities.end()) return;
 
     m_unique_entities.insert(pEntityInterface);
 }
 
-void render_set::try_add(entity_ptr_type pEntityInterface) {
+void render_set::try_add(graphics_entity_ptr_type pEntityInterface) {
     if (auto search = m_unique_entities.find(pEntityInterface); 
         search != m_unique_entities.end()) return;
 

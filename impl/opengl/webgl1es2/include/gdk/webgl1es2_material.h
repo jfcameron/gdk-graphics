@@ -18,7 +18,7 @@ namespace gdk {
     /// \name external interface
     ///@{
     //
-        virtual void set_texture(const std::string_view aName, const texture_ptr_type aTexture) override;
+        virtual void set_texture(const std::string_view aName, const graphics_texture_ptr_type aTexture) override;
         
         virtual void set_float(const std::string_view aName, float aValue) override;
         virtual void set_vector2(const std::string_view aName, graphics_vector2_type aValue) override;
@@ -34,14 +34,14 @@ namespace gdk {
     ///@}
         
         //! shaders can be shared among many webgl1es2_materials
-        using shader_ptr_type = std::shared_ptr<gdk::webgl1es2_shader_program>;
+        using graphics_shader_ptr_type = std::shared_ptr<gdk::webgl1es2_shader_program>;
 
     /// \name internal interface
     ///@{
     //
         material::render_mode get_render_mode() const;
 
-        shader_ptr_type getShaderProgram();
+        graphics_shader_ptr_type getShaderProgram();
         //! modifies the opengl state, assigning the program, assigning values to the program's uniforms etc.
         void activate();
     ///@}
@@ -63,7 +63,7 @@ namespace gdk {
         /// logically, a webgl1es2_material without a shader_program implies 
         /// a pipeline without a programmable vertex shader stage nor a 
         /// programmable fragment shader stage, which is not a valid pipeline
-        webgl1es2_material(shader_ptr_type pShader,
+        webgl1es2_material(graphics_shader_ptr_type pShader,
             material::face_culling_mode aface_culling_mode,
             material::render_mode aRenderMode);
 
@@ -78,7 +78,7 @@ namespace gdk {
             std::unordered_map<std::string, texture_ptr_impl_type>;
 
         //! the shader used by the webgl1es2_material
-        shader_ptr_type m_pShaderProgram;
+        graphics_shader_ptr_type m_pShaderProgram;
         
         //! Whether or not to discard polygons based on [entity space] normal direction
         material::face_culling_mode m_FaceCullMode = material::face_culling_mode::none;

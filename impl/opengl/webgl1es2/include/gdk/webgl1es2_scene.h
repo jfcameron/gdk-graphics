@@ -16,31 +16,31 @@ namespace gdk {
     //! set of objects to render
     class render_set {
     public:
-        using entity_ptr_type = std::shared_ptr<const entity>;
-        using material_ptr_type = std::shared_ptr<webgl1es2_material>;
-        using model_ptr_type = std::shared_ptr<webgl1es2_model>;
-        using model_to_entity_collection = std::unordered_map<model_ptr_type, 
-            std::unordered_set<entity_ptr_type>>;
+        using graphics_entity_ptr_type = std::shared_ptr<const entity>;
+        using graphics_material_ptr_type = std::shared_ptr<webgl1es2_material>;
+        using graphics_model_ptr_type = std::shared_ptr<webgl1es2_model>;
+        using model_to_entity_collection = std::unordered_map<graphics_model_ptr_type, 
+            std::unordered_set<graphics_entity_ptr_type>>;
         using material_to_model_to_entity_collection_collection = 
-            std::unordered_map<material_ptr_type, model_to_entity_collection>;
+            std::unordered_map<graphics_material_ptr_type, model_to_entity_collection>;
 
         virtual void draw(const webgl1es2_camera *r) const;
         
-        virtual void try_add(entity_ptr_type);
+        virtual void try_add(graphics_entity_ptr_type);
 
         virtual ~render_set() = default;
 
     protected:
         material_to_model_to_entity_collection_collection m_MaterialToModelToEntityCollection;
 
-        std::unordered_set<entity_ptr_type> m_unique_entities;
+        std::unordered_set<graphics_entity_ptr_type> m_unique_entities;
     };
 
     class sorted_render_set final : public render_set {
     public:
         virtual void draw(const webgl1es2_camera *r) const;
 
-        virtual void try_add(entity_ptr_type) override;
+        virtual void try_add(graphics_entity_ptr_type) override;
 
         sorted_render_set() = default;
 
@@ -52,18 +52,18 @@ namespace gdk {
     class webgl1es2_scene final : public scene {
     public:
         //! materials can be shared across webgl1es2_scenes
-        using material_ptr_type = std::shared_ptr<webgl1es2_material>;
+        using graphics_material_ptr_type = std::shared_ptr<webgl1es2_material>;
         //! models can be shared across webgl1es2_scenes
-        using model_ptr_type = std::shared_ptr<webgl1es2_model>;
+        using graphics_model_ptr_type = std::shared_ptr<webgl1es2_model>;
 
         //! associative collection: Models to collections of Entities - 
         /// Used to optimize GL calls
-        using model_to_entity_collection = std::unordered_map<model_ptr_type, 
+        using model_to_entity_collection = std::unordered_map<graphics_model_ptr_type, 
             std::unordered_set<std::shared_ptr<const entity>>>;
         //! associative collection: Materials to {Models to collections of Entities} - 
         /// Used to optimize GL calls
         using material_to_model_to_entity_collection_collection = 
-            std::unordered_map<material_ptr_type, model_to_entity_collection>;
+            std::unordered_map<graphics_material_ptr_type, model_to_entity_collection>;
 
     /// \name external interface
     ///@{

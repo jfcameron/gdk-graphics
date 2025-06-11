@@ -28,25 +28,25 @@ namespace gdk {
 /// \name Pointer types
 ///@{
 //
-    using camera_ptr_type = std::shared_ptr<screen_camera>;
-    using context_ptr_type = std::shared_ptr<graphics::context>;
-    using entity_ptr_type = std::shared_ptr<entity>;
-    using material_ptr_type = std::shared_ptr<material>;
-    using model_ptr_type = std::shared_ptr<model>;
-    using scene_ptr_type = std::shared_ptr<scene>;
-    using shader_ptr_type = std::shared_ptr<shader_program>;
-    using texture_camera_ptr_type = std::shared_ptr<texture_camera>;
-    using texture_ptr_type = std::shared_ptr<texture>;
+    using graphics_camera_ptr_type = std::shared_ptr<screen_camera>;
+    using graphics_context_ptr_type = std::shared_ptr<graphics::context>;
+    using graphics_entity_ptr_type = std::shared_ptr<entity>;
+    using graphics_material_ptr_type = std::shared_ptr<material>;
+    using graphics_model_ptr_type = std::shared_ptr<model>;
+    using graphics_scene_ptr_type = std::shared_ptr<scene>;
+    using graphics_shader_ptr_type = std::shared_ptr<shader_program>;
+    using graphics_texture_camera_ptr_type = std::shared_ptr<texture_camera>;
+    using graphics_texture_ptr_type = std::shared_ptr<texture>;
 
-    using const_camera_ptr_type = std::shared_ptr<const screen_camera>;
-    using const_context_ptr_type = std::shared_ptr<const graphics::context>;
-    using const_entity_ptr_type = std::shared_ptr<const entity>;
-    using const_material_ptr_type = std::shared_ptr<const material>;
-    using const_model_ptr_type = std::shared_ptr<const model>;
-    using const_scene_ptr_type = std::shared_ptr<const scene>;
-    using const_shader_ptr_type = std::shared_ptr<const shader_program>;
-    using const_texture_camera_ptr_type = std::shared_ptr<const texture_camera>;
-    using const_texture_ptr_type = std::shared_ptr<const texture>;
+    using const_graphics_camera_ptr_type = std::shared_ptr<const screen_camera>;
+    using const_graphics_context_ptr_type = std::shared_ptr<const graphics::context>;
+    using const_graphics_entity_ptr_type = std::shared_ptr<const entity>;
+    using const_graphics_material_ptr_type = std::shared_ptr<const material>;
+    using const_graphics_model_ptr_type = std::shared_ptr<const model>;
+    using const_graphics_scene_ptr_type = std::shared_ptr<const scene>;
+    using const_graphics_shader_ptr_type = std::shared_ptr<const shader_program>;
+    using const_graphics_texture_camera_ptr_type = std::shared_ptr<const texture_camera>;
+    using const_graphics_texture_ptr_type = std::shared_ptr<const texture>;
 ///@}
 
 /// \name Floating point types

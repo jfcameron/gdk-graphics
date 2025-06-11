@@ -38,7 +38,7 @@ static inline void setRenderMode(const material::render_mode aRenderMode) {
     throw graphics_exception("unhandled render mode");
 }
 
-webgl1es2_material::webgl1es2_material(shader_ptr_type pShader,
+webgl1es2_material::webgl1es2_material(graphics_shader_ptr_type pShader,
     material::face_culling_mode aface_culling_mode,
     material::render_mode aRenderMode)
 : m_pShaderProgram(pShader)
@@ -68,11 +68,11 @@ void webgl1es2_material::activate() {
 	for (const auto& [name, a] : m_Textures) m_pShaderProgram->try_set_uniform(name, *a);
 }
 
-webgl1es2_material::shader_ptr_type webgl1es2_material::getShaderProgram() {
+webgl1es2_material::graphics_shader_ptr_type webgl1es2_material::getShaderProgram() {
     return m_pShaderProgram;
 }
 
-void webgl1es2_material::set_texture(const std::string_view aName, const texture_ptr_type aValue) {
+void webgl1es2_material::set_texture(const std::string_view aName, const graphics_texture_ptr_type aValue) {
     m_Textures[std::string(aName)] = std::static_pointer_cast<webgl1es2_texture>(aValue);
 }
 

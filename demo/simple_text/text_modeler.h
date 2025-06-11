@@ -22,10 +22,10 @@
 class text_modeler final {
 public:
     //! get the model, contains the uploaded model data for the batch
-    const gdk::const_model_ptr_type model() const;
+    const gdk::const_graphics_model_ptr_type model() const;
 
     //! get the material, used to render the model
-    const gdk::const_material_ptr_type material() const;
+    const gdk::const_graphics_material_ptr_type material() const;
 
     //! upload the model data to the model and clear the data
     void upload();
@@ -34,7 +34,7 @@ public:
     void set_text(const std::string &string);
 
     /// \brief constructs a new instance
-    text_modeler(gdk::context_ptr_type pContext, gdk::material_ptr_type aMaterial = {});
+    text_modeler(gdk::graphics_context_ptr_type pContext, gdk::graphics_material_ptr_type aMaterial = {});
 
 private:
     gdk::batch_modeler m_BatchModeler;

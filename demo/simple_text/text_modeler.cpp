@@ -3,7 +3,6 @@
 #include "text_modeler.h"
 
 #include <gdk/texture_data.h>
-#include <jfc/to_array.h>
 
 using namespace gdk;
 
@@ -57,7 +56,7 @@ static const std::vector<texture_data::encoded_byte> GLYPH_PNG_DATA {
     0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
 };
 
-text_modeler::text_modeler(gdk::context_ptr_type pContext, gdk::material_ptr_type aMaterial) 
+text_modeler::text_modeler(gdk::graphics_context_ptr_type pContext, gdk::graphics_material_ptr_type aMaterial) 
 : m_BatchModeler(pContext, aMaterial ? aMaterial : [&]() {
     auto pTexture = pContext->make_texture(texture_data::make_from_png(GLYPH_PNG_DATA).first);
     auto pMaterial(pContext->make_material(pContext->get_alpha_cutoff_shader(), material::render_mode::opaque));
@@ -179,7 +178,7 @@ void text_modeler::set_text(const std::string &string) {
     }
 }
 
-const gdk::const_model_ptr_type text_modeler::model() const { return m_BatchModeler.model(); }
-const gdk::const_material_ptr_type text_modeler::material() const { return m_BatchModeler.material(); }
+const gdk::const_graphics_model_ptr_type text_modeler::model() const { return m_BatchModeler.model(); }
+const gdk::const_graphics_material_ptr_type text_modeler::material() const { return m_BatchModeler.material(); }
 void text_modeler::upload() { m_BatchModeler.upload(); }
 

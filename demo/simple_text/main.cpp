@@ -9,7 +9,6 @@
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
 
-#include <jfc/to_array.h>
 #include <jfc/event.h>
 
 #include <GLFW/glfw3.h>

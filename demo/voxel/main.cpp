@@ -408,6 +408,10 @@ int main(int argc, char **argv) {
     blockUVTextureView.data = &blockTypeToUVTextureMapData.front();
     auto pBlockTypeToUVTextureMap = pGraphics->make_texture(blockUVTextureView, texture::wrap_mode::clamped, texture::wrap_mode::clamped);
 
+    //TODO: this program works, but there is a lot of room for improvement.
+    // - simplify fragment shader as much as possible
+    // - try to move work out of frag and move it to vertex, then pass the data via varyings.
+    //   moving the texture lookups here if possible would be a big performance gain.
     auto pShader = [&]() {
         const std::string vertexShaderSource(R"V0G0N(
         uniform mat4 _MVP;

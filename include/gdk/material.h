@@ -36,11 +36,11 @@ namespace gdk {
         };
 
         /// \brief textures can be shared among many webgl1es2_materials.
-        using texture_ptr_type = std::shared_ptr<gdk::texture>;
+        using graphics_texture_ptr_type = std::shared_ptr<gdk::texture>;
 
         /// \brief assigns a texture to the material.
         /// \note note that this is passed by pointer, not value
-        virtual void set_texture(const std::string_view aName, texture_ptr_type aTexturePointer) = 0;
+        virtual void set_texture(const std::string_view aName, graphics_texture_ptr_type aTexturePointer) = 0;
 
         /// \brief assigns a float to the material.
         virtual void set_float(const std::string_view aName, float aValue) = 0;
