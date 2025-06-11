@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
     game_loop(60, [&](const float time, const float deltaTime) {
         glfw_window::poll_events();
 
-        pCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
+        pCamera->set_projection(graphics_matrix4x4_type::make_perspective_projection_matrix(90, 0.01, 20, pWindow->aspect_ratio()));
         graphics_matrix4x4_type matCamera;
         matCamera.set_translation({0, 0, -10});
         matCamera.set_rotation({{0,0,0}});
@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
         pEntity->set_transform( {std::cos(time), -0., -11.}, {{0, 4 * ( 1/ 2), 4}});
         pEntity2->set_transform( {2., std::sin(time) * 2.f, -12.5}, {{time *0.9f, time *0.5f, 0}}, {1.0, 1.0, 1});
         
-        pTextureCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
+        pTextureCamera->set_projection(graphics_matrix4x4_type::make_perspective_projection_matrix(90, 0.01, 20, pWindow->aspect_ratio()));
         pTextureCamera->set_transform({std::sin(time), 0, -10}, {});
 
         model_data newData = model_data::make_quad();

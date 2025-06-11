@@ -1,9 +1,9 @@
 # © Joseph Cameron - All Rights Reserved
 
 jfc_project(executable
-    NAME "adhoc_demo"
+    NAME "sprite_demo"
     VERSION 1.0
-    DESCRIPTION "demo gdk-graphics app"
+    DESCRIPTION "sprite_demo"
     C++_STANDARD 17
     C_STANDARD 90
 

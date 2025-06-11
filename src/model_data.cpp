@@ -193,7 +193,7 @@ void model_data::sort_by_nearest_triangle(
     observerWorldMatrix.set_translation(aObserverWorldPosition);
     
     graphics_matrix4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
-    graphics_vector3_type observerLocalPostion(localObserver.m[3][0], localObserver.m[3][1], localObserver.m[3][2]);
+    graphics_vector3_type observerLocalPostion = localObserver.translation(); 
 
     sort_by_triangle(
         [&observerLocalPostion](triangle a, triangle b) {
@@ -214,14 +214,14 @@ void model_data::sort_by_furthest_triangle(
     const graphics_vector3_type &aObserverWorldPosition,
     graphics_matrix4x4_type aEntityInstanceWorldMatrix,
     const std::string &aObserverWorldPositionAttributeName) {
-    //TODO: name becomes misleading at this point. maybe require teh inverse in the method param
+    //TODO: name becomes misleading at this point. maybe require the inverse in the method param
     aEntityInstanceWorldMatrix.inverse_affine(); 
 
     graphics_matrix4x4_type observerWorldMatrix;
     observerWorldMatrix.set_translation(aObserverWorldPosition);
     
     graphics_matrix4x4_type localObserver = aEntityInstanceWorldMatrix * observerWorldMatrix;
-    graphics_vector3_type observerLocalPostion(localObserver.m[3][0], localObserver.m[3][1], localObserver.m[3][2]);
+    graphics_vector3_type observerLocalPostion = localObserver.translation();
 
     sort_by_triangle(
         [&observerLocalPostion](triangle a, triangle b) {

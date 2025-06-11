@@ -181,7 +181,8 @@ int main(int argc, char **argv) {
         pCamera->set_clear_color(color::cornflower_blue);
         pScene->add(pCamera);
         update_event.subscribe([pCamera, &pWindow](float time, float deltaTime) {
-            pCamera->set_orthographic_projection(1.0, 1.0, -0.1, 10., pWindow->aspect_ratio());
+            pCamera->set_projection(graphics_matrix4x4_type::make_orthographic_projection_matrix(
+                {1.f, 1.f}, -0.1f, 10.f, pWindow->aspect_ratio()));
         });
         return pCamera;
     }();

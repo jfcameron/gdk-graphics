@@ -8,6 +8,7 @@
 #include <gdk/graphics_constraints.h>
 #include <gdk/graphics_context.h>
 #include <gdk/graphics_exception.h>
+#include <gdk/math_constants.h>
 #include <gdk/scene.h>
 #include <gdk/texture_data.h>
 #include <gdk/webgl1es2_context.h>
@@ -910,12 +911,12 @@ int main(int argc, char **argv) {
         auto [lightingVolumeTextureView, _] = lighting.to_texture_data();
         pLightingTexture->update_data(lightingVolumeTextureView);
 
-        graphics_matrix4x4_type root({0,0,0}, {{0.f, +3.1415f + time*0.5f, 0}});
+        graphics_matrix4x4_type root({0,0,0}, {{0.f, numbers::pi_f + time*0.5f, 0}});
         graphics_matrix4x4_type chunkMatrix({-8, 0, -8}, {{0, 0, 0}});
 
         pVolumetricEntity->set_transform(root * chunkMatrix);
 
-        pCamera->set_perspective_projection(90, 0.01, 35, pWindow->aspect_ratio());
+        pCamera->set_projection(graphics_matrix4x4_type::make_perspective_projection_matrix(90, 0.01, 35, pWindow->aspect_ratio()));
         pCamera->set_transform({0, +6, +9}, {{+0.6f, 0, 0}});
 
         pScene->draw(pWindow->window_size());

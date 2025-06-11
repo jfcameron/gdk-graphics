@@ -53,7 +53,7 @@ namespace glh {
     }
 
     void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_matrix4x4_type &aMatrix4x4) {
-        glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.m[0][0]);
+        glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.front());
     }
 
     void BindTextureUniform(const GLuint aUniformHandle, const GLuint aTextureHandle, const int aTextureUnit) {

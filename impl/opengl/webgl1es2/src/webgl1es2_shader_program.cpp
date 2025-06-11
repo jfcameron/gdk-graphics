@@ -521,8 +521,7 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
 bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const graphics_matrix4x4_type &a) const {
     if (const auto& search = m_ActiveUniforms.find(aName); search != m_ActiveUniforms.end()) {
         auto b = a;
-        //b.transpose();
-        glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &b.m[0][0]);
+        glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &b.front());
         return true;
     }
 
@@ -539,7 +538,7 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string &aName, const s
         data.reserve(a.size() * order * order);
 
         for (const auto &mat : a) for (int y(0); y < order; ++y) for (int x(0); x < order; ++x) {
-            data.push_back(mat.m[y][x]);
+            data.push_back(mat.get(y, x));
             glUniformMatrix4fv(search->second.location, 1, GL_FALSE, &data[0]);
             return true;
         }

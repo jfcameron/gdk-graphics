@@ -53,16 +53,7 @@ namespace gdk
     /// \name descendant's interface
     ///@{
     //
-        void set_perspective_projection(const float aFieldOfView,
-            const float aNearClippingPlane,
-            const float aFarClippingPlane,
-            const float aViewportAspectRatio);
-
-        void set_orthographic_projection(const float aWidth,
-            const float aHeight,
-            const float aNearClippingPlane,
-            const float aFarClippingPlane,
-            const float aViewportAspectRatio);
+        void set_projection(const gdk::graphics_matrix4x4_type &aMatrix);
 
         void set_clear_color(const gdk::color& acolor);
 

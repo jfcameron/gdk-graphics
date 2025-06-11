@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
         pCamera->set_clear_color(color::black);
         pScene->add(pCamera);
         update_event.subscribe([pCamera, &pWindow](float time, float deltaTime) {
-            pCamera->set_perspective_projection(90, 0.01, 20, pWindow->aspect_ratio());
+            pCamera->set_projection(graphics_matrix4x4_type::make_perspective_projection_matrix(90, 0.01, 20, pWindow->aspect_ratio()));
             pCamera->set_transform({});
         });
         return pCamera;

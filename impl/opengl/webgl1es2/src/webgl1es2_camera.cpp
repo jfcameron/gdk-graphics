@@ -55,21 +55,8 @@ void webgl1es2_camera::set_transform(const gdk::graphics_matrix4x4_type &aMatrix
     set_transform(aMatrix.translation(), aMatrix.rotation());
 }
 
-void webgl1es2_camera::set_perspective_projection(const float aFieldOfView,
-    const float aNearClippingPlane, 
-    const float aFarClippingPlane, 
-    const float aViewportAspectRatio) {
-    m_ProjectionMatrix.set_to_perspective(aFieldOfView, 
-        aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
-}
-
-void webgl1es2_camera::set_orthographic_projection(const float aWidth,
-    const float aHeight,
-    const float aNearClippingPlane,
-    const float aFarClippingPlane,
-    const float aViewportAspectRatio) {
-    m_ProjectionMatrix.set_to_orthographic({ aWidth, aHeight }, 
-        aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio);
+void webgl1es2_camera::set_projection(const gdk::graphics_matrix4x4_type &aMatrix) {
+    m_ProjectionMatrix = aMatrix;
 }
 
 graphics_matrix4x4_type webgl1es2_camera::get_view_matrix() const { 

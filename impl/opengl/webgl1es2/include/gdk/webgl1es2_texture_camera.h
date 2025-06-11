@@ -24,16 +24,8 @@ namespace gdk {
     /// \name external interface
     ///@{
     //
-        virtual void set_perspective_projection(const float aFieldOfView,
-            const float aNearClippingPlane,
-            const float aFarClippingPlane,
-            const float aViewportAspectRatio) override;
 
-        virtual void set_orthographic_projection(const float aWidth,
-            const float aHeight,
-            const float aNearClippingPlane,
-            const float aFarClippingPlane,
-            const float aViewportAspectRatio) override;
+        virtual void set_projection(const gdk::graphics_matrix4x4_type &aMatrix) override;
 
         virtual void set_clear_color(const gdk::color& acolor) override;
 

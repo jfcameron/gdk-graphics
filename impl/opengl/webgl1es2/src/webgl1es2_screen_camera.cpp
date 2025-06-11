@@ -36,26 +36,8 @@ void webgl1es2_screen_camera::activate(const gdk::graphics_intvector2_type &aFra
     webgl1es2_camera::activate_clear_mode();
 }
 
-void webgl1es2_screen_camera::set_perspective_projection(const float aFieldOfView,
-    const float aNearClippingPlane, 
-    const float aFarClippingPlane, 
-    const float aViewportAspectRatio) {
-    webgl1es2_camera::set_perspective_projection(aFieldOfView,
-        aNearClippingPlane, 
-        aFarClippingPlane, 
-        aViewportAspectRatio);
-}
-
-void webgl1es2_screen_camera::set_orthographic_projection(const float aWidth,
-    const float aHeight,
-    const float aNearClippingPlane,
-    const float aFarClippingPlane,
-    const float aViewportAspectRatio) {
-    webgl1es2_camera::set_orthographic_projection(aWidth,
-        aHeight,
-        aNearClippingPlane,
-        aFarClippingPlane,
-        aViewportAspectRatio);
+void webgl1es2_screen_camera::set_projection(const gdk::graphics_matrix4x4_type &aMatrix) {
+    webgl1es2_camera::set_projection(aMatrix);
 }
 
 void webgl1es2_screen_camera::set_clear_color(const gdk::color& acolor) {

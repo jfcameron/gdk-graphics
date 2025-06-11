@@ -28,18 +28,7 @@ namespace gdk {
                 const float aWidth, 
                 const float aHeight) override;
 
-        /// \brief sets the projection matrix to a perspective projection
-        virtual void set_perspective_projection(const float aFieldOfView,
-            const float aNearClippingPlane, 
-            const float aFarClippingPlane, 
-            const float aViewportAspectRatio) override;
-
-        /// \brief sets the projection matrix to an orthographic projection
-        virtual void set_orthographic_projection(const float aWidth,
-                const float aHeight,
-                const float aNearClippingPlane,
-                const float aFarClippingPlane,
-                const float aViewportAspectRatio) override;
+        virtual void set_projection(const gdk::graphics_matrix4x4_type &aMatrix) override;
 
         /// \brief rebuilds the view matrix from a 3d position and rotation
         virtual void set_transform(const gdk::graphics_vector3_type &aWorldPos,
