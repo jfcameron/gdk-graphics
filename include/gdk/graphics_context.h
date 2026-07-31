@@ -70,6 +70,8 @@ namespace gdk {
             /// - vertex attributes: vec3 pos, vec2 uv, vec3 normal
             [[nodiscard]] virtual graphics_model_ptr_type get_cube_model() const = 0;
 
+            [[nodiscard]] virtual graphics_model_ptr_type get_sphere_model() const = 0;
+
             /// \brief Basic unlit forward renderer program:
             /// Attributes: 
             /// - vec3 pos

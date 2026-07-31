@@ -58,8 +58,8 @@ void sorted_render_set::draw(const webgl1es2_camera *pCamera) const {
         const auto entityPosA = static_cast<const webgl1es2_entity *>(pA.get())->getModelMatrix().translation();
         const auto entityPosB = static_cast<const webgl1es2_entity *>(pB.get())->getModelMatrix().translation();
 
-        const auto aDist = cameraPos.distance(entityPosA);
-        const auto bDist = cameraPos.distance(entityPosB);
+        const auto aDist = cameraPos.distance_from(entityPosA);
+        const auto bDist = cameraPos.distance_from(entityPosB);
 
         return (aDist > bDist);
     });

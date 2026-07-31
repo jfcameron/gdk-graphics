@@ -56,6 +56,9 @@ namespace gdk {
         //! a cube with format pos3uv2norm3
         static const jfc::lazy_ptr<gdk::webgl1es2_model> Cube; 
 
+        //! a sphere with format pos3uv2norm3
+        static const jfc::lazy_ptr<gdk::webgl1es2_model> Sphere; 
+
     private:
         //! stores component data for a single attribute
         struct attribute {

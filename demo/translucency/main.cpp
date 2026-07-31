@@ -187,7 +187,7 @@ int main(int argc, char **argv) {
         graphics_vector3_type tran(std::cos(time*0.25)*0.5,0.0,0); quadMat.set_translation({tran});
         graphics_vector3_type rot(time,0,0); 
         graphics_vector3_type sca(0.5);
-        quadMat.set_rotation({rot}, sca);
+        quadMat.set_rotation_and_scale({rot}, sca);
         quad.transform("a_Position", quadMat);
 
         quad.transform("a_UV", {0.2f, 0}, 0, {2.f, 2.f});

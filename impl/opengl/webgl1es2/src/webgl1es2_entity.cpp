@@ -44,7 +44,7 @@ const graphics_matrix4x4_type &webgl1es2_entity::getModelMatrix() const {
 void webgl1es2_entity::set_transform(const graphics_vector3_type &aWorldPos, const graphics_quaternion_type &aRotation, const graphics_vector3_type &aScale) {
     m_ModelMatrix.set_to_identity();
     m_ModelMatrix.set_translation(aWorldPos);
-    m_ModelMatrix.set_rotation(aRotation, aScale);
+    m_ModelMatrix.set_rotation_and_scale(aRotation, aScale);
 }
 
 void webgl1es2_entity::set_transform(const graphics_matrix4x4_type& a) {

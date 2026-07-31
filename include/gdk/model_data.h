@@ -19,6 +19,7 @@ namespace gdk {
     /// \brief vertex data stored in system memory. 
     ///
     /// vertex data is comprised of a collection of attributes, which in turn are a collection of components
+    //TODO: its good that the getters enforce const but the type shouldnt have to match the member. rather than vector, span would be better
     class model_data final {
     public:
         using attribute_collection_type = std::unordered_map<std::string, attribute_data>;

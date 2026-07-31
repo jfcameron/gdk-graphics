@@ -201,8 +201,8 @@ void model_data::sort_by_nearest_triangle(
             const auto entityPosA = a.centroid;
             const auto entityPosB = b.centroid;
 
-            const auto aDist = cameraPos.distance(entityPosA);
-            const auto bDist = cameraPos.distance(entityPosB);
+            const auto aDist = cameraPos.distance_from(entityPosA);
+            const auto bDist = cameraPos.distance_from(entityPosB);
 
             return (aDist < bDist);
         },
@@ -229,8 +229,8 @@ void model_data::sort_by_furthest_triangle(
             const auto entityPosA = a.centroid;
             const auto entityPosB = b.centroid;
 
-            const auto aDist = cameraPos.distance(entityPosA);
-            const auto bDist = cameraPos.distance(entityPosB);
+            const auto aDist = cameraPos.distance_from(entityPosA);
+            const auto bDist = cameraPos.distance_from(entityPosB);
 
             return (aDist > bDist);
         },
@@ -267,7 +267,7 @@ void model_data::transform(const std::string &aPositionAttributeName,
     const graphics_vector3_type &aScale) {
 
     graphics_matrix4x4_type mat;
-    mat.set_rotation(aRot, aScale);
+    mat.set_rotation_and_scale(aRot, aScale);
     mat.set_translation(aPos);
     transform(aPositionAttributeName, mat);
 

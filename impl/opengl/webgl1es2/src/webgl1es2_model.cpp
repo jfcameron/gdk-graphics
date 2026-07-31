@@ -5,6 +5,7 @@
 #include <gdk/opengl.h>
 #include <gdk/webgl1es2_model.h>
 #include <gdk/model_data.h>
+#include <gdk/math_constants.h>
 
 #include <iostream>
 #include <stdexcept>
@@ -12,6 +13,65 @@
 using namespace gdk;
 
 static constexpr auto TAG("webgl1es2_model");
+
+const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Sphere([]() {
+    constexpr int latitudeBands = 8;
+    constexpr int longitudeBands = 8;
+    constexpr float radius = 0.5f;
+
+    std::vector<float> positions;
+    std::vector<float> normals;
+    std::vector<float> uvs;
+
+    auto get_vertex = [&](int lat, int lon) {
+        const float theta = lat * numbers::pi_f / latitudeBands;
+        const float phi = lon * 2.0f * numbers::pi_f / longitudeBands;
+
+        const float sinTheta = std::sin(theta);
+        const float cosTheta = std::cos(theta);
+        const float sinPhi = std::sin(phi);
+        const float cosPhi = std::cos(phi);
+
+        const float x = cosPhi * sinTheta;
+        const float y = cosTheta;
+        const float z = sinPhi * sinTheta;
+
+        const float u = 1.0f - (float(lon) / longitudeBands);
+        const float v = 1.0f - (float(lat) / latitudeBands);
+
+        positions.push_back(radius * x);
+        positions.push_back(radius * y);
+        positions.push_back(radius * z);
+
+        normals.push_back(x);
+        normals.push_back(y);
+        normals.push_back(z);
+
+        uvs.push_back(u);
+        uvs.push_back(v);
+    };
+
+    for (int lat = 0; lat < latitudeBands; ++lat) {
+        for (int lon = 0; lon < longitudeBands; ++lon) {
+            // Triangle 1
+            get_vertex(lat, lon);
+            get_vertex(lat + 1, lon);
+            get_vertex(lat, lon + 1);
+
+            // Triangle 2
+            get_vertex(lat + 1, lon);
+            get_vertex(lat + 1, lon + 1);
+            get_vertex(lat, lon + 1);
+        }
+    }
+
+    model_data data = {{
+        { "a_Position", {positions, 3}},
+        { "a_Normal", {normals, 3}},
+        { "a_UV", {uvs, 2}}
+    }};
+    return new gdk::webgl1es2_model(model::usage_hint::upload_once, data);
+});
 
 const jfc::lazy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
     model_data data = {{
@@ -239,12 +299,14 @@ void webgl1es2_model::upload(const usage_hint &aUsage,
     const model_data &aData) {
     m_PrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode());
 
-    update_index_data(m_IndexBufferHandle, 
-        aData.indexes().size(), 
-        &aData.indexes().front(), 
-        dataUsageToGLenum(aUsage),
-        m_IndexCount
-    );
+    if (!aData.indexes().empty()) {
+        update_index_data(m_IndexBufferHandle, 
+            aData.indexes().size(), 
+            &aData.indexes().front(), 
+            dataUsageToGLenum(aUsage),
+            m_IndexCount
+        );
+    }
 
     //Vertex buffer objects
     {

@@ -64,7 +64,7 @@ namespace gdk {
             aLightPosition.z -= HALF;
 
             for (int x(0); x < aSize; ++x) for (int y(0); y < aSize; ++y) for (int z(0); z < aSize; ++z) {
-                float distanceFromCentre = CENTRE.distance(gdk::vector3<float>(x,y,z));
+                float distanceFromCentre = CENTRE.distance_from(gdk::vector3<float>(x,y,z));
                 float normalizedHalfDistanceFromCentre = distanceFromCentre / HALF; 
                 float intensity = (1.0f / std::sqrt(normalizedHalfDistanceFromCentre)) - 1.0f; 
                 intensity = std::clamp(intensity, 0.0f, 1.0f);

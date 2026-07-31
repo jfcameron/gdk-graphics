@@ -55,6 +55,8 @@ namespace gdk {
         [[nodiscard]] virtual graphics_shader_ptr_type get_alpha_cutoff_shader() const override;
 
         [[nodiscard]] virtual graphics_model_ptr_type get_cube_model() const override;
+
+        [[nodiscard]] virtual graphics_model_ptr_type get_sphere_model() const override;
         
         webgl1es2_context(webgl1es2_context &&);
 
