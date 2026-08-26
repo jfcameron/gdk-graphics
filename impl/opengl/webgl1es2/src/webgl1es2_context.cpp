@@ -1,114 +1,122 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <gdk/texture_data.h>
-#include <gdk/vertex_data.h>
-#include <gdk/webgl1es2_context.h>
-#include <gdk/webgl1es2_entity.h>
-#include <gdk/webgl1es2_material.h>
-#include <gdk/webgl1es2_model.h>
-#include <gdk/webgl1es2_scene.h>
-#include <gdk/webgl1es2_screen_camera.h>
-#include <gdk/webgl1es2_shader_program.h>
-#include <gdk/webgl1es2_texture_camera.h>
+#include <gdk/graphics/exception.h>
+#include <gdk/graphics/model_data.h>
+#include <gdk/graphics/texture_data.h>
+#include <gdk/graphics/webgl1es2_context.h>
 
-#include <stdexcept>
+#include <gdk/graphics/opengl.h>
+#include <gdk/graphics/webgl1es2_entity.h>
+#include <gdk/graphics/webgl1es2_material.h>
+#include <gdk/graphics/webgl1es2_model.h>
+#include <gdk/graphics/webgl1es2_scene.h>
+#include <gdk/graphics/webgl1es2_screen_camera.h>
+#include <gdk/graphics/webgl1es2_shader_program.h>
+#include <gdk/graphics/webgl1es2_texture_camera.h>
+
 #include <iostream>
+#include <stdexcept>
 
 using namespace gdk;
+using namespace gdk::graphics;
+
+context_ptr_type webgl1es2_context::make() {
+    return context_ptr_type(new webgl1es2_context());
+}
 
 webgl1es2_context::webgl1es2_context()
-{}
+: m_pState(std::make_shared<gl_state>()) {
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_SCISSOR_TEST);
+}
 
-std::shared_ptr<screen_camera> webgl1es2_context::make_camera() const {
+webgl1es2_context::webgl1es2_context(webgl1es2_context &&) = default;
+
+webgl1es2_context::~webgl1es2_context() = default;
+
+std::shared_ptr<gl_state> webgl1es2_context::state() const { return m_pState; }
+
+std::shared_ptr<screen_camera> webgl1es2_context::make_camera() {
     return std::shared_ptr<screen_camera>(new webgl1es2_screen_camera());
 }
 
-std::shared_ptr<texture_camera> webgl1es2_context::make_texture_camera() const {
+std::shared_ptr<texture_camera> webgl1es2_context::make_texture_camera() {
     return std::shared_ptr<texture_camera>(new webgl1es2_texture_camera());
 }
 
-graphics::context::entity_ptr_type webgl1es2_context::make_entity(gdk::graphics::context::model_ptr_type pModel, 
-    gdk::graphics::context::material_ptr_type pMaterial) const {
-    return graphics::context::entity_ptr_type(
+entity_ptr_type webgl1es2_context::make_entity(
+    const const_model_ptr_type pModel, 
+    const const_material_ptr_type pMaterial) {
+    return entity_ptr_type(
         new webgl1es2_entity(
-            std::static_pointer_cast<webgl1es2_model>(pModel),
-            std::static_pointer_cast<webgl1es2_material>(pMaterial)));
+            std::static_pointer_cast<webgl1es2_model>(
+                std::const_pointer_cast<gdk::graphics::model>(pModel)),
+            std::static_pointer_cast<webgl1es2_material>(
+                std::const_pointer_cast<gdk::graphics::material>(pMaterial)
+        )));
 }
 
-graphics::context::material_ptr_type webgl1es2_context::make_material(
-    gdk::graphics::context::shader_ptr_type pShader,
-    material::render_mode aRenderMode,
-    material::FaceCullingMode aFaceCullingMode) const {
-    return graphics::context::material_ptr_type(
+material_ptr_type webgl1es2_context::make_material(
+    const const_shader_ptr_type pShader,
+    const material::render_mode aRenderMode,
+    const material::face_culling_mode aFaceCullingMode) {
+    return material_ptr_type(
         new webgl1es2_material(
-            std::static_pointer_cast<webgl1es2_shader_program>(pShader),
+            std::static_pointer_cast<webgl1es2_shader_program>(
+                std::const_pointer_cast<gdk::graphics::shader_program>(pShader)),
             aFaceCullingMode,
             aRenderMode));
 }
 
-graphics::context::shader_ptr_type webgl1es2_context::make_shader(const std::string &aVertexShaderStageSourceCodeGLSL, const std::string &aFragmentShaderStageSourceCodeGLSL) const {
-    return graphics::context::shader_ptr_type(
-        new webgl1es2_shader_program(aVertexShaderStageSourceCodeGLSL, aFragmentShaderStageSourceCodeGLSL));
+shader_ptr_type webgl1es2_context::make_shader(
+    const std::string_view aVertexShaderStageSourceCodeGLSL, 
+    const std::string_view aFragmentShaderStageSourceCodeGLSL) {
+    return shader_ptr_type(
+        new webgl1es2_shader_program(std::string(aVertexShaderStageSourceCodeGLSL), std::string(aFragmentShaderStageSourceCodeGLSL)));
 }
 
-graphics::context::shader_ptr_type webgl1es2_context::get_alpha_cutoff_shader() const {
-    return std::static_pointer_cast<shader_program>(
-        static_cast<std::shared_ptr<webgl1es2_shader_program>>(
-            webgl1es2_shader_program::AlphaCutOff));
+shader_ptr_type webgl1es2_context::make_alpha_cutoff_shader() const {
+    return std::static_pointer_cast<shader_program>(webgl1es2_shader_program::make_alpha_cutoff());
 }
 
-graphics::context::shader_ptr_type webgl1es2_context::get_pink_shader_of_death() const {
-    return std::static_pointer_cast<shader_program>(
-        static_cast<std::shared_ptr<webgl1es2_shader_program>>(
-            webgl1es2_shader_program::PinkShaderOfDeath));
+model_ptr_type webgl1es2_context::make_cube_model() const {
+    return std::static_pointer_cast<model>(webgl1es2_model::make_cube());
 }
 
-graphics::context::model_ptr_type webgl1es2_context::get_cube_model() const {
-    return std::static_pointer_cast<model>(
-        std::shared_ptr<webgl1es2_model>(webgl1es2_model::Cube));
+model_ptr_type webgl1es2_context::make_sphere_model() const {
+    return std::static_pointer_cast<model>(webgl1es2_model::make_sphere());
 }
 
-graphics::context::model_ptr_type webgl1es2_context::get_quad_model() const {
-    return std::static_pointer_cast<model>(
-        std::shared_ptr<webgl1es2_model>(webgl1es2_model::Quad));
+texture_ptr_type webgl1es2_context::make_texture(const texture_data::view &imageView, const texture::wrap_mode aWrapModeU,
+    const texture::wrap_mode aWrapModeV) {
+    return texture_ptr_type(new webgl1es2_texture(imageView, aWrapModeU, aWrapModeV));
 }
 
-graphics::context::texture_ptr_type webgl1es2_context::make_texture(const texture_data::view &imageView, const texture::wrap_mode aWrapModeU,
-    const texture::wrap_mode aWrapModeV) const
-{
-    return graphics::context::texture_ptr_type(
-        new webgl1es2_texture(imageView, aWrapModeU, aWrapModeV));
-}
-
-graphics::context::texture_ptr_type webgl1es2_context::make_texture() const {
+texture_ptr_type webgl1es2_context::make_texture() {
     texture_data::view view;
     view.width = 0;
     view.height = 0;
     view.format = texture::format::grey;
     view.data = nullptr;
 
-    return graphics::context::texture_ptr_type(new webgl1es2_texture(view));
+    return texture_ptr_type(new webgl1es2_texture(view));
 }
 
-graphics::context::model_ptr_type webgl1es2_context::make_model(const model::usage_hint usage,
-    const vertex_data &vertexDataView) const {
-    return graphics::context::model_ptr_type(new gdk::webgl1es2_model(
-        gdk::model::usage_hint::write_once, 
-        vertexDataView));
+model_ptr_type webgl1es2_context::make_model(const model::usage_hint usage,
+    const model_data &vertexDataView) {
+    return model_ptr_type(new gdk::graphics::webgl1es2_model(usage, vertexDataView));
 }
 
-graphics::context::model_ptr_type webgl1es2_context::make_model() const {
-    std::vector<float> data({0, 0, 0});
-    return make_model(model::usage_hint::write_once, 
-        {{{"a_Position", {data, 1}}}});
+model_ptr_type webgl1es2_context::make_model() {
+    //TODO: Possibly delay initial vbo upload until user-data is actually provided.
+    return make_model(model::usage_hint::upload_once, {{
+        { "nil", { {
+            0.0f, 0.0f, 0.0f,
+        }, 1 } },
+    }});
 }
 
-graphics::context::scene_ptr_type webgl1es2_context::make_scene() const {
-    return graphics::context::scene_ptr_type(
-        new gdk::webgl1es2_scene());
-}
-
-graphics::context::context_ptr_type webgl1es2_context::make() {
-    return std::make_unique<webgl1es2_context>(webgl1es2_context());
+scene_ptr_type webgl1es2_context::make_scene() {
+    return scene_ptr_type(new gdk::graphics::webgl1es2_scene(m_pState));
 }
 

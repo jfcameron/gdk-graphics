@@ -1,14 +1,11 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <gdk/game_loop.h>
-#include <gdk/graphics_context.h>
-#include <gdk/scene.h>
-#include <gdk/texture_data.h>
-#include <gdk/webgl1es2_context.h>
-
-#include <jfc/glfw_window.h>
-
-#include <GLFW/glfw3.h>
+#include <gdk/timing/game_loop.h>
+#include <gdk/windowing/impl_glfw_window.h>
+#include <gdk/graphics/context.h>
+#include <gdk/graphics/scene.h>
+#include <gdk/graphics/texture_data.h>
+#include <gdk/graphics/webgl1es2_context.h>
 
 #include <array>
 #include <chrono>
@@ -24,73 +21,37 @@
 
 using namespace gdk;
 
-vertex_data make_quad() {
-    const vertex_data quadData({
-        { 
-            "a_Position",
-            {
-                {
-                    1.0f, 1.0f, 0.0f,
-                    0.0f, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f,
-                    1.0f, 1.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f,
-                    1.0f, 0.0f, 0.0f,
-                },
-                3
-            }
-        },
-        { 
-            "a_UV",
-            {
-                {
-                    1, 0,
-                    0, 0,
-                    0, 1,
-                    1, 0,
-                    0, 1,
-                    1, 1,
-                },
-                2
-            }
-        }
-    });
-    return quadData;
-}
+using namespace gdk::graphics;
+using namespace gdk::timing;
 
-int main(int argc, char **argv) {
-    glfw_window window("per entity and per triangle translucency");
+int main() {
+    const auto pWindow = windowing::impl_glfw_window::make("per entity and per triangle translucency");
 
     auto pContext = webgl1es2_context::make();
     auto pScene = pContext->make_scene();
 
-    auto [pBatchModel, batchModelVertexData] = [&]() {
-        vertex_data batchModelVertexData;
-        return std::make_tuple(
-            pContext->make_model(model::usage_hint::write_once, batchModelVertexData),
-            std::move(batchModelVertexData)
-        );
-    }();
+    model_data batchModelVertexData;
+    auto pBatchModel = pContext->make_model(model::usage_hint::upload_once, batchModelVertexData);
 
     auto pTextureCamera = [&]() {
         auto p(pContext->make_texture_camera());
-        p->set_clear_color({1,0.1,0.1,1});
+        p->set_clear_color({1.f, 0.1f, 0.1f, 1.f});
         pScene->add(p);
         return p;
     }();
 
     auto pCamera = [&]() {
         auto p(pContext->make_camera());
-        p->set_clear_color(color::DarkGreen);
+        p->set_clear_color(color::cornflower_blue);
         pScene->add(p);
         return p;
     }();
 
-    auto pAlpha = pContext->get_alpha_cutoff_shader();
+    auto pAlpha = pContext->make_alpha_cutoff_shader();
 
     auto pUserModel = [&]() {
         float size(1);
-        decltype(size) hsize = size/2.;
+        decltype(size) hsize = size/2.f;
 
         const std::vector<float> posData({
             size -hsize, size -hsize, 0.0f,
@@ -110,26 +71,13 @@ int main(int argc, char **argv) {
             1, 1
         });
 
-        const vertex_data userdefined_quad_vertex_data(
-        {
-            { 
-                "a_Position",
-                {
-                    posData,
-                    3
-                }
-            },
-            { 
-                "a_UV",
-                {
-                    uvData,
-                    2
-                }
-            }
+        const model_data userdefined_quad_model_data({
+            {"a_Position", { posData, 3 }},
+            {"a_UV", { uvData, 2 }}
         });
 
-        return pContext->make_model(model::usage_hint::write_once, 
-            userdefined_quad_vertex_data);
+        return pContext->make_model(model::usage_hint::upload_once, 
+            userdefined_quad_model_data);
     }();
 
     auto pTexture = [&]() {
@@ -143,21 +91,21 @@ int main(int argc, char **argv) {
         view.width = 2;
         view.height = 2;
         view.format = texture::format::rgba;
-        view.data = reinterpret_cast<std::byte *>(&imageData.front());
+        view.data = &imageData.front();
         return pContext->make_texture(view);
     }();
 
     auto pMaterial = [&]() {
         auto pMaterial = pContext->make_material(pAlpha, material::render_mode::transparent);
-        pMaterial->setTexture("_Texture", pTextureCamera->get_color_texture());
-        pMaterial->setVector2("_UVScale", {1, 1});
-        pMaterial->setVector2("_UVOffset", {0, 0});
+        pMaterial->set_texture("_Texture", pTextureCamera->get_color_texture());
+        pMaterial->set_vector2("_UVScale", {1, 1});
+        pMaterial->set_vector2("_UVOffset", {0, 0});
         return pMaterial;
     }();
 
     auto pEntity = [&]() {
         auto pEntity = pContext->make_entity(pBatchModel, pMaterial);
-        pEntity->set_model_matrix(Vector3<float>{2., 0., -11.}, Quaternion<float>());
+        pEntity->set_transform(vector3<float>{2., 0., -11.}, quaternion<float>());
         pScene->add(pEntity);
         return pEntity;
     }();
@@ -174,20 +122,22 @@ int main(int argc, char **argv) {
             view.width = 2;
             view.height = 2;
             view.format = texture::format::rgba;
-            view.data = reinterpret_cast<std::byte *>(&textureData.front());
+            view.data = &textureData.front();
             return pContext->make_texture(view);
         }();
 
         auto pMaterial = [&]() {
-            auto p = pContext->make_material(pAlpha, material::render_mode::transparent);
-            p->setTexture("_Texture", pTexture);
-            p->setVector2("_UVScale", {1, 1});
-            p->setVector2("_UVOffset", {0, 0});
+            auto p = pContext->make_material(pAlpha, 
+                material::render_mode::transparent, 
+                material::face_culling_mode::back);
+            p->set_texture("_Texture", pTexture);
+            p->set_vector2("_UVScale", {1, 1});
+            p->set_vector2("_UVOffset", {0, 0});
             return p;
         }();
 
-        auto pEntity = pContext->make_entity(pContext->get_cube_model(), pMaterial);
-        pEntity->set_model_matrix({2., 0., -12.5}, {{0, 0, 0}}, {1.0, 1.0, 1});
+        auto pEntity = pContext->make_entity(pContext->make_cube_model(), pMaterial);
+        pEntity->set_transform({2., 0., -12.5}, quaternion_type::identity, {1.0, 1.0, 1});
         pScene->add(pEntity);
         return pEntity;
     }();
@@ -195,52 +145,65 @@ int main(int argc, char **argv) {
     auto pEntity3 = [&]() {    
         auto pMaterial = [&]() {
             auto pMaterial = pContext->make_material(pAlpha);
-            pMaterial->setTexture("_Texture", pTexture);
-            pMaterial->setVector2("_UVScale", {1, 1});
-            pMaterial->setVector2("_UVOffset", {0, 0});
+            pMaterial->set_texture("_Texture", pTexture);
+            pMaterial->set_vector2("_UVScale", {1, 1});
+            pMaterial->set_vector2("_UVOffset", {0, 0});
             return pMaterial;
         }();
 
-        auto pEntity(pContext->make_entity(pContext->get_cube_model(), pMaterial));
-        pEntity->set_model_matrix({2., 0., -14.5}, {{0, 2, 0.6}}, {6.5, 0.5, 3});
+        auto pEntity(pContext->make_entity(pContext->make_cube_model(), pMaterial));
+        pEntity->set_transform({2.f, 0.f, -14.5f}, quaternion_type::from_euler({0.f, 2.f, 0.6f}),
+            {6.5f, 0.5f, 3.f});
         pScene->add(pEntity);
 
         return pEntity;
     }();
     
-    game_loop(60, [&](const float time, const float deltaTime) {
-        glfwPollEvents();
+    game_loop(frames_per_second{60}, [&](const game_loop::frame aFrame) {
+        const auto time = static_cast<float>(aFrame.elapsed);
+        windowing::impl_glfw_window::poll_events();
 
-        pCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        graphics_mat4x4_type matCamera;
-        matCamera.translate({0, 0, -10});
-        matCamera.rotate({{0,0,0}});
-        pCamera->set_world_matrix(matCamera);
+        pCamera->set_perspective_projection(to_radians(90.0f), 0.01f, 20, static_cast<floating_point_type>(pWindow->aspect_ratio()));
+        matrix4x4_type matCamera;
+        matCamera.set_translation({0, 0, -10});
+        matCamera.set_rotation(quaternion_type::identity);
+        pCamera->set_transform(matCamera);
 
-        pEntity->set_model_matrix( {std::cos(time), -0., -11.}, {{0, 4 * ( 1/ 2), 4}});
-        pEntity2->set_model_matrix( {2., 0., -12.5}, {{time *0.9f, time *0.5f, 0}}, {1.0, 1.0, 1});
+        pEntity->set_transform({std::cos(time), -0., -11.},
+            quaternion_type::from_euler({0, 4 * (1 / 2), 4}));
+        pEntity2->set_transform({2., std::sin(time) * 2.f, -12.5},
+            quaternion_type::from_euler({time * 0.9f, time * 0.5f, 0}), {1.0, 1.0, 1});
         
-        pTextureCamera->set_perspective_projection(90, 0.01, 20, window.getAspectRatio());
-        pTextureCamera->set_world_matrix({std::sin(time), 0, -10}, {});
+        pTextureCamera->set_perspective_projection(to_radians(90.0f), 0.01f, 20, static_cast<floating_point_type>(pWindow->aspect_ratio()));
+        pTextureCamera->set_transform({std::sin(time), 0, -10}, {});
 
-        vertex_data newData = make_quad();
-        newData.transform_position({0.5,0,(float)sin(time)*0.5f},{{0,0,0}},{0.5});
+        model_data newData = model_data::make_quad();
+        newData.transform("a_Position", 
+            {0.5, 0, (float)sin(time) * 0.5f}, quaternion_type::identity,
+            vector3_type(0.5f));
 
         batchModelVertexData.clear();
-        auto quad = make_quad();
+        auto quad = model_data::make_quad();
         batchModelVertexData.push_back(quad);
-        quad.transform_uv({0.2f, 0}, {2.f, 2.f});
-        quad.transform_position({0.5,0.5,(float)cos(time)*0.5f},{{0,0,0}},{0.5});
+
+        matrix4x4_type quadMat;
+        vector3_type tran(std::cos(time*0.25f)*0.5f,0.0,0); quadMat.set_translation({tran});
+        vector3_type rot(time,0,0); 
+        vector3_type sca(0.5);
+        quadMat.set_rotation_and_scale(quaternion_type::from_euler(rot), sca);
+        quad.transform("a_Position", quadMat);
+
+        quad.transform("a_UV", {0.2f, 0}, 0, {2.f, 2.f});
         batchModelVertexData.push_back(quad);
-        batchModelVertexData.sort_by_nearest_triangle( {0,0,-20}, graphics_mat4x4_type::Identity);
-        pBatchModel->update_vertex_data(model::usage_hint::streaming, batchModelVertexData);
+        batchModelVertexData.sort_by_nearest_triangle( {0,0,-20}, matrix4x4_type::identity);
+        pBatchModel->upload(model::usage_hint::streaming, batchModelVertexData);
 
-        pScene->draw(window.getWindowSize());
+        pScene->draw(pWindow->window_size());
 
-        window.swapBuffer(); 
+        pWindow->swap_buffers(); 
 
-        return window.shouldClose();
-    });
+        return pWindow->should_close();
+    }).run();
 
     return EXIT_SUCCESS;
 }

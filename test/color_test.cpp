@@ -5,9 +5,10 @@
 #include <jfc/catch.hpp>
 #include <jfc/types.h>
 
-#include <gdk/color.h>
+#include <gdk/graphics/color.h>
 
 using namespace gdk;
+using namespace gdk::graphics;
 
 TEST_CASE("gdk::color", "[gdk::color]")
 {
@@ -15,29 +16,29 @@ TEST_CASE("gdk::color", "[gdk::color]")
     {
         color color;
 
-        REQUIRE(color == color::Black);
+        REQUIRE(color == color::black);
     }
 
     SECTION("equality semantics work")
     {
-        REQUIRE(color::Blue == color::Blue);
+        REQUIRE(color::blue == color::blue);
 
-        REQUIRE(color::Red != color::Green);
+        REQUIRE(color::red != color::green);
     }
 
     SECTION("move semantics")
     {
-        color a = color::CornflowerBlue;
+        color a = color::cornflower_blue;
         {
             color b = std::move(a);
 
-            REQUIRE(b == color::CornflowerBlue);
+            REQUIRE(b == color::cornflower_blue);
         }
     }
     
     SECTION("copy semantics")
     {
-        color a = color::White;
+        color a = color::white;
 
         auto b = a;
 

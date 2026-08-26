@@ -10,6 +10,7 @@
 #include <gdk/webgl1es2_vertex_attribute.h>
 
 using namespace gdk;
+using namespace gdk::graphics;
 
 TEST_CASE("gdk::webgl1es2_vertex_attribute", "[gdk::webgl1es2_vertex_attribute]")
 {

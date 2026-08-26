@@ -7,9 +7,10 @@
 
 #include "test_include.h"
 
-#include <gdk/webgl1es2_model.h>
+#include <gdk/graphics/webgl1es2_model.h>
 
 using namespace gdk;
+using namespace gdk::graphics;
 
 TEST_CASE("webgl1es2_model", "[gdk::webgl1es2_model]")
 {
@@ -17,7 +18,7 @@ TEST_CASE("webgl1es2_model", "[gdk::webgl1es2_model]")
 
     SECTION("Hardcoded vertex data is well formed")
     {
-        /*auto pCube = static_cast<std::shared_ptr<model>>(model::Cube);
+        /*auto pCube = model::make_cube();
 
         REQUIRE(pCube->getHandle() >= 0);
 

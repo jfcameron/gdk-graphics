@@ -1,14 +1,14 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <gdk/color.h>
-#include <gdk/glh.h>
-#include <gdk/graphics_exception.h>
+#include <gdk/graphics/color.h>
+#include <gdk/graphics/glh.h>
+#include <gdk/graphics/exception.h>
 
 #include <cmath>
 #include <vector>
 
 namespace glh {
-    void ClearColor(const gdk::color &acolor) {
+    void ClearColor(const gdk::graphics::color &acolor) {
         glClearColor(acolor.r, acolor.g, acolor.b, acolor.a);
     }
 
@@ -27,11 +27,11 @@ namespace glh {
             reinterpret_cast<void *>(sizeof(GLfloat) * aAttributeOffset));
     }
 
-    void Viewport(const gdk::graphics_intvector2_type& aPos, const gdk::graphics_intvector2_type& aSize) {
+    void Viewport(const gdk::graphics::intvector2_type& aPos, const gdk::graphics::intvector2_type& aSize) {
         glViewport(aPos.x, aPos.y, aSize.x, aSize.y);
     }
 
-    void Scissor(const gdk::graphics_intvector2_type& aPos, const gdk::graphics_intvector2_type& aSize) {
+    void Scissor(const gdk::graphics::intvector2_type& aPos, const gdk::graphics::intvector2_type& aSize) {
         glScissor(aPos.x, aPos.y, aSize.x, aSize.y);
     }
 
@@ -39,21 +39,21 @@ namespace glh {
         glUniform1f(uniformHandle, aValue);
     }
 
-    void Bind2FloatUniform(const GLint uniformHandle, const gdk::graphics_vector2_type &agraphics_vector2_type) {
+    void Bind2FloatUniform(const GLint uniformHandle, const gdk::graphics::vector2_type &agraphics_vector2_type) {
         glUniform2f(uniformHandle, agraphics_vector2_type.x, agraphics_vector2_type.y);
     }
 
-    void Bind3FloatUniform(const GLint uniformHandle, const gdk::graphics_vector3_type &agraphics_vector3_type) {
+    void Bind3FloatUniform(const GLint uniformHandle, const gdk::graphics::vector3_type &agraphics_vector3_type) {
         glUniform3f(uniformHandle, agraphics_vector3_type.x, agraphics_vector3_type.y, agraphics_vector3_type.z);
     }
 
-    void Bind4FloatUniform(const GLint uniformHandle, const gdk::graphics_vector4_type &agraphics_vector4_type) {
+    void Bind4FloatUniform(const GLint uniformHandle, const gdk::graphics::vector4_type &agraphics_vector4_type) {
         glUniform4f(uniformHandle, agraphics_vector4_type.x, agraphics_vector4_type.y, agraphics_vector4_type.z, 
 			agraphics_vector4_type.w);
     }
 
-    void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics_mat4x4_type &aMatrix4x4) {
-        glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.m[0][0]);
+    void BindMatrix4x4(const GLint uniformHandle, const gdk::graphics::matrix4x4_type &aMatrix4x4) {
+        glUniformMatrix4fv(uniformHandle, 1, GL_FALSE, &aMatrix4x4.front());
     }
 
     void BindTextureUniform(const GLuint aUniformHandle, const GLuint aTextureHandle, const int aTextureUnit) {
@@ -69,7 +69,7 @@ namespace glh {
             case 6: glActiveTexture(GL_TEXTURE6); break;
             case 7: glActiveTexture(GL_TEXTURE7); break;
 
-            default: throw gdk::graphics_exception(
+            default: throw gdk::graphics::exception(
 				"GLES2.0/WebGL1.0 only guarantee 8 texture units; "
 				"you are trying to bind too many textures simultaneously to the context");
         }
@@ -119,6 +119,6 @@ std::optional<std::string> glh::GetError() {
 
         default: break;
     }
-    throw gdk::graphics_exception("unhandled gl error type");
+    throw gdk::graphics::exception("unhandled gl error type");
 }
 

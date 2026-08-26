@@ -1,9 +1,11 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <gdk/glh.h>
-#include <gdk/graphics_exception.h>
-#include <gdk/texture_data.h>
-#include <gdk/webgl1es2_texture.h>
+#include <string>
+#include <gdk/graphics/glh.h>
+#include <gdk/graphics/constraints.h>
+#include <gdk/graphics/exception.h>
+#include <gdk/graphics/texture_data.h>
+#include <gdk/graphics/webgl1es2_texture.h>
 
 #include <stb/stb_image.h>
 
@@ -14,40 +16,36 @@
 #include <vector>
 
 using namespace gdk;
+using namespace gdk::graphics;
 
-static constexpr char TAG[] = "texture";
-
-static inline bool isPowerOfTwo(const long aNumber) {
-    return aNumber > 0 && pow(2, static_cast<int>(log2(aNumber))) == aNumber;
-}
 
 static inline webgl1es2_texture::format textureFormatToWebGL1ES2TextureFormat(const texture::format a) {
     switch(a) {
         case texture::format::grey: return webgl1es2_texture::format::alpha;
+        case texture::format::rg: return webgl1es2_texture::format::luminance_alpha;
         case texture::format::rgb: return webgl1es2_texture::format::rgb;
         case texture::format::rgba: return webgl1es2_texture::format::rgba;
-        default: break;
     }
-    throw graphics_exception("unhandled format type");
+    throw exception("unhandled format type");
 }
 
 static inline GLint webGL1ES2TextureFormatToToGLint(const webgl1es2_texture::format a) {
     switch(a) {
         case webgl1es2_texture::format::depth: {
 #if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
-            if (!GLEW_ARB_depth_texture) throw graphics_exception(
+            if (!GLEW_ARB_depth_texture) throw exception(
                 "webgl1es2_texture: use of depth textures requires the "
                 "availability of the depth_texture extention, which is "
                 "not available on the current platform");
 #endif
             return GL_DEPTH_COMPONENT;
         }
+        case webgl1es2_texture::format::alpha: return GL_ALPHA;
+        case webgl1es2_texture::format::luminance_alpha: return GL_LUMINANCE_ALPHA;
         case webgl1es2_texture::format::rgb: return GL_RGB;
         case webgl1es2_texture::format::rgba: return GL_RGBA;
-        case webgl1es2_texture::format::alpha: return GL_ALPHA;
-        default: break;
     }
-    throw graphics_exception("unhandled format type");
+    throw exception("unhandled format type");
 }
 
 static inline GLint minification_filter_to_glint(const webgl1es2_texture::minification_filter a) {
@@ -58,18 +56,16 @@ static inline GLint minification_filter_to_glint(const webgl1es2_texture::minifi
         case webgl1es2_texture::minification_filter::linear_mipmap_nearest: return GL_LINEAR_MIPMAP_NEAREST;
         case webgl1es2_texture::minification_filter::nearest_mipmap_linear: return GL_NEAREST_MIPMAP_LINEAR;
         case webgl1es2_texture::minification_filter::linear_mipmap_linear: return GL_LINEAR_MIPMAP_LINEAR;
-        default: break;
     }
-    throw graphics_exception("unhandled minification filter");
+    throw exception("unhandled minification filter");
 }
 
 static inline GLint magnification_filter_to_glint(const webgl1es2_texture::magnification_filter a) {
     switch(a) {
         case webgl1es2_texture::magnification_filter::linear: return GL_LINEAR;
         case webgl1es2_texture::magnification_filter::nearest: return GL_NEAREST;
-        default: break;
     }
-    throw graphics_exception("unhandled magnification filter");
+    throw exception("unhandled magnification filter");
 }
 
 static inline GLint wrap_mode_to_glint(const texture::wrap_mode a) {
@@ -77,34 +73,28 @@ static inline GLint wrap_mode_to_glint(const texture::wrap_mode a) {
         case texture::wrap_mode::clamped: return GL_CLAMP_TO_EDGE;
         case texture::wrap_mode::repeat: return GL_REPEAT;
         case texture::wrap_mode::mirrored: return GL_MIRRORED_REPEAT;
-        default: break;
     }
-    throw graphics_exception("unhandled wrap mode");
+    throw exception("unhandled wrap mode");
 }
 
-const std::shared_ptr<gdk::webgl1es2_texture> webgl1es2_texture::GetCheckerboardOfDeath() {
-    static std::shared_ptr<gdk::webgl1es2_texture> ptr;
-    static std::once_flag initFlag;
-    std::call_once(initFlag, []() {
-        std::vector<std::underlying_type<std::byte>::type> imageData({
-            0x00, 0xff, 0xff, 0xff,                                    
-            0xff, 0xff, 0xff, 0xff,                                    
-            0xff, 0xff, 0xff, 0xff,
-            0x00, 0x00, 0x00, 0xff,
-        });
-        texture_data::view view;
-        view.width = 2;
-        view.height = 2;
-        view.format = texture::format::rgba;
-        view.data = reinterpret_cast<std::byte *>(&imageData.front());
-
-        ptr = std::make_shared<gdk::webgl1es2_texture>(view);
+std::shared_ptr<webgl1es2_texture> webgl1es2_texture::make_checkerboard_of_death() {
+    const std::vector<texture_data::channel_type> imageData({
+        0x00, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff,
+        0x00, 0x00, 0x00, 0xff,
     });
-    
-    return ptr;
-};
 
-const GLint webgl1es2_texture::getMaxTextureSize() {
+    texture_data::view view;
+    view.width = 2;
+    view.height = 2;
+    view.format = texture::format::rgba;
+    view.data = &imageData.front();
+
+    return std::make_shared<webgl1es2_texture>(view);
+}
+
+GLint webgl1es2_texture::getMaxTextureSize() {
     static std::once_flag once;
     static GLint max_texture_2d_size;
 
@@ -133,21 +123,22 @@ webgl1es2_texture::webgl1es2_texture(
 {}
 
 static inline void validate_texture_size(const size_t aWidthInTexels, const size_t aHeightInTexels) {
-    if ((aWidthInTexels > 0 && !isPowerOfTwo(aWidthInTexels)) || 
-        aHeightInTexels > 0 && !isPowerOfTwo((aHeightInTexels)))
-        throw graphics_exception("webgl1es2_texture dimensions must be power of 2");
+    if ((aWidthInTexels > 0 && !is_power_of_two(aWidthInTexels)) ||
+        (aHeightInTexels > 0 && !is_power_of_two(aHeightInTexels)))
+        throw exception("webgl1es2_texture dimensions must be power of 2");
 
-    if (const auto MAX_TEXTURE_2D_SIZE(webgl1es2_texture::getMaxTextureSize());
-        aWidthInTexels > MAX_TEXTURE_2D_SIZE || 
-        aHeightInTexels > MAX_TEXTURE_2D_SIZE)
-        throw graphics_exception(": webgl1es2_texture too large for this platform. max: " + MAX_TEXTURE_2D_SIZE);
+    if (const auto MAX_TEXTURE_2D_SIZE = webgl1es2_texture::getMaxTextureSize();
+        aWidthInTexels > static_cast<std::size_t>(MAX_TEXTURE_2D_SIZE) ||
+        aHeightInTexels > static_cast<std::size_t>(MAX_TEXTURE_2D_SIZE))
+        throw exception(std::string("webgl1es2_texture too large for this platform. max: ")
+            .append(std::to_string(MAX_TEXTURE_2D_SIZE)));
 }
 
 webgl1es2_texture::webgl1es2_texture(
     const webgl1es2_texture::format aFormat,
     const size_t aWidthInTexels,
     const size_t aHeightInTexels,
-    std::byte *aData,
+    const texture_data::channel_type *aData,
     const wrap_mode aWrapModeU,
     const wrap_mode aWrapModeV,
     const minification_filter minFilter,
@@ -166,8 +157,8 @@ webgl1es2_texture::webgl1es2_texture(
     glTexImage2D(GL_TEXTURE_2D, 
         0, 
         format,
-        aWidthInTexels, 
-        aHeightInTexels, 
+        static_cast<GLsizei>(aWidthInTexels), 
+        static_cast<GLsizei>(aHeightInTexels), 
         0, 
         format,
         GL_UNSIGNED_BYTE, 
@@ -189,9 +180,9 @@ webgl1es2_texture::webgl1es2_texture(
 [](const GLuint handle) {
     glDeleteTextures(1, &handle);
 })
-, m_CurrentDataFormat(webGL1ES2TextureFormatToToGLint(aFormat))
-, m_CurrentDataHeight(aHeightInTexels)
 , m_CurrentDataWidth(aWidthInTexels)
+, m_CurrentDataHeight(aHeightInTexels)
+, m_CurrentDataFormat(webGL1ES2TextureFormatToToGLint(aFormat))
 {}
 
 GLuint webgl1es2_texture::getHandle() const {
@@ -214,8 +205,8 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView) {
     glTexImage2D(GL_TEXTURE_2D, 
         0, 
         format,
-        imageView.width, 
-        imageView.height, 
+        static_cast<GLsizei>(imageView.width), 
+        static_cast<GLsizei>(imageView.height), 
         0, 
         format,
         GL_UNSIGNED_BYTE, 
@@ -232,23 +223,18 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView,
     const size_t offsetX, const size_t offsetY) {
     if (offsetY + imageView.height > m_CurrentDataHeight ||
         offsetX + imageView.width > m_CurrentDataWidth)
-        throw graphics_exception("webgl1es2_texture::update_data: "
+        throw exception("webgl1es2_texture::update_data: "
             "when updating a subsection of texture data, the incoming "
             "data must be within the bounds of the existing data");
-
-    /*if (webGL1ES2TextureFormatToToGLint(imageView.format) != m_CurrentDataFormat) //TODO: reenable check
-        throw graphics_exception("webgl1es2_texture::update_data: "
-            "when updating a subsection of texture data, the incoming data "
-            "must match the existing data's format");*/
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_Handle.get());
     glTexSubImage2D(GL_TEXTURE_2D, 
         0, 
-        offsetX,
-        offsetY,
-        imageView.width, 
-        imageView.height, 
+        static_cast<GLint>(offsetX),
+        static_cast<GLint>(offsetY),
+        static_cast<GLsizei>(imageView.width), 
+        static_cast<GLsizei>(imageView.height), 
         m_CurrentDataFormat,
         GL_UNSIGNED_BYTE, 
         const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&imageView.data[0])));
@@ -257,5 +243,4 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView,
 }
 
 bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const { return m_Handle == b.m_Handle; }
-bool webgl1es2_texture::operator!=(const webgl1es2_texture &b) const { return !(*this == b); }
 

@@ -22,8 +22,6 @@ inline void initGL()
 
     if (bFirst)
     {
-        //std::cout << "THIS SHOULD APPEAR ONCE\n";
-
         if (!glfwInit()) throw std::runtime_error(std::string("InitGL").append("/glfwInit failed"));
 
         glfwWindowHint(GLFW_RESIZABLE, true);
@@ -31,14 +29,13 @@ inline void initGL()
         if (GLFWwindow *pWindow = glfwCreateWindow(400, 300, "gdk window", nullptr, nullptr))
         {
             glfwMakeContextCurrent(pWindow);
-
-            // Vsync controller. if not called, the interval is platform dependent. 0 is off. negative values allow for swapping even if the backbuffer arrives late (vendor extension dependent).
             glfwSwapInterval(-1); 
-
             glfwSwapBuffers(pWindow);
 
 #if defined JFC_TARGET_PLATFORM_Linux || defined JFC_TARGET_PLATFORM_Windows
-            if (GLenum err = glewInit() != GLEW_OK) throw std::runtime_error(std::string("InitGL").append("/glewinit failed"));
+            if (const GLenum err = glewInit(); err != GLEW_OK)
+                throw std::runtime_error(std::string("InitGL/glewInit failed: ")
+                    .append(reinterpret_cast<const char *>(glewGetErrorString(err))));
 #endif
         }
         else throw std::runtime_error(std::string("InitGL").append("/glfw window init failed"));
@@ -49,7 +46,7 @@ inline void initGL()
 
 namespace jfc
 {
-    static bool glGetError()
+    inline bool glGetError()
     {
         std::string errorcodebuffer = "";
 

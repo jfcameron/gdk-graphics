@@ -4,7 +4,7 @@ jfc_project(executable
     NAME "translucency_demo"
     VERSION 1.0
     DESCRIPTION "demo gdk-graphics app"
-    C++_STANDARD 17
+    C++_STANDARD 20
     C_STANDARD 90
 
     SOURCE_LIST

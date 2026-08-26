@@ -1,72 +1,185 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <string>
+#include "test_include.h"
 
 #include <jfc/catch.hpp>
 #include <jfc/types.h>
 
-#include "test_include.h"
+#include <gdk/graphics/texture_data.h>
+#include <gdk/graphics/webgl1es2_texture.h>
 
-#include <gdk/webgl1es2_texture.h>
+#include <memory>
+#include <type_traits>
+#include <vector>
 
 using namespace gdk;
+using namespace gdk::graphics;
 
-static const std::vector<GLubyte> textureDataPNGRGBA32(
-{
-    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x08,
-    0x08, 0x02, 0x00, 0x00, 0x00, 0x4b, 0x6d, 0x29, 0xdc, 0x00, 0x00, 0x00,
-    0x01, 0x73, 0x52, 0x47, 0x42, 0x00, 0xae, 0xce, 0x1c, 0xe9, 0x00, 0x00,
-    0x00, 0x04, 0x67, 0x41, 0x4d, 0x41, 0x00, 0x00, 0xb1, 0x8f, 0x0b, 0xfc,
-    0x61, 0x05, 0x00, 0x00, 0x00, 0x09, 0x70, 0x48, 0x59, 0x73, 0x00, 0x00,
-    0x0e, 0xc3, 0x00, 0x00, 0x0e, 0xc3, 0x01, 0xc7, 0x6f, 0xa8, 0x64, 0x00,
-    0x00, 0x00, 0x1b, 0x49, 0x44, 0x41, 0x54, 0x18, 0x57, 0x63, 0xf8, 0xff,
-    0xff, 0xff, 0xcc, 0x9b, 0xaf, 0x30, 0x49, 0x06, 0xac, 0xa2, 0x40, 0x72,
-    0x30, 0xea, 0xf8, 0xff, 0x1f, 0x00, 0xd3, 0x06, 0xab, 0x21, 0x92, 0xd9,
-    0xa4, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42,
-    0x60, 0x82
-});
-
-TEST_CASE("gdk::webgl1es2_texture", "[gdk::webgl1es2_texture]")
-{
-    initGL();
-
-    SECTION("webgl1es2_texture produces a valid webgl1es2_texture in the gl context")
-    {
-        auto tex = webgl1es2_texture::GetCheckerboardOfDeath();
-
-        REQUIRE(tex->getHandle() != 0);
-    }
-
-    SECTION("regular ctor and move semantics work")
-    {
-        webgl1es2_texture tex(webgl1es2_texture::make_from_png_rgba32(textureDataPNGRGBA32));
-
-        webgl1es2_texture b = std::move(tex);
-        
-        REQUIRE(!jfc::glGetError());
-    }
-
-    SECTION("construction by image view works")
-    {
-        //
-        gdk::webgl1es2_texture::webgl1es2_texture_2d_data_view_type view;
-        view.width = 2;
-        view.height = 2;
-        view.format = webgl1es2_texture::format::rgba;
-
-        std::vector<std::underlying_type<std::byte>::type> imageData({
+namespace {
+    struct checker final {
+        std::vector<texture_data::channel_type> pixels{
             0x00, 0xff, 0xff, 0xff,
             0xff, 0xff, 0xff, 0xff,
             0xff, 0xff, 0xff, 0xff,
-            0x00, 0x00, 0x00, 0xff,
-        });
+            0x00, 0x00, 0x00, 0xff};
 
-        view.data = reinterpret_cast<std::byte *>(&imageData.front()); 
+        [[nodiscard]] texture_data::view view(const size_t aWidth = 2, const size_t aHeight = 2) const {
+            texture_data::view v;
+            v.width = aWidth;
+            v.height = aHeight;
+            v.format = texture::format::rgba;
+            v.data = &pixels.front();
 
-        webgl1es2_texture tex(view);
-        
+            return v;
+        }
+    };
+}
+
+TEST_CASE("gdk::webgl1es2_texture construction", "[gdk::webgl1es2_texture]")
+{
+    initGL();
+
+    const checker image;
+
+    SECTION("from a texture_data view")
+    {
+        const webgl1es2_texture tex(image.view());
+
+        REQUIRE(tex.getHandle() != 0);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("from loose format, size and data")
+    {
+        const webgl1es2_texture tex(webgl1es2_texture::format::rgba, 2, 2, &image.pixels.front());
+
+        REQUIRE(tex.getHandle() != 0);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("dimensions must be powers of two")
+    {
+        REQUIRE_THROWS(webgl1es2_texture(image.view(3, 2)));
+        REQUIRE_THROWS(webgl1es2_texture(image.view(2, 3)));
+    }
+
+    SECTION("every wrap mode is accepted")
+    {
+        for (const auto u : {webgl1es2_texture::wrap_mode::repeat,
+            webgl1es2_texture::wrap_mode::clamped, webgl1es2_texture::wrap_mode::mirrored}) {
+            for (const auto v : {webgl1es2_texture::wrap_mode::repeat,
+                webgl1es2_texture::wrap_mode::clamped, webgl1es2_texture::wrap_mode::mirrored}) {
+                const webgl1es2_texture tex(image.view(), u, v);
+
+                REQUIRE(tex.getHandle() != 0);
+                REQUIRE(!jfc::glGetError());
+            }
+        }
+    }
+
+    SECTION("every minification and magnification filter is accepted")
+    {
+        using min_filter = webgl1es2_texture::minification_filter;
+        using mag_filter = webgl1es2_texture::magnification_filter;
+
+        for (const auto min : {min_filter::linear, min_filter::nearest,
+            min_filter::nearest_mipmap_nearest, min_filter::linear_mipmap_nearest,
+            min_filter::nearest_mipmap_linear, min_filter::linear_mipmap_linear}) {
+            for (const auto mag : {mag_filter::nearest, mag_filter::linear}) {
+                const webgl1es2_texture tex(image.view(),
+                    webgl1es2_texture::wrap_mode::repeat, webgl1es2_texture::wrap_mode::repeat,
+                    min, mag);
+
+                REQUIRE(tex.getHandle() != 0);
+                REQUIRE(!jfc::glGetError());
+            }
+        }
+    }
+}
+
+TEST_CASE("gdk::webgl1es2_texture updating", "[gdk::webgl1es2_texture]")
+{
+    initGL();
+
+    const checker image;
+    webgl1es2_texture tex(image.view());
+
+    const auto handleBefore = tex.getHandle();
+
+    SECTION("replacing the data keeps the same gl object")
+    {
+        tex.update_data(image.view());
+
+        REQUIRE(tex.getHandle() == handleBefore);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("a sub-region can be replaced")
+    {
+        const checker patch;
+
+        tex.update_data(patch.view(1, 1), 0, 0);
+
+        REQUIRE(tex.getHandle() == handleBefore);
         REQUIRE(!jfc::glGetError());
     }
 }
 
+TEST_CASE("gdk::webgl1es2_texture semantics", "[gdk::webgl1es2_texture]")
+{
+    initGL();
+
+    const checker image;
+
+    SECTION("it is move only")
+    {
+        REQUIRE(std::is_move_constructible<webgl1es2_texture>::value);
+        REQUIRE(std::is_move_assignable<webgl1es2_texture>::value);
+        REQUIRE_FALSE(std::is_copy_constructible<webgl1es2_texture>::value);
+        REQUIRE_FALSE(std::is_copy_assignable<webgl1es2_texture>::value);
+    }
+
+    SECTION("a moved-to texture carries the handle")
+    {
+        webgl1es2_texture source(image.view());
+        const auto handle = source.getHandle();
+
+        const webgl1es2_texture moved(std::move(source));
+
+        REQUIRE(moved.getHandle() == handle);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("equality distinguishes two separately built textures")
+    {
+        const webgl1es2_texture a(image.view());
+        const webgl1es2_texture b(image.view());
+
+        REQUIRE(a != b);
+        REQUIRE(a == a);
+    }
+}
+
+TEST_CASE("gdk::webgl1es2_texture provided resources", "[gdk::webgl1es2_texture]")
+{
+    initGL();
+
+    SECTION("the checkerboard of death is live and shared")
+    {
+        const auto pFirst = webgl1es2_texture::make_checkerboard_of_death();
+
+        REQUIRE(pFirst);
+        REQUIRE(pFirst->getHandle() != 0);
+        REQUIRE(!jfc::glGetError());
+
+        REQUIRE(webgl1es2_texture::make_checkerboard_of_death().get() != pFirst.get());
+    }
+
+    SECTION("the device reports a usable maximum texture size")
+    {
+        const auto maxSize = webgl1es2_texture::getMaxTextureSize();
+
+        REQUIRE(maxSize >= 64);
+        REQUIRE(!jfc::glGetError());
+    }
+}

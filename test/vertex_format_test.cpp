@@ -10,6 +10,7 @@
 #include <gdk/webgl1es2_vertex_format.h>
 
 using namespace gdk;
+using namespace gdk::graphics;
 
 TEST_CASE("webgl1es2_vertex_format", "[gdk::webgl1es2_vertex_format]")
 {

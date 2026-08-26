@@ -1,243 +1,229 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include <gdk/glh.h>
-#include <gdk/graphics_exception.h>
-#include <gdk/opengl.h>
-#include <gdk/webgl1es2_model.h>
-#include <gdk/vertex_data.h>
+#include <gdk/graphics/glh.h>
+#include <gdk/graphics/exception.h>
+#include <gdk/graphics/opengl.h>
+#include <gdk/graphics/webgl1es2_model.h>
+#include <gdk/graphics/model_data.h>
+#include <gdk/math_constants.h>
 
 #include <iostream>
 #include <stdexcept>
 
 using namespace gdk;
+using namespace gdk::graphics;
 
 static constexpr auto TAG("webgl1es2_model");
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Quad([]() {
-    std::vector<webgl1es2_model::attribute_component_data_type> pos({
-        // x,    y,    z
-        1.0f, 1.0f, 0.0f, // 1--0
-        0.0f, 1.0f, 0.0f, // | /
-        0.0f, 0.0f, 0.0f, // 2
-        1.0f, 1.0f, 0.0f, //    0
-        0.0f, 0.0f, 0.0f, //  / |
-        1.0f, 0.0f, 0.0f, // 1--2
-    });
-    
-    // Center the quad
-    for (size_t i(0); i < (pos.size()); i += 3) {
-        pos[i + 0] -= 0.5f;
-        pos[i + 1] -= 0.5f;
+std::shared_ptr<webgl1es2_model> webgl1es2_model::make_sphere() {
+    constexpr int latitudeBands = 8;
+    constexpr int longitudeBands = 8;
+    constexpr float radius = 0.5f;
+
+    std::vector<float> positions;
+    std::vector<float> normals;
+    std::vector<float> uvs;
+
+    auto get_vertex = [&](int lat, int lon) {
+        const float theta = lat * numbers::pi_f / latitudeBands;
+        const float phi = lon * 2.0f * numbers::pi_f / longitudeBands;
+
+        const float sinTheta = std::sin(theta);
+        const float cosTheta = std::cos(theta);
+        const float sinPhi = std::sin(phi);
+        const float cosPhi = std::cos(phi);
+
+        const float x = cosPhi * sinTheta;
+        const float y = cosTheta;
+        const float z = sinPhi * sinTheta;
+
+        const float u = 1.0f - (float(lon) / longitudeBands);
+        const float v = 1.0f - (float(lat) / latitudeBands);
+
+        positions.push_back(radius * x);
+        positions.push_back(radius * y);
+        positions.push_back(radius * z);
+
+        normals.push_back(x);
+        normals.push_back(y);
+        normals.push_back(z);
+
+        uvs.push_back(u);
+        uvs.push_back(v);
+    };
+
+    for (int lat = 0; lat < latitudeBands; ++lat) {
+        for (int lon = 0; lon < longitudeBands; ++lon) {
+            // Triangle 1
+            get_vertex(lat, lon);
+            get_vertex(lat + 1, lon);
+            get_vertex(lat, lon + 1);
+
+            // Triangle 2
+            get_vertex(lat + 1, lon);
+            get_vertex(lat + 1, lon + 1);
+            get_vertex(lat, lon + 1);
+        }
     }
 
-    return new gdk::webgl1es2_model(model::usage_hint::write_once, {
-    {
-        { 
-            "a_Position",
-            {
-                pos,
-                3
-            }
-        },
-        { 
-            "a_UV",
-            {
-                {
-                    // u,    v
-                    1.0f, 0.0f, // 1--0
-                    0.0f, 0.0f, // | /
-                    0.0f, 1.0f, // 2
-                    1.0f, 0.0f, //    0
-                    0.0f, 1.0f, //  / |
-                    1.0f, 1.0f, // 1--2
-                },
-                2
-            }
-        }
-    }});
-});
+    model_data data = {{
+        { "a_Position", {positions, 3}},
+        { "a_Normal", {normals, 3}},
+        { "a_UV", {uvs, 2}}
+    }};
+    return std::make_shared<webgl1es2_model>(model::usage_hint::upload_once, data);
+}
 
-const jfc::shared_proxy_ptr<gdk::webgl1es2_model> webgl1es2_model::Cube([]() {
-    float size(1.f);
-    float hsize(size/2.f);
+std::shared_ptr<webgl1es2_model> webgl1es2_model::make_cube() {
+    model_data data = {{
+        { "a_Position", {{
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 0.0f, 0.0f, 
+            0.0f, 1.0f, 0.0f, 
+            1.0f, 1.0f, 0.0f, 
+            1.0f, 0.0f, 0.0f, 
+            0.0f, 0.0f, 0.0f, 
 
-    std::vector<webgl1es2_model::attribute_component_data_type> pos({
-        //        x,           y,      z,
-        size -hsize, size -hsize, -hsize, // 2--0
-        0.0f -hsize, 0.0f -hsize, -hsize, // | /
-        0.0f -hsize, size -hsize, -hsize, // 1
-        size -hsize, size -hsize, -hsize, //    0
-        size -hsize, 0.0f -hsize, -hsize, //  / |
-        0.0f -hsize, 0.0f -hsize, -hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, size -hsize,  hsize, // 1--0
-        0.0f -hsize, size -hsize,  hsize, // | /
-        0.0f -hsize, 0.0f -hsize,  hsize, // 2
-        size -hsize, size -hsize,  hsize, //    0
-        0.0f -hsize, 0.0f -hsize,  hsize, //  / |
-        size -hsize, 0.0f -hsize,  hsize, // 1--2 
-        //        x,           y       z,
-        0.0f -hsize, size -hsize,  hsize, // 2--0
-        0.0f -hsize, size -hsize, -hsize, // | /
-        0.0f -hsize, 0.0f -hsize, -hsize, // 1
-        0.0f -hsize, size -hsize,  hsize, //    0
-        0.0f -hsize, 0.0f -hsize, -hsize, //  / |
-        0.0f -hsize, 0.0f -hsize,  hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, size -hsize,  hsize, // 2--0
-        size -hsize, 0.0f -hsize, -hsize, // | /
-        size -hsize, size -hsize, -hsize, // 1
-        size -hsize, size -hsize,  hsize, //    0
-        size -hsize, 0.0f -hsize,  hsize, //  / |
-        size -hsize, 0.0f -hsize, -hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, 0.0f -hsize, -hsize, // 2--0
-        0.0f -hsize, 0.0f -hsize,  hsize, // | /
-        0.0f -hsize, 0.0f -hsize, -hsize, // 1
-        size -hsize, 0.0f -hsize, -hsize, //    0
-        size -hsize, 0.0f -hsize,  hsize, //  / |
-        0.0f -hsize, 0.0f -hsize,  hsize, // 2--1 
-        //        x,           y,      z,
-        size -hsize, 1.0f -hsize, -hsize, // 1--0
-        0.0f -hsize, 1.0f -hsize, -hsize, // | /
-        0.0f -hsize, 1.0f -hsize,  hsize, // 2
-        size -hsize, 1.0f -hsize, -hsize, //    0
-        0.0f -hsize, 1.0f -hsize,  hsize, //  / |
-        size -hsize, 1.0f -hsize,  hsize, // 1--2             
-    });
+            1.0f, 1.0f, 1.0f, 
+            0.0f, 1.0f, 1.0f, 
+            0.0f, 0.0f, 1.0f, 
+            1.0f, 1.0f, 1.0f, 
+            0.0f, 0.0f, 1.0f, 
+            1.0f, 0.0f, 1.0f, 
 
-    std::vector<webgl1es2_model::attribute_component_data_type> uv({
-        //u,   v,
-        0.0, 0.0, // 2--0
-        1.0, 1.0, // | /
-        1.0, 0.0, // 1
-        0.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 2--1 
-        //u,   v,
-        1.0, 0.0, // 1--0
-        0.0, 0.0, // | /
-        0.0, 1.0, // 2
-        1.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 1--2 
-        //u,   v,
-        1.0, 0.0, // 2--0
-        0.0, 0.0, // | /
-        0.0, 1.0, // 1
-        1.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 2--1 
-        //u,   v,
-        0.0, 0.0, // 2--0
-        1.0, 1.0, // | /
-        1.0, 0.0, // 1
-        0.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 2--1 
-        //u,   v,
-        1.0, 0.0, // 2--0
-        0.0, 1.0, // | /
-        0.0, 0.0, // 1
-        1.0, 0.0, //    0
-        1.0, 1.0, //  / |
-        0.0, 1.0, // 2--1 
-        //u,   v,
-        1.0, 0.0, // 1--0
-        0.0, 0.0, // | /
-        0.0, 1.0, // 2
-        1.0, 0.0, //    0
-        0.0, 1.0, //  / |
-        1.0, 1.0, // 1--2             
-    });
-    
-    std::vector<webgl1es2_model::attribute_component_data_type> normal({
-        //Nx,   Ny,   Nz, North
-        +0.0, +0.0, -1.0, // 2--0
-        +0.0, +0.0, -1.0, // | /
-        +0.0, +0.0, -1.0, // 1
-        +0.0, +0.0, -1.0, //    0
-        +0.0, +0.0, -1.0, //  / |
-        +0.0, +0.0, -1.0, // 2--1 
-        //Nx,   Ny,   Nz, South
-        +0.0, +0.0, +1.0, // 1--0
-        +0.0, +0.0, +1.0, // | /
-        +0.0, +0.0, +1.0, // 2
-        +0.0, +0.0, +1.0, //    0
-        +0.0, +0.0, +1.0, //  / |
-        +0.0, +0.0, +1.0, // 1--2 
-        //Nx,   Ny,   Nz, West
-        -1.0, +0.0, +0.0, // 2--0
-        -1.0, +0.0, +0.0, // | /
-        -1.0, +0.0, +0.0, // 1
-        -1.0, +0.0, +0.0, //    0
-        -1.0, +0.0, +0.0, //  / |
-        -1.0, +0.0, +0.0, // 2--1 
-        //Nx,   Ny,   Nz, East
-        +1.0, +0.0, +0.0, // 2--0
-        +1.0, +0.0, +0.0, // | /
-        +1.0, +0.0, +0.0, // 1
-        +1.0, +0.0, +0.0, //    0
-        +1.0, +0.0, +0.0, //  / |
-        +1.0, +0.0, +0.0, // 2--1 
-        //Nx,  Ny,    Nz, Down
-        +0.0, -1.0, +0.0, // 2--0
-        +0.0, -1.0, +0.0, // | /
-        +0.0, -1.0, +0.0, // 1
-        +0.0, -1.0, +0.0, //    0
-        +0.0, -1.0, +0.0, //  / |
-        +0.0, -1.0, +0.0, // 2--1 
-        //Nx,   Ny,   Nz, Up
-        +0.0, +1.0, +0.0, // 1--0
-        +0.0, +1.0, +0.0, // | /
-        +0.0, +1.0, +0.0, // 2
-        +0.0, +1.0, +0.0, //    0
-        +0.0, +1.0, +0.0, //  / |
-        +0.0, +1.0, +0.0, // 1--2             
-    });
-    
-    return new gdk::webgl1es2_model(model::usage_hint::write_once, {
-    {
-        { 
-            "a_Position",
-            {
-                pos,
-                3
-            }
-        },
-        { 
-            "a_UV",
-            {
-                uv,
-                2
-            }
-        },
-        { 
-            "a_Normal",
-            {
-                normal,
-                3
-            }
-        }
-    }});
-});
+            0.0f, 1.0f, 1.0f, 
+            0.0f, 1.0f, 0.0f, 
+            0.0f, 0.0f, 0.0f, 
+            0.0f, 1.0f, 1.0f, 
+            0.0f, 0.0f, 0.0f, 
+            0.0f, 0.0f, 1.0f, 
+
+            1.0f, 1.0f, 1.0f, 
+            1.0f, 0.0f, 0.0f, 
+            1.0f, 1.0f, 0.0f, 
+            1.0f, 1.0f, 1.0f, 
+            1.0f, 0.0f, 1.0f, 
+            1.0f, 0.0f, 0.0f, 
+
+            1.0f, 0.0f, 0.0f, 
+            0.0f, 0.0f, 1.0f, 
+            0.0f, 0.0f, 0.0f, 
+            1.0f, 0.0f, 0.0f, 
+            1.0f, 0.0f, 1.0f, 
+            0.0f, 0.0f, 1.0f, 
+
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 1.0f, 
+            1.0f, 1.0f, 0.0f, 
+            0.0f, 1.0f, 1.0f, 
+            1.0f, 1.0f, 1.0f, 
+        }, 3 }},
+        { "a_UV", {{
+            0.0, 0.0, 
+            1.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+            
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+           
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+          
+            0.0, 0.0, 
+            1.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+         
+            1.0, 0.0, 
+            0.0, 1.0, 
+            0.0, 0.0, 
+            1.0, 0.0, 
+            1.0, 1.0, 
+            0.0, 1.0, 
+        
+            1.0, 0.0, 
+            0.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 0.0, 
+            0.0, 1.0, 
+            1.0, 1.0, 
+        }, 2 }},
+        { "a_Normal", {{
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+            0.0, 0.0, -1.0, 
+
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 
+
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+            -1.0, 0.0, 0.0, 
+
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+            1.0, 0.0, 0.0, 
+
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+            0.0, -1.0, 0.0, 
+
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 1.0, 0.0, 
+        }, 3 }}
+    }};
+    data.transform("a_Position", {-0.5f,-0.5f,-0.5f});
+    return std::make_shared<webgl1es2_model>(model::usage_hint::upload_once, data);
+}
 
 static inline GLenum dataUsageToGLenum(const model::usage_hint aUsageHint) {
     switch (aUsageHint) {
         case model::usage_hint::dynamic: return GL_DYNAMIC_DRAW;
         case model::usage_hint::streaming: return GL_STREAM_DRAW;
-        case model::usage_hint::write_once: return GL_STATIC_DRAW;
-        default: break;
+        case model::usage_hint::upload_once: return GL_STATIC_DRAW;
     }
-    throw graphics_exception("unhandled usage hint type");
+    throw exception("unhandled usage hint type");
 }
 
-static inline GLenum vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(const vertex_data::primitive_mode aPrimitiveMode) {
+static inline GLenum vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(const model_data::primitive_mode aPrimitiveMode) {
     switch (aPrimitiveMode) {
-        case vertex_data::primitive_mode::triangles: return GL_TRIANGLES;
-        default: break;
+        case model_data::primitive_mode::triangles: return GL_TRIANGLES;
     }
-    throw graphics_exception("unhandled vertex_data::PrimitiveMode");
+    throw exception("unhandled model_data::PrimitiveMode");
 }
 
 static inline void update_index_data(
@@ -246,7 +232,9 @@ static inline void update_index_data(
     const GLushort *pIndexBegin, 
     GLenum ausage_hint,
     GLsizei &m_IndexCount) {
-    if (m_IndexCount = index_count > 0) {
+    m_IndexCount = static_cast<GLsizei>(index_count);
+
+    if (m_IndexCount > 0) {
         if (!handle.has_value()) {
             handle.emplace([&]() {
                 GLuint ibo(0);
@@ -272,7 +260,7 @@ static inline void update_index_data(
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
         if (const auto error = glh::GetError()) 
-            throw graphics_exception(std::string(TAG).append(*error));
+            throw exception(std::string(TAG).append(*error));
     }
     else handle.reset();
 }
@@ -288,7 +276,7 @@ void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
         
             glVertexAttribPointer(
                 activeAttribute->location,
-                current_attribute.components,
+                static_cast<GLint>(current_attribute.components),
                 GL_FLOAT, //TODO: supporting smaller data types would be a good optimization for attributes that do not need the range or precision of floats
                 GL_FALSE, 
                 0, 
@@ -310,20 +298,65 @@ void webgl1es2_model::draw() const {
     else glDrawArrays(m_PrimitiveMode, 0, m_VertexCount);
 }
 
-void webgl1es2_model::update_vertex_data(const usage_hint &aUsage,
-    const vertex_data &aData) {
+/// \brief a sphere big enough to contain every position in the data in model space
+static void compute_bounds(const model_data &aData, vector3_type &aCentreOut,
+    floating_point_type &aRadiusOut) {
+    aCentreOut = {0, 0, 0};
+    aRadiusOut = 0;
+
+    const auto found = aData.attributes().find("a_Position");
+
+    if (found == aData.attributes().end()) return;
+
+    const auto &components = found->second.components();
+    const auto stride = found->second.number_of_components_per_attribute();
+
+    if (stride < 3 || components.size() < 3) return;
+
+    auto minimum = vector3_type{components[0], components[1], components[2]};
+    auto maximum = minimum;
+
+    for (std::size_t i = 0; i + 2 < components.size(); i += stride) {
+        minimum.x = std::min(minimum.x, components[i + 0]);
+        minimum.y = std::min(minimum.y, components[i + 1]);
+        minimum.z = std::min(minimum.z, components[i + 2]);
+
+        maximum.x = std::max(maximum.x, components[i + 0]);
+        maximum.y = std::max(maximum.y, components[i + 1]);
+        maximum.z = std::max(maximum.z, components[i + 2]);
+    }
+
+    aCentreOut = {(minimum.x + maximum.x) * 0.5f, (minimum.y + maximum.y) * 0.5f,
+        (minimum.z + maximum.z) * 0.5f};
+
+    // The furthest vertex from the centre
+    for (std::size_t i = 0; i + 2 < components.size(); i += stride) {
+        const auto dx = components[i + 0] - aCentreOut.x;
+        const auto dy = components[i + 1] - aCentreOut.y;
+        const auto dz = components[i + 2] - aCentreOut.z;
+
+        aRadiusOut = std::max(aRadiusOut, std::sqrt(dx * dx + dy * dy + dz * dz));
+    }
+}
+
+void webgl1es2_model::upload(const usage_hint &aUsage,
+    const model_data &aData) {
+    compute_bounds(aData, m_BoundsCentre, m_BoundsRadius);
+
     m_PrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode());
 
-    update_index_data(m_IndexBufferHandle, 
-        aData.getIndexData().size(), 
-        &aData.getIndexData()[0], 
-        dataUsageToGLenum(aUsage),
-        m_IndexCount
-    );
+    if (!aData.indexes().empty()) {
+        update_index_data(m_IndexBufferHandle, 
+            aData.indexes().size(), 
+            &aData.indexes().front(), 
+            dataUsageToGLenum(aUsage),
+            m_IndexCount
+        );
+    }
 
     //Vertex buffer objects
     {
-        const auto &newAttibuteData(aData.data());
+        const auto &newAttibuteData(aData.attributes());
 
         if (m_VertexBufferHandles.size() < newAttibuteData.size()) {
             m_VertexBufferHandles.reserve(newAttibuteData.size());
@@ -334,7 +367,7 @@ void webgl1es2_model::update_vertex_data(const usage_hint &aUsage,
                     glGenBuffers(1, &vbo);
 
                     if (const auto error = glh::GetError()) 
-                        throw graphics_exception(std::string(TAG).append(*error));
+                        throw exception(std::string(TAG).append(*error));
 
                     return vbo;
                 }(),
@@ -363,14 +396,14 @@ void webgl1es2_model::update_vertex_data(const usage_hint &aUsage,
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             attribute newAttribute = {
-                .buffer_handle_index = i,
-                .components = data.component_count(),
-                .size = data.components().size()
+                i,                                          // buffer_handle_index
+                data.number_of_components_per_attribute(),  // components
+                data.components().size()                    // size
             };
 
             m_Attributes[name] = newAttribute;
 
-            m_VertexCount = newAttribute.size / newAttribute.components;
+            m_VertexCount = static_cast<GLsizei>(newAttribute.size / newAttribute.components);
 
             ++i;
         }
@@ -378,9 +411,9 @@ void webgl1es2_model::update_vertex_data(const usage_hint &aUsage,
 }
 
 webgl1es2_model::webgl1es2_model(const usage_hint &aUsage,
-    const vertex_data &aData)
-: m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode()))
-, m_IndexCount((GLsizei)aData.getIndexData().size()) {
-    update_vertex_data(aUsage, aData);
+    const model_data &aData)
+: m_IndexCount(static_cast<GLsizei>(aData.indexes().size()))
+, m_PrimitiveMode(vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode())) {
+    upload(aUsage, aData);
 }
 

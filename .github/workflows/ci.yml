@@ -1,0 +1,103 @@
+# © Joseph Cameron - All Rights Reserved
+
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.preset }} (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: linux-gcc
+            runner: ubuntu-latest
+            tests: true
+
+          - preset: linux-clang
+            runner: ubuntu-latest
+            tests: true
+
+          - preset: linux-gcc
+            runner: ubuntu-24.04-arm
+            tests: true
+
+          - preset: macos-clang
+            runner: macos-latest
+            tests: true
+
+          - preset: windows-msvc
+            runner: windows-latest
+            tests: true
+
+          - preset: linux-clang-asan
+            runner: ubuntu-latest
+            tests: true
+
+          - preset: linux-gcc-ci
+            runner: ubuntu-latest
+            tests: true
+
+          - preset: linux-clang-ci
+            runner: ubuntu-latest
+            tests: true
+
+          - preset: linux-gcc-demo
+            runner: ubuntu-latest
+            tests: false
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: install windowing and software gl
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xorg-dev libwayland-dev libxkbcommon-dev wayland-protocols \
+            xvfb mesa-utils libgl1-mesa-dri
+
+      - name: configure
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: test (linux)
+        if: matrix.tests && runner.os == 'Linux'
+        env:
+          LIBGL_ALWAYS_SOFTWARE: 1
+        run: xvfb-run -a --server-args="-screen 0 1280x1024x24" ctest --preset ${{ matrix.preset }}
+
+      - name: test
+        if: matrix.tests && runner.os != 'Linux'
+        run: ctest --preset ${{ matrix.preset }}
+
+  emscripten:
+    name: emscripten (wasm)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: latest
+
+      - name: report the toolchain
+        run: emcc --version
+
+      - name: configure
+        run: emcmake cmake --preset emscripten
+
+      - name: build
+        run: cmake --build --preset emscripten
