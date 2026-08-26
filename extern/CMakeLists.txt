@@ -21,7 +21,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-math")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-time")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/jfc-memory")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/jfc-smart_handles")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/simple-glfw")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-windowing")
 
 set(JFC_BUILD_TESTS "${_jfc_outer_build_tests}" CACHE BOOL "" FORCE)
 set(JFC_BUILD_DOCS "${_jfc_outer_build_docs}" CACHE BOOL "" FORCE)

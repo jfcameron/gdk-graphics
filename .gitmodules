@@ -13,9 +13,9 @@
 [submodule "extern/jfc-memory"]
 	path = extern/jfc-memory
 	url = https://github.com/jfcameron/jfc-memory.git
-[submodule "extern/simple-glfw"]
-	path = extern/simple-glfw
-	url = https://github.com/jfcameron/simple-glfw.git
+[submodule "extern/gdk-windowing"]
+	path = extern/gdk-windowing
+	url = https://github.com/jfcameron/gdk-windowing.git
 [submodule "extern/jfc-smart_handles"]
 	path = extern/jfc-smart_handles
 	url = https://github.com/jfcameron/jfc-smart_handles.git

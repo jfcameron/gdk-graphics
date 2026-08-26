@@ -1,8 +1,8 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include "volume_block_model.h"
+#include "volumetric_lighting.h"
 
-#include <gdk/graphics/ext/volumetric_lighting.h>
 #include <gdk/timing/game_loop.h>
 #include <gdk/windowing/impl_glfw_window.h>
 #include <gdk/graphics/constraints.h>
