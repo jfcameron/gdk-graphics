@@ -86,6 +86,7 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/retarget.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skeleton.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skinning.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/png.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp  
@@ -104,26 +105,6 @@ jfc_project(library
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/sprite_animation.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/model_data.cpp
 )
-
-option(GDK_GRAPHICS_EXT_PNG "Build the ext/ png decoder" ON)
-
-if (GDK_GRAPHICS_EXT_PNG)
-    add_library(gdkgraphics_ext_png STATIC "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/png.cpp")
-
-    target_compile_features(gdkgraphics_ext_png PUBLIC cxx_std_20)
-
-    target_include_directories(gdkgraphics_ext_png
-        PUBLIC
-            "${CMAKE_CURRENT_SOURCE_DIR}/include"
-            ${gdkgraphics_INCLUDE_DIRECTORIES}
-        PRIVATE ${stb_INCLUDE_DIR})
-
-    target_link_libraries(gdkgraphics_ext_png PUBLIC gdkgraphics ${stb_LIBRARIES})
-
-    set(gdkgraphics_ext_png_INCLUDE_DIRECTORIES
-        "${CMAKE_CURRENT_SOURCE_DIR}/include" ${gdkgraphics_INCLUDE_DIRECTORIES})
-    set(gdkgraphics_ext_png_LIBRARIES gdkgraphics_ext_png)
-endif()
 
 if (JFC_BUILD_DEMO)
     add_subdirectory(demo)
