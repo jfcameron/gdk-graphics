@@ -46,7 +46,7 @@ inline void initGL()
 
 namespace jfc
 {
-    inline bool glGetError()
+    inline bool glGetError(const bool aExpected = false)
     {
         std::string errorcodebuffer = "";
 
@@ -82,7 +82,7 @@ namespace jfc
 
         }
         
-        if (errorcodebuffer.size()) std::cerr << errorcodebuffer << std::endl;
+        if (errorcodebuffer.size() && !aExpected) std::cerr << errorcodebuffer << std::endl;
 
         return true;
     }

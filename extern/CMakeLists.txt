@@ -1,11 +1,7 @@
 # © Joseph Cameron - All Rights Reserved
 
-set(dependencies
-    "stb"
-    "cgltf"
-)
-
-jfc_add_dependencies(${dependencies})
+include("${CMAKE_CURRENT_LIST_DIR}/stb.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cgltf.cmake")
 
 set(_jfc_outer_build_tests "${JFC_BUILD_TESTS}")
 set(_jfc_outer_build_docs "${JFC_BUILD_DOCS}")

@@ -107,15 +107,15 @@ void webgl1es2_camera::set_orthographic_projection(const gdk::graphics::vector2_
         aFarClippingPlane, aViewportAspectRatio);
 }
 
-matrix4x4_type webgl1es2_camera::get_view_matrix() const { 
+const matrix4x4_type &webgl1es2_camera::get_view_matrix() const { 
     return m_ViewMatrix; 
 }
 
-matrix4x4_type webgl1es2_camera::get_world_matrix() const {
+const matrix4x4_type &webgl1es2_camera::get_world_matrix() const {
     return m_WorldMatrix;
 }
 
-matrix4x4_type webgl1es2_camera::get_projection_matrix() const { 
+const matrix4x4_type &webgl1es2_camera::get_projection_matrix() const { 
     return m_ProjectionMatrix; 
 }
 

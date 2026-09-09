@@ -4,7 +4,9 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/jfc-cmake/jfclib.cmake")
 
-project(null)
+project(gdkgraphics
+    VERSION 0.9
+    DESCRIPTION "game development kit graphics lib")
 
 option(JFC_BUILD_DEMO "Build the demo" ON)
 option(JFC_BUILD_DOCS "Build documentation" OFF)
@@ -35,76 +37,66 @@ else()
     endforeach()
 endif()
 
-jfc_project(library
-    NAME "gdkgraphics"
-    VERSION 0.9
-    DESCRIPTION "game development kit graphics lib"
-    C++_STANDARD 20
-    C_STANDARD 90
-    TYPE STATIC
+add_library(gdkgraphics STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/gltf.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/bvh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/ik.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/profile.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/retarget.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skeleton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skinning.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/png.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_context.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_entity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_material.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_model.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_scene.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_screen_camera.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_shader_program.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/attribute_data.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/sprite_animation.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/model_data.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/null/src/null_context.cpp)
 
-    PUBLIC_INCLUDE_DIRECTORIES
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/include
-        
-        ${gdkmath_INCLUDE_DIRECTORIES} 
-        ${gdktime_INCLUDE_DIRECTORIES}
-        ${gdkmemory_INCLUDE_DIRECTORIES}
-        ${jfc-smart_handles_INCLUDE_DIRECTORIES}
-        ${gdkwindow_INCLUDE_DIRECTORIES}
+add_library(gdk::graphics ALIAS gdkgraphics)
 
-    PRIVATE_INCLUDE_DIRECTORIES
+set_target_properties(gdkgraphics PROPERTIES EXPORT_NAME graphics)
+
+set_target_properties(gdkgraphics PROPERTIES PREFIX "lib")
+
+jfc_generate_cmake_header()
+
+target_include_directories(gdkgraphics
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/impl/null/include>"
+        "$<INSTALL_INTERFACE:include>"
+
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated_include>"
+    PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/include
-
         ${CMAKE_CURRENT_SOURCE_DIR}/incubate
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/include
         ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/include
+    )
 
-        ${stb_INCLUDE_DIR}
-        ${cgltf_INCLUDE_DIR}
+target_compile_features(gdkgraphics PUBLIC cxx_std_20)
 
-    LIBRARIES
-        ${gdkmath_LIBRARIES}
-        ${gdktime_LIBRARIES}
-        ${stb_LIBRARIES}
-        ${cgltf_LIBRARIES}
-        ${gdkwindow_LIBRARIES} # Required by provided webgl/gles2 implementation
-
-    DEPENDENCIES
-        "stb"
-        "cgltf"
-        "gdkmath"
-        "gdktime"
-        "gdkwindow" # Required by provided webgl/gles2 implementation
-
-    SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/gltf.cpp
-
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/bvh.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/ik.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/profile.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/retarget.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skeleton.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skinning.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/png.cpp
-
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp  
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_context.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_entity.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_material.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_model.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_scene.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_screen_camera.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_shader_program.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/attribute_data.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/sprite_animation.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/model_data.cpp
-)
+target_link_libraries(gdkgraphics PUBLIC
+    gdkmath
+    gdktime
+    gdkmemory
+    jfc-smart_handles
+    gdkwindow
+    stb
+    cgltf)
 
 if (JFC_BUILD_DEMO)
     add_subdirectory(demo)
@@ -112,6 +104,10 @@ endif()
 
 if (JFC_BUILD_TESTS)
     add_subdirectory(test)
+endif()
+
+if (JFC_BUILD_FUZZERS)
+    add_subdirectory(fuzz)
 endif()
 
 if (JFC_BUILD_DOCS)

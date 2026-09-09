@@ -1,15 +1,14 @@
 // © Joseph Cameron - All Rights Reserved
 
-#ifndef JFC_EVENT_H
-#define JFC_EVENT_H
+#ifndef JFC_EVENTS_EVENT_H
+#define JFC_EVENTS_EVENT_H
 
 #include <algorithm>
 #include <mutex>
 #include <vector> 
 
-namespace jfc {
+namespace jfc::events {
     /// \brief event class that requires the user to clean up after themselves
-    ///
     template<class... event_parameter_types_param>
     class event final {
     public:

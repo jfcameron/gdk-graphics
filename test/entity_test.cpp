@@ -191,7 +191,7 @@ TEST_CASE("gdk::webgl1es2_entity drawing", "[gdk::webgl1es2_entity]")
     {
         as_the_scene_would(*pMaterial, *pModel);
 
-        a.draw(view, projection);
+        a.draw(view, projection, projection * view);
 
         REQUIRE(!jfc::glGetError());
     }
@@ -200,7 +200,7 @@ TEST_CASE("gdk::webgl1es2_entity drawing", "[gdk::webgl1es2_entity]")
     {
         as_the_scene_would(*pMaterial, *pModel);
 
-        a.draw(view, projection);
+        a.draw(view, projection, projection * view);
 
         const auto expected = projection * view * a.getModelMatrix();
         const auto uploaded = read_mat4("_MVP");
@@ -217,11 +217,11 @@ TEST_CASE("gdk::webgl1es2_entity drawing", "[gdk::webgl1es2_entity]")
     {
         as_the_scene_would(*pMaterial, *pModel);
 
-        a.draw(view, projection);
+        a.draw(view, projection, projection * view);
         const auto before = read_mat4("_MVP");
 
         a.set_transform({-7, 0, 0}, quaternion_type::identity);
-        a.draw(view, projection);
+        a.draw(view, projection, projection * view);
         const auto after = read_mat4("_MVP");
 
         REQUIRE(before != after);
@@ -232,21 +232,21 @@ TEST_CASE("gdk::webgl1es2_entity drawing", "[gdk::webgl1es2_entity]")
     {
         as_the_scene_would(*pMaterial, *pModel);
 
-        a.draw(view, projection);
+        a.draw(view, projection, projection * view);
         const auto whileVisible = read_mat4("_MVP");
 
         a.hide();
         REQUIRE(a.is_hidden());
 
         a.set_transform({100, 100, 100}, quaternion_type::identity);
-        a.draw(view, projection);
+        a.draw(view, projection, projection * view);
 
         REQUIRE(read_mat4("_MVP") == whileVisible);
 
         a.show();
         REQUIRE_FALSE(a.is_hidden());
 
-        a.draw(view, projection);
+        a.draw(view, projection, projection * view);
         REQUIRE(read_mat4("_MVP") != whileVisible);
 
         REQUIRE(!jfc::glGetError());

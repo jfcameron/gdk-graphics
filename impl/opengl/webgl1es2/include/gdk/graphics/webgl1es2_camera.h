@@ -23,15 +23,15 @@ namespace gdk::graphics
     /// \name internal interface
     ///@{
     //
-        /// \brief position and rotation of the camera in worldspace, same as an entity model matrix
-        matrix4x4_type get_world_matrix() const;
+        /// \brief position and rotation of the camera in worldspace
+        const matrix4x4_type &get_world_matrix() const;
 
         /// \brief gets the view matrix
         /// \note the view matrix is the inverse of the world matrix
-        matrix4x4_type get_view_matrix() const;
+        const matrix4x4_type &get_view_matrix() const;
 
         /// \brief gets the projection matrix
-        matrix4x4_type get_projection_matrix() const;
+        const matrix4x4_type &get_projection_matrix() const;
 
     ///@}
         /// \brief copy semantics

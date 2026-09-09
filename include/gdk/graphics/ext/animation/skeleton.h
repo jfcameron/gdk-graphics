@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-/// \file the animation half of the skeleton demo: bones, poses, clips, and the arithmetic over them.
 namespace gdk::graphics::animation {
     /// \brief a chain of bones in bind pose.
     struct skeleton final {
@@ -125,8 +124,8 @@ namespace gdk::graphics::animation {
     /// \brief the matrices that take a bind-pose vertex to its posed position
     [[nodiscard]] std::vector<matrix4x4_type> skinning_palette(
         const skeleton &aSkeleton, const pose &aPose,
-        const std::vector<matrix4x4_type> &aInverseBind);
-
+        const std::vector<matrix4x4_type> &aInverseBind
+    );
 }
 
 #endif

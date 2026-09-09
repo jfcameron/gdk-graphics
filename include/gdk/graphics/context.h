@@ -56,20 +56,14 @@ namespace gdk::graphics {
             [[nodiscard]] virtual texture_ptr_type make_texture(
                 const texture_data::view &aTextureDataView,
                 const texture::wrap_mode aWrapModeU = texture::wrap_mode::repeat,
-                const texture::wrap_mode aWrapModeV = texture::wrap_mode::repeat
+                const texture::wrap_mode aWrapModeV = texture::wrap_mode::repeat,
+                const texture::filter_mode aFilterMode = texture::filter_mode::smooth
             ) = 0;
             //! make an empty texture 
             [[nodiscard]] virtual texture_ptr_type make_texture() = 0;
         ///@}
 
         /// \name special resources provided by the implementation
-        ///
-        /// **Each call builds a new one, and the caller owns what it gets.** These were shared
-        /// instances, lazily built once per process and handed to everyone -- which is a gl object
-        /// living outside any gl context, and wrong as soon as a second one exists: a handle made in
-        /// one context means nothing in another. A caller who wants one cube for a whole program
-        /// should make it once and hold it, which is a thing only the caller can decide.
-        /// \see ROADMAP_GDK_WINDOW.md §6g
         ///@{
         //
             /// \brief a 1x1x1 cube model

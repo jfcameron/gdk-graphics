@@ -156,6 +156,16 @@
         "CMAKE_C_FLAGS": "-sUSE_GLFW=3",
         "CMAKE_EXE_LINKER_FLAGS": "-sUSE_GLFW=3"
       }
+    },
+    {
+      "name": "linux-docs",
+      "displayName": "Linux / documentation",
+      "inherits": "linux-gcc",
+      "cacheVariables": {
+        "JFC_BUILD_DOCS": "ON",
+        "JFC_BUILD_TESTS": "OFF",
+        "JFC_BUILD_DEMO": "OFF"
+      }
     }
   ],
   "buildPresets": [

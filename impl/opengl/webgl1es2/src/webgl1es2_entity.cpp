@@ -20,16 +20,15 @@ webgl1es2_entity::webgl1es2_entity(const std::shared_ptr<webgl1es2_model> amodel
 , m_Material(aMaterial)
 {}
 
-void webgl1es2_entity::draw(const matrix4x4_type &aViewMatrix, const matrix4x4_type &aProjectionMatrix) const {
+void webgl1es2_entity::draw(const matrix4x4_type &aViewMatrix,
+    const matrix4x4_type &aProjectionMatrix, const matrix4x4_type &aViewProjection) const {
     if (m_IsHidden) return;
 
-    const matrix4x4_type p = aProjectionMatrix;
-    const matrix4x4_type v = aViewMatrix;
-    const matrix4x4_type m = getModelMatrix();
+    const auto &m = getModelMatrix();
 
-    const auto mvp = p * v * m;
-    
-    m_Material->getShaderProgram()->set_standard_matrices(m, v, p, mvp);
+    const auto mvp = aViewProjection * m;
+
+    m_Material->getShaderProgram()->set_standard_matrices(m, aViewMatrix, aProjectionMatrix, mvp);
 
     m_model->draw();
 }
@@ -74,11 +73,11 @@ void webgl1es2_entity::set_transform(const matrix4x4_type& a) {
 	m_ModelMatrix = a;
 }
 
-std::shared_ptr<model> webgl1es2_entity::getModel() const {
+const std::shared_ptr<webgl1es2_model> &webgl1es2_entity::getModel() const {
     return m_model;
 }
 
-std::shared_ptr<material> webgl1es2_entity::getMaterial() const {
+const std::shared_ptr<webgl1es2_material> &webgl1es2_entity::getMaterial() const {
     return m_Material;
 }
 

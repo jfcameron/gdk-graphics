@@ -50,7 +50,8 @@ namespace gdk::graphics {
         [[nodiscard]] virtual texture_ptr_type make_texture(
             const texture_data::view &imageView,
             const texture::wrap_mode,
-            const texture::wrap_mode
+            const texture::wrap_mode,
+            const texture::filter_mode = texture::filter_mode::smooth
         ) override;
 
         [[nodiscard]] virtual texture_ptr_type make_texture() override;
@@ -71,7 +72,6 @@ namespace gdk::graphics {
     private:
         webgl1es2_context();
 
-        //! shared rather than held by value: a scene made here outlives nothing, but refers to it
         std::shared_ptr<gl_state> m_pState;
     };
 }

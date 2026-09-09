@@ -1,23 +1,14 @@
 # © Joseph Cameron - All Rights Reserved
 
-jfc_project(executable
-    NAME "skeleton_demo"
-    VERSION 1.0
-    DESCRIPTION "cpu skeletal animation demo"
-    C++_STANDARD 20
-    C_STANDARD 90
+project(skeleton_demo)
 
-    SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/content.cpp
+add_executable(skeleton_demo
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/content.cpp)
 
-    PRIVATE_INCLUDE_DIRECTORIES
-        "${gdkgraphics_INCLUDE_DIRECTORIES}"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../incubate"
+target_include_directories(skeleton_demo PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../incubate")
 
-    LIBRARIES
-        "${gdkgraphics_LIBRARIES}"
+target_link_libraries(skeleton_demo PRIVATE gdkgraphics)
 
-    DEPENDENCIES
-        "gdkgraphics"
-)
+target_compile_features(skeleton_demo PRIVATE cxx_std_20)

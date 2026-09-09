@@ -194,3 +194,126 @@ TEST_CASE("gdk::webgl1es2_material value semantics", "[gdk::webgl1es2_material]"
         REQUIRE(!jfc::glGetError());
     }
 }
+
+TEST_CASE("**activating a material puts its uniform values into gl**",
+    "[gdk::webgl1es2_material]")
+{
+    initGL();
+
+    const std::string vertexSource(R"V0G0N(
+    uniform float _Float;
+    uniform vec2 _Vec2;
+    uniform vec4 _Vec4;
+    uniform int _Int;
+    uniform ivec2 _IVec2Array[3];
+    attribute highp vec3 a_Position;
+
+    void main() {
+        gl_Position = vec4(a_Position, 1.0) * _Float * float(_Int)
+            * vec4(_Vec2, 0.0, 0.0) * _Vec4
+            * float(_IVec2Array[0].x + _IVec2Array[1].y + _IVec2Array[2].x);
+    }
+    )V0G0N");
+
+    const std::string fragmentSource(R"V0G0N(
+    void main() { gl_FragColor = vec4(1.0); }
+    )V0G0N");
+
+    const auto pShader = std::make_shared<webgl1es2_shader_program>(vertexSource, fragmentSource);
+
+    webgl1es2_material subject(pShader, material::face_culling_mode::none,
+        material::render_mode::opaque);
+
+    pShader->useProgram(test_gl_state());
+
+    const auto reads = [](const char *aName, const std::size_t aCount) {
+        std::vector<GLfloat> out(aCount, -1.0f);
+
+        GLint current = 0;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &current);
+
+        glGetUniformfv(current, glGetUniformLocation(current, aName), &out.front());
+
+        return out;
+    };
+
+    SECTION("a float arrives")
+    {
+        subject.set_float("_Float", 0.75f);
+        subject.activate(test_gl_state());
+
+        REQUIRE(reads("_Float", 1).at(0) == Approx(0.75f));
+    }
+
+    SECTION("a vector2 arrives, both components")
+    {
+        subject.set_vector2("_Vec2", {0.25f, 0.5f});
+        subject.activate(test_gl_state());
+
+        const auto stored = reads("_Vec2", 2);
+
+        REQUIRE(stored.at(0) == Approx(0.25f));
+        REQUIRE(stored.at(1) == Approx(0.5f));
+    }
+
+    SECTION("a colour arrives in rgba order")
+    {
+        subject.set_vector4("_Vec4", color(0.125f, 0.25f, 0.5f, 0.75f));
+        subject.activate(test_gl_state());
+
+        const auto stored = reads("_Vec4", 4);
+
+        REQUIRE(stored.at(0) == Approx(0.125f));
+        REQUIRE(stored.at(3) == Approx(0.75f));
+    }
+
+    SECTION("the newest value wins when a name is set twice")
+    {
+        subject.set_float("_Float", 0.1f);
+        subject.set_float("_Float", 0.9f);
+        subject.activate(test_gl_state());
+
+        REQUIRE(reads("_Float", 1).at(0) == Approx(0.9f));
+    }
+
+    SECTION("a name the shader does not declare is harmless")
+    {
+        subject.set_float("_NoSuchUniform", 1.0f);
+        subject.activate(test_gl_state());
+
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("**an ivec2 array arrives, every element of it**")
+    {
+        subject.set_int_vector2_array("_IVec2Array", {{1, 2}, {3, 4}, {5, 6}});
+        subject.activate(test_gl_state());
+
+        GLint current = 0;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &current);
+
+        const auto element = [&](const std::size_t aIndex) {
+            const auto name = std::string("_IVec2Array[").append(std::to_string(aIndex)).append("]");
+
+            std::vector<GLint> out(2, -1);
+
+            glGetUniformiv(current, glGetUniformLocation(current, name.c_str()), &out.front());
+
+            return out;
+        };
+
+        REQUIRE(element(0) == std::vector<GLint>{1, 2});
+        REQUIRE(element(1) == std::vector<GLint>{3, 4});
+        REQUIRE(element(2) == std::vector<GLint>{5, 6});
+
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("an empty ivec2 array names no elements and is harmless")
+    {
+        subject.set_int_vector2_array("_IVec2Array", {});
+        subject.activate(test_gl_state());
+
+        REQUIRE(!jfc::glGetError());
+    }
+}

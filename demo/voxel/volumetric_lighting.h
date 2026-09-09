@@ -6,14 +6,13 @@
 #include <gdk/graphics/color.h>
 #include <gdk/graphics/constraints.h>
 #include <gdk/graphics/texture_data.h>
-#include <gdk/graphics/cube_array.h>
+#include <jfc/collections/cube_array.h>
 
 #include <algorithm>
 #include <array>
 
 namespace gdk::graphics {
     /// \brief cubic volume of diffuse lighting data
-    ///
     template<size_t size_param>
     class volumetric_lighting final {
     public:
@@ -32,12 +31,10 @@ namespace gdk::graphics {
         using local_space_component_type = int;
 
     private:
-        gdk::graphics::cube_array<gdk::graphics::color, size> m_Data;
+        jfc::collections::cube_array<gdk::graphics::color, size> m_Data;
 
         void add(const local_space_component_type aX, const local_space_component_type aY, const local_space_component_type aZ, 
             const gdk::graphics::color &aColor) {
-            // The cast is safe because the negative case has already returned; written out so the
-            // signed/unsigned comparison is deliberate rather than accidental.
             if (aX < 0 || static_cast<std::size_t>(aX) >= size) return;
             if (aY < 0 || static_cast<std::size_t>(aY) >= size) return;
             if (aZ < 0 || static_cast<std::size_t>(aZ) >= size) return;

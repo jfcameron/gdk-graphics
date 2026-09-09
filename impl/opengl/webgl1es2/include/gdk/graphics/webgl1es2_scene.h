@@ -32,8 +32,10 @@ namespace gdk::graphics {
         using material_to_model_to_entity_collection_collection =
             std::unordered_map<material_ptr_type, model_to_entity_collection>;
 
+        /// `aViewProjection` is projection * view for this camera, built once by the caller
+        /// rather than per entity
         virtual void draw(const webgl1es2_camera *r, gl_state &aState,
-            const frustum &aFrustum) const;
+            const frustum &aFrustum, const matrix4x4_type &aViewProjection) const;
 
         virtual void try_add(entity_ptr_type);
 
@@ -45,7 +47,15 @@ namespace gdk::graphics {
 
     protected:
         /// \brief remove dead pointers
+        /// \brief drop entries whose entity is gone
         void prune() const;
+
+        static constexpr std::size_t PRUNE_INTERVAL{64};
+
+        /// \brief take the slot for an entity, over a dead one at the same address if need be
+        [[nodiscard]] bool claim(const entity_ptr_type &apEntity) const;
+
+        mutable std::size_t m_SinceLastPrune{0};
 
         mutable std::unordered_map<const entity *, entity_weak_ptr_type> m_unique_entities;
 
@@ -56,7 +66,7 @@ namespace gdk::graphics {
     class sorted_render_set final : public render_set {
     public:
         virtual void draw(const webgl1es2_camera *r, gl_state &aState,
-            const frustum &aFrustum) const override;
+            const frustum &aFrustum, const matrix4x4_type &aViewProjection) const override;
 
         virtual void try_add(entity_ptr_type) override;
 
@@ -88,7 +98,6 @@ namespace gdk::graphics {
     /// \name external interface
     ///@{
     //
-        //TODO: these fail silently on nullptr. should probably throw?
         virtual void add(const std::shared_ptr<const screen_camera> &pCamera) override;
         virtual void add(const std::shared_ptr<const texture_camera> &pCamera) override;
         virtual void add(const std::shared_ptr<const entity> &pEntity) override;
@@ -102,7 +111,6 @@ namespace gdk::graphics {
 
     private:
         //! screen_cameras used to render this webgl1es2_scene.
-        //! cameras are held weakly for the same reason entities are. \see render_set
         mutable std::vector<std::weak_ptr<const webgl1es2_screen_camera>> m_screen_cameras;
         
         //! texture_cameras used to render this webgl1es2_scene.

@@ -501,3 +501,49 @@ TEST_CASE("entities outside the view volume are not drawn", "[gdk::webgl1es2_sce
         REQUIRE_FALSE(nothing_was_drawn());
     }
 }
+
+TEST_CASE("an entity is drawn even when it lands where a dead one was",
+    "[gdk::webgl1es2_scene]")
+{
+    initGL();
+
+    alignas(webgl1es2_entity) static std::byte storage[sizeof(webgl1es2_entity)];
+
+    webgl1es2_scene scene(test_gl_state_ptr());
+
+    const auto pMaterial = a_material();
+
+    const auto pCamera = a_camera();
+
+    scene.add(pCamera);
+
+    const auto entity_in_storage = [&pMaterial] {
+        auto *const pRaw = new (storage) webgl1es2_entity(webgl1es2_model::make_cube(), pMaterial);
+
+        pRaw->set_transform({0, 0, -10}, quaternion_type::identity);
+
+        return std::shared_ptr<webgl1es2_entity>(pRaw,
+            [](webgl1es2_entity *apDoomed) { apDoomed->~webgl1es2_entity(); });
+    };
+
+    const entity *deadAddress = nullptr;
+
+    {
+        const auto pDoomed = entity_in_storage();
+
+        deadAddress = pDoomed.get();
+
+        scene.add(pDoomed);
+    }
+
+    const auto pReused = entity_in_storage();
+
+    REQUIRE(pReused.get() == deadAddress);
+
+    scene.add(pReused);
+
+    mark(*pMaterial);
+    scene.draw(FRAME_BUFFER_SIZE);
+
+    REQUIRE_FALSE(nothing_was_drawn());
+}

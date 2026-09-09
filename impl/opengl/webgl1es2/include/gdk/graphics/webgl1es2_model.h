@@ -3,6 +3,7 @@
 #ifndef GDK_GFX_WEB1GLES2_MODEL_H
 #define GDK_GFX_WEB1GLES2_MODEL_H
 
+#include <gdk/graphics/string_keyed.h>
 #include <gdk/graphics/model.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
 #include <jfc/lazy_ptr.h>
@@ -14,6 +15,7 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace gdk::graphics {
     class model_data;
@@ -63,9 +65,6 @@ namespace gdk::graphics {
         
         //! a cube with format pos3uv2norm3
         /// \brief a 1x1x1 cube: vec3 position, vec2 uv, vec3 normal
-        ///
-        /// **Built fresh, and the caller owns it.** \see
-        /// webgl1es2_shader_program::make_pink_shader_of_death for why these are factories now.
         [[nodiscard]] static std::shared_ptr<webgl1es2_model> make_cube(); 
 
         //! a sphere with format pos3uv2norm3
@@ -80,12 +79,6 @@ namespace gdk::graphics {
             size_t size;
         };
 
-        /// \brief centre and radius of a sphere containing every vertex, in the model's own space
-        ///
-        /// Computed at upload, because that is the only moment the position data is in hand. A sphere
-        /// rather than a box because an entity's transform includes rotation: a rotated box has to be
-        /// recomputed to stay axis aligned, while a sphere only needs its centre moved and its radius
-        /// scaled. \see webgl1es2_entity::world_bounds
         vector3_type m_BoundsCentre{0, 0, 0};
         floating_point_type m_BoundsRadius = 0;
 
@@ -97,7 +90,16 @@ namespace gdk::graphics {
         
         GLenum m_PrimitiveMode;
 
-        std::unordered_map<std::string, attribute> m_Attributes;
+        string_keyed<attribute> m_Attributes;
+
+        /// \brief the attribute locations this model resolved for one shader program
+        struct bound_attribute final {
+            GLuint buffer;
+            GLint location;
+            GLint components;
+        };
+        //! keyed by program handle, because one model is drawn with more than one shader
+        mutable std::unordered_map<GLuint, std::vector<bound_attribute>> m_BindingCache;
     };
 }
 

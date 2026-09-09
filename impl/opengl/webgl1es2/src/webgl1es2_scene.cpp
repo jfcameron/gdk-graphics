@@ -25,27 +25,37 @@ namespace {
 }
 
 
+bool render_set::claim(const entity_ptr_type &apEntity) const {
+    const auto [entry, inserted] = m_unique_entities.try_emplace(apEntity.get(), apEntity);
+
+    if (inserted) return true;
+
+    if (!entry->second.expired()) return false;
+
+    entry->second = apEntity;
+
+    return true;
+}
+
 void render_set::prune() const {
-    for (auto entity = m_unique_entities.begin(); entity != m_unique_entities.end();)
-        entity = entity->second.expired() ? m_unique_entities.erase(entity) : std::next(entity);
+    if (++m_SinceLastPrune < PRUNE_INTERVAL) return;
 
-    for (auto material = m_MaterialToModelToEntityCollection.begin();
-        material != m_MaterialToModelToEntityCollection.end();) {
-        auto &models = material->second;
+    m_SinceLastPrune = 0;
 
-        for (auto model = models.begin(); model != models.end();) {
-            auto &entities = model->second;
+    const auto dead = [](const auto &aPair) { return aPair.second.expired(); };
 
-            entities.erase(std::remove_if(entities.begin(), entities.end(),
-                [](const entity_weak_ptr_type &a) { return a.expired(); }), entities.end());
+    std::erase_if(m_unique_entities, dead);
 
-            model = entities.empty() ? models.erase(model) : std::next(model);
-        }
+    std::erase_if(m_MaterialToModelToEntityCollection, [](auto &aMaterial) {
+        std::erase_if(aMaterial.second, [](auto &aModel) {
+            std::erase_if(aModel.second,
+                [](const entity_weak_ptr_type &a) { return a.expired(); });
 
-        material = models.empty()
-            ? m_MaterialToModelToEntityCollection.erase(material)
-            : std::next(material);
-    }
+            return aModel.second.empty();
+        });
+
+        return aMaterial.second.empty();
+    });
 }
 
 std::size_t render_set::entity_count() const {
@@ -97,12 +107,11 @@ void webgl1es2_scene::remove(const std::shared_ptr<const screen_camera> &pCamera
 
     const auto *const pTarget = pCamera.get();
 
-    m_screen_cameras.erase(std::remove_if(m_screen_cameras.begin(), m_screen_cameras.end(),
-        [pTarget](const std::weak_ptr<const webgl1es2_screen_camera> &a) {
-            const auto pLocked = a.lock();
+    std::erase_if(m_screen_cameras, [pTarget](const std::weak_ptr<const webgl1es2_screen_camera> &a) {
+        const auto pLocked = a.lock();
 
-            return !pLocked || pLocked.get() == pTarget;
-        }), m_screen_cameras.end());
+        return !pLocked || pLocked.get() == pTarget;
+    });
 }
 
 void webgl1es2_scene::remove(const std::shared_ptr<const texture_camera> &pCamera) {
@@ -110,78 +119,73 @@ void webgl1es2_scene::remove(const std::shared_ptr<const texture_camera> &pCamer
 
     const auto *const pTarget = pCamera.get();
 
-    m_texture_cameras.erase(std::remove_if(m_texture_cameras.begin(), m_texture_cameras.end(),
-        [pTarget](const std::weak_ptr<const webgl1es2_texture_camera> &a) {
-            const auto pLocked = a.lock();
+    std::erase_if(m_texture_cameras, [pTarget](const std::weak_ptr<const webgl1es2_texture_camera> &a) {
+        const auto pLocked = a.lock();
 
-            return !pLocked || pLocked.get() == pTarget;
-        }), m_texture_cameras.end());
+        return !pLocked || pLocked.get() == pTarget;
+    });
 }
 
 void sorted_render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
-    const frustum &aFrustum) const {
+    const frustum &aFrustum, const matrix4x4_type &aViewProjection) const {
     prune();
 
-    std::vector<std::shared_ptr<const entity>> sorted_entities;
+    std::vector<std::shared_ptr<const entity>> live;
 
-    sorted_entities.reserve(m_unique_entities.size());
+    live.reserve(m_unique_entities.size());
 
     for (const auto &[address, weak] : m_unique_entities)
-        if (auto pEntity = weak.lock()) sorted_entities.push_back(std::move(pEntity));
+        if (auto pEntity = weak.lock()) live.push_back(std::move(pEntity));
 
-    std::sort(sorted_entities.begin(), sorted_entities.end(),
-    [pCamera](std::shared_ptr<const entity> pA, std::shared_ptr<const entity> pB) {
-        const auto cameraPos = static_cast<const webgl1es2_camera *>(pCamera)->get_world_matrix().translation();
-        const auto entityPosA = static_cast<const webgl1es2_entity *>(pA.get())->getModelMatrix().translation();
-        const auto entityPosB = static_cast<const webgl1es2_entity *>(pB.get())->getModelMatrix().translation();
+    const auto cameraPosition = pCamera->get_world_matrix().translation();
 
-        const auto aDist = cameraPos.distance_from(entityPosA);
-        const auto bDist = cameraPos.distance_from(entityPosB);
+    std::vector<std::pair<floating_point_type, const webgl1es2_entity *>> byDepth;
 
-        return (aDist > bDist);
-    });
+    byDepth.reserve(live.size());
 
-    for (auto current_entity : sorted_entities) {
-        auto pEntity = static_cast<const webgl1es2_entity *>(current_entity.get());
+    for (const auto &pLocked : live) {
+        const auto *const pEntity = static_cast<const webgl1es2_entity *>(pLocked.get());
 
+        byDepth.emplace_back(
+            (pEntity->getModelMatrix().translation() - cameraPosition).length_squared(), pEntity);
+    }
+
+    std::sort(byDepth.begin(), byDepth.end(),
+        [](const auto &aA, const auto &aB) { return aA.first > aB.first; });
+
+    for (const auto &[depth, pEntity] : byDepth) {
         if (culled(*pEntity, aFrustum)) continue;
 
-        auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
+        const auto &pMaterial = pEntity->getMaterial();
+
         pMaterial->activate(aState);
 
-        auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
-        pModel->bind(*pMaterial->getShaderProgram());
+        pEntity->getModel()->bind(*pMaterial->getShaderProgram());
 
-        pEntity->draw(pCamera->get_view_matrix(),
-            pCamera->get_projection_matrix());
+        pEntity->draw(pCamera->get_view_matrix(), pCamera->get_projection_matrix(),
+            aViewProjection);
     }
 }
 
 void sorted_render_set::try_add(entity_ptr_type pEntityInterface) {
-    prune();
-
-    m_unique_entities.emplace(pEntityInterface.get(), pEntityInterface);
+    static_cast<void>(claim(pEntityInterface));
 }
 
 void render_set::try_add(entity_ptr_type pEntityInterface) {
-    prune();
-
-    if (!m_unique_entities.emplace(pEntityInterface.get(), pEntityInterface).second) return;
+    if (!claim(pEntityInterface)) return;
 
     auto pEntity = static_cast<const webgl1es2_entity *>(pEntityInterface.get());
-    auto pModel = std::static_pointer_cast<webgl1es2_model>(pEntity->getModel());
-    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
 
-    m_MaterialToModelToEntityCollection[pMaterial][pModel].push_back(pEntityInterface);
+    m_MaterialToModelToEntityCollection[pEntity->getMaterial()][pEntity->getModel()]
+        .push_back(pEntityInterface);
 }
 
 void webgl1es2_scene::add(const std::shared_ptr<const entity> &pEntityInterface) {
     if (!pEntityInterface.get()) return;
 
     auto pEntity = static_cast<const webgl1es2_entity *>(pEntityInterface.get());
-    auto pMaterial = std::static_pointer_cast<webgl1es2_material>(pEntity->getMaterial());
 
-    switch(pMaterial->get_render_mode()) {
+    switch(pEntity->getMaterial()->get_render_mode()) {
         case material::render_mode::opaque: m_opaque_set.try_add(pEntityInterface); return;
         case material::render_mode::transparent: m_translucent_set.try_add(pEntityInterface); return;
         default: break;
@@ -190,16 +194,16 @@ void webgl1es2_scene::add(const std::shared_ptr<const entity> &pEntityInterface)
 }
 
 void render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
-    const frustum &aFrustum) const {
+    const frustum &aFrustum, const matrix4x4_type &aViewProjection) const {
     prune();
 
     for (auto &[current_material, current_model_to_entity_collection] :
         m_MaterialToModelToEntityCollection) {
-        current_material->activate(aState);
+        bool materialActive = false;
 
         for (auto &[current_model, current_entity_collection]
             : current_model_to_entity_collection) {
-            current_model->bind(*current_material->getShaderProgram());
+            bool modelBound = false;
 
             for (auto &current_entity : current_entity_collection) {
                 const auto pLocked = current_entity.lock();
@@ -210,7 +214,20 @@ void render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
 
                 if (culled(*pEntity, aFrustum)) continue;
 
-                pEntity->draw(pCamera->get_view_matrix(), pCamera->get_projection_matrix());
+                if (!materialActive) {
+                    current_material->activate(aState);
+
+                    materialActive = true;
+                }
+
+                if (!modelBound) {
+                    current_model->bind(*current_material->getShaderProgram());
+
+                    modelBound = true;
+                }
+
+                pEntity->draw(pCamera->get_view_matrix(), pCamera->get_projection_matrix(),
+                    aViewProjection);
             }
         }
     }
@@ -222,16 +239,15 @@ void webgl1es2_scene::draw(const gdk::graphics::intvector2_type &aFrameBufferSiz
 
         std::vector<std::shared_ptr<const camera_type>> out;
 
-        aCameras.erase(std::remove_if(aCameras.begin(), aCameras.end(),
-            [&out](const std::weak_ptr<const camera_type> &a) {
-                if (auto pLocked = a.lock()) {
-                    out.push_back(std::move(pLocked));
+        std::erase_if(aCameras, [&out](const std::weak_ptr<const camera_type> &a) {
+            if (auto pLocked = a.lock()) {
+                out.push_back(std::move(pLocked));
 
-                    return false;
-                }
+                return false;
+            }
 
-                return true;
-            }), aCameras.end());
+            return true;
+        });
 
         return out;
     };
@@ -239,23 +255,27 @@ void webgl1es2_scene::draw(const gdk::graphics::intvector2_type &aFrameBufferSiz
     for (auto &current_texture_camera : live(m_texture_cameras)) {
         current_texture_camera->activate();
 
-        const frustum cameraFrustum(current_texture_camera->get_projection_matrix()
-            * current_texture_camera->get_view_matrix());
+        const auto viewProjection = current_texture_camera->get_projection_matrix()
+            * current_texture_camera->get_view_matrix();
 
-        m_opaque_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum);
+        const frustum cameraFrustum(viewProjection);
 
-        m_translucent_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum);
+        m_opaque_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum, viewProjection);
+
+        m_translucent_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum, viewProjection);
     }
 
     for (auto &current_screen_camera : live(m_screen_cameras)) {
         current_screen_camera->activate(aFrameBufferSize);
 
-        const frustum cameraFrustum(current_screen_camera->get_projection_matrix()
-            * current_screen_camera->get_view_matrix());
+        const auto viewProjection = current_screen_camera->get_projection_matrix()
+            * current_screen_camera->get_view_matrix();
 
-        m_opaque_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum);
+        const frustum cameraFrustum(viewProjection);
 
-        m_translucent_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum);
+        m_opaque_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum, viewProjection);
+
+        m_translucent_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum, viewProjection);
     }
 }
 

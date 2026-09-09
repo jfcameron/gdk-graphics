@@ -266,23 +266,41 @@ static inline void update_index_data(
 }
 
 void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const {
-    for (const auto &[name, current_attribute] : m_Attributes) {
-        if (auto activeAttribute = aShaderProgram.tryGetActiveAttribute(name); 
-            activeAttribute.has_value()) {
-            glBindBuffer(GL_ARRAY_BUFFER, 
-                m_VertexBufferHandles[current_attribute.buffer_handle_index].get());
-            
-            glEnableVertexAttribArray(activeAttribute->location);
-        
-            glVertexAttribPointer(
-                activeAttribute->location,
-                static_cast<GLint>(current_attribute.components),
-                GL_FLOAT, //TODO: supporting smaller data types would be a good optimization for attributes that do not need the range or precision of floats
-                GL_FALSE, 
-                0, 
-                0  
-            );
-        }
+    const auto cached = m_BindingCache.find(aShaderProgram.handle());
+
+    const auto &bindings = cached != m_BindingCache.end()
+        ? cached->second
+        : [&]() -> const std::vector<bound_attribute> & {
+            std::vector<bound_attribute> resolved;
+
+            for (const auto &[name, current_attribute] : m_Attributes) {
+                const auto active = aShaderProgram.tryGetActiveAttribute(name);
+
+                if (!active.has_value()) continue;
+
+                resolved.push_back({
+                    m_VertexBufferHandles[current_attribute.buffer_handle_index].get(),
+                    active->location,
+                    static_cast<GLint>(current_attribute.components)});
+            }
+
+            return m_BindingCache.emplace(aShaderProgram.handle(), std::move(resolved))
+                .first->second;
+        }();
+
+    for (const auto &each : bindings) {
+        glBindBuffer(GL_ARRAY_BUFFER, each.buffer);
+
+        glEnableVertexAttribArray(each.location);
+
+        glVertexAttribPointer(
+            each.location,
+            each.components,
+            GL_FLOAT, //TODO: supporting smaller data types would be a good optimization for attributes that do not need the range or precision of floats
+            GL_FALSE,
+            0,
+            0
+        );
     }
 }
 
@@ -298,7 +316,6 @@ void webgl1es2_model::draw() const {
     else glDrawArrays(m_PrimitiveMode, 0, m_VertexCount);
 }
 
-/// \brief a sphere big enough to contain every position in the data in model space
 static void compute_bounds(const model_data &aData, vector3_type &aCentreOut,
     floating_point_type &aRadiusOut) {
     aCentreOut = {0, 0, 0};
@@ -329,7 +346,6 @@ static void compute_bounds(const model_data &aData, vector3_type &aCentreOut,
     aCentreOut = {(minimum.x + maximum.x) * 0.5f, (minimum.y + maximum.y) * 0.5f,
         (minimum.z + maximum.z) * 0.5f};
 
-    // The furthest vertex from the centre
     for (std::size_t i = 0; i + 2 < components.size(); i += stride) {
         const auto dx = components[i + 0] - aCentreOut.x;
         const auto dy = components[i + 1] - aCentreOut.y;
@@ -341,18 +357,18 @@ static void compute_bounds(const model_data &aData, vector3_type &aCentreOut,
 
 void webgl1es2_model::upload(const usage_hint &aUsage,
     const model_data &aData) {
+    m_BindingCache.clear();
+
     compute_bounds(aData, m_BoundsCentre, m_BoundsRadius);
 
     m_PrimitiveMode = vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(aData.get_primitive_mode());
 
-    if (!aData.indexes().empty()) {
-        update_index_data(m_IndexBufferHandle, 
-            aData.indexes().size(), 
-            &aData.indexes().front(), 
-            dataUsageToGLenum(aUsage),
-            m_IndexCount
-        );
-    }
+    update_index_data(m_IndexBufferHandle,
+        aData.indexes().size(),
+        aData.indexes().empty() ? nullptr : &aData.indexes().front(),
+        dataUsageToGLenum(aUsage),
+        m_IndexCount
+    );
 
     //Vertex buffer objects
     {
@@ -395,11 +411,10 @@ void webgl1es2_model::upload(const usage_hint &aUsage,
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-            attribute newAttribute = {
-                i,                                          // buffer_handle_index
-                data.number_of_components_per_attribute(),  // components
-                data.components().size()                    // size
-            };
+            const attribute newAttribute{
+                .buffer_handle_index = i,
+                .components = data.number_of_components_per_attribute(),
+                .size = data.components().size()};
 
             m_Attributes[name] = newAttribute;
 

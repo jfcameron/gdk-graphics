@@ -9,7 +9,7 @@
 #include <gdk/graphics/texture_data.h>
 #include <gdk/graphics/webgl1es2_context.h>
 
-#include <jfc/event.h>
+#include <jfc/events/event.h>
 
 #include <GLFW/glfw3.h>
 
@@ -33,7 +33,7 @@ using namespace gdk::timing;
 int main() {
     const auto pWindow = windowing::impl_glfw_window::make("basic rendering demo");
 
-    jfc::event<float, float> update_event;
+    jfc::events::event<float, float> update_event;
 
     const auto pGraphics = webgl1es2_context::make();
     const auto pScene = pGraphics->make_scene();

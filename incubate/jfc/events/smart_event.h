@@ -1,16 +1,15 @@
 // © Joseph Cameron - All Rights Reserved
 
-#ifndef JFC_SMART_EVENT_H
-#define JFC_SMART_EVENT_H
+#ifndef JFC_EVENTS_SMART_EVENT_H
+#define JFC_EVENTS_SMART_EVENT_H
 
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <unordered_set>
 
-namespace jfc {
+namespace jfc::events {
     /// \brief event class that automatically cleans up unused observers
-    ///
     template<class... event_parameter_types_param>
     class smart_event final {
     public:

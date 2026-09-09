@@ -1,13 +1,12 @@
 // © Joseph Cameron - All Rights Reserved
 
-#ifndef GDK_GRAPHICS_CUBE_ARRAY_H
-#define GDK_GRAPHICS_CUBE_ARRAY_H
+#ifndef JFC_COLLECTIONS_CUBE_ARRAY_H
+#define JFC_COLLECTIONS_CUBE_ARRAY_H
 
 #include <array>
 
-namespace gdk::graphics {
+namespace jfc::collections {
     /// \brief 3d array where its length width and height are equal
-    ///
     template<typename value_type, size_t size_param>
     class cube_array final {
     public:

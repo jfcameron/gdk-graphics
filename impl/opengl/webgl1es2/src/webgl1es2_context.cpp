@@ -88,8 +88,14 @@ model_ptr_type webgl1es2_context::make_sphere_model() const {
 }
 
 texture_ptr_type webgl1es2_context::make_texture(const texture_data::view &imageView, const texture::wrap_mode aWrapModeU,
-    const texture::wrap_mode aWrapModeV) {
-    return texture_ptr_type(new webgl1es2_texture(imageView, aWrapModeU, aWrapModeV));
+    const texture::wrap_mode aWrapModeV, const texture::filter_mode aFilterMode) {
+    const auto sharp = aFilterMode == texture::filter_mode::sharp;
+
+    return texture_ptr_type(new webgl1es2_texture(imageView, aWrapModeU, aWrapModeV,
+        sharp ? webgl1es2_texture::minification_filter::nearest
+              : webgl1es2_texture::minification_filter::linear,
+        sharp ? webgl1es2_texture::magnification_filter::nearest
+              : webgl1es2_texture::magnification_filter::linear));
 }
 
 texture_ptr_type webgl1es2_context::make_texture() {

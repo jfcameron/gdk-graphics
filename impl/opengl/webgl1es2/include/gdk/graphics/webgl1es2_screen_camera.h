@@ -6,6 +6,9 @@
 #include <gdk/graphics/color.h>
 #include <gdk/graphics/types.h>
 #include <gdk/graphics/screen_camera.h>
+
+#include <optional>
+#include <utility>
 #include <gdk/graphics/webgl1es2_camera.h>
 #include <gdk/graphics/webgl1es2_texture.h>
 #include <jfc/unique_handle.h>
@@ -23,6 +26,11 @@ namespace gdk::graphics {
     ///@{
     //
         /// \brief sets the normalized size and position of the viewport within of the window
+        virtual void set_scissor(const float aX, const float aY, const float aWidth,
+            const float aHeight) override;
+
+        virtual void clear_scissor() override;
+
         virtual void set_viewport(const float aX, 
                 const float aY,
                 const float aWidth, 
@@ -72,6 +80,9 @@ namespace gdk::graphics {
 
     private:
         vector2_type m_ViewportPosition = vector2_type::zero;
+
+        std::optional<std::pair<vector2_type, vector2_type>> m_Scissor;
+
         vector2_type m_ViewportSize = vector2_type(1, 1); 
     };
 }

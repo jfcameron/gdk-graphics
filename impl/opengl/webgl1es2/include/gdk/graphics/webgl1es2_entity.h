@@ -20,8 +20,7 @@ namespace gdk::graphics
     
     /// \brief Represents an observable 3D object. 
     ///
-    /// \detailed Has a position/rotation/scale, a polygonal shape (model), a material (shader, uniforms)
-    ///
+    /// \details Has a position/rotation/scale, a polygonal shape (model), a material (shader, uniforms)
     class webgl1es2_entity final : public entity {
     public:
     /// \name external interface
@@ -44,24 +43,21 @@ namespace gdk::graphics
         virtual void set_transform(const matrix4x4_type& a) override;
     ///@}
 
-        /// \brief this entity's bounding sphere in world space, for culling
-        ///
-        /// The model's own-space sphere put through the model matrix: the centre is transformed, and
-        /// the radius is scaled by the **largest** of the three axis scales -- anything smaller could
-        /// report a sphere that does not contain the mesh, and a cull that hides something visible is
-        /// a far worse failure than one that draws something it need not have.
+        /// \brief this entity's bounding sphere in world space, used for culling
         void world_bounds(vector3_type &aCentreOut, floating_point_type &aRadiusOut) const;
 
         //! get the model
-        std::shared_ptr<model> getModel() const;
+        const std::shared_ptr<webgl1es2_model> &getModel() const;
 
         //! get the material
-        std::shared_ptr<material> getMaterial() const;
+        const std::shared_ptr<webgl1es2_material> &getMaterial() const;
 
         /// \brief draws the webgl1es2_entity at its current world position, with respect to a view and projection matrix.
         /// generally should not be called by the end user. view, proj, are most easily provided to the webgl1es2_entity 
         /// via a camera.
-        void draw(const matrix4x4_type &aViewMatrix, const matrix4x4_type &aProjectionMatrix) const;
+        /// `aViewProjection` is projection * view, constant across the camera's pass
+        void draw(const matrix4x4_type &aViewMatrix, const matrix4x4_type &aProjectionMatrix,
+            const matrix4x4_type &aViewProjection) const;
 		
         /// \brief returns a const ref to the model matrix
         const matrix4x4_type &getModelMatrix() const;
@@ -83,16 +79,9 @@ namespace gdk::graphics
         ~webgl1es2_entity() = default;
     
     private:
-        //! model used when rendering the entity
         std::shared_ptr<webgl1es2_model> m_model;
-       
-        //! material used when rendering the entity
         std::shared_ptr<webgl1es2_material> m_Material;
-
-        //! Position in the world
         matrix4x4_type m_ModelMatrix;
-
-        //! Whether or not to respect draw calls
         bool m_IsHidden = false;
     };
 }

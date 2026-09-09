@@ -1,23 +1,14 @@
 # © Joseph Cameron - All Rights Reserved
 
-jfc_project(executable
-    NAME "voxel_demo"
-    VERSION 1.0
-    DESCRIPTION "demo gdk-graphics app"
-    C++_STANDARD 20
-    C_STANDARD 90
+project(voxel_demo)
 
-    SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    
-    PRIVATE_INCLUDE_DIRECTORIES
-        "${gdkgraphics_INCLUDE_DIRECTORIES}"
+add_executable(voxel_demo
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-    LIBRARIES
-        "${gdkgraphics_LIBRARIES}"
-        "${gdkgraphics_ext_png_LIBRARIES}"
+target_include_directories(voxel_demo PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../incubate")
 
-    DEPENDENCIES
-        "gdkgraphics"
-)
+target_link_libraries(voxel_demo PRIVATE gdkgraphics)
+
+target_compile_features(voxel_demo PRIVATE cxx_std_20)
 

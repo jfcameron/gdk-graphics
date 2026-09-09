@@ -19,6 +19,14 @@ namespace gdk::graphics {
             const float aWidth, 
             const float aHeight) = 0;
 
+        /// \brief clip this camera to a rectangle of the window without moving what it draws
+        virtual void set_scissor(const float aX,
+            const float aY,
+            const float aWidth,
+            const float aHeight) = 0;
+
+        virtual void clear_scissor() = 0;
+
         virtual ~screen_camera() = default;
     };
 }

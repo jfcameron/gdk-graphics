@@ -9,7 +9,6 @@
 #include <vector>
 #include <span>
 
-/// \file two-bone inverse kinematics
 namespace gdk::graphics::animation {
     [[nodiscard]] pose with_limb_reaching(const skeleton &aSkeleton, const pose &aPose,
         const std::size_t aUpper, const vector3_type &aTarget, const vector3_type &aPoleDirection);
@@ -39,9 +38,6 @@ namespace gdk::graphics::animation {
     [[nodiscard]] float stance_weight(const foot_arc &aArc, const float aFootHeight,
         const float aBand = 0.25f);
 
-    /// Spans rather than `const std::vector &`: these are read, not kept, so the container the caller
-    /// holds them in is not this function's business. A caller with a `std::array` or a subrange no
-    /// longer has to copy into a vector to call it.
     [[nodiscard]] float pelvis_lift(std::span<const matrix4x4_type> aWorld,
         std::span<const std::size_t> aFeet, const vector3_type &aCharacterPosition,
         const quaternion_type &aCharacterRotation,

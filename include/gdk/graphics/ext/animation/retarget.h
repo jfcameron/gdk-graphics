@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-/// \file playing one rig's animation on another rig.
 namespace gdk::graphics::animation {
     using bone_mapping = std::vector<int>;
 

@@ -4,6 +4,7 @@
 #define GDK_GFX_WEBGL1ES2_MATERIAL_H
 
 #include <gdk/graphics/webgl1es2_gl_state.h>
+#include <gdk/graphics/string_keyed.h>
 #include <gdk/graphics/material.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
 
@@ -78,7 +79,7 @@ namespace gdk::graphics {
 
         //! associative collection: uniform name to texture data
         using texture_uniform_collection_type = 
-            std::unordered_map<std::string, texture_ptr_impl_type>;
+            string_keyed<texture_ptr_impl_type>;
 
         //! the shader used by the webgl1es2_material
         shader_ptr_type m_pShaderProgram;
@@ -92,31 +93,39 @@ namespace gdk::graphics {
         //! texture data provided to the shader stages
         texture_uniform_collection_type m_Textures;
         
-        //! float data provided to the shader stages
-        std::unordered_map<std::string, float> m_Floats;
+        /// \brief a value bound for the shader stages, with its location already resolved
+        template<typename value_type>
+        struct uniform final {
+            GLint location{-1};
+            value_type value{};
+        };
 
-        //! vector2 data provided to the shader stages
-        std::unordered_map<std::string, vector2_type> m_Vector2s;
+        /// \brief store a value and resolve its location if this is the first time it is set
+        template<typename value_type, typename collection_type>
+        void assign(collection_type &aCollection, const std::string_view aName,
+            const value_type &aValue) {
+            if (const auto found = aCollection.find(aName); found != aCollection.end()) {
+                found->second.value = aValue;
 
-        //! vector3 data provided to the shader stages
-        std::unordered_map<std::string, vector3_type> m_vector3s;
-        
-        //! vector4 data provided to the shader stages
-        std::unordered_map<std::string, vector4_type> m_vector4s;
+                return;
+            }
 
-        //! integer data provided to the shader stages
-        std::unordered_map<std::string, int> m_Integers;
-        
-        //! integer data provided to the shader stages
-        std::unordered_map<std::string, intvector2_type> m_Integer2s;
+            const auto entry = aCollection.emplace(aName, typename collection_type::mapped_type{})
+                .first;
 
-        //! integer data provided to the shader stages
-        std::unordered_map<std::string, intvector3_type> m_Integer3s;
-        
-        //! integer data provided to the shader stages
-        std::unordered_map<std::string, intvector4_type> m_Integer4s;
+            entry->second.location = m_pShaderProgram->uniform_location(entry->first);
+            entry->second.value = aValue;
+        }
 
-        std::unordered_map<std::string, std::vector<intvector2_type>> m_IntVector2Arrays;
+        string_keyed<uniform<float>> m_Floats;
+        string_keyed<uniform<vector2_type>> m_Vector2s;
+        string_keyed<uniform<vector3_type>> m_vector3s;
+        string_keyed<uniform<vector4_type>> m_vector4s;
+        string_keyed<uniform<int>> m_Integers;
+        string_keyed<uniform<intvector2_type>> m_Integer2s;
+        string_keyed<uniform<intvector3_type>> m_Integer3s;
+        string_keyed<uniform<intvector4_type>> m_Integer4s;
+        string_keyed<uniform<std::vector<intvector2_type>>> m_IntVector2Arrays;
     };
 }
 

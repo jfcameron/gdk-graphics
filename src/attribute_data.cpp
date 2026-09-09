@@ -3,13 +3,17 @@
 #include <gdk/graphics/attribute_data.h>
 #include <gdk/graphics/exception.h>
 
+#include <string>
+
 using namespace gdk;
 using namespace gdk::graphics;
 
 size_t attribute_data::number_of_components_per_attribute() const { return m_NumberOfComponentsPerAttribute; }
 
 size_t attribute_data::number_of_attributes_in_component_data() const {
-    return m_Components.size() / number_of_components_per_attribute();
+    if (!m_NumberOfComponentsPerAttribute) return 0;
+
+    return m_Components.size() / m_NumberOfComponentsPerAttribute;
 }
 
 const std::vector<component_type> &attribute_data::components() const { return m_Components; }
@@ -27,6 +31,17 @@ attribute_data::attribute_data(std::initializer_list<component_type> aComponents
 {}
 
 void attribute_data::push_back(const attribute_data &rhs) {
+    if (!m_NumberOfComponentsPerAttribute)
+        m_NumberOfComponentsPerAttribute = rhs.m_NumberOfComponentsPerAttribute;
+
+    else if (rhs.m_NumberOfComponentsPerAttribute
+        && m_NumberOfComponentsPerAttribute != rhs.m_NumberOfComponentsPerAttribute)
+        throw exception(std::string("attribute_data::push_back: cannot append an attribute of ")
+            .append(std::to_string(rhs.m_NumberOfComponentsPerAttribute))
+            .append(" components per attribute to one of ")
+            .append(std::to_string(m_NumberOfComponentsPerAttribute))
+            .append("; the result would not describe either"));
+
     m_Components.reserve(m_Components.size() + rhs.m_Components.size());
     m_Components.insert(m_Components.end(), rhs.m_Components.begin(), rhs.m_Components.end());
 }

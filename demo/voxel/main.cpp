@@ -15,7 +15,7 @@
 #include <gdk/graphics/webgl1es2_context.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
 #include <gdk/graphics/webgl1es2_texture.h>
-#include <gdk/graphics/cube_array.h>
+#include <jfc/collections/cube_array.h>
 
 #include <algorithm>
 #include <array>
@@ -277,7 +277,7 @@ public:
     using texture_data_view_pair = std::pair<gdk::graphics::texture_data::view, std::shared_ptr<texture_data_type>>;
 
 private:
-    gdk::graphics::cube_array<blockType, size> m_Data;
+    jfc::collections::cube_array<blockType, size> m_Data;
 
 public:
     const blockType &at(const size_t aX, const size_t aY, const size_t aZ) const {
@@ -885,7 +885,6 @@ int main() {
     );
 
     auto pVolumetricModel(pGraphics->make_model());
-    //pVolumetricModel->upload(model::usage_hint::streaming, blockModelData);
     pVolumetricModel->upload(model::usage_hint::streaming, blockModelDataOptimized);
 
     auto pVolumetricEntity = [&]() {

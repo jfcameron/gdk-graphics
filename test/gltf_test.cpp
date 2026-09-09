@@ -220,3 +220,255 @@ TEST_CASE("gdk::graphics::read_gltf", "[gdk::graphics]")
         REQUIRE_THROWS_AS(read_gltf(external), std::runtime_error);
     }
 }
+
+TEST_CASE("a glTF document's names come back with its geometry", "[gdk::graphics]") {
+    const auto document = [] {
+        std::string bin;
+
+        for (const float v : {0.f,0.f,0.f,  1.f,0.f,0.f,  0.f,2.f,0.f}) putf(bin, v);
+        for (const float v : {0.f,0.f,      1.f,0.f,      0.f,1.f})     putf(bin, v);
+
+        return glb(R"({
+          "asset":{"version":"2.0"},
+          "buffers":[{"byteLength":60}],
+          "bufferViews":[
+            {"buffer":0,"byteOffset":0, "byteLength":36},
+            {"buffer":0,"byteOffset":36,"byteLength":24}],
+          "accessors":[
+            {"bufferView":0,"componentType":5126,"count":3,"type":"VEC3"},
+            {"bufferView":1,"componentType":5126,"count":3,"type":"VEC2"}],
+          "nodes":[{"name":"wall_stone","mesh":0}],
+          "meshes":[
+            {"name":"Cube.003","primitives":[
+              {"attributes":{"POSITION":0,"TEXCOORD_0":1}},
+              {"attributes":{"POSITION":0,"TEXCOORD_0":1}}]},
+            {"primitives":[{"attributes":{"POSITION":0,"TEXCOORD_0":1}}]}]
+        })", bin);
+    }();
+
+    const auto content = read_gltf(document);
+
+    REQUIRE(content.meshes.size() == 3);
+
+    SECTION("**the node's name and the mesh's name are different facts, and both come back**")
+    {
+        REQUIRE(content.meshes[0].node_name == "wall_stone");
+        REQUIRE(content.meshes[0].mesh_name == "Cube.003");
+    }
+
+    SECTION("**a mesh of several primitives repeats its name, once per primitive**")
+    {
+        REQUIRE(content.meshes[1].node_name == content.meshes[0].node_name);
+        REQUIRE(content.meshes[1].mesh_name == content.meshes[0].mesh_name);
+    }
+
+    SECTION("**what nothing names has no name, rather than inheriting one**")
+    {
+        REQUIRE(content.meshes[2].mesh_name.empty());
+        REQUIRE(content.meshes[2].node_name.empty());
+    }
+}
+
+TEST_CASE("a glTF node's parent, material and placement come back with it", "[gdk::graphics]") {
+    const auto document = [] {
+        std::string bin;
+
+        for (const float v : {0.f,0.f,0.f,  1.f,0.f,0.f,  0.f,2.f,0.f}) putf(bin, v);
+        for (const float v : {0.f,0.f,      1.f,0.f,      0.f,1.f})     putf(bin, v);
+
+        return glb(R"({
+          "asset":{"version":"2.0"},
+          "buffers":[{"byteLength":60}],
+          "bufferViews":[
+            {"buffer":0,"byteOffset":0, "byteLength":36},
+            {"buffer":0,"byteOffset":36,"byteLength":24}],
+          "accessors":[
+            {"bufferView":0,"componentType":5126,"count":3,"type":"VEC3"},
+            {"bufferView":1,"componentType":5126,"count":3,"type":"VEC2"}],
+          "materials":[{"name":"accent"}],
+          "nodes":[
+            {"name":"pillar","mesh":0,"children":[1]},
+            {"name":"collider","mesh":1,"translation":[0,0.5,0]}],
+          "meshes":[
+            {"name":"pillar_mesh","primitives":[
+              {"attributes":{"POSITION":0,"TEXCOORD_0":1},"material":0}]},
+            {"name":"collider_mesh_data","primitives":[
+              {"attributes":{"POSITION":0,"TEXCOORD_0":1}}]}]
+        })", bin);
+    }();
+
+    const auto content = read_gltf(document);
+
+    REQUIRE(content.meshes.size() == 2);
+
+    SECTION("**a child knows its parent by name, since a parent may carry no mesh at all**")
+    {
+        REQUIRE(content.meshes[0].parent_name.empty());
+        REQUIRE(content.meshes[1].parent_name == "pillar");
+    }
+
+    SECTION("**a material comes back as its name, not as its parameters**")
+    {
+        REQUIRE(content.meshes[0].material_name == "accent");
+
+        REQUIRE(content.meshes[1].material_name.empty());
+    }
+
+    SECTION("**a node moved in object mode carries the offset in its transform**")
+    {
+        REQUIRE(content.meshes[1].data.attributes().at("a_Position").components()[1]
+            == Approx(0.0f));
+
+        REQUIRE(content.meshes[1].local_transform[7] == Approx(0.5f));
+
+        REQUIRE(content.meshes[1].local_transform[3] == Approx(0.0f));
+        REQUIRE(content.meshes[1].local_transform[11] == Approx(0.0f));
+    }
+
+    SECTION("**and an unmoved node is identity rather than whatever was there**")
+    {
+        const auto &identity = content.meshes[0].local_transform;
+
+        for (std::size_t i = 0; i < 16; ++i)
+            REQUIRE(identity[i] == Approx(i % 5 == 0 ? 1.0f : 0.0f));
+    }
+}
+
+TEST_CASE("a primitive's indices come back with it", "[gdk::graphics]") {
+    const auto indexed = [] {
+        std::string bin;
+
+        for (const float v : {0.f,0.f,0.f, 1.f,0.f,0.f, 1.f,1.f,0.f, 0.f,1.f,0.f}) putf(bin, v);
+
+        for (const std::uint16_t i : {0, 1, 2, 0, 2, 3}) {
+            bin.push_back(static_cast<char>(i & 0xff));
+            bin.push_back(static_cast<char>(i >> 8));
+        }
+
+        return glb(R"({
+          "asset":{"version":"2.0"},
+          "buffers":[{"byteLength":60}],
+          "bufferViews":[
+            {"buffer":0,"byteOffset":0, "byteLength":48},
+            {"buffer":0,"byteOffset":48,"byteLength":12}],
+          "accessors":[
+            {"bufferView":0,"componentType":5126,"count":4,"type":"VEC3"},
+            {"bufferView":1,"componentType":5123,"count":6,"type":"SCALAR"}],
+          "meshes":[{"primitives":[{"attributes":{"POSITION":0},"indices":1}]}]
+        })", bin);
+    }();
+
+    const auto content = read_gltf(indexed);
+
+    REQUIRE(content.meshes.size() == 1);
+
+    SECTION("**an indexed primitive stays indexed, and keeps its winding**")
+    {
+        REQUIRE(content.meshes.front().data.indexed());
+
+        const auto &indexes = content.meshes.front().data.indexes();
+
+        REQUIRE(indexes.size() == 6);
+
+        REQUIRE(indexes[0] == 0);
+        REQUIRE(indexes[1] == 1);
+        REQUIRE(indexes[2] == 2);
+        REQUIRE(indexes[3] == 0);
+        REQUIRE(indexes[4] == 2);
+        REQUIRE(indexes[5] == 3);
+    }
+
+    SECTION("**and a primitive with none is left unindexed rather than given some**")
+    {
+        REQUIRE_FALSE(read_gltf(triangle()).meshes.front().data.indexed());
+    }
+}
+
+TEST_CASE("a glTF document's images come back encoded", "[gdk::graphics]") {
+    const std::string picture = "\x89PNG\r\n\x1a\n";
+
+    SECTION("**an image in the binary chunk is handed back byte for byte**")
+    {
+        std::string bin;
+
+        for (const float v : {0.f,0.f,0.f, 1.f,0.f,0.f, 0.f,1.f,0.f}) putf(bin, v);
+
+        bin += picture;
+
+        const auto document = glb(R"({
+          "asset":{"version":"2.0"},
+          "buffers":[{"byteLength":44}],
+          "bufferViews":[
+            {"buffer":0,"byteOffset":0, "byteLength":36},
+            {"buffer":0,"byteOffset":36,"byteLength":8}],
+          "accessors":[{"bufferView":0,"componentType":5126,"count":3,"type":"VEC3"}],
+          "images":[{"name":"brick","bufferView":1,"mimeType":"image/png"}],
+          "textures":[{"source":0}],
+          "materials":[{"name":"stone","pbrMetallicRoughness":{
+            "baseColorTexture":{"index":0}}}],
+          "meshes":[{"primitives":[
+            {"attributes":{"POSITION":0},"material":0}]}]
+        })", bin);
+
+        const auto content = read_gltf(document);
+
+        REQUIRE(content.images.size() == 1);
+        REQUIRE(content.images.front().name == "brick");
+        REQUIRE(content.images.front().mime_type == "image/png");
+
+        REQUIRE(content.images.front().bytes.size() == picture.size());
+
+        REQUIRE(std::memcmp(content.images.front().bytes.data(), picture.data(), picture.size())
+            == 0);
+    }
+
+    SECTION("**and a primitive says which image its material paints with**")
+    {
+        std::string bin;
+
+        for (const float v : {0.f,0.f,0.f, 1.f,0.f,0.f, 0.f,1.f,0.f}) putf(bin, v);
+
+        bin += picture;
+
+        const auto document = glb(R"({
+          "asset":{"version":"2.0"},
+          "buffers":[{"byteLength":44}],
+          "bufferViews":[
+            {"buffer":0,"byteOffset":0, "byteLength":36},
+            {"buffer":0,"byteOffset":36,"byteLength":8}],
+          "accessors":[{"bufferView":0,"componentType":5126,"count":3,"type":"VEC3"}],
+          "images":[{"name":"brick","bufferView":1,"mimeType":"image/png"}],
+          "textures":[{"source":0}],
+          "materials":[{"name":"stone","pbrMetallicRoughness":{
+            "baseColorTexture":{"index":0}}}],
+          "meshes":[{"primitives":[
+            {"attributes":{"POSITION":0},"material":0}]}]
+        })", bin);
+
+        const auto content = read_gltf(document);
+
+        REQUIRE(content.meshes.front().base_color_image == 0);
+        REQUIRE(read_gltf(triangle()).meshes.front().base_color_image == -1);
+    }
+
+    SECTION("**an image naming a file is refused, the way an external buffer is**")
+    {
+        const auto external = glb(R"({
+          "asset":{"version":"2.0"},
+          "images":[{"name":"brick","uri":"../../../etc/passwd"}]
+        })", "");
+
+        try {
+            const auto ignored = read_gltf(external);
+
+            FAIL("expected a document naming a file to be refused");
+        }
+        catch (const std::runtime_error &aException) {
+            const std::string said = aException.what();
+
+            INFO("said: " << said);
+
+            REQUIRE(said.find("names a file") != std::string::npos);
+        }
+    }
+}

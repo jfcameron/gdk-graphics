@@ -1,24 +1,14 @@
 # © Joseph Cameron - All Rights Reserved
 
-jfc_project(executable
-    NAME "sprite_demo"
-    VERSION 1.0
-    DESCRIPTION "sprite_demo"
-    C++_STANDARD 20
-    C_STANDARD 90
+project(sprite_demo)
 
-    SOURCE_LIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    
-    PRIVATE_INCLUDE_DIRECTORIES
-        "${gdkgraphics_INCLUDE_DIRECTORIES}"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../../incubate"
+add_executable(sprite_demo
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-    LIBRARIES
-        "${gdkgraphics_LIBRARIES}"
-        "${gdkgraphics_ext_png_LIBRARIES}"
+target_include_directories(sprite_demo PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../incubate")
 
-    DEPENDENCIES
-        "gdkgraphics"
-)
+target_link_libraries(sprite_demo PRIVATE gdkgraphics)
+
+target_compile_features(sprite_demo PRIVATE cxx_std_20)
 

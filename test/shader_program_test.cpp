@@ -292,6 +292,25 @@ TEST_CASE("gdk::webgl1es2_shader_program uniforms", "[gdk::webgl1es2_shader_prog
         REQUIRE(!jfc::glGetError());
     }
 
+    SECTION("**an array is addressable by the name the shader declared, without a [0] suffix**")
+    {
+        REQUIRE(subject.try_set_uniform("_FloatArray", std::vector<GLfloat>{1, 2, 3}));
+        REQUIRE(subject.try_set_uniform("_Vec2Array",
+            std::vector<vector2_type>{{1, 2}, {3, 4}, {5, 6}}));
+
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("and by the [0] spelling gl itself reports, which names the same location")
+    {
+        REQUIRE(subject.try_set_uniform("_FloatArray[0]", std::vector<GLfloat>{1, 2, 3}));
+
+        REQUIRE(read_floats("_FloatArray[0]", 1).at(0) == Approx(1.0f));
+        REQUIRE(read_floats("_FloatArray[2]", 1).at(0) == Approx(3.0f));
+
+        REQUIRE(!jfc::glGetError());
+    }
+
     SECTION("every array overload reaches gl cleanly")
     {
         REQUIRE(set_array(subject, "_FloatArray", std::vector<GLfloat>{1, 2, 3}));
@@ -359,7 +378,7 @@ TEST_CASE("gdk::webgl1es2_shader_program uniforms", "[gdk::webgl1es2_shader_prog
     SECTION("the return value is a question about the name, not about the type")
     {
         REQUIRE(subject.try_set_uniform("_Mat4", 1.0f));
-        REQUIRE(jfc::glGetError());   
+        REQUIRE(jfc::glGetError(true));
     }
 }
 

@@ -101,3 +101,21 @@ jobs:
 
       - name: build
         run: cmake --build --preset emscripten
+
+  docs:
+    name: docs (doxygen)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen \
+            xorg-dev libwayland-dev libxkbcommon-dev wayland-protocols
+
+      - name: generate documentation
+        run: cmake --preset linux-docs

@@ -25,6 +25,13 @@ void webgl1es2_screen_camera::set_viewport(const float aX, const float aY,
     m_ViewportSize.y = aHeight;
 }
 
+void webgl1es2_screen_camera::set_scissor(const float aX, const float aY, const float aWidth,
+    const float aHeight) {
+    m_Scissor = std::pair{vector2_type(aX, aY), vector2_type(aWidth, aHeight)};
+}
+
+void webgl1es2_screen_camera::clear_scissor() { m_Scissor.reset(); }
+
 void webgl1es2_screen_camera::activate(const gdk::graphics::intvector2_type &aFrameBufferSize) const {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -38,7 +45,9 @@ void webgl1es2_screen_camera::activate(const gdk::graphics::intvector2_type &aFr
     const auto viewportPixelSize = toPixels(m_ViewportSize);
     
     glh::Viewport(viewportPixelPosition, viewportPixelSize);
-    glh::Scissor(viewportPixelPosition, viewportPixelSize);
+
+    if (m_Scissor) glh::Scissor(toPixels(m_Scissor->first), toPixels(m_Scissor->second));
+    else glh::Scissor(viewportPixelPosition, viewportPixelSize);
     
     webgl1es2_camera::activate_clear_mode();
 }

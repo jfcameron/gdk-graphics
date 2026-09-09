@@ -162,7 +162,7 @@ webgl1es2_texture::webgl1es2_texture(
         0, 
         format,
         GL_UNSIGNED_BYTE, 
-        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&aData[0])));
+        reinterpret_cast<const GLubyte *>(aData));
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -210,7 +210,7 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView) {
         0, 
         format,
         GL_UNSIGNED_BYTE, 
-        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&imageView.data[0])));
+        reinterpret_cast<const GLubyte *>(imageView.data));
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -237,7 +237,7 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView,
         static_cast<GLsizei>(imageView.height), 
         m_CurrentDataFormat,
         GL_UNSIGNED_BYTE, 
-        const_cast<GLubyte *>(reinterpret_cast<const GLubyte *>(&imageView.data[0])));
+        reinterpret_cast<const GLubyte *>(imageView.data));
 
     glGenerateMipmap(GL_TEXTURE_2D);
 }

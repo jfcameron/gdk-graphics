@@ -3,9 +3,11 @@
 #ifndef GDK_GFX_WEBGL1ES2_GL_STATE_H
 #define GDK_GFX_WEBGL1ES2_GL_STATE_H
 
+#include <gdk/graphics/string_keyed.h>
 #include <gdk/graphics/opengl.h>
 
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace gdk::graphics {
@@ -30,17 +32,17 @@ namespace gdk::graphics {
         [[nodiscard]] GLuint current_program() const { return mCurrentProgram; }
 
         //! the unit already assigned to aName in the program in use or -1
-        [[nodiscard]] GLint assigned_texture_unit(const std::string &aName) const {
+        [[nodiscard]] GLint assigned_texture_unit(const std::string_view aName) const {
             const auto found = mTextureUnits.find(aName);
 
             return found == mTextureUnits.end() ? -1 : found->second;
         }
 
         //! take the next free unit for aName
-        [[nodiscard]] GLint assign_texture_unit(const std::string &aName) {
+        [[nodiscard]] GLint assign_texture_unit(const std::string_view aName) {
             const GLint unit = mTextureUnitCounter++;
 
-            mTextureUnits[aName] = unit;
+            mTextureUnits.emplace(aName, unit);
 
             return unit;
         }
@@ -56,9 +58,7 @@ namespace gdk::graphics {
 
     private:
         GLuint mCurrentProgram{0};
-
-        std::unordered_map<std::string, GLint> mTextureUnits;
-
+        string_keyed<GLint> mTextureUnits;
         short mTextureUnitCounter{0};
     };
 }

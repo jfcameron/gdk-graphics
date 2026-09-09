@@ -3,6 +3,7 @@
 #ifndef GDK_GFX_VERTEX_DATA_H
 #define GDK_GFX_VERTEX_DATA_H
 
+#include <gdk/graphics/string_keyed.h>
 #include <gdk/graphics/attribute_data.h>
 #include <gdk/graphics/types.h>
 
@@ -22,7 +23,7 @@ namespace gdk::graphics {
     //TODO: its good that the getters enforce const but the type shouldnt have to match the member. rather than vector, span would be better
     class model_data final {
     public:
-        using attribute_collection_type = std::unordered_map<std::string, attribute_data>;
+        using attribute_collection_type = string_keyed<attribute_data>;
         using index_value_type = unsigned short;
 
         enum class primitive_mode {
@@ -32,8 +33,24 @@ namespace gdk::graphics {
         //! get the primitive mode
         primitive_mode get_primitive_mode() const;
 
-        //! get list of indexes
+        /// \brief the order the vertices are drawn in, empty if they are drawn in storage order
+        ///
+        /// A model with indices is drawn with glDrawElements and one without with glDrawArrays.
+        /// Indexing lets a vertex shared by several triangles be stored once, which for a typical
+        /// closed surface is about a third of the vertices a triangle soup needs.
         const std::vector<index_value_type> &indexes() const;
+
+        //! does this model name its vertices in an explicit order?
+        [[nodiscard]] bool indexed() const;
+
+        /// \brief draw the vertices in this order rather than in the order they are stored
+        ///
+        /// \throws exception if an index is past the end of the vertex data. Out of range indices
+        /// are undefined behaviour in gl: they usually draw garbage or take the driver down, and
+        /// they never say why, so they are refused here where the cause is still visible.
+        ///
+        /// An empty list removes the indices, returning the model to storage order.
+        void set_indexes(std::vector<index_value_type> aIndexes);
 
         //! get collection of all attribute data
         const attribute_collection_type &attributes() const;
@@ -76,6 +93,10 @@ namespace gdk::graphics {
             const std::string &aPositionAttributeName = "a_Position");
 
         /// \brief append a different model_data to this model_data
+        ///
+        /// The appended indices are offset so that they still name the appended vertices. If only
+        /// one of the two is indexed, the other is given the indices it implies, because the
+        /// result has to be one thing or the other.
         void push_back(const model_data &other);
 
         /// \brief overwrite a section of vertex data using another vertex data instance
@@ -96,7 +117,7 @@ namespace gdk::graphics {
         model_data operator+(const model_data &aData);
 
         //! append a copy of different model_data to this model_data
-        /// \warn must be same format
+        /// \warning must be same format
         model_data &operator+=(const model_data &other);
 
         //! support move semantics
@@ -114,6 +135,10 @@ namespace gdk::graphics {
 
         model_data(attribute_collection_type &&aAttributeData);
 
+        //! \throws exception if an index is past the end of aAttributeData. \see set_indexes
+        model_data(attribute_collection_type &&aAttributeData,
+            std::vector<index_value_type> &&aIndexes);
+
         ~model_data() = default;
 
         //! creates model data for a unit sized quad with position and uv data
@@ -123,6 +148,8 @@ namespace gdk::graphics {
 
     private:
         size_t m_VertexCount{};
+
+        std::vector<index_value_type> m_Indexes{};
         attribute_collection_type m_Attributes{};
         primitive_mode m_PrimitiveMode = primitive_mode::triangles; 
     };

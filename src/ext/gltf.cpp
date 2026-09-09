@@ -10,6 +10,8 @@
 #include <map>
 #include <memory>
 #include <stdexcept>
+#include <array>
+#include <limits>
 #include <string>
 #include <unordered_map>
 
@@ -350,7 +352,71 @@ namespace gdk::graphics {
                     + " (external buffers are not read; supply a self-contained glb)");
         }
 
+        {
+            const auto result = cgltf_validate(document.get());
+
+            if (result != cgltf_result_success)
+                throw std::runtime_error(std::string("gltf: ") + describe(result)
+                    + " (the document does not describe itself consistently)");
+        }
+
         gltf_content content;
+
+        for (cgltf_size i = 0; i < document->images_count; ++i) {
+            const auto &image = document->images[i];
+
+            gltf_image out;
+
+            out.name = image.name ? image.name : "";
+            out.mime_type = image.mime_type ? image.mime_type : "";
+
+            if (image.buffer_view && image.buffer_view->buffer
+                && image.buffer_view->buffer->data) {
+                const auto &view = *image.buffer_view;
+
+                if (view.offset > view.buffer->size
+                    || view.size > view.buffer->size - view.offset)
+                    throw std::runtime_error("gdk::graphics::read_gltf: this document's image \""
+                        + out.name + "\" claims more bytes than the buffer holding it has");
+
+                const auto *pStart = static_cast<const std::byte *>(view.buffer->data)
+                    + view.offset;
+
+                out.bytes.assign(pStart, pStart + view.size);
+            }
+            else if (image.uri) {
+                const std::string_view uri(image.uri);
+
+                const auto comma = uri.find(',');
+
+                if (uri.rfind("data:", 0) != 0 || comma == std::string_view::npos
+                    || uri.find(";base64") == std::string_view::npos)
+                    throw std::runtime_error("gdk::graphics::read_gltf: this document's image \""
+                        + out.name + "\" names a file rather than carrying its own bytes. Supply "
+                        "a self-contained glb");
+
+                void *pDecoded = nullptr;
+
+                const auto encoded = uri.substr(comma + 1);
+
+                const auto bound = encoded.size() / 4 * 3;
+
+                const auto result = cgltf_load_buffer_base64(&options, bound, encoded.data(),
+                    &pDecoded);
+
+                if (result != cgltf_result_success)
+                    throw std::runtime_error("gdk::graphics::read_gltf: this document's image \""
+                        + out.name + "\" has a data uri that will not decode");
+
+                const auto *pStart = static_cast<const std::byte *>(pDecoded);
+
+                out.bytes.assign(pStart, pStart + bound);
+
+                options.memory.free_func(options.memory.user_data, pDecoded);
+            }
+
+            content.images.push_back(std::move(out));
+        }
 
         std::vector<std::vector<std::size_t>> remaps;
 
@@ -365,8 +431,56 @@ namespace gdk::graphics {
             content.animations.push_back(convert(document->animations[a], document->skins[0],
                 remaps[0], content.skeletons[0]));
 
+        for (cgltf_size n = 0; n < document->nodes_count; ++n) {
+            const auto &node = document->nodes[n];
+
+            gltf_node out;
+
+            out.name = node.name ? node.name : "";
+            out.parent_name = node.parent && node.parent->name ? node.parent->name : "";
+            out.draws = node.mesh != nullptr;
+
+            {
+                cgltf_float column[16];
+
+                cgltf_node_transform_local(&node, column);
+
+                for (int row = 0; row < 4; ++row)
+                    for (int col = 0; col < 4; ++col)
+                        out.local_transform[static_cast<std::size_t>(row * 4 + col)]
+                            = static_cast<float>(column[col * 4 + row]);
+            }
+
+            content.nodes.push_back(std::move(out));
+        }
+
         for (cgltf_size m = 0; m < document->meshes_count; ++m) {
             const auto &mesh = document->meshes[m];
+
+            const cgltf_node *pNode = nullptr;
+
+            for (cgltf_size n = 0; n < document->nodes_count && !pNode; ++n)
+                if (document->nodes[n].mesh == &mesh) pNode = &document->nodes[n];
+
+            const std::string meshName = mesh.name ? mesh.name : "";
+            const std::string nodeName = pNode && pNode->name ? pNode->name : "";
+
+            const std::string parentName = pNode && pNode->parent && pNode->parent->name
+                ? pNode->parent->name
+                : "";
+
+            std::array<float, 16> local{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+            if (pNode) {
+                cgltf_float column[16];
+
+                cgltf_node_transform_local(pNode, column);
+
+                for (int row = 0; row < 4; ++row)
+                    for (int col = 0; col < 4; ++col)
+                        local[static_cast<std::size_t>(row * 4 + col)]
+                            = static_cast<float>(column[col * 4 + row]);
+            }
 
             for (cgltf_size p = 0; p < mesh.primitives_count; ++p) {
                 const auto &primitive = mesh.primitives[p];
@@ -387,8 +501,42 @@ namespace gdk::graphics {
 
                 if (attributes.empty()) continue;
 
+                std::vector<model_data::index_value_type> indices;
+
+                if (primitive.indices) {
+                    indices.reserve(primitive.indices->count);
+
+                    for (cgltf_size i = 0; i < primitive.indices->count; ++i) {
+                        const auto index = cgltf_accessor_read_index(primitive.indices, i);
+
+                        if (index > std::numeric_limits<model_data::index_value_type>::max())
+                            throw std::runtime_error("gdk::graphics::read_gltf: this document "
+                                "indexes a vertex past what a model can address. Split the mesh");
+
+                        indices.push_back(
+                            static_cast<model_data::index_value_type>(index));
+                    }
+                }
+
                 gltf_mesh out;
-                out.data = model_data(std::move(attributes));
+                out.data = indices.empty()
+                    ? model_data(std::move(attributes))
+                    : model_data(std::move(attributes), std::move(indices));
+                out.mesh_name = meshName;
+                out.node_name = nodeName;
+                out.parent_name = parentName;
+                out.local_transform = local;
+
+                if (primitive.material && primitive.material->name)
+                    out.material_name = primitive.material->name;
+
+                if (primitive.material && primitive.material->has_pbr_metallic_roughness) {
+                    const auto *pImage = primitive.material
+                        ->pbr_metallic_roughness.base_color_texture.texture;
+
+                    if (pImage && pImage->image)
+                        out.base_color_image = static_cast<int>(pImage->image - document->images);
+                }
 
                 for (cgltf_size n = 0; n < document->nodes_count && out.skeleton < 0; ++n) {
                     const auto &node = document->nodes[n];

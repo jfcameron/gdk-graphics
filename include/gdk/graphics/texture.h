@@ -13,7 +13,6 @@ namespace gdk::graphics {
         struct view;
     }
     /// \brief uniform color data, usually used to color the surface of a 3d model, but also used for height maps, volumetric lights etc.
-    ///
     class texture {
     public:
         //TODO: rename one,two,three,four since which channels the data is stored in from the perspective of a shader depends on the implementation
@@ -34,12 +33,18 @@ namespace gdk::graphics {
             mirrored //!< every odd whole value flips the index of the sampled value. {1.25, 0.5} would sample {0.75, 0.5}
         };
 
+        /// \brief how a texel is chosen when a pixel does not land exactly on one
+        enum class filter_mode {
+            smooth, //!< linear: a weighted average of the texels around the sample
+            sharp   //!< nearest: the one texel closest to the sample, so texels stay square
+        };
+
         //! replace the texture data with new data
         virtual void update_data(const texture_data::view &) = 0;
 
         //! update a section of texture data
-        /// \warn formats must match
-        /// \warn new data must be kept within bounds of the existing data
+        /// \warning formats must match
+        /// \warning new data must be kept within bounds of the existing data
         virtual void update_data(const texture_data::view &, const size_t offsetX, const size_t offsetY) = 0;
 
         //! trivial destructor

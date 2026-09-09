@@ -19,11 +19,11 @@ namespace gdk::graphics {
         void clamp(); 
 
         /// \brief add two colors together.
-        /// \warn does not clamp values within the normalized range
+        /// \warning does not clamp values within the normalized range
         void operator+=(const color &aOther);
         
         /// \brief equality semantics
-        bool operator==(const color &aOther) const;
+        [[nodiscard]] constexpr bool operator==(const color &aOther) const = default;
 
         /// \brief copy semantics
         color(const color &) = default;
@@ -40,10 +40,12 @@ namespace gdk::graphics {
 
         /// \brief constructs a color with provided channel values. 
         /// Alpha has a default opaque value
-        color(const channel_type aR, 
-            const channel_type aG, 
-            const channel_type aB, 
-            const channel_type aA = 1);
+        constexpr color(const channel_type aR,
+            const channel_type aG,
+            const channel_type aB,
+            const channel_type aA = 1)
+        : r(aR), g(aG), b(aB), a(aA)
+        {}
 
     /// \name special values
     ///@{
@@ -64,11 +66,25 @@ namespace gdk::graphics {
         /// color-related errors (stands out against most palettes)
         static const color deathly_pink;
         //! an opaque pastel blue color
-        static const color cornflower_blue;
+static const color cornflower_blue;
     ///@}
     };
         
     std::ostream &operator<<(std::ostream &stream, const color &acolor);
+
+    inline const color color::black{0.0f, 0.0f, 0.0f, 1.0f};
+    inline const color color::white{1.0f, 1.0f, 1.0f, 1.0f};
+    inline const color color::red{1.0f, 0.0f, 0.0f, 1.0f};
+    inline const color color::green{0.0f, 1.0f, 0.0f, 1.0f};
+    inline const color color::dark_green{0.0f, 0.6f, 0.0f, 1.0f};
+    inline const color color::blue{0.0f, 0.0f, 1.0f, 1.0f};
+    inline const color color::deathly_pink{1.0f, 0.2f, 0.8f, 1.0f};
+    inline const color color::cornflower_blue{
+        0.3921568627450980392156862745098f,
+        0.58431372549019607843137254901961f,
+        0.92941176470588235294117647058824f,
+        1.0f
+    };
 }
 
 #endif

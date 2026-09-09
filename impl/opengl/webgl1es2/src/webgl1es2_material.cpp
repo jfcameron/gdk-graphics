@@ -56,15 +56,22 @@ void webgl1es2_material::activate(gl_state &aState) {
     setRenderMode(m_RenderMode);
 	m_pShaderProgram->useProgram(aState);
 
-	for (const auto& [name, a] : m_Integers) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Integer2s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Integer3s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Integer4s) m_pShaderProgram->try_set_uniform(name, a);
-   
-    for (const auto& [name, a] : m_Floats) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_Vector2s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_vector3s) m_pShaderProgram->try_set_uniform(name, a);
-	for (const auto& [name, a] : m_vector4s) m_pShaderProgram->try_set_uniform(name, a);
+    const auto upload = [this](const auto &aCollection) {
+        for (const auto &[name, each] : aCollection)
+            m_pShaderProgram->set_uniform(each.location, each.value);
+    };
+
+    upload(m_Integers);
+    upload(m_Integer2s);
+    upload(m_Integer3s);
+    upload(m_Integer4s);
+
+    upload(m_Floats);
+    upload(m_Vector2s);
+    upload(m_vector3s);
+    upload(m_vector4s);
+
+    upload(m_IntVector2Arrays);
 
 	for (const auto& [name, a] : m_Textures) m_pShaderProgram->try_set_uniform(name, *a, aState);
 }
@@ -78,42 +85,42 @@ void webgl1es2_material::set_texture(const std::string_view aName, const texture
 }
 
 void webgl1es2_material::set_float(const std::string_view aName, float aValue) {
-    m_Floats[std::string(aName)] = aValue;
+    assign(m_Floats, aName, aValue);
 }
 
 void webgl1es2_material::set_vector2(const std::string_view aName, vector2_type aValue) {
-    m_Vector2s[std::string(aName)] = aValue;
+    assign(m_Vector2s, aName, aValue);
 }
 
 void webgl1es2_material::set_vector3(const std::string_view aName, vector3_type aValue) {
-    m_vector3s[std::string(aName)] = aValue;
+    assign(m_vector3s, aName, aValue);
 }
 
 void webgl1es2_material::set_vector4(const std::string_view aName, vector4_type aValue) {
-    m_vector4s[std::string(aName)] = aValue;
+    assign(m_vector4s, aName, aValue);
 }
 
 void webgl1es2_material::set_vector4(const std::string_view aName, const color &aValue) {
-    m_vector4s[std::string(aName)] = vector4(aValue.r, aValue.g, aValue.b, aValue.a);
+    assign(m_vector4s, aName, vector4_type(aValue.r, aValue.g, aValue.b, aValue.a));
 }
 
 void webgl1es2_material::set_integer(const std::string_view aName, int aValue) {
-    m_Integers[std::string(aName)] = aValue;
+    assign(m_Integers, aName, aValue);
 }
 
 void webgl1es2_material::set_integer2(const std::string_view aName, int aValue1, int aValue2) {
-    m_Integer2s[std::string(aName)] = {aValue1, aValue2};
+    assign(m_Integer2s, aName, intvector2_type(aValue1, aValue2));
 }
 
 void webgl1es2_material::set_integer3(const std::string_view aName, int aValue1, int aValue2, int aValue3) {
-    m_Integer3s[std::string(aName)] = {aValue1, aValue2, aValue3};
+    assign(m_Integer3s, aName, intvector3_type(aValue1, aValue2, aValue3));
 }
 
 void webgl1es2_material::set_integer4(const std::string_view aName, int aValue1, int aValue2, int aValue3, int aValue4) {
-    m_Integer4s[std::string(aName)] = {aValue1, aValue2, aValue3, aValue4};
+    assign(m_Integer4s, aName, intvector4_type(aValue1, aValue2, aValue3, aValue4));
 }
 
 void webgl1es2_material::set_int_vector2_array(const std::string_view aName, const std::vector<intvector2_type> &aValue) {
-    m_IntVector2Arrays[std::string(aName)] = {aValue};
+    assign(m_IntVector2Arrays, aName, aValue);
 }
 

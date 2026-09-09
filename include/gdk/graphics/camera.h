@@ -11,9 +11,9 @@ namespace gdk::graphics {
     public:
         /// \brief controls which buffers in the active frame buffer object to clear
         enum class clear_mode {
-            nothing, //!< Do not clear any buffers
-            color_and_depth, //!< Clear the color and depth buffers
-            depth_only //!< Clear the Depth buffer
+            nothing,            //!< Do not clear any buffers
+            color_and_depth,    //!< Clear the color and depth buffers
+            depth_only          //!< Clear the Depth buffer
         };
 
         /// \brief use a perspective projection with the given view volume
@@ -26,7 +26,7 @@ namespace gdk::graphics {
             const floating_point_type aViewportAspectRatio) = 0;
 
         /// \brief use an orthographic projection with the given view volume
-        /// \param aOrthographicSize width and height of the view volume in world units
+        /// `aOrthographicSize` is the full extent of the volume, not its half extents
         virtual void set_orthographic_projection(const gdk::graphics::vector2_type &aOrthographicSize,
             const floating_point_type aNearClippingPlane, const floating_point_type aFarClippingPlane,
             const floating_point_type aViewportAspectRatio) = 0;
