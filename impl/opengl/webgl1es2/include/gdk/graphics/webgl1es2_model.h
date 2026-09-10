@@ -85,7 +85,7 @@ namespace gdk::graphics {
         GLsizei m_IndexCount = 0; 
         GLsizei m_VertexCount = 0; 
 
-        std::optional<jfc::unique_handle<GLuint>> m_IndexBufferHandle;
+        jfc::unique_handle<GLuint> m_IndexBufferHandle;
         std::vector<jfc::unique_handle<GLuint>> m_VertexBufferHandles;
         
         GLenum m_PrimitiveMode;

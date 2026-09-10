@@ -7,6 +7,7 @@
 #include <gdk/graphics/model_data.h>
 #include <gdk/math_constants.h>
 
+#include <optional>
 #include <iostream>
 #include <stdexcept>
 
@@ -227,7 +228,7 @@ static inline GLenum vertexDataPrimitiveMode_to_wegl1es2ModelPrimitiveMode(const
 }
 
 static inline void update_index_data(
-    std::optional<jfc::unique_handle<GLuint>> &handle,
+    jfc::unique_handle<GLuint> &handle,
     size_t index_count, 
     const GLushort *pIndexBegin, 
     GLenum ausage_hint,
@@ -235,8 +236,8 @@ static inline void update_index_data(
     m_IndexCount = static_cast<GLsizei>(index_count);
 
     if (m_IndexCount > 0) {
-        if (!handle.has_value()) {
-            handle.emplace([&]() {
+        if (!handle) {
+            handle.reset([&]() {
                 GLuint ibo(0);
                 
                 glGenBuffers(1, &ibo);
@@ -248,7 +249,7 @@ static inline void update_index_data(
             });
         }
 
-        GLuint ibo = handle.value().get();
+        GLuint ibo = handle.get();
             
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
                 
@@ -305,8 +306,8 @@ void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
 }
 
 void webgl1es2_model::draw() const {
-    if (m_IndexBufferHandle.has_value()) {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.value().get());
+    if (m_IndexBufferHandle) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBufferHandle.get());
 
         glDrawElements(m_PrimitiveMode,
             m_IndexCount,
