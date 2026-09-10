@@ -3,7 +3,7 @@
 #ifndef JFC_TEST_INCLUDE_H
 #define JFC_TEST_INCLUDE_H
 
-#include <gdkgraphics/buildinfo.h>
+#include <gdk/graphics/build_info.h>
 
 #include <stdexcept>
 

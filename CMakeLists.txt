@@ -70,7 +70,7 @@ set_target_properties(gdkgraphics PROPERTIES EXPORT_NAME graphics)
 
 set_target_properties(gdkgraphics PROPERTIES PREFIX "lib")
 
-jfc_generate_cmake_header()
+jfc_generate_build_info()
 
 target_include_directories(gdkgraphics
     PUBLIC

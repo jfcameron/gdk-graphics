@@ -3,7 +3,7 @@
 #include <gdk/graphics/glh.h>
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
-#include <gdkgraphics/buildinfo.h>
+#include <gdk/graphics/build_info.h>
 
 #include <atomic>
 #include <iostream>
@@ -114,7 +114,7 @@ static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_s
         }
     )V0G0N");
 
-    aSource.insert(0, std::string("#define ").append(gdkgraphics_BuildInfo_TargetPlatform).append("\n"));
+    aSource.insert(0, std::string("#define ").append(gdk::graphics::build_info::target_platform).append("\n"));
 #if defined JFC_TARGET_PLATFORM_Emscripten 
     // version must be the first line in source. version must be present for WebGL platforms
     aSource.insert(0, std::string("#version 100\n"));

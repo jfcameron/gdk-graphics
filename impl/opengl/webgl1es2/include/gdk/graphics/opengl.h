@@ -1,7 +1,7 @@
 #ifndef GDK_OPENGL
 #define GDK_OPENGL
 
-#include <gdkgraphics/buildinfo.h>
+#include <gdk/graphics/build_info.h>
 
 #ifdef JFC_TARGET_PLATFORM_Emscripten
 #include <GLES2/gl2.h>
