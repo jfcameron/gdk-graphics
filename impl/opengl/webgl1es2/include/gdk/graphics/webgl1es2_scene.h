@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <gdk/graphics/scene.h>
+#include <gdk/graphics/string_keyed.h>
 #include <gdk/graphics/webgl1es2_material.h>
 #include <gdk/graphics/webgl1es2_model.h>
 #include <gdk/graphics/webgl1es2_screen_camera.h>
@@ -16,8 +17,20 @@
 #include <unordered_set>
 #include <vector>
 
-// TODO handle entity material & model changes. -> Will need to implement signals... vec<functor> likely. Maybe. This adds bookkeeping complexity, runtime complexity. it may be preferrable for the user to "change" an entities properties by removing the one you no longer want and inserting a new one with new properties.
 namespace gdk::graphics {
+    /// \brief values a scene gives every program it draws with. \see scene::set_vector3
+    class scene_uniforms final {
+    public:
+        //! uploads every value the program declares, and skips the rest
+        void apply(const webgl1es2_shader_program &aProgram) const;
+
+        string_keyed<float> floats;
+        string_keyed<vector2_type> vector2s;
+        string_keyed<vector3_type> vector3s;
+        string_keyed<vector4_type> vector4s;
+        string_keyed<int> integers;
+    };
+
     /// \brief set of objects to render grouped so that gl state changes as little as possible
     class render_set {
     public:
@@ -34,8 +47,11 @@ namespace gdk::graphics {
 
         /// `aViewProjection` is projection * view for this camera, built once by the caller
         /// rather than per entity
+        ///
+        /// `aUniforms` go up before each material's own, so a material's value for a name wins
         virtual void draw(const webgl1es2_camera *r, gl_state &aState,
-            const frustum &aFrustum, const matrix4x4_type &aViewProjection) const;
+            const frustum &aFrustum, const matrix4x4_type &aViewProjection,
+            const scene_uniforms &aUniforms) const;
 
         virtual void try_add(entity_ptr_type);
 
@@ -66,7 +82,8 @@ namespace gdk::graphics {
     class sorted_render_set final : public render_set {
     public:
         virtual void draw(const webgl1es2_camera *r, gl_state &aState,
-            const frustum &aFrustum, const matrix4x4_type &aViewProjection) const override;
+            const frustum &aFrustum, const matrix4x4_type &aViewProjection,
+            const scene_uniforms &aUniforms) const override;
 
         virtual void try_add(entity_ptr_type) override;
 
@@ -107,20 +124,25 @@ namespace gdk::graphics {
         virtual void remove(const std::shared_ptr<const entity> &pEntity) override;
 
         virtual void draw(const gdk::graphics::intvector2_type &aFrameBufferSize) const override;
+
+        virtual void set_float(const std::string_view aName, float aValue) override;
+        virtual void set_vector2(const std::string_view aName, vector2_type aValue) override;
+        virtual void set_vector3(const std::string_view aName, vector3_type aValue) override;
+        virtual void set_vector4(const std::string_view aName, vector4_type aValue) override;
+        virtual void set_vector4(const std::string_view aName, const color &aValue) override;
+        virtual void set_integer(const std::string_view aName, int aValue) override;
     ///@}
 
     private:
-        //! screen_cameras used to render this webgl1es2_scene.
         mutable std::vector<std::weak_ptr<const webgl1es2_screen_camera>> m_screen_cameras;
         
-        //! texture_cameras used to render this webgl1es2_scene.
         mutable std::vector<std::weak_ptr<const webgl1es2_texture_camera>> m_texture_cameras;
 
-        //! Nested associative array, used to optimize gl calls.
         material_to_model_to_entity_collection_collection m_MaterialToModelToEntityCollection;
 
-        //! the gl context this scene draws through. \see gl_state
         std::shared_ptr<gl_state> m_pState;
+
+        scene_uniforms m_Uniforms;
 
         render_set m_opaque_set;
 

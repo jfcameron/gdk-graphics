@@ -443,7 +443,8 @@ int main() {
         )V0G0N");
 
         const std::string fragmentShaderSource(R"V0G0N(
-        uniform lowp float _VolumetricTextureSize;
+        // must be mediump. lowp is only guaranteed a range of +/-2, and this holds 16
+        uniform mediump float _VolumetricTextureSize;
         uniform sampler2D _BlockTypeToUVMappingTexture;
         uniform sampler2D _BlockTypeVolumetricTexture;
         uniform sampler2D _LightingVolumetricTexture;

@@ -35,8 +35,8 @@ namespace gdk::graphics {
 
         /// \brief how a texel is chosen when a pixel does not land exactly on one
         enum class filter_mode {
-            smooth, //!< linear: a weighted average of the texels around the sample
-            sharp   //!< nearest: the one texel closest to the sample, so texels stay square
+            sharp,  //!< nearest: the one texel closest to the sample, so texels stay square
+            smooth  //!< linear: a weighted average of the texels around the sample
         };
 
         //! replace the texture data with new data

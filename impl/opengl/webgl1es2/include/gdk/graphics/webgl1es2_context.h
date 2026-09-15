@@ -40,6 +40,9 @@ namespace gdk::graphics {
             const material::face_culling_mode aface_culling_mode
         ) override;
 
+        [[nodiscard]] virtual material_ptr_type make_material(
+            const const_material_ptr_type &aPrototype) override;
+
         [[nodiscard]] virtual model_ptr_type make_model() override;
 
         [[nodiscard]] virtual model_ptr_type make_model(
@@ -51,12 +54,16 @@ namespace gdk::graphics {
             const texture_data::view &imageView,
             const texture::wrap_mode,
             const texture::wrap_mode,
-            const texture::filter_mode = texture::filter_mode::smooth
+            const texture::filter_mode = texture::filter_mode::sharp
         ) override;
 
         [[nodiscard]] virtual texture_ptr_type make_texture() override;
 
         [[nodiscard]] virtual shader_ptr_type make_alpha_cutoff_shader() const override;
+
+        [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const override;
+
+        [[nodiscard]] virtual size_t max_texture_size() const override;
 
         [[nodiscard]] virtual model_ptr_type make_cube_model() const override;
 
@@ -73,6 +80,8 @@ namespace gdk::graphics {
         webgl1es2_context();
 
         std::shared_ptr<gl_state> m_pState;
+
+        size_t m_MaxTextureSize = 0;
     };
 }
 

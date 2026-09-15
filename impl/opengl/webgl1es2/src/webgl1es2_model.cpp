@@ -400,6 +400,8 @@ void webgl1es2_model::upload(const usage_hint &aUsage,
 
         m_Attributes.clear();
 
+        m_VertexCount = 0;
+
         size_t i(0);
         for (const auto &[name, data] : newAttibuteData) {
             glBindBuffer (GL_ARRAY_BUFFER, m_VertexBufferHandles[i].get());

@@ -25,7 +25,8 @@ context_ptr_type webgl1es2_context::make() {
 }
 
 webgl1es2_context::webgl1es2_context()
-: m_pState(std::make_shared<gl_state>()) {
+: m_pState(std::make_shared<gl_state>())
+, m_MaxTextureSize(static_cast<size_t>(webgl1es2_texture::getMaxTextureSize())) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_SCISSOR_TEST);
 }
@@ -68,11 +69,26 @@ material_ptr_type webgl1es2_context::make_material(
             aRenderMode));
 }
 
+material_ptr_type webgl1es2_context::make_material(const const_material_ptr_type &aPrototype) {
+    if (!aPrototype) throw exception("webgl1es2_context::make_material: no prototype to copy");
+
+    return std::make_shared<webgl1es2_material>(
+        *std::static_pointer_cast<const webgl1es2_material>(aPrototype));
+}
+
 shader_ptr_type webgl1es2_context::make_shader(
     const std::string_view aVertexShaderStageSourceCodeGLSL, 
     const std::string_view aFragmentShaderStageSourceCodeGLSL) {
     return shader_ptr_type(
         new webgl1es2_shader_program(std::string(aVertexShaderStageSourceCodeGLSL), std::string(aFragmentShaderStageSourceCodeGLSL)));
+}
+
+size_t webgl1es2_context::max_texture_size() const {
+    return m_MaxTextureSize;
+}
+
+shader_ptr_type webgl1es2_context::make_alpha_blend_shader() const {
+    return std::static_pointer_cast<shader_program>(webgl1es2_shader_program::make_alpha_blend());
 }
 
 shader_ptr_type webgl1es2_context::make_alpha_cutoff_shader() const {
@@ -114,12 +130,7 @@ model_ptr_type webgl1es2_context::make_model(const model::usage_hint usage,
 }
 
 model_ptr_type webgl1es2_context::make_model() {
-    //TODO: Possibly delay initial vbo upload until user-data is actually provided.
-    return make_model(model::usage_hint::upload_once, {{
-        { "nil", { {
-            0.0f, 0.0f, 0.0f,
-        }, 1 } },
-    }});
+    return make_model(model::usage_hint::upload_once, model_data());
 }
 
 scene_ptr_type webgl1es2_context::make_scene() {

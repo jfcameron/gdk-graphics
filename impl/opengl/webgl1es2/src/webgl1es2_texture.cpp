@@ -11,7 +11,6 @@
 
 #include <cmath>
 #include <iostream>
-#include <mutex>
 #include <type_traits>
 #include <vector>
 
@@ -95,12 +94,9 @@ std::shared_ptr<webgl1es2_texture> webgl1es2_texture::make_checkerboard_of_death
 }
 
 GLint webgl1es2_texture::getMaxTextureSize() {
-    static std::once_flag once;
-    static GLint max_texture_2d_size;
+    GLint max_texture_2d_size(0);
 
-    std::call_once(once, []() {
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_2d_size);
-    });
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_2d_size);
 
     return max_texture_2d_size;
 }

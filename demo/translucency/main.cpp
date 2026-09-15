@@ -47,7 +47,7 @@ int main() {
         return p;
     }();
 
-    auto pAlpha = pContext->make_alpha_cutoff_shader();
+    auto pAlpha = pContext->make_alpha_blend_shader();
 
     auto pUserModel = [&]() {
         float size(1);
@@ -80,12 +80,12 @@ int main() {
             userdefined_quad_model_data);
     }();
 
-    auto pTexture = [&]() {
+    auto pBatchTexture = [&]() {
         std::vector<std::underlying_type<std::byte>::type> imageData({
-            0x00, 0xff, 0xff, 0xff,                                    
-            0xff, 0xff, 0xff, 0xff,                                    
-            0xff, 0xff, 0xff, 0xff,
-            0x00, 0x00, 0x00, 0xff
+            0xff, 0xff, 0x00, 0x40,
+            0x00, 0xff, 0xff, 0xc0,
+            0xff, 0x00, 0xff, 0xc0,
+            0xff, 0xff, 0xff, 0x40
         });
         texture_data::view view;
         view.width = 2;
@@ -97,7 +97,7 @@ int main() {
 
     auto pMaterial = [&]() {
         auto pMaterial = pContext->make_material(pAlpha, material::render_mode::transparent);
-        pMaterial->set_texture("_Texture", pTextureCamera->get_color_texture());
+        pMaterial->set_texture("_Texture", pBatchTexture);
         pMaterial->set_vector2("_UVScale", {1, 1});
         pMaterial->set_vector2("_UVOffset", {0, 0});
         return pMaterial;
@@ -113,10 +113,10 @@ int main() {
     auto pEntity2 = [&]() {
         auto pTexture = [&]() {
             std::vector<std::underlying_type<std::byte>::type> textureData({
-                0x55, 0xff, 0xff, 0xff,
-                0xff, 0x00, 0xff, 0xff,
-                0xff, 0xff, 0x00, 0xff,
-                0x00, 0x00, 0x44, 0xff
+                0x55, 0xff, 0xff, 0x99,
+                0xff, 0x00, 0xff, 0x99,
+                0xff, 0xff, 0x00, 0x99,
+                0x00, 0x00, 0x44, 0x99
             });
             texture_data::view view;
             view.width = 2;
@@ -145,7 +145,7 @@ int main() {
     auto pEntity3 = [&]() {    
         auto pMaterial = [&]() {
             auto pMaterial = pContext->make_material(pAlpha);
-            pMaterial->set_texture("_Texture", pTexture);
+            pMaterial->set_texture("_Texture", pTextureCamera->get_color_texture());
             pMaterial->set_vector2("_UVScale", {1, 1});
             pMaterial->set_vector2("_UVOffset", {0, 0});
             return pMaterial;

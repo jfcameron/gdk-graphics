@@ -199,6 +199,9 @@ namespace gdk::graphics {
         /// Suitable for text, gui elements and 2d sprites; extremely lightweight.
         [[nodiscard]] static std::shared_ptr<webgl1es2_shader_program> make_alpha_cutoff();
 
+ //! \brief keeps the texel's alpha rather than discarding on it, for the blender to use
+ static std::shared_ptr<webgl1es2_shader_program> make_alpha_blend();
+
         static size_t MAX_TEXTURE_UNITS();
         static size_t MAX_FRAGMENT_SHADER_INSTRUCTIONS();
         static size_t MAX_VERTEX_SHADER_INSTRUCTIONS();

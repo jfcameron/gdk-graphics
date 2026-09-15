@@ -103,7 +103,7 @@ namespace gdk::graphics {
             const texture_data::view &aTextureView,
             const wrap_mode aWrapModeU = wrap_mode::repeat,
             const wrap_mode aWrapModeV = wrap_mode::repeat,
-            const minification_filter minFilter = minification_filter::linear,
+            const minification_filter minFilter = minification_filter::nearest,
             const magnification_filter magFilter = magnification_filter::nearest);
 
         webgl1es2_texture(
@@ -113,7 +113,7 @@ namespace gdk::graphics {
             const texture_data::channel_type *aData,
             const wrap_mode aWrapModeU = wrap_mode::repeat,
             const wrap_mode aWrapModeV = wrap_mode::repeat,
-            const minification_filter minFilter = minification_filter::linear,
+            const minification_filter minFilter = minification_filter::nearest,
             const magnification_filter magFilter = magnification_filter::nearest);
 
         /// \brief a texture useful for indicating a texture related failure

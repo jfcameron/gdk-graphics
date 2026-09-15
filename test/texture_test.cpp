@@ -77,6 +77,21 @@ TEST_CASE("gdk::webgl1es2_texture construction", "[gdk::webgl1es2_texture]")
         }
     }
 
+    SECTION("filtering is off unless it is asked for")
+    {
+        const webgl1es2_texture tex(image.view());
+
+        glBindTexture(GL_TEXTURE_2D, tex.getHandle());
+
+        GLint magnification{0}, minification{0};
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, &magnification);
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, &minification);
+
+        REQUIRE(magnification == GL_NEAREST);
+        REQUIRE(minification == GL_NEAREST);
+        REQUIRE(!jfc::glGetError());
+    }
+
     SECTION("every minification and magnification filter is accepted")
     {
         using min_filter = webgl1es2_texture::minification_filter;
@@ -180,6 +195,16 @@ TEST_CASE("gdk::webgl1es2_texture provided resources", "[gdk::webgl1es2_texture]
         const auto maxSize = webgl1es2_texture::getMaxTextureSize();
 
         REQUIRE(maxSize >= 64);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("the maximum is asked of GL each time rather than remembered once")
+    {
+        const auto first = webgl1es2_texture::getMaxTextureSize();
+        const auto second = webgl1es2_texture::getMaxTextureSize();
+
+        REQUIRE(first == second);
+        REQUIRE(first > 0);
         REQUIRE(!jfc::glGetError());
     }
 }

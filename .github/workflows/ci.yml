@@ -62,7 +62,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xorg-dev libwayland-dev libxkbcommon-dev wayland-protocols \
-            xvfb mesa-utils libgl1-mesa-dri
+            xvfb mesa-utils libgl1-mesa-dri fonts-dejavu-core fonts-noto-cjk
 
       - name: configure
         run: cmake --preset ${{ matrix.preset }}

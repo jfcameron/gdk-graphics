@@ -393,6 +393,22 @@ TEST_CASE("gdk::webgl1es2_scene draw order", "[gdk::webgl1es2_scene]")
         REQUIRE(!jfc::glGetError());
     }
 
+    SECTION("under an orthographic camera, back to front is along the view, not distance across it")
+    {
+        pCamera->set_orthographic_projection({2000, 2000}, 0.1f, 100.0f, 1.0f);
+
+        const auto pNearAcross = an_entity(pMaterial, {500, 0, -5});
+        const auto pFarAhead = an_entity(pMaterial, {0, 0, -6});
+
+        scene.add(pNearAcross);
+        scene.add(pFarAhead);
+
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        require_matches(read_mvp(), expected_mvp(*pCamera, *pNearAcross));
+        REQUIRE(!jfc::glGetError());
+    }
+
     SECTION("opaque entities are drawn before transparent ones")
     {
         const auto pOpaqueMaterial = a_material(material::render_mode::opaque);
@@ -546,4 +562,102 @@ TEST_CASE("an entity is drawn even when it lands where a dead one was",
     scene.draw(FRAME_BUFFER_SIZE);
 
     REQUIRE_FALSE(nothing_was_drawn());
+}
+
+TEST_CASE("**a scene's uniforms reach every material it draws, and a material's own win**",
+    "[gdk::webgl1es2_scene]")
+{
+    initGL();
+
+    const auto pShader = std::make_shared<webgl1es2_shader_program>(R"V0G0N(
+    uniform mat4 _MVP;
+    uniform float _Ambient;
+    uniform vec3 _Sun;
+    uniform int _Count;
+    attribute highp vec3 a_Position;
+
+    void main() {
+        gl_Position = _MVP * vec4(a_Position, 1.0) * _Ambient * float(_Count)
+            * vec4(_Sun, 1.0);
+    }
+    )V0G0N", R"V0G0N(
+    void main() { gl_FragColor = vec4(1.0); }
+    )V0G0N");
+
+    const auto a_lit_material = [&pShader] {
+        return std::make_shared<webgl1es2_material>(pShader, material::face_culling_mode::none,
+            material::render_mode::opaque);
+    };
+
+    webgl1es2_scene scene(std::make_shared<gl_state>());
+
+    const auto pFirst = a_lit_material();
+    const auto pSecond = a_lit_material();
+
+    const auto pFirstEntity = an_entity(pFirst, {0, 0, -10});
+    const auto pSecondEntity = an_entity(pSecond, {1, 0, -10});
+    const auto pCamera = a_camera();
+
+    scene.add(pFirstEntity);
+    scene.add(pSecondEntity);
+    scene.add(pCamera);
+
+    const auto read = [&pShader](const char *const aName, const std::size_t aCount) {
+        std::vector<GLfloat> out(aCount, -1.0f);
+
+        glGetUniformfv(pShader->handle(), glGetUniformLocation(pShader->handle(), aName),
+            &out.front());
+
+        return out;
+    };
+
+    SECTION("a value set once on the scene arrives") {
+        scene.set_float("_Ambient", 0.5f);
+        scene.set_vector3("_Sun", {0.25f, 0.5f, 0.75f});
+        scene.set_integer("_Count", 3);
+
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        REQUIRE(read("_Ambient", 1).at(0) == Approx(0.5f));
+
+        const auto sun = read("_Sun", 3);
+
+        REQUIRE(sun.at(0) == Approx(0.25f));
+        REQUIRE(sun.at(2) == Approx(0.75f));
+
+        GLint count = -1;
+        glGetUniformiv(pShader->handle(), glGetUniformLocation(pShader->handle(), "_Count"),
+            &count);
+
+        REQUIRE(count == 3);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("a later value replaces the earlier one") {
+        scene.set_float("_Ambient", 0.5f);
+        scene.set_float("_Ambient", 0.125f);
+
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        REQUIRE(read("_Ambient", 1).at(0) == Approx(0.125f));
+    }
+
+    SECTION("**a material's own value for the name wins over the scene's**") {
+        scene.set_float("_Ambient", 0.5f);
+
+        pFirst->set_float("_Ambient", 0.25f);
+        pSecond->set_float("_Ambient", 0.25f);
+
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        REQUIRE(read("_Ambient", 1).at(0) == Approx(0.25f));
+    }
+
+    SECTION("a name no shader declares is harmless") {
+        scene.set_float("_NoSuchUniform", 1.0f);
+
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        REQUIRE(!jfc::glGetError());
+    }
 }

@@ -58,11 +58,13 @@ TEST_CASE("a null scene remembers what is in it", "[null_context][scene]")
 
         REQUIRE(pScene->entity_count() == 1);
         REQUIRE(pScene->contains(pEntity));
+        REQUIRE(pScene->entities() == std::vector<std::shared_ptr<const entity>>{pEntity});
 
         pScene->remove(pEntity);
 
         REQUIRE(pScene->entity_count() == 0);
         REQUIRE_FALSE(pScene->contains(pEntity));
+        REQUIRE(pScene->entities().empty());
     }
 
     SECTION("adding the same entity twice does not double count it")
@@ -305,6 +307,33 @@ TEST_CASE("a null texture remembers its size", "[null_context][texture]")
         REQUIRE(pTexture->width() == 4);
         REQUIRE(pTexture->upload_count() == 2);
     }
+
+    SECTION("**its data is every upload applied**: whole, then a rectangle written into place")
+    {
+        REQUIRE(pTexture->data() == pixels);
+
+        std::vector<texture_data::channel_type> counting(2 * 2 * 4);
+
+        for (std::size_t i = 0; i < counting.size(); ++i)
+            counting[i] = static_cast<texture_data::channel_type>(i + 1);
+
+        pTexture->update_data({
+            .width = 2, .height = 2, .format = texture::format::rgba, .data = counting.data()},
+            1, 2);
+
+        const auto &data = pTexture->data();
+
+        REQUIRE(data[(2 * 4 + 1) * 4] == 1);
+        REQUIRE(data[(2 * 4 + 2) * 4 + 3] == 8);
+        REQUIRE(data[(3 * 4 + 1) * 4] == 9);
+        REQUIRE(data[(3 * 4 + 2) * 4 + 3] == 16);
+        REQUIRE(data[(2 * 4 + 0) * 4] == 0);
+        REQUIRE(data[(1 * 4 + 1) * 4] == 0);
+
+        pTexture->update_data(view);
+
+        REQUIRE(pTexture->data() == pixels);
+    }
 }
 
 TEST_CASE("a camera clips to its viewport until it is told to clip to something else",
@@ -344,4 +373,12 @@ TEST_CASE("a camera clips to its viewport until it is told to clip to something 
 
         REQUIRE(pCamera->scissor() == std::array<float, 4>{0, 0.5f, 1, 0.5f});
     }
+}
+
+TEST_CASE("a context reports the largest texture its device can make", "[null_context]") {
+    const auto pContext = null_context::make();
+
+    REQUIRE(pContext->max_texture_size() > 0);
+
+    REQUIRE(pContext->max_texture_size() >= 2048);
 }

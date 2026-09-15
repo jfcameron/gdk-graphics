@@ -4,6 +4,7 @@
 #define GDK_GFX_NULL_CONTEXT_H
 
 #include <gdk/graphics/context.h>
+#include <gdk/graphics/texture_data.h>
 
 #include <array>
 #include <map>
@@ -34,18 +35,28 @@ namespace gdk::graphics {
             const material::render_mode aRenderMode,
             const material::face_culling_mode aFaceCullingMode) override;
 
+        [[nodiscard]] virtual material_ptr_type make_material(
+            const const_material_ptr_type &aPrototype) override;
+
         [[nodiscard]] virtual texture_ptr_type make_texture(
             const texture_data::view &aTextureDataView,
             const texture::wrap_mode aWrapModeU,
             const texture::wrap_mode aWrapModeV,
-            const texture::filter_mode aFilterMode = texture::filter_mode::smooth) override;
+            const texture::filter_mode aFilterMode = texture::filter_mode::sharp) override;
 
         [[nodiscard]] virtual texture_ptr_type make_texture() override;
+
+        /// \brief how many textures this context has been asked to create.
+        [[nodiscard]] std::size_t texture_count() const;
 
         [[nodiscard]] virtual model_ptr_type make_cube_model() const override;
         [[nodiscard]] virtual model_ptr_type make_sphere_model() const override;
 
         [[nodiscard]] virtual shader_ptr_type make_alpha_cutoff_shader() const override;
+
+        [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const override;
+
+        [[nodiscard]] virtual size_t max_texture_size() const override;
 
         //! accepts any source at all, because nothing compiles it
         [[nodiscard]] shader_ptr_type make_shader(const std::string_view aVertexSource,
@@ -55,6 +66,7 @@ namespace gdk::graphics {
         [[nodiscard]] std::size_t resources_made() const;
 
     private:
+        std::size_t mTextureCount{0};
         null_context() = default;
 
         std::size_t mResourcesMade{0};
@@ -90,10 +102,15 @@ namespace gdk::graphics {
         //! how many times data has been handed to this texture, including at construction
         [[nodiscard]] std::size_t upload_count() const;
 
+        /// \brief the texture's content: every upload applied, a row at a time from the first
+        [[nodiscard]] const texture_data::channel_data &data() const;
+
     private:
         std::size_t mWidth{0};
         std::size_t mHeight{0};
         std::size_t mUploadCount{0};
+        std::size_t mChannels{0};
+        texture_data::channel_data mData;
         wrap_mode mWrapU{wrap_mode::repeat};
         wrap_mode mWrapV{wrap_mode::repeat};
     };
@@ -296,7 +313,23 @@ namespace gdk::graphics {
 
         virtual void draw(const gdk::graphics::intvector2_type &aFrameBufferSize) const override;
 
+        virtual void set_float(const std::string_view aName, float aValue) override;
+        virtual void set_vector2(const std::string_view aName, vector2_type aValue) override;
+        virtual void set_vector3(const std::string_view aName, vector3_type aValue) override;
+        virtual void set_vector4(const std::string_view aName, vector4_type aValue) override;
+        virtual void set_vector4(const std::string_view aName, const color &aValue) override;
+        virtual void set_integer(const std::string_view aName, int aValue) override;
+
+        //! what the scene was last told for a name, so a test can see what reached it
+        [[nodiscard]] std::optional<float> float_at(const std::string &aName) const;
+        [[nodiscard]] std::optional<vector3_type> vector3_at(const std::string &aName) const;
+        [[nodiscard]] std::optional<vector4_type> vector4_at(const std::string &aName) const;
+
         [[nodiscard]] std::size_t entity_count() const;
+
+        /// \brief every entity in the scene, in no particular order
+        [[nodiscard]] std::vector<std::shared_ptr<const entity>> entities() const;
+
         [[nodiscard]] std::size_t camera_count() const;
         [[nodiscard]] bool contains(const std::shared_ptr<const entity> &pEntity) const;
 
@@ -310,6 +343,12 @@ namespace gdk::graphics {
         std::set<std::shared_ptr<const entity>> mEntities;
         std::set<std::shared_ptr<const screen_camera>> mScreenCameras;
         std::set<std::shared_ptr<const texture_camera>> mTextureCameras;
+
+        std::map<std::string, float> mFloats;
+        std::map<std::string, vector2_type> mVector2s;
+        std::map<std::string, vector3_type> mVector3s;
+        std::map<std::string, vector4_type> mVector4s;
+        std::map<std::string, int> mIntegers;
 
         mutable std::size_t mDrawCount{0};
         mutable intvector2_type mLastFrameBufferSize{0, 0};

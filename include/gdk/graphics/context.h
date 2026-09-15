@@ -5,6 +5,8 @@
 
 #include <gdk/graphics/entity.h>
 #include <gdk/graphics/types.h>
+
+#include <cstddef>
 #include <gdk/graphics/material.h>
 #include <gdk/graphics/model.h>
 #include <gdk/graphics/scene.h>
@@ -45,19 +47,23 @@ namespace gdk::graphics {
             //! make an empty model
             [[nodiscard]] virtual model_ptr_type make_model() = 0;
 
-            //! make a material. 
+            //! make a material.
             [[nodiscard]] virtual material_ptr_type make_material(
                 const const_shader_ptr_type pShader,
                 const material::render_mode aRenderMode = material::render_mode::opaque,
                 const material::face_culling_mode aFaceCullingMode = material::face_culling_mode::none
             ) = 0;
 
+            /// \brief make a material that starts as a copy of another
+            [[nodiscard]] virtual material_ptr_type make_material(
+                const const_material_ptr_type &aPrototype) = 0;
+
             //! make a texture 
             [[nodiscard]] virtual texture_ptr_type make_texture(
                 const texture_data::view &aTextureDataView,
                 const texture::wrap_mode aWrapModeU = texture::wrap_mode::repeat,
                 const texture::wrap_mode aWrapModeV = texture::wrap_mode::repeat,
-                const texture::filter_mode aFilterMode = texture::filter_mode::smooth
+                const texture::filter_mode aFilterMode = texture::filter_mode::sharp
             ) = 0;
             //! make an empty texture 
             [[nodiscard]] virtual texture_ptr_type make_texture() = 0;
@@ -85,6 +91,16 @@ namespace gdk::graphics {
             /// - sample _Texture, if alpha is 0, discard frag, 
             ///   otherwise write frag to color buffer
             [[nodiscard]] virtual shader_ptr_type make_alpha_cutoff_shader() const = 0;
+
+            /// \brief a shader that keeps the texel's alpha, for the blender to use.
+            ///
+            /// The sibling of the alpha cutoff shader: the two differ only in what the fragment does
+            /// with alpha, one discarding anything not fully opaque and this one passing it through.
+            /// Pair it with material::render_mode::transparent, which is what enables blending.
+            [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const = 0;
+
+            /// \brief the largest square texture this context can create in texels.
+            [[nodiscard]] virtual size_t max_texture_size() const = 0;
         //@}
 
             //! virtual destructor

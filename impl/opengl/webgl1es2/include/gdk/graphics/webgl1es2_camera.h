@@ -33,6 +33,9 @@ namespace gdk::graphics
         /// \brief gets the projection matrix
         const matrix4x4_type &get_projection_matrix() const;
 
+        //! whether its projection is orthographic, where near and far is along the view alone
+        [[nodiscard]] bool is_orthographic() const { return m_Orthographic; }
+
     ///@}
         /// \brief copy semantics
         webgl1es2_camera(const webgl1es2_camera& a) = default;
@@ -80,6 +83,8 @@ namespace gdk::graphics
         matrix4x4_type m_WorldMatrix = matrix4x4_type::identity; 
         matrix4x4_type m_ViewMatrix = matrix4x4_type::identity; 
         matrix4x4_type m_ProjectionMatrix = matrix4x4_type::identity; 
+
+        bool m_Orthographic = false;
 
         gdk::graphics::camera::clear_mode m_ClearMode = gdk::graphics::camera::clear_mode::color_and_depth;
         gdk::graphics::color m_ClearColor = color::cornflower_blue;

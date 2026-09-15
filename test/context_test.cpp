@@ -10,8 +10,10 @@
 #include <gdk/graphics/texture_data.h>
 #include <gdk/graphics/webgl1es2_context.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
+#include <gdk/graphics/webgl1es2_texture.h>
 
 #include <memory>
+#include <utility>
 #include <type_traits>
 #include <vector>
 
@@ -42,6 +44,65 @@ namespace {
             {"a_Position", {{0, 0, 0,  1, 0, 0,  0, 1, 0}, 3}},
             {"a_UV", {{0, 0,  1, 0,  0, 1}, 2}}}};
     }
+}
+
+TEST_CASE("gdk::context::make_texture filtering", "[gdk::context]")
+{
+    initGL();
+
+    auto pContext = webgl1es2_context::make();
+
+    const checker image;
+
+    const auto filters_of = [](const texture_ptr_type &apTexture) {
+        const auto pTexture = std::static_pointer_cast<webgl1es2_texture>(apTexture);
+
+        glBindTexture(GL_TEXTURE_2D, pTexture->getHandle());
+
+        GLint magnification{0}, minification{0};
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, &magnification);
+        glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, &minification);
+
+        return std::pair(magnification, minification);
+    };
+
+    SECTION("a texture is unfiltered unless filtering is asked for")
+    {
+        const auto [magnification, minification] = filters_of(pContext->make_texture(image.view()));
+
+        REQUIRE(magnification == GL_NEAREST);
+        REQUIRE(minification == GL_NEAREST);
+    }
+
+    SECTION("the empty overload agrees with the one that takes data")
+    {
+        const auto [magnification, minification] = filters_of(pContext->make_texture());
+
+        REQUIRE(magnification == GL_NEAREST);
+        REQUIRE(minification == GL_NEAREST);
+    }
+
+    SECTION("filter_mode::sharp is the default spelled out")
+    {
+        const auto [magnification, minification] = filters_of(pContext->make_texture(image.view(),
+            texture::wrap_mode::repeat, texture::wrap_mode::repeat,
+            texture::filter_mode::sharp));
+
+        REQUIRE(magnification == GL_NEAREST);
+        REQUIRE(minification == GL_NEAREST);
+    }
+
+    SECTION("filter_mode::smooth opts in to filtering")
+    {
+        const auto [magnification, minification] = filters_of(pContext->make_texture(image.view(),
+            texture::wrap_mode::repeat, texture::wrap_mode::repeat,
+            texture::filter_mode::smooth));
+
+        REQUIRE(magnification == GL_LINEAR);
+        REQUIRE(minification == GL_LINEAR);
+    }
+
+    REQUIRE(!jfc::glGetError());
 }
 
 TEST_CASE("context construction", "[gdk::context]")

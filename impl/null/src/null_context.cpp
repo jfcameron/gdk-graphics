@@ -2,6 +2,7 @@
 
 #include <gdk/graphics/null_context.h>
 
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
 #include <gdk/graphics/texture_data.h>
 
@@ -19,10 +20,32 @@ const std::string &null_shader::vertex_source() const { return mVertexSource; }
 
 const std::string &null_shader::fragment_source() const { return mFragmentSource; }
 
+namespace {
+    [[nodiscard]] std::size_t channels_of(const texture::format aFormat) {
+        switch (aFormat) {
+            case texture::format::grey: return 1;
+            case texture::format::rg: return 2;
+            case texture::format::rgb: return 3;
+            case texture::format::rgba: return 4;
+        }
+
+        return 0;
+    }
+
+    [[nodiscard]] texture_data::channel_data copy_of(const texture_data::view &aView) {
+        if (!aView.data) return {};
+
+        return texture_data::channel_data(aView.data,
+            aView.data + aView.width * aView.height * channels_of(aView.format));
+    }
+}
+
 null_texture::null_texture(const texture_data::view &aView, const wrap_mode aU, const wrap_mode aV)
 : mWidth(aView.width)
 , mHeight(aView.height)
 , mUploadCount(1)
+, mChannels(channels_of(aView.format))
+, mData(copy_of(aView))
 , mWrapU(aU)
 , mWrapV(aV)
 {}
@@ -30,11 +53,24 @@ null_texture::null_texture(const texture_data::view &aView, const wrap_mode aU, 
 void null_texture::update_data(const texture_data::view &aView) {
     mWidth = aView.width;
     mHeight = aView.height;
+    mChannels = channels_of(aView.format);
+    mData = copy_of(aView);
 
     ++mUploadCount;
 }
 
-void null_texture::update_data(const texture_data::view &, const size_t, const size_t) {
+void null_texture::update_data(const texture_data::view &aView, const size_t aOffsetX,
+    const size_t aOffsetY) {
+    if (aView.data && channels_of(aView.format) == mChannels
+        && mData.size() == mWidth * mHeight * mChannels) {
+        for (std::size_t row = 0; row < aView.height && aOffsetY + row < mHeight; ++row)
+            for (std::size_t column = 0; column < aView.width && aOffsetX + column < mWidth;
+                ++column)
+                for (std::size_t channel = 0; channel < mChannels; ++channel)
+                    mData[((aOffsetY + row) * mWidth + aOffsetX + column) * mChannels + channel]
+                        = aView.data[(row * aView.width + column) * mChannels + channel];
+    }
+
     ++mUploadCount;
 }
 
@@ -43,6 +79,8 @@ std::size_t null_texture::width() const { return mWidth; }
 std::size_t null_texture::height() const { return mHeight; }
 
 std::size_t null_texture::upload_count() const { return mUploadCount; }
+
+const texture_data::channel_data &null_texture::data() const { return mData; }
 
 null_model::null_model(const usage_hint aUsage, const model_data &aModelData) {
     upload(aUsage, aModelData);
@@ -306,7 +344,53 @@ void null_scene::draw(const intvector2_type &aFrameBufferSize) const {
     ++mDrawCount;
 }
 
+void null_scene::set_float(const std::string_view aName, float aValue) {
+    mFloats[std::string(aName)] = aValue;
+}
+
+void null_scene::set_vector2(const std::string_view aName, vector2_type aValue) {
+    mVector2s[std::string(aName)] = aValue;
+}
+
+void null_scene::set_vector3(const std::string_view aName, vector3_type aValue) {
+    mVector3s[std::string(aName)] = aValue;
+}
+
+void null_scene::set_vector4(const std::string_view aName, vector4_type aValue) {
+    mVector4s[std::string(aName)] = aValue;
+}
+
+void null_scene::set_vector4(const std::string_view aName, const color &aValue) {
+    set_vector4(aName, vector4_type(aValue.r, aValue.g, aValue.b, aValue.a));
+}
+
+void null_scene::set_integer(const std::string_view aName, int aValue) {
+    mIntegers[std::string(aName)] = aValue;
+}
+
+std::optional<float> null_scene::float_at(const std::string &aName) const {
+    const auto found = mFloats.find(aName);
+
+    return found == mFloats.end() ? std::optional<float>() : found->second;
+}
+
+std::optional<vector3_type> null_scene::vector3_at(const std::string &aName) const {
+    const auto found = mVector3s.find(aName);
+
+    return found == mVector3s.end() ? std::optional<vector3_type>() : found->second;
+}
+
+std::optional<vector4_type> null_scene::vector4_at(const std::string &aName) const {
+    const auto found = mVector4s.find(aName);
+
+    return found == mVector4s.end() ? std::optional<vector4_type>() : found->second;
+}
+
 std::size_t null_scene::entity_count() const { return mEntities.size(); }
+
+std::vector<std::shared_ptr<const entity>> null_scene::entities() const {
+    return {mEntities.begin(), mEntities.end()};
+}
 
 std::size_t null_scene::camera_count() const {
     return mScreenCameras.size() + mTextureCameras.size();
@@ -369,16 +453,29 @@ material_ptr_type null_context::make_material(const const_shader_ptr_type pShade
     return std::make_shared<null_material>(pShader, aRenderMode, aFaceCullingMode);
 }
 
+material_ptr_type null_context::make_material(const const_material_ptr_type &aPrototype) {
+    if (!aPrototype) throw exception("null_context::make_material: no prototype to copy");
+
+    ++mResourcesMade;
+
+    return std::make_shared<null_material>(
+        *std::static_pointer_cast<const null_material>(aPrototype));
+}
+
 texture_ptr_type null_context::make_texture(const texture_data::view &aView,
     const texture::wrap_mode aWrapModeU, const texture::wrap_mode aWrapModeV,
     const texture::filter_mode) {
     ++mResourcesMade;
+    ++mTextureCount;
 
     return std::make_shared<null_texture>(aView, aWrapModeU, aWrapModeV);
 }
 
+std::size_t null_context::texture_count() const { return mTextureCount; }
+
 texture_ptr_type null_context::make_texture() {
     ++mResourcesMade;
+    ++mTextureCount;
 
     return std::make_shared<null_texture>();
 }
@@ -391,7 +488,15 @@ model_ptr_type null_context::make_sphere_model() const {
     return std::make_shared<null_model>();
 }
 
+size_t null_context::max_texture_size() const {
+    return 8192;
+}
+
 shader_ptr_type null_context::make_alpha_cutoff_shader() const {
+    return std::make_shared<null_shader>();
+}
+
+shader_ptr_type null_context::make_alpha_blend_shader() const {
     return std::make_shared<null_shader>();
 }
 

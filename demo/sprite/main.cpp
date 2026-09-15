@@ -11,6 +11,8 @@
 #include <gdk/graphics/webgl1es2_context.h>
 #include <jfc/events/event.h>
 
+#include <GLFW/glfw3.h>
+
 #include <array>
 #include <chrono>
 #include <cmath>
@@ -113,12 +115,25 @@ int main() {
     pCamera->set_transform(vector3_type::zero, quaternion_type::identity);
     pEntity->set_transform({0, 0, 0}, quaternion_type::identity, {1, 1, 1});
 
-    gdk::graphics::sprite_animation walk({
-        {0.00f, { 0, 0, 16, 17}},
-        {0.25f, {16, 0, 16, 17}},
-        {0.50f, {32, 0, 16, 17}},
-        {0.75f, {48, 0, 16, 17}},
-    });
+    std::vector<sprite_animation::frame> data {
+        { 0, 0, 16, 17, 0.25},
+        {16, 0, 16, 17, 0.25},
+        {32, 0, 16, 17, 0.25},
+        {48, 0, 16, 17, 0.25},
+    };
+    gdk::graphics::sprite_animation walk(data, 64, 64);
+
+    std::vector<sprite_animation::frame> flourishData {
+        { 0,  0, 16, 17, 0.12f},
+        {16,  0, 16, 17, 0.12f},
+        {32,  0, 16, 17, 0.12f},
+        {48, 34, 16, 17, 0.12f},
+    };
+    gdk::graphics::sprite_animation flourish(flourishData, 64, 64,
+        sprite_animation::play_mode::once);
+
+    bool reportedFinished(false);
+    float flourishStartedAt(0);
 
     game_loop(frames_per_second{60}, [&](const game_loop::frame aFrame) {
         const auto time = static_cast<float>(aFrame.elapsed);
@@ -126,7 +141,30 @@ int main() {
         windowing::impl_glfw_window::poll_events();
         update_event.notify(time, deltaTime);
 
-        auto frame = walk.at(time, 64, 64);
+        const auto spaceHeld = glfwGetKey(pWindow->ptr_to_implementation().get(), GLFW_KEY_SPACE)
+            == GLFW_PRESS;
+
+        if (spaceHeld && !flourishing) {
+            flourishing = true;
+            reportedFinished = false;
+            flourishStartedAt = time;
+        }
+        else if (!spaceHeld) flourishing = false;
+
+        auto frame = walk.at(time);
+
+        if (flourishing) {
+            const auto flourishTime = time - flourishStartedAt;
+
+            frame = flourish.at(flourishTime);
+
+            if (flourish.has_finished(flourishTime) && !reportedFinished) {
+                std::cout << "flourish finished at " << flourishTime
+                    << "s, holding its last frame\n";
+
+                reportedFinished = true;
+            }
+        }
 
         auto vertexData = make_quad();
         vertexData.transform("a_Position", {-0.5, -0.5, 0});

@@ -8,6 +8,7 @@
 
 #include <gdk/graphics/color.h>
 #include <gdk/graphics/types.h>
+#include <gdk/graphics/webgl1es2_context.h>
 #include <gdk/graphics/webgl1es2_material.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
 #include <gdk/graphics/webgl1es2_texture.h>
@@ -315,5 +316,65 @@ TEST_CASE("**activating a material puts its uniform values into gl**",
         subject.activate(test_gl_state());
 
         REQUIRE(!jfc::glGetError());
+    }
+}
+
+TEST_CASE("**a material made from a prototype starts as a copy and then goes its own way**",
+    "[gdk::webgl1es2_material]")
+{
+    initGL();
+
+    const auto pShader = std::make_shared<webgl1es2_shader_program>(R"V0G0N(
+    uniform float _Float;
+    attribute highp vec3 a_Position;
+
+    void main() { gl_Position = vec4(a_Position, 1.0) * _Float; }
+    )V0G0N", R"V0G0N(
+    void main() { gl_FragColor = vec4(1.0); }
+    )V0G0N");
+
+    const auto pContext = webgl1es2_context::make();
+
+    const auto pPrototype = pContext->make_material(pShader);
+
+    pPrototype->set_float("_Float", 0.25f);
+
+    const auto pCopy = pContext->make_material(const_material_ptr_type(pPrototype));
+
+    REQUIRE(pCopy);
+    REQUIRE(pCopy != pPrototype);
+
+    gl_state state;
+
+    const auto uploaded = [&](const material_ptr_type &aMaterial) {
+        static_cast<webgl1es2_material &>(*aMaterial).activate(state);
+
+        GLfloat value = -1.0f;
+        glGetUniformfv(pShader->handle(), glGetUniformLocation(pShader->handle(), "_Float"),
+            &value);
+
+        return value;
+    };
+
+    SECTION("the copy starts with the prototype's values") {
+        REQUIRE(uploaded(pCopy) == Approx(0.25f));
+    }
+
+    SECTION("a value set on the copy is not seen by the prototype") {
+        pCopy->set_float("_Float", 0.75f);
+
+        REQUIRE(uploaded(pCopy) == Approx(0.75f));
+        REQUIRE(uploaded(pPrototype) == Approx(0.25f));
+    }
+
+    SECTION("nor one set on the prototype afterwards by the copy") {
+        pPrototype->set_float("_Float", 0.5f);
+
+        REQUIRE(uploaded(pPrototype) == Approx(0.5f));
+        REQUIRE(uploaded(pCopy) == Approx(0.25f));
+    }
+
+    SECTION("there is nothing to copy from no prototype") {
+        REQUIRE_THROWS(pContext->make_material(const_material_ptr_type()));
     }
 }

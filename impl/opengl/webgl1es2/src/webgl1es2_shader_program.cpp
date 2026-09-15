@@ -86,7 +86,42 @@ std::shared_ptr<webgl1es2_shader_program> webgl1es2_shader_program::make_alpha_c
         vec4 texel = texture2D(_Texture, uv);
         if (texel[3] < 1.0) discard;
 
-        gl_FragColor = vec4(texel.xyz, 0.5);                        
+        gl_FragColor = texel;
+    }
+    )V0G0N");
+
+    return std::make_shared<webgl1es2_shader_program>(vertexShaderSource, fragmentShaderSource);
+}
+
+std::shared_ptr<webgl1es2_shader_program> webgl1es2_shader_program::make_alpha_blend() {
+    const std::string vertexShaderSource(R"V0G0N(
+    uniform mat4 _MVP;
+    uniform mat4 _Model;
+    uniform mat4 _Projection;
+    uniform mat4 _View;
+
+    attribute highp vec3 a_Position;
+    attribute mediump vec2 a_UV;
+    
+    varying mediump vec2 v_UV;
+
+    void main () {
+        gl_Position = _MVP * vec4(a_Position,1.0);
+        v_UV = a_UV;
+    }
+    )V0G0N");
+
+    const std::string fragmentShaderSource(R"V0G0N(
+    uniform sampler2D _Texture;
+    uniform vec2 _UVOffset;
+    uniform vec2 _UVScale; 
+
+    varying lowp vec2 v_UV;
+
+    void main() {
+        lowp vec2 uv = (v_UV + _UVOffset) * _UVScale;  
+
+        gl_FragColor = texture2D(_Texture, uv);
     }
     )V0G0N");
 
@@ -94,23 +129,56 @@ std::shared_ptr<webgl1es2_shader_program> webgl1es2_shader_program::make_alpha_c
 }
 
 static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_stages(std::string &aSource) {
+    /// \brief gdk_texture3D: a volume packed into a square 2d texture, read by a 3d index
+    ///
+    /// \brief gdk_texture3D_trilinear: the volume read between voxels, blended from the eight
+    /// around a point
     aSource.insert(0, R"V0G0N(
-        // access volumetric data using a 3d index that has been packed into a 2d texture
-        // WARN: the length, width and height of the volumetric data must be equal and must be a power of 2!
-        // aIndexOffset2d: nudge where the sampling takes place. initially set to 0,0 but if you see color issues at
-        // the edges between voxels, playing with this will help to hide them
-        lowp vec4 gdk_texture3D(sampler2D aSampler2D, float aVolumetricDataLength, vec2 aIndexOffset2d, ivec3 aIndex3d) {
-            highp float oneDimensionIndex = float(aIndex3d.x) +
-                (float(aIndex3d.y) * aVolumetricDataLength) +
-                (float(aIndex3d.z) * aVolumetricDataLength * aVolumetricDataLength);
+        #ifdef GL_FRAGMENT_PRECISION_HIGH
+        #define GDK_TEXTURE3D_PRECISION highp
+        #else
+        #define GDK_TEXTURE3D_PRECISION mediump
+        #endif
 
-            float size2D = sqrt(aVolumetricDataLength * aVolumetricDataLength * aVolumetricDataLength);
+        mediump vec4 gdk_texture3D(sampler2D aSampler2D,
+            GDK_TEXTURE3D_PRECISION float aVolumetricDataLength,
+            GDK_TEXTURE3D_PRECISION vec2 aIndexOffset2d, ivec3 aIndex3d) {
+            GDK_TEXTURE3D_PRECISION float rowsPerLine = floor(sqrt(aVolumetricDataLength) + 0.5);
+            GDK_TEXTURE3D_PRECISION float size2D = aVolumetricDataLength * rowsPerLine;
 
-            lowp vec2 normalizedLightVoxelCoordinates = vec2(
-                (mod(oneDimensionIndex, size2D) + aIndexOffset2d.x) / size2D,
-                (floor(oneDimensionIndex / size2D) + aIndexOffset2d.y) / size2D
-            );
-            return texture2D(aSampler2D, normalizedLightVoxelCoordinates);
+            GDK_TEXTURE3D_PRECISION vec3 index = clamp(vec3(aIndex3d), 0.0,
+                aVolumetricDataLength - 1.0);
+
+            GDK_TEXTURE3D_PRECISION float column = index.x
+                + aVolumetricDataLength * mod(index.y, rowsPerLine);
+            GDK_TEXTURE3D_PRECISION float row = floor(index.y / rowsPerLine)
+                + (aVolumetricDataLength / rowsPerLine) * index.z;
+
+            return texture2D(aSampler2D, (vec2(column, row) + aIndexOffset2d) / size2D);
+        }
+
+        mediump vec4 gdk_texture3D_trilinear(sampler2D aSampler2D,
+            GDK_TEXTURE3D_PRECISION float aVolumetricDataLength,
+            GDK_TEXTURE3D_PRECISION vec3 aPosition) {
+            GDK_TEXTURE3D_PRECISION vec3 between = aPosition - 0.5;
+            GDK_TEXTURE3D_PRECISION vec3 below = floor(between);
+            GDK_TEXTURE3D_PRECISION vec3 t = between - below;
+
+            ivec3 b = ivec3(below);
+
+            GDK_TEXTURE3D_PRECISION float L = aVolumetricDataLength;
+            GDK_TEXTURE3D_PRECISION vec2 centre = vec2(0.5, 0.5);
+
+            mediump vec4 x00 = mix(gdk_texture3D(aSampler2D, L, centre, b),
+                gdk_texture3D(aSampler2D, L, centre, b + ivec3(1, 0, 0)), t.x);
+            mediump vec4 x10 = mix(gdk_texture3D(aSampler2D, L, centre, b + ivec3(0, 1, 0)),
+                gdk_texture3D(aSampler2D, L, centre, b + ivec3(1, 1, 0)), t.x);
+            mediump vec4 x01 = mix(gdk_texture3D(aSampler2D, L, centre, b + ivec3(0, 0, 1)),
+                gdk_texture3D(aSampler2D, L, centre, b + ivec3(1, 0, 1)), t.x);
+            mediump vec4 x11 = mix(gdk_texture3D(aSampler2D, L, centre, b + ivec3(0, 1, 1)),
+                gdk_texture3D(aSampler2D, L, centre, b + ivec3(1, 1, 1)), t.x);
+
+            return mix(mix(x00, x10, t.y), mix(x01, x11, t.y), t.z);
         }
     )V0G0N");
 

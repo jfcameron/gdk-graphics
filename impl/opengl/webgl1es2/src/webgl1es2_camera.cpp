@@ -98,6 +98,8 @@ void webgl1es2_camera::set_perspective_projection(const float aFieldOfView,
     const float aViewportAspectRatio) {
     m_ProjectionMatrix = make_gl_perspective(aFieldOfView, aNearClippingPlane, aFarClippingPlane,
         aViewportAspectRatio);
+
+    m_Orthographic = false;
 }
 
 void webgl1es2_camera::set_orthographic_projection(const gdk::graphics::vector2_type &aOrthographicSize,
@@ -105,6 +107,8 @@ void webgl1es2_camera::set_orthographic_projection(const gdk::graphics::vector2_
     const float aViewportAspectRatio) {
     m_ProjectionMatrix = make_gl_orthographic(aOrthographicSize, aNearClippingPlane,
         aFarClippingPlane, aViewportAspectRatio);
+
+    m_Orthographic = true;
 }
 
 const matrix4x4_type &webgl1es2_camera::get_view_matrix() const { 

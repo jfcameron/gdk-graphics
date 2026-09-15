@@ -1,6 +1,9 @@
 // © Joseph Cameron - All Rights Reserved
 
-#include "text_modeler.h"
+#include <embedded_font.h>
+
+#include <gdk/graphics/ext/font.h>
+#include <gdk/graphics/ext/text_modeler.h>
 
 #include <gdk/timing/game_loop.h>
 #include <gdk/windowing/impl_glfw_window.h>
@@ -18,6 +21,9 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
+#include <span>
+#include <vector>
 #include <map>
 #include <set>
 #include <thread>
@@ -49,9 +55,15 @@ int main() {
         return pCamera;
     }();
 
-    text_modeler textModeler(pGraphics);
+    auto pFont = std::make_shared<gdk::graphics::ext::font>(
+        std::span<const gdk::graphics::texture_data::encoded_byte>(
+            EMBEDDED_FONT, sizeof(EMBEDDED_FONT)),
+        48.f);
+
+    gdk::graphics::ext::text_modeler textModeler(pGraphics, pFont);
     update_event.subscribe([&]([[maybe_unused]] float time, [[maybe_unused]] float deltaTime) {
-        textModeler.set_text("this is not a test,\nthis is rock and roll!\n<blar>\ntime: " + std::to_string((int)time));
+        textModeler.set_text("This is NOT a test,\nthis is Rock & Roll!\ntime: "
+            + std::to_string((int)time));
         textModeler.upload();
     });
 

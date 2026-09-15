@@ -4,6 +4,8 @@
 #include <gdk/graphics/webgl1es2_entity.h>
 #include <gdk/graphics/webgl1es2_scene.h>
 
+#include <gdk/math_ops.h>
+
 #include <algorithm>
 #include <list>
 #include <vector>
@@ -126,8 +128,35 @@ void webgl1es2_scene::remove(const std::shared_ptr<const texture_camera> &pCamer
     });
 }
 
+void scene_uniforms::apply(const webgl1es2_shader_program &aProgram) const {
+    const auto upload = [&aProgram](const auto &aCollection) {
+        for (const auto &[name, value] : aCollection)
+            if (const auto location = aProgram.uniform_location(name); location != -1)
+                aProgram.set_uniform(location, value);
+    };
+
+    upload(floats);
+    upload(vector2s);
+    upload(vector3s);
+    upload(vector4s);
+    upload(integers);
+}
+
+namespace {
+    void bind(webgl1es2_material &aMaterial, gl_state &aState, const scene_uniforms &aUniforms) {
+        const auto pProgram = aMaterial.getShaderProgram();
+
+        pProgram->useProgram(aState);
+
+        aUniforms.apply(*pProgram);
+
+        aMaterial.activate(aState);
+    }
+}
+
 void sorted_render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
-    const frustum &aFrustum, const matrix4x4_type &aViewProjection) const {
+    const frustum &aFrustum, const matrix4x4_type &aViewProjection,
+    const scene_uniforms &aUniforms) const {
     prune();
 
     std::vector<std::shared_ptr<const entity>> live;
@@ -139,6 +168,10 @@ void sorted_render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
 
     const auto cameraPosition = pCamera->get_world_matrix().translation();
 
+    const bool alongView = pCamera->is_orthographic();
+
+    const auto &view = pCamera->get_view_matrix();
+
     std::vector<std::pair<floating_point_type, const webgl1es2_entity *>> byDepth;
 
     byDepth.reserve(live.size());
@@ -146,8 +179,10 @@ void sorted_render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
     for (const auto &pLocked : live) {
         const auto *const pEntity = static_cast<const webgl1es2_entity *>(pLocked.get());
 
-        byDepth.emplace_back(
-            (pEntity->getModelMatrix().translation() - cameraPosition).length_squared(), pEntity);
+        const auto at = pEntity->getModelMatrix().translation();
+
+        // the view looks down -z, so what is farther along it is more negative
+        byDepth.emplace_back(alongView ? -(view * at).z : (at - cameraPosition).length_squared(), pEntity);
     }
 
     std::sort(byDepth.begin(), byDepth.end(),
@@ -158,7 +193,7 @@ void sorted_render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
 
         const auto &pMaterial = pEntity->getMaterial();
 
-        pMaterial->activate(aState);
+        bind(*pMaterial, aState, aUniforms);
 
         pEntity->getModel()->bind(*pMaterial->getShaderProgram());
 
@@ -194,7 +229,8 @@ void webgl1es2_scene::add(const std::shared_ptr<const entity> &pEntityInterface)
 }
 
 void render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
-    const frustum &aFrustum, const matrix4x4_type &aViewProjection) const {
+    const frustum &aFrustum, const matrix4x4_type &aViewProjection,
+    const scene_uniforms &aUniforms) const {
     prune();
 
     for (auto &[current_material, current_model_to_entity_collection] :
@@ -215,7 +251,7 @@ void render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
                 if (culled(*pEntity, aFrustum)) continue;
 
                 if (!materialActive) {
-                    current_material->activate(aState);
+                    bind(*current_material, aState, aUniforms);
 
                     materialActive = true;
                 }
@@ -260,9 +296,11 @@ void webgl1es2_scene::draw(const gdk::graphics::intvector2_type &aFrameBufferSiz
 
         const frustum cameraFrustum(viewProjection);
 
-        m_opaque_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum, viewProjection);
+        m_opaque_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum, viewProjection,
+            m_Uniforms);
 
-        m_translucent_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum, viewProjection);
+        m_translucent_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum,
+            viewProjection, m_Uniforms);
     }
 
     for (auto &current_screen_camera : live(m_screen_cameras)) {
@@ -273,10 +311,36 @@ void webgl1es2_scene::draw(const gdk::graphics::intvector2_type &aFrameBufferSiz
 
         const frustum cameraFrustum(viewProjection);
 
-        m_opaque_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum, viewProjection);
+        m_opaque_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum, viewProjection,
+            m_Uniforms);
 
-        m_translucent_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum, viewProjection);
+        m_translucent_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum,
+            viewProjection, m_Uniforms);
     }
+}
+
+void webgl1es2_scene::set_float(const std::string_view aName, float aValue) {
+    m_Uniforms.floats[std::string(aName)] = aValue;
+}
+
+void webgl1es2_scene::set_vector2(const std::string_view aName, vector2_type aValue) {
+    m_Uniforms.vector2s[std::string(aName)] = aValue;
+}
+
+void webgl1es2_scene::set_vector3(const std::string_view aName, vector3_type aValue) {
+    m_Uniforms.vector3s[std::string(aName)] = aValue;
+}
+
+void webgl1es2_scene::set_vector4(const std::string_view aName, vector4_type aValue) {
+    m_Uniforms.vector4s[std::string(aName)] = aValue;
+}
+
+void webgl1es2_scene::set_vector4(const std::string_view aName, const color &aValue) {
+    set_vector4(aName, vector4_type(aValue.r, aValue.g, aValue.b, aValue.a));
+}
+
+void webgl1es2_scene::set_integer(const std::string_view aName, int aValue) {
+    m_Uniforms.integers[std::string(aName)] = aValue;
 }
 
 webgl1es2_scene::webgl1es2_scene(std::shared_ptr<gl_state> apState)
