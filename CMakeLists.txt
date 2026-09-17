@@ -46,6 +46,7 @@ add_library(gdkgraphics STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skeleton.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skinning.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/font.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/aseprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/png.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp

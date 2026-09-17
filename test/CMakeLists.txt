@@ -4,6 +4,7 @@ jfc_add_tests(
     C++_STANDARD 20
 
     TEST_SOURCE_FILES
+        "${CMAKE_CURRENT_LIST_DIR}/aseprite_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/camera_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/color_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/context_test.cpp"
