@@ -26,6 +26,7 @@ endfunction()
 
 import_stb_projects(
     "stb_image"
+    "stb_image_write"
     "stb_rect_pack"
     "stb_truetype"
 )
