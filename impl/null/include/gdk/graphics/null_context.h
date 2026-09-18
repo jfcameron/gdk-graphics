@@ -111,8 +111,8 @@ namespace gdk::graphics {
         std::size_t mUploadCount{0};
         std::size_t mChannels{0};
         texture_data::channel_data mData;
-        wrap_mode mWrapU{wrap_mode::repeat};
-        wrap_mode mWrapV{wrap_mode::repeat};
+        [[maybe_unused]] wrap_mode mWrapU{wrap_mode::repeat};
+        [[maybe_unused]] wrap_mode mWrapV{wrap_mode::repeat};
     };
 
     //! \see null_context
@@ -174,7 +174,7 @@ namespace gdk::graphics {
     private:
         const_shader_ptr_type mpShader;
         render_mode mRenderMode;
-        face_culling_mode mFaceCullingMode;
+        [[maybe_unused]] face_culling_mode mFaceCullingMode;
 
         std::map<std::string, float> mFloats;
         std::map<std::string, vector4_type> mVector4s;
