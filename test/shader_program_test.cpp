@@ -574,8 +574,8 @@ TEST_CASE("gdk::webgl1es2_shader_program device limits", "[gdk::webgl1es2_shader
 
     SECTION("the uniform vector limits come back at or above the es2 minimums")
     {
-        REQUIRE(program::MAX_VERTEX_SHADER_INSTRUCTIONS() >= 128);
-        REQUIRE(program::MAX_FRAGMENT_SHADER_INSTRUCTIONS() >= 16);
+        REQUIRE(program::MAX_VERTEX_SHADER_UNIFORM_VECTORS() >= 128);
+        REQUIRE(program::MAX_FRAGMENT_SHADER_UNIFORM_VECTORS() >= 16);
 
         REQUIRE(!jfc::glGetError());
     }

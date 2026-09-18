@@ -330,6 +330,10 @@ TEST_CASE("what is not an aseprite sheet is refused, and says what was wrong", "
     }
 }
 
+namespace {
+    constexpr std::size_t MAX_ASEPRITE_ENTRIES = 65536;
+}
+
 TEST_CASE("a sheet of more frames, tags or slices than are allowed is refused", "[aseprite]") {
     const std::string FRAME = R"({ "frame": { "x": 0, "y": 0, "w": 1, "h": 1 }, "duration": 1 })";
 
