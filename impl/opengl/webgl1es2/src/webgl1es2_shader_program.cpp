@@ -24,16 +24,28 @@ size_t webgl1es2_shader_program::MAX_TEXTURE_UNITS() {
     ///TODO: once thats done also cache the result
     return 8;
 }
-size_t webgl1es2_shader_program::MAX_FRAGMENT_SHADER_INSTRUCTIONS() {
-    GLint instructionLimit;
-    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &instructionLimit);
-    return instructionLimit; 
+size_t webgl1es2_shader_program::MAX_FRAGMENT_SHADER_UNIFORM_VECTORS() {
+    GLint uniformLimit = 0;
+
+#if defined(GL_MAX_FRAGMENT_UNIFORM_VECTORS)
+    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &uniformLimit);
+    return uniformLimit;
+#else
+    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &uniformLimit);
+    return static_cast<size_t>(uniformLimit / 4);
+#endif
 }
 
-size_t webgl1es2_shader_program::MAX_VERTEX_SHADER_INSTRUCTIONS() {
-    GLint instructionLimit;
-    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &instructionLimit);
-    return instructionLimit; 
+size_t webgl1es2_shader_program::MAX_VERTEX_SHADER_UNIFORM_VECTORS() {
+    GLint uniformLimit = 0;
+
+#if defined(GL_MAX_VERTEX_UNIFORM_VECTORS)
+    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &uniformLimit);
+    return uniformLimit;
+#else
+    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &uniformLimit);
+    return static_cast<size_t>(uniformLimit / 4);
+#endif
 }
 
 std::shared_ptr<webgl1es2_shader_program> webgl1es2_shader_program::make_pink_shader_of_death() {

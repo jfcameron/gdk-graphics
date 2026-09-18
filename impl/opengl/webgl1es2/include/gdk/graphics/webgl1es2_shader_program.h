@@ -203,8 +203,8 @@ namespace gdk::graphics {
  static std::shared_ptr<webgl1es2_shader_program> make_alpha_blend();
 
         static size_t MAX_TEXTURE_UNITS();
-        static size_t MAX_FRAGMENT_SHADER_INSTRUCTIONS();
-        static size_t MAX_VERTEX_SHADER_INSTRUCTIONS();
+        static size_t MAX_FRAGMENT_SHADER_UNIFORM_VECTORS();
+        static size_t MAX_VERTEX_SHADER_UNIFORM_VECTORS();
     
     private:
         //! handle to the  vertex shader

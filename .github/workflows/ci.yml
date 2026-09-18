@@ -60,9 +60,18 @@ jobs:
       - name: install windowing and software gl
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y xorg-dev libwayland-dev libxkbcommon-dev wayland-protocols \
-            xvfb mesa-utils libgl1-mesa-dri fonts-dejavu-core fonts-noto-cjk
+            sudo apt-get update
+            sudo apt-get install -y \
+              fonts-dejavu-core \
+              fonts-noto-cjk \
+              libgl1-mesa-dri \
+              libglu1-mesa-dev \
+              libwayland-dev \
+              libxkbcommon-dev \
+              mesa-utils \
+              wayland-protocols \
+              xorg-dev \
+              xvfb
 
       - name: configure
         run: cmake --preset ${{ matrix.preset }}
@@ -114,8 +123,13 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y doxygen \
-            xorg-dev libwayland-dev libxkbcommon-dev wayland-protocols
+          sudo apt-get install -y \
+            doxygen \
+            graphviz \
+            libwayland-dev \
+            libxkbcommon-dev \
+            wayland-protocols \
+            xorg-dev 
 
       - name: generate documentation
         run: cmake --preset linux-docs

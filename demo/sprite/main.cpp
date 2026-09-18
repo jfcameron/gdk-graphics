@@ -172,7 +172,9 @@ int main() {
             reportedFinished = false;
             flourishStartedAt = time;
         }
-        else if (!spaceHeld) flourishing = false;
+        else if (!spaceHeld) {
+            flourishing = false;
+        }
 
         auto frame = walk.at(time);
 

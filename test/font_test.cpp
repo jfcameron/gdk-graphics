@@ -289,7 +289,7 @@ TEST_CASE("gdk::graphics::ext::font can be sized by its em", "[gdk::graphics::ex
         REQUIRE(must_get(byEm, U'A').advance == Approx(700.f * 0.032f).margin(0.01f));
         REQUIRE(must_get(byHeight, U'A').advance == Approx(700.f * 32.f / 1400.f).margin(0.01f));
 
-        REQUIRE(must_get(byEm, U'日').advance == Approx(32.f).margin(0.0001f));
+        REQUIRE(must_get(byEm, U'\u65E5').advance == Approx(32.f).margin(0.0001f));
     }
 
     SECTION("a font whose ascent to descent is its em sizes the same either way") {
