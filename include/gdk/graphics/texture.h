@@ -3,28 +3,18 @@
 #ifndef GDK_GFX_TEXTURE_H
 #define GDK_GFX_TEXTURE_H
 
+#include <gdk/graphics/texture_data.h>
 #include <gdk/graphics/types.h>
 
 #include <cstddef>
 #include <vector>
 
 namespace gdk::graphics {
-    namespace texture_data {
-        struct view;
-    }
     /// \brief uniform color data, usually used to color the surface of a 3d model, but also used for height maps, volumetric lights etc.
     class texture {
     public:
-        //TODO: rename one,two,three,four since which channels the data is stored in from the perspective of a shader depends on the implementation
-        // Why: opengles rgba, rgb, luminance (1ch), luminance alpha (2ch). I cant change this behavior,
-        // giving them the more intuitive 'grey' and 'rg' are misleading
-        /// \brief format of data in the component_type array
-        enum class format { 
-            grey, //!< a sequence of 1 channel, single byte color: grey, ...
-            rg,   //!< a sequence of 2 channels, single byte colors: red, green, ...
-            rgb,  //!< a sequence of 3 channels, single byte colors: red, green, blue, ...
-            rgba, //!< a sequence of 4 channels, single byte colors: red, green, blue, alpha, ...
-        };
+        /// \brief format of data in the component_type array. \see texture_data::format
+        using format = texture_data::format;
 
         /// \brief behavior when sampling outside of the normalized texture range (u0-1, v0-1)
         enum class wrap_mode {

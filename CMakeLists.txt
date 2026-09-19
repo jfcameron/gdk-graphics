@@ -38,16 +38,6 @@ else()
 endif()
 
 add_library(gdkgraphics STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/gltf.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/bvh.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/ik.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/profile.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/retarget.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skeleton.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/animation/skinning.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/font.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/aseprite.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/png.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_context.cpp
@@ -59,12 +49,8 @@ add_library(gdkgraphics STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_shader_program.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/attribute_data.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/sprite_animation.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/text_modeler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/model_data.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/null/src/null_context.cpp)
 
 add_library(gdk::graphics ALIAS gdkgraphics)
@@ -93,13 +79,13 @@ target_include_directories(gdkgraphics
 target_compile_features(gdkgraphics PUBLIC cxx_std_20)
 
 target_link_libraries(gdkgraphics PUBLIC
+    gdkgraphics_data
     gdkmath
     gdktime
     gdkmemory
     jfc-smart_handles
     gdkwindow
-    stb
-    cgltf)
+)
 
 if (JFC_BUILD_DEMO)
     add_subdirectory(demo)
@@ -107,10 +93,6 @@ endif()
 
 if (JFC_BUILD_TESTS)
     add_subdirectory(test)
-endif()
-
-if (JFC_BUILD_FUZZERS)
-    add_subdirectory(fuzz)
 endif()
 
 if (JFC_BUILD_DOCS)

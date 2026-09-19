@@ -7,7 +7,6 @@
 #include <gdk/graphics/texture_data.h>
 #include <gdk/graphics/webgl1es2_texture.h>
 
-#include <stb/stb_image.h>
 
 #include <cmath>
 #include <iostream>

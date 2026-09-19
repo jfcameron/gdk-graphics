@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <array>
+#include <memory>
 
 namespace gdk::graphics {
     /// \brief cubic volume of diffuse lighting data
@@ -96,7 +97,7 @@ namespace gdk::graphics {
             texture_data::view view;
             view.width = size_2d;
             view.height = size_2d;
-            view.format = texture::format::rgb;
+            view.format = texture_data::format::rgb;
             view.data = &(pTextureData->front());
 
             return { view, pTextureData };

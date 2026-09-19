@@ -1,9 +1,6 @@
 [submodule "jfc-cmake"]
 	path = cmake/jfc-cmake
 	url = https://github.com/jfcameron/jfc-cmake.git
-[submodule "extern/stb"]
-	path = extern/stb
-	url = https://github.com/nothings/stb.git
 [submodule "extern/gdk-math"]
 	path = extern/gdk-math
     url = https://github.com/jfcameron/gdk-math.git
@@ -19,6 +16,6 @@
 [submodule "extern/jfc-smart_handles"]
 	path = extern/jfc-smart_handles
 	url = https://github.com/jfcameron/jfc-smart_handles.git
-[submodule "extern/cgltf"]
-	path = extern/cgltf
-	url = https://github.com/jkuhlmann/cgltf.git
+[submodule "extern/gdk-graphics_data"]
+	path = extern/gdk-graphics_data
+	url = https://github.com/jfcameron/gdk-graphics_data.git

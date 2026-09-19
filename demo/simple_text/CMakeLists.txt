@@ -3,7 +3,7 @@
 project(simple_text_demo)
 
 jfc_embed_file("EMBEDDED_FONT"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../assets/fonts/LiberationSans-Regular.ttf"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../extern/gdk-graphics_data/assets/fonts/LiberationSans-Regular.ttf"
     "${CMAKE_CURRENT_BINARY_DIR}/generated/embedded_font.h"
 )
 
