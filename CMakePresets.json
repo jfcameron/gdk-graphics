@@ -137,7 +137,7 @@
       "description": "Cross-compiles the windows leg from a unix host through msvc-wine. Not gated on hostSystemName: the host is deliberately not Windows. Set MSVC_WINE_ROOT if msvc-wine is not in /opt/msvc.",
       "inherits": "base",
       "generator": "Ninja",
-      "toolchainFile": "${sourceDir}/cmake/toolchain-msvc-wine.cmake",
+      "toolchainFile": "${sourceDir}/cmake/jfc-cmake/toolchains/toolchain-msvc-wine.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_FLAGS": "/W4 /EHsc /permissive-"
