@@ -6,7 +6,6 @@
 #include <gdk/graphics/string_keyed.h>
 #include <gdk/graphics/model.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
-#include <jfc/lazy_ptr.h>
 
 #include <memory>
 #include <jfc/unique_handle.h>

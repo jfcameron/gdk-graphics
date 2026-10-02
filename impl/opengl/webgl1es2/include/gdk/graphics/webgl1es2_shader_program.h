@@ -11,8 +11,6 @@
 #include <jfc/unique_handle.h>
 #include <gdk/graphics/webgl1es2_gl_state.h>
 
-#include <jfc/lazy_ptr.h>
-
 #include <memory>
 
 #include <array>

@@ -7,7 +7,6 @@
 #include <gdk/graphics/types.h>
 #include <gdk/graphics/webgl1es2_material.h>
 #include <gdk/graphics/webgl1es2_texture.h>
-#include <jfc/default_ptr.h>
 
 #include <iosfwd>
 #include <memory>

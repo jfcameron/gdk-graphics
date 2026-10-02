@@ -13,7 +13,6 @@ set(JFC_BUILD_BENCH OFF CACHE BOOL "" FORCE)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-graphics_data")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-math")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-time")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/jfc-memory")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/jfc-smart_handles")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-windowing")
 

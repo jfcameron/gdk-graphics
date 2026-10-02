@@ -8,7 +8,6 @@
 #include <gdk/graphics/webgl1es2_entity.h>
 #include <gdk/graphics/webgl1es2_model.h>
 #include <gdk/graphics/webgl1es2_shader_program.h>
-#include <jfc/default_ptr.h>
 
 #include <iostream>
 

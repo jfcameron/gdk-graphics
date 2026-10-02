@@ -82,7 +82,6 @@ target_link_libraries(gdkgraphics PUBLIC
     gdkgraphics_data
     gdkmath
     gdktime
-    gdkmemory
     jfc-smart_handles
     gdkwindow
 )
