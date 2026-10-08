@@ -36,7 +36,7 @@ void webgl1es2_entity::world_bounds(vector3_type &aCentreOut,
     floating_point_type &aRadiusOut) const {
     const auto pModel = std::static_pointer_cast<webgl1es2_model>(m_model);
 
-    const auto &local = pModel->bounds_centre();
+    const auto &local = m_Bounds ? m_Bounds->first : pModel->bounds_centre();
 
     aCentreOut = {
         m_ModelMatrix.get(0, 0) * local.x + m_ModelMatrix.get(1, 0) * local.y
@@ -54,8 +54,12 @@ void webgl1es2_entity::world_bounds(vector3_type &aCentreOut,
         return std::sqrt(x * x + y * y + z * z);
     };
 
-    aRadiusOut = pModel->bounds_radius()
+    aRadiusOut = (m_Bounds ? m_Bounds->second : pModel->bounds_radius())
         * std::max(axis_scale(0), std::max(axis_scale(1), axis_scale(2)));
+}
+
+void webgl1es2_entity::set_bounds(const vector3_type &aCentre, const floating_point_type aRadius) {
+    m_Bounds = std::pair{aCentre, aRadius};
 }
 
 const matrix4x4_type &webgl1es2_entity::getModelMatrix() const {

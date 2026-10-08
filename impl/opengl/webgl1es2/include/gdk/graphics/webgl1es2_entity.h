@@ -10,7 +10,9 @@
 
 #include <iosfwd>
 #include <memory>
+#include <optional>
 #include <string_view>
+#include <utility>
 
 namespace gdk::graphics
 {
@@ -40,6 +42,8 @@ namespace gdk::graphics
             const vector3_type &aScale = vector3_type::one) override;
 
         virtual void set_transform(const matrix4x4_type& a) override;
+
+        virtual void set_bounds(const vector3_type &aCentre, floating_point_type aRadius) override;
     ///@}
 
         /// \brief this entity's bounding sphere in world space, used for culling
@@ -82,6 +86,8 @@ namespace gdk::graphics
         std::shared_ptr<webgl1es2_material> m_Material;
         matrix4x4_type m_ModelMatrix;
         bool m_IsHidden = false;
+
+        std::optional<std::pair<vector3_type, floating_point_type>> m_Bounds;
     };
 }
 

@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <utility>
 #include <set>
 #include <string>
 #include <vector>
@@ -196,7 +197,11 @@ namespace gdk::graphics {
 
         virtual void set_transform(const matrix4x4_type &aTransform) override;
 
+        virtual void set_bounds(const vector3_type &aCentre, floating_point_type aRadius) override;
+
         [[nodiscard]] const matrix4x4_type &transform() const;
+
+        [[nodiscard]] const std::optional<std::pair<vector3_type, floating_point_type>> &bounds() const;
         [[nodiscard]] const_model_ptr_type model() const;
         [[nodiscard]] const_material_ptr_type material() const;
 
@@ -206,6 +211,7 @@ namespace gdk::graphics {
 
         matrix4x4_type mTransform;
         bool mHidden{false};
+        std::optional<std::pair<vector3_type, floating_point_type>> mBounds;
     };
 
     //! \see null_context

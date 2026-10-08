@@ -271,6 +271,16 @@ TEST_CASE("a null entity remembers its transform and visibility", "[null_context
 
         REQUIRE(pEntity->transform() == expected);
     }
+
+    SECTION("bounds said outright are remembered, and none until they are")
+    {
+        REQUIRE_FALSE(pEntity->bounds());
+
+        pEntity->set_bounds({1, 2, 3}, 4);
+
+        REQUIRE(pEntity->bounds()->first == vector3_type(1, 2, 3));
+        REQUIRE(pEntity->bounds()->second == 4);
+    }
 }
 
 TEST_CASE("a null texture remembers its size", "[null_context][texture]")

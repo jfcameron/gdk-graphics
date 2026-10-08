@@ -174,6 +174,37 @@ TEST_CASE("gdk::webgl1es2_entity transform", "[gdk::webgl1es2_entity]")
     }
 }
 
+TEST_CASE("gdk::webgl1es2_entity bounds", "[gdk::webgl1es2_entity]")
+{
+    initGL();
+
+    webgl1es2_entity a(a_model(), a_material());
+
+    vector3_type centre;
+    floating_point_type radius = 0;
+
+    SECTION("its model's, where nothing else was said: the cube's, round nought, moved with it")
+    {
+        a.set_transform({10, 0, 0}, quaternion_type::identity);
+        a.world_bounds(centre, radius);
+
+        REQUIRE(centre.x == Approx(10.0f));
+        REQUIRE(radius == Approx(std::static_pointer_cast<webgl1es2_model>(a_model())->bounds_radius()));
+    }
+
+    SECTION("its own, where they were said: in its own space, moved and scaled with it")
+    {
+        a.set_bounds({40, 2, -7}, 13);
+        a.set_transform({1, 0, 0}, quaternion_type::identity, {2, 2, 2});
+        a.world_bounds(centre, radius);
+
+        REQUIRE(centre.x == Approx(81.0f));
+        REQUIRE(centre.y == Approx(4.0f));
+        REQUIRE(centre.z == Approx(-14.0f));
+        REQUIRE(radius == Approx(26.0f));
+    }
+}
+
 TEST_CASE("gdk::webgl1es2_entity drawing", "[gdk::webgl1es2_entity]")
 {
     initGL();

@@ -216,7 +216,13 @@ void null_entity::set_transform(const vector3_type &aWorldPos, const quaternion_
 
 void null_entity::set_transform(const matrix4x4_type &aTransform) { mTransform = aTransform; }
 
+void null_entity::set_bounds(const vector3_type &aCentre, const floating_point_type aRadius) {
+    mBounds = std::pair{aCentre, aRadius};
+}
+
 const matrix4x4_type &null_entity::transform() const { return mTransform; }
+
+const std::optional<std::pair<vector3_type, floating_point_type>> &null_entity::bounds() const { return mBounds; }
 
 const_model_ptr_type null_entity::model() const { return mpModel; }
 
