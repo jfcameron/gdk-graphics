@@ -255,6 +255,11 @@ namespace {
 }
 
 void gdk::graphics::check_texture(const profile &aProfile, const std::size_t aWidth, const std::size_t aHeight) {
+    check_texture(aProfile, aWidth, aHeight, false);
+}
+
+void gdk::graphics::check_texture(const profile &aProfile, const std::size_t aWidth, const std::size_t aHeight,
+    const bool aClampedAndUnmipmapped) {
     const auto &most = aProfile.most;
 
     const auto too_big = [&](const std::size_t aHas, const std::string &aWay) {
@@ -265,7 +270,7 @@ void gdk::graphics::check_texture(const profile &aProfile, const std::size_t aWi
     if (aWidth > most.texture_size) throw too_big(aWidth, "wide");
     if (aHeight > most.texture_size) throw too_big(aHeight, "tall");
 
-    if (most.non_power_of_two_textures || (aWidth == 0 && aHeight == 0)) return;
+    if (most.non_power_of_two_textures || aClampedAndUnmipmapped || (aWidth == 0 && aHeight == 0)) return;
 
     if (!is_power_of_two(aWidth))
         throw exception(aProfile.name + ": a texture " + std::to_string(aWidth)

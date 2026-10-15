@@ -45,7 +45,9 @@ webgl1es2_material::webgl1es2_material(shader_ptr_type pShader,
 : m_pShaderProgram(pShader)
 , m_FaceCullMode(aface_culling_mode)
 , m_RenderMode(aRenderMode)
-{}
+{
+    if (m_pShaderProgram) assign(m_vector4s, "_Color", vector4_type(1, 1, 1, 1));
+}
 
 material::render_mode webgl1es2_material::get_render_mode() const {
     return m_RenderMode;

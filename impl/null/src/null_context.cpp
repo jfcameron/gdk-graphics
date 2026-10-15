@@ -53,7 +53,8 @@ null_texture::null_texture(const texture_data::view &aView, const wrap_mode aU, 
 void null_texture::hold_to(std::shared_ptr<const profile> pProfile) { mProfile = std::move(pProfile); }
 
 void null_texture::update_data(const texture_data::view &aView) {
-    if (mProfile) check_texture(*mProfile, aView.width, aView.height);
+    if (mProfile) check_texture(*mProfile, aView.width, aView.height,
+        mWrapU == wrap_mode::clamped && mWrapV == wrap_mode::clamped);
 
     mWidth = aView.width;
     mHeight = aView.height;
@@ -495,7 +496,8 @@ material_ptr_type null_context::make_material(const const_material_ptr_type &aPr
 texture_ptr_type null_context::make_texture(const texture_data::view &aView,
     const texture::wrap_mode aWrapModeU, const texture::wrap_mode aWrapModeV,
     const texture::filter_mode) {
-    if (mProfile) check_texture(*mProfile, aView.width, aView.height);
+    if (mProfile) check_texture(*mProfile, aView.width, aView.height,
+        aWrapModeU == texture::wrap_mode::clamped && aWrapModeV == texture::wrap_mode::clamped);
 
     ++mResourcesMade;
     ++mTextureCount;

@@ -208,3 +208,109 @@ TEST_CASE("gdk::webgl1es2_texture provided resources", "[gdk::webgl1es2_texture]
         REQUIRE(!jfc::glGetError());
     }
 }
+
+TEST_CASE("gdk::webgl1es2_texture mipmaps follow the filter", "[gdk::webgl1es2_texture]")
+{
+    initGL();
+
+    const checker image;
+
+    using min_filter = webgl1es2_texture::minification_filter;
+    using mag_filter = webgl1es2_texture::magnification_filter;
+
+    SECTION("a texture whose filter reads no mipmaps has none generated, and samples as before")
+    {
+        for (const auto min : {min_filter::linear, min_filter::nearest}) {
+            webgl1es2_texture tex(image.view(), webgl1es2_texture::wrap_mode::repeat,
+                webgl1es2_texture::wrap_mode::repeat, min, mag_filter::linear);
+
+            tex.update_data(image.view());
+            tex.update_data(image.view(1, 1), 0, 0);
+
+            REQUIRE(!jfc::glGetError());
+
+#ifndef JFC_TARGET_PLATFORM_Emscripten
+            // desktop GL can say whether a level exists: level 1 of a 2 by 2 texture would be 1 wide
+            glBindTexture(GL_TEXTURE_2D, tex.getHandle());
+
+            GLint levelOneWidth = -1;
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 1, GL_TEXTURE_WIDTH, &levelOneWidth);
+
+            REQUIRE(levelOneWidth == 0);
+            REQUIRE(!jfc::glGetError());
+#endif
+        }
+    }
+
+    SECTION("a mipmapped texture is complete after construction and after both kinds of update")
+    {
+        for (const auto min : {min_filter::nearest_mipmap_nearest, min_filter::linear_mipmap_nearest,
+            min_filter::nearest_mipmap_linear, min_filter::linear_mipmap_linear}) {
+            webgl1es2_texture tex(image.view(), webgl1es2_texture::wrap_mode::repeat,
+                webgl1es2_texture::wrap_mode::repeat, min, mag_filter::linear);
+
+            const auto level_one_width = [&]() {
+                glBindTexture(GL_TEXTURE_2D, tex.getHandle());
+
+                GLint width = -1;
+#ifndef JFC_TARGET_PLATFORM_Emscripten
+                glGetTexLevelParameteriv(GL_TEXTURE_2D, 1, GL_TEXTURE_WIDTH, &width);
+#else
+                width = 1;
+#endif
+                return width;
+            };
+
+            REQUIRE(level_one_width() == 1);
+
+            tex.update_data(image.view());
+            REQUIRE(level_one_width() == 1);
+
+            tex.update_data(image.view(1, 1), 0, 0);
+            REQUIRE(level_one_width() == 1);
+
+            REQUIRE(!jfc::glGetError());
+        }
+    }
+}
+
+TEST_CASE("gdk::webgl1es2_texture of a size that is not a power of two", "[gdk::webgl1es2_texture]")
+{
+    initGL();
+
+    const checker image;
+
+    using min_filter = webgl1es2_texture::minification_filter;
+    using mag_filter = webgl1es2_texture::magnification_filter;
+    using wrap = webgl1es2_texture::wrap_mode;
+
+    SECTION("clamped on both axes and unmipmapped, any size is taken, as GLES 2 and WebGL 1 take it")
+    {
+        const webgl1es2_texture tex(image.view(3, 1), wrap::clamped, wrap::clamped,
+            min_filter::linear, mag_filter::linear);
+
+        REQUIRE(tex.getHandle() != 0);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("repeating, mirrored, or mipmapped, it must still be a power of two")
+    {
+        REQUIRE_THROWS(webgl1es2_texture(image.view(3, 1), wrap::repeat, wrap::clamped));
+        REQUIRE_THROWS(webgl1es2_texture(image.view(3, 1), wrap::clamped, wrap::mirrored));
+        REQUIRE_THROWS(webgl1es2_texture(image.view(3, 1), wrap::clamped, wrap::clamped,
+            min_filter::linear_mipmap_linear, mag_filter::linear));
+    }
+
+    SECTION("an update follows the same rule as construction")
+    {
+        webgl1es2_texture clamped(image.view(), wrap::clamped, wrap::clamped, min_filter::linear,
+            mag_filter::linear);
+
+        REQUIRE_NOTHROW(clamped.update_data(image.view(3, 1)));
+        REQUIRE(!jfc::glGetError());
+
+        webgl1es2_texture repeating(image.view());
+
+        REQUIRE_THROWS(repeating.update_data(image.view(3, 1)));
+    }
+}

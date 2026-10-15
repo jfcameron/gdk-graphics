@@ -38,6 +38,11 @@ namespace gdk::graphics {
         /// where the profile takes only those
         void check_texture(const profile &aProfile, std::size_t aWidth, std::size_t aHeight);
 
+        /// \brief the same, for a texture that is clamped on both axes and never mipmapped if
+        /// aClampedAndUnmipmapped: ES 2.0 takes any size for one of those, so the profile does too
+        void check_texture(const profile &aProfile, std::size_t aWidth, std::size_t aHeight,
+            bool aClampedAndUnmipmapped);
+
         /// \brief a shader program, counted from its GLSL's declarations: uniform vectors in each stage,
         /// attributes, varyings, and samplers in each stage
         void check_shader(const profile &aProfile, std::string_view aVertexSource,

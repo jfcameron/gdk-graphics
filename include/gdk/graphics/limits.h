@@ -16,10 +16,12 @@ namespace gdk::graphics {
         //! the widest and tallest a texture may be, in texels (`GL_MAX_TEXTURE_SIZE`)
         std::size_t texture_size = UNRESTRICTED;
 
-        /// \brief whether a texture may be other than a power of two wide and tall
+        /// \brief whether a texture may be other than a power of two wide and tall with any filter
+        /// and wrapping
         ///
-        /// ES 2.0 takes one only unmipmapped and clamped; gdk-graphics mipmaps every texture, so
-        /// for it an ES 2.0 device takes powers of two alone.
+        /// ES 2.0 and WebGL 1 take one only unmipmapped and clamped on both axes, which a
+        /// webgl1es2_texture made so is allowed whatever this says; anything repeating or mipmapped
+        /// must be a power of two there.
         bool non_power_of_two_textures = true;
 
         //! uniform vectors a vertex shader may declare (`GL_MAX_VERTEX_UNIFORM_VECTORS`)

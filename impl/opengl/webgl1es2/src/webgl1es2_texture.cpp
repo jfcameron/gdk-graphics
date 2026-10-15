@@ -7,8 +7,19 @@
 #include <gdk/graphics/texture_data.h>
 #include <gdk/graphics/webgl1es2_texture.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/em_asm.h>
+#endif
+
+#if GDK_GRAPHICS_HAS_EGL
+#define EGL_NO_X11
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#endif
 
 #include <cmath>
+#include <cstring>
+#include <initializer_list>
 #include <iostream>
 #include <type_traits>
 #include <vector>
@@ -117,10 +128,22 @@ webgl1es2_texture::webgl1es2_texture(
     magFilter) 
 {}
 
-static inline void validate_texture_size(const size_t aWidthInTexels, const size_t aHeightInTexels) {
-    if ((aWidthInTexels > 0 && !is_power_of_two(aWidthInTexels)) ||
-        (aHeightInTexels > 0 && !is_power_of_two(aHeightInTexels)))
-        throw exception("webgl1es2_texture dimensions must be power of 2");
+static inline bool samples_mipmaps(const webgl1es2_texture::minification_filter aFilter) {
+    return aFilter != webgl1es2_texture::minification_filter::linear
+        && aFilter != webgl1es2_texture::minification_filter::nearest;
+}
+
+static inline bool any_size_allowed(const texture::wrap_mode aU, const texture::wrap_mode aV,
+    const bool aHasMipmaps) {
+    return !aHasMipmaps && aU == texture::wrap_mode::clamped && aV == texture::wrap_mode::clamped;
+}
+
+static inline void validate_texture_size(const size_t aWidthInTexels, const size_t aHeightInTexels,
+    const bool aAnySize) {
+    if (!aAnySize && ((aWidthInTexels > 0 && !is_power_of_two(aWidthInTexels)) ||
+        (aHeightInTexels > 0 && !is_power_of_two(aHeightInTexels))))
+        throw exception("webgl1es2_texture dimensions must be a power of two unless the texture is "
+            "clamped on both axes and its filter reads no mipmaps");
 
     if (const auto MAX_TEXTURE_2D_SIZE = webgl1es2_texture::getMaxTextureSize();
         aWidthInTexels > static_cast<std::size_t>(MAX_TEXTURE_2D_SIZE) ||
@@ -138,8 +161,12 @@ webgl1es2_texture::webgl1es2_texture(
     const wrap_mode aWrapModeV,
     const minification_filter minFilter,
     const magnification_filter magFilter)
-: m_Handle([&]() {
-    validate_texture_size(aWidthInTexels, aHeightInTexels);
+: m_WrapU(aWrapModeU)
+, m_WrapV(aWrapModeV)
+, m_HasMipmaps(samples_mipmaps(minFilter))
+, m_Handle([&]() {
+    validate_texture_size(aWidthInTexels, aHeightInTexels,
+        any_size_allowed(aWrapModeU, aWrapModeV, samples_mipmaps(minFilter)));
 
     GLuint handle;
     glGenTextures(1, &handle);
@@ -159,7 +186,7 @@ webgl1es2_texture::webgl1es2_texture(
         GL_UNSIGNED_BYTE, 
         reinterpret_cast<const GLubyte *>(aData));
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    if (samples_mipmaps(minFilter)) glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 
         magnification_filter_to_glint(magFilter));
@@ -192,9 +219,11 @@ void webgl1es2_texture::activateAndBind(const GLint aUnit) const {
 void webgl1es2_texture::hold_to(std::shared_ptr<const profile> pProfile) { m_pProfile = std::move(pProfile); }
 
 void webgl1es2_texture::update_data(const texture_data::view &imageView) {
-    if (m_pProfile) check_texture(*m_pProfile, imageView.width, imageView.height);
+    const auto anySize = any_size_allowed(m_WrapU, m_WrapV, m_HasMipmaps);
 
-    validate_texture_size(imageView.width, imageView.height);
+    if (m_pProfile) check_texture(*m_pProfile, imageView.width, imageView.height, anySize);
+
+    validate_texture_size(imageView.width, imageView.height, anySize);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_Handle.get());
@@ -211,7 +240,7 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView) {
         GL_UNSIGNED_BYTE, 
         reinterpret_cast<const GLubyte *>(imageView.data));
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    if (m_HasMipmaps) glGenerateMipmap(GL_TEXTURE_2D);
 
     m_CurrentDataFormat = format;
     m_CurrentDataWidth = imageView.width;
@@ -238,8 +267,89 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView,
         GL_UNSIGNED_BYTE, 
         reinterpret_cast<const GLubyte *>(imageView.data));
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    if (m_HasMipmaps) glGenerateMipmap(GL_TEXTURE_2D);
 }
+
+void webgl1es2_texture::take_external_contents(const std::size_t aWidth, const std::size_t aHeight) {
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    m_WrapU = wrap_mode::clamped;
+    m_WrapV = wrap_mode::clamped;
+    m_HasMipmaps = false;
+    m_CurrentDataFormat = GL_RGBA;
+    m_CurrentDataWidth = aWidth;
+    m_CurrentDataHeight = aHeight;
+}
+
+#ifdef __EMSCRIPTEN__
+void webgl1es2_texture::update_data(const emscripten::val &aImageSource) {
+    const auto dimension = [&aImageSource](const std::initializer_list<const char *> aNames) {
+        for (const auto *const pName : aNames) {
+            const auto value = aImageSource[pName];
+
+            if (!value.isUndefined() && !value.isNull()) return value.as<std::size_t>();
+        }
+
+        throw exception("webgl1es2_texture::update_data: the image source has no size, so it is not a "
+            "VideoFrame, an ImageBitmap, an image, a video or a canvas");
+    };
+
+    const auto width = dimension({"displayWidth", "width", "videoWidth"});
+    const auto height = dimension({"displayHeight", "height", "videoHeight"});
+
+    if (m_pProfile) check_texture(*m_pProfile, width, height, true);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_Handle.get());
+
+    EM_ASM({
+        GLctx.texImage2D(GLctx.TEXTURE_2D, 0, GLctx.RGBA, GLctx.RGBA, GLctx.UNSIGNED_BYTE, Emval.toValue($0));
+    }, aImageSource.as_handle());
+
+    take_external_contents(width, height);
+}
+#endif
+
+#if GDK_GRAPHICS_HAS_EGL
+namespace {
+    using egl_image_target_texture_2d_type = void (*)(GLenum, void *);
+
+    [[nodiscard]] egl_image_target_texture_2d_type egl_image_target_texture_2d() {
+        static const auto function = reinterpret_cast<egl_image_target_texture_2d_type>(
+            eglGetProcAddress("glEGLImageTargetTexture2DOES"));
+
+        return function;
+    }
+}
+
+bool webgl1es2_texture::can_adopt_egl_images() {
+    if (!egl_image_target_texture_2d()) return false;
+
+    const auto *const pExtensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+
+    return pExtensions && std::strstr(pExtensions, "GL_OES_EGL_image");
+}
+
+void webgl1es2_texture::adopt(const egl_image_type apImage, const std::size_t aWidth, const std::size_t aHeight) {
+    if (!apImage) throw exception("webgl1es2_texture::adopt: there is no image to adopt");
+
+    if (!can_adopt_egl_images()) throw exception("webgl1es2_texture::adopt: this context has no "
+        "GL_OES_EGL_image, so a texture cannot sample an EGLImage. The context must be EGL's, on a "
+        "driver with the extension");
+
+    if (m_pProfile) check_texture(*m_pProfile, aWidth, aHeight, true);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_Handle.get());
+
+    egl_image_target_texture_2d()(GL_TEXTURE_2D, apImage);
+
+    take_external_contents(aWidth, aHeight);
+}
+#endif
 
 bool webgl1es2_texture::operator==(const webgl1es2_texture &b) const { return m_Handle == b.m_Handle; }
 

@@ -87,6 +87,20 @@ target_link_libraries(gdkgraphics PUBLIC
     gdkwindow
 )
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(OpenGL QUIET COMPONENTS EGL)
+
+    if (TARGET OpenGL::EGL)
+        target_link_libraries(gdkgraphics PUBLIC OpenGL::EGL)
+
+        target_compile_definitions(gdkgraphics PUBLIC GDK_GRAPHICS_HAS_EGL=1)
+    endif()
+endif()
+
+if (EMSCRIPTEN)
+    target_link_options(gdkgraphics PUBLIC "-lembind")
+endif()
+
 if (JFC_BUILD_DEMO)
     add_subdirectory(demo)
 endif()

@@ -94,6 +94,10 @@ namespace gdk::graphics {
             /// Fragment shader behavior:
             /// - sample _Texture, if alpha is 0, discard frag, 
             ///   otherwise write frag to color buffer
+            ///
+            /// Both built-in shaders multiply the texel by `_Color`, a vec4 the material may set:
+            /// a tint, a fade, a dim. A material starts with it white, so nothing changes until
+            /// it is set.
             [[nodiscard]] virtual shader_ptr_type make_alpha_cutoff_shader() const = 0;
 
             /// \brief a shader that keeps the texel's alpha, for the blender to use.
@@ -102,6 +106,10 @@ namespace gdk::graphics {
             /// with alpha, one discarding anything not fully opaque and this one passing it through.
             /// Pair it with material::render_mode::transparent, which is what enables blending.
             [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const = 0;
+
+            /// \brief Anything an implementation offers beyond these, shader source for one, say,
+            /// is reached by casting to its context: webgl1es2_context::make_shader takes GLSL ES
+            /// 1.0, which means nothing to another implementation, so it is not here.
 
             [[nodiscard]] virtual graphics::limits limits() const = 0;
         //@}

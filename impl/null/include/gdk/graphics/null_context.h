@@ -112,8 +112,8 @@ namespace gdk::graphics {
         std::size_t mUploadCount{0};
         std::size_t mChannels{0};
         texture_data::channel_data mData;
-        [[maybe_unused]] wrap_mode mWrapU{wrap_mode::repeat};
-        [[maybe_unused]] wrap_mode mWrapV{wrap_mode::repeat};
+        wrap_mode mWrapU{wrap_mode::repeat};
+        wrap_mode mWrapV{wrap_mode::repeat};
     };
 
     class null_model final : public model {

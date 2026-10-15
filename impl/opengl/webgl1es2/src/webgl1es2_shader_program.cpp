@@ -89,6 +89,7 @@ std::shared_ptr<webgl1es2_shader_program> webgl1es2_shader_program::make_alpha_c
     uniform sampler2D _Texture;
     uniform vec2 _UVOffset;
     uniform vec2 _UVScale; 
+    uniform vec4 _Color;
 
     varying lowp vec2 v_UV;
 
@@ -98,7 +99,7 @@ std::shared_ptr<webgl1es2_shader_program> webgl1es2_shader_program::make_alpha_c
         vec4 texel = texture2D(_Texture, uv);
         if (texel[3] < 1.0) discard;
 
-        gl_FragColor = texel;
+        gl_FragColor = texel * _Color;
     }
     )V0G0N");
 
@@ -127,13 +128,14 @@ std::shared_ptr<webgl1es2_shader_program> webgl1es2_shader_program::make_alpha_b
     uniform sampler2D _Texture;
     uniform vec2 _UVOffset;
     uniform vec2 _UVScale; 
+    uniform vec4 _Color;
 
     varying lowp vec2 v_UV;
 
     void main() {
         lowp vec2 uv = (v_UV + _UVOffset) * _UVScale;  
 
-        gl_FragColor = texture2D(_Texture, uv);
+        gl_FragColor = texture2D(_Texture, uv) * _Color;
     }
     )V0G0N");
 

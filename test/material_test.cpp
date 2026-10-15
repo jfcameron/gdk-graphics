@@ -13,6 +13,7 @@
 #include <gdk/graphics/webgl1es2_shader_program.h>
 #include <gdk/graphics/webgl1es2_texture.h>
 
+#include <array>
 #include <memory>
 #include <string>
 #include <vector>
@@ -376,5 +377,56 @@ TEST_CASE("**a material made from a prototype starts as a copy and then goes its
 
     SECTION("there is nothing to copy from no prototype") {
         REQUIRE_THROWS(pContext->make_material(const_material_ptr_type()));
+    }
+}
+
+TEST_CASE("gdk::webgl1es2_material tints by _Color, white until told otherwise", "[gdk::webgl1es2_material]")
+{
+    initGL();
+
+    const auto color_uniform_of = [](webgl1es2_material &aMaterial) {
+        aMaterial.activate(test_gl_state());
+
+        const auto pProgram = aMaterial.getShaderProgram();
+        const auto location = pProgram->uniform_location("_Color");
+
+        REQUIRE(location != -1);
+
+        std::array<GLfloat, 4> values{-1, -1, -1, -1};
+        glGetUniformfv(pProgram->handle(), location, values.data());
+
+        REQUIRE(!jfc::glGetError());
+
+        return values;
+    };
+
+    SECTION("both built-in shaders take it, and a new material leaves the texel as it is")
+    {
+        for (const auto &pShader : {webgl1es2_shader_program::make_alpha_cutoff(),
+            webgl1es2_shader_program::make_alpha_blend()}) {
+            webgl1es2_material mat(pShader, material::face_culling_mode::none, material::render_mode::opaque);
+
+            REQUIRE(color_uniform_of(mat) == std::array<GLfloat, 4>{1, 1, 1, 1});
+        }
+    }
+
+    SECTION("a material that sets it dims, tints or fades what it draws")
+    {
+        auto mat = a_material();
+
+        mat.set_vector4("_Color", color{0.5f, 0.25f, 1.0f, 0.75f});
+
+        REQUIRE(color_uniform_of(mat) == std::array<GLfloat, 4>{0.5f, 0.25f, 1.0f, 0.75f});
+    }
+
+    SECTION("a copy keeps what the original set")
+    {
+        auto original = a_material();
+
+        original.set_vector4("_Color", color{0, 0, 0, 1});
+
+        webgl1es2_material copy(original);
+
+        REQUIRE(color_uniform_of(copy) == std::array<GLfloat, 4>{0, 0, 0, 1});
     }
 }

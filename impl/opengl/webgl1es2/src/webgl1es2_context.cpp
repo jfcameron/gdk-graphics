@@ -14,6 +14,7 @@
 #include <gdk/graphics/webgl1es2_shader_program.h>
 #include <gdk/graphics/webgl1es2_texture_camera.h>
 
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 
@@ -35,7 +36,18 @@ namespace {
     [[nodiscard]] graphics::limits limits_of_gl() {
         graphics::limits out;
         out.texture_size = static_cast<std::size_t>(webgl1es2_texture::getMaxTextureSize());
-        out.non_power_of_two_textures = false;  
+#ifdef JFC_TARGET_PLATFORM_Emscripten
+        // WebGL 1 takes one repeating or mipmapped only with the extension; clamped and
+        // unmipmapped it takes any size regardless, as webgl1es2_texture allows
+        out.non_power_of_two_textures = [] {
+            const auto *const pExtensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+
+            return pExtensions && std::strstr(pExtensions, "GL_OES_texture_npot");
+        }();
+#else
+        // desktop GL 2.0 and later take any size: ARB_texture_non_power_of_two is core there
+        out.non_power_of_two_textures = true;
+#endif
         out.texture_units = gl_integer(GL_MAX_TEXTURE_IMAGE_UNITS);
         out.vertex_texture_units = gl_integer(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS);
         out.vertex_attributes = gl_integer(GL_MAX_VERTEX_ATTRIBS);
@@ -140,7 +152,9 @@ model_ptr_type webgl1es2_context::make_sphere_model() const {
 
 texture_ptr_type webgl1es2_context::make_texture(const texture_data::view &imageView, const texture::wrap_mode aWrapModeU,
     const texture::wrap_mode aWrapModeV, const texture::filter_mode aFilterMode) {
-    if (m_pProfile) check_texture(*m_pProfile, imageView.width, imageView.height);
+    // never mipmapped, so clamped on both axes it may be any size
+    if (m_pProfile) check_texture(*m_pProfile, imageView.width, imageView.height,
+        aWrapModeU == texture::wrap_mode::clamped && aWrapModeV == texture::wrap_mode::clamped);
 
     const auto sharp = aFilterMode == texture::filter_mode::sharp;
 

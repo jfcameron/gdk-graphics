@@ -14,6 +14,10 @@
 #include <vector>
 #include <gdk/graphics/profile.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/val.h>
+#endif
+
 namespace gdk::graphics {
     namespace texture_data { struct view; }
 
@@ -28,13 +32,16 @@ namespace gdk::graphics {
 
         //! The webgl1es2_texture minifying function is used whenever the pixel being 
         /// webgl1es2_textured maps to an area greater than one webgl1es2_texture element.
+        ///
+        /// Only the four mipmap filters read mipmap levels, so only a texture made with one of
+        /// them has levels generated, at construction and on every update.
         enum class minification_filter {
-            //! Returns the value of the webgl1es2_texture element that is nearest 
-            /// (in Manhattan distance) to the center of the pixel being webgl1es2_textured.
-            linear,
-            
             //! Returns the weighted average of the four webgl1es2_texture elements that are 
             /// closest to the center of the pixel being webgl1es2_textured.
+            linear,
+            
+            //! Returns the value of the webgl1es2_texture element that is nearest 
+            /// (in Manhattan distance) to the center of the pixel being webgl1es2_textured.
             nearest,
             
             //! Chooses the mipmap that most closely matches the size of the pixel being 
@@ -99,7 +106,9 @@ namespace gdk::graphics {
         webgl1es2_texture(webgl1es2_texture &&) = default;
 
         /// \brief creates a 2d webgl1es2_texture from decoded image data.
-        /// \exception length, width of the webgl1es2_texture must be power of 2
+        /// \exception exception the width or height is not a power of two, unless the texture is
+        /// clamped on both axes and its filter reads no mipmaps, when GLES 2 and WebGL 1 take any
+        /// size
         webgl1es2_texture(
             const texture_data::view &aTextureView,
             const wrap_mode aWrapModeU = wrap_mode::repeat,
@@ -130,8 +139,48 @@ namespace gdk::graphics {
 
         void hold_to(std::shared_ptr<const profile> pProfile);
 
+#ifdef __EMSCRIPTEN__
+        /// \brief replaces the texture's contents with a JS image source: a VideoFrame, an
+        /// ImageBitmap, an image or video element, a canvas. The browser draws it in on the GPU,
+        /// converting as it goes; nothing is copied through the CPU.
+        ///
+        /// The texture takes the source's size. As that is seldom a power of two, filtering
+        /// becomes linear without mipmaps and wrapping clamped, which is what WebGL 1 takes then.
+        /// \warning on the thread that owns the WebGL context, where a VideoFrame also lives
+        /// \exception exception the source has no size, or is past the profile's largest texture
+        void update_data(const emscripten::val &aImageSource);
+#endif
+
+#if GDK_GRAPHICS_HAS_EGL
+        /// \brief an EGLImage, as EGL's own `EGLImage` type: a `void *`, so that EGL's headers are
+        /// not this one's
+        using egl_image_type = void *;
+
+        /// \brief whether this context can sample an EGLImage: GL_OES_EGL_image is there, which
+        /// needs the context to be EGL's (GLFW_EGL_CONTEXT_API on X11; Wayland's always is)
+        [[nodiscard]] static bool can_adopt_egl_images();
+
+        /// \brief makes the texture's contents an EGLImage: the image's memory, sampled where it
+        /// is, not copied. A hardware decoder's frame, say, imported from its DMA-BUF.
+        ///
+        /// Size as given; no mipmaps, and clamped. The image must outlive the texture's use of it:
+        /// keep it, and what it was made from, until a later frame has replaced it on screen and
+        /// the GPU has finished with it. A later update_data gives the texture storage of its own
+        /// again.
+        /// \exception exception the context cannot adopt, or the image is null
+        void adopt(egl_image_type apImage, const std::size_t aWidth, const std::size_t aHeight);
+#endif
+
     private:
+        void take_external_contents(const std::size_t aWidth, const std::size_t aHeight);
+
         std::shared_ptr<const profile> m_pProfile;
+
+        wrap_mode m_WrapU;
+        wrap_mode m_WrapV;
+
+        //! whether the minification filter reads mipmap levels, so they must be kept up to date
+        bool m_HasMipmaps;
 
         //! handle to the webgl1es2_texture buffer
         jfc::unique_handle<GLuint> m_Handle;
