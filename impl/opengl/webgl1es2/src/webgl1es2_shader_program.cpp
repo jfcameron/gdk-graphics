@@ -769,6 +769,10 @@ bool webgl1es2_shader_program::try_set_uniform(const std::string_view aName,
     return false;
 }
 
+const webgl1es2_shader_program::active_attribute_collection_type &webgl1es2_shader_program::activeAttributes() const {
+    return m_ActiveAttributes;
+}
+
 std::optional<webgl1es2_shader_program::active_attribute_info> webgl1es2_shader_program::tryGetActiveAttribute(const std::string_view aAttributeName) const {
     if (auto found = m_ActiveAttributes.find(aAttributeName); found != m_ActiveAttributes.end()) 
         return found->second;

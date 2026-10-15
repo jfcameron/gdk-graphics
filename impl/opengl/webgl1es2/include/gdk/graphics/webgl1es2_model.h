@@ -15,6 +15,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <gdk/graphics/profile.h>
 
 namespace gdk::graphics {
     class model_data;
@@ -70,7 +71,11 @@ namespace gdk::graphics {
         //! a unit sphere. \see make_cube
         [[nodiscard]] static std::shared_ptr<webgl1es2_model> make_sphere(); 
 
+        void hold_to(std::shared_ptr<const profile> pProfile);
+
     private:
+        std::shared_ptr<const profile> m_pProfile;
+
         //! stores component data for a single attribute
         struct attribute {
             size_t buffer_handle_index;
@@ -97,8 +102,13 @@ namespace gdk::graphics {
             GLint location;
             GLint components;
         };
-        //! keyed by program handle, because one model is drawn with more than one shader
-        mutable std::unordered_map<GLuint, std::vector<bound_attribute>> m_BindingCache;
+
+        struct bindings final {
+            std::vector<bound_attribute> fed;
+            std::vector<GLint> unfed;
+        };
+
+        mutable std::unordered_map<GLuint, bindings> m_BindingCache;
     };
 }
 

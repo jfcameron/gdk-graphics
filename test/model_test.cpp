@@ -128,6 +128,42 @@ TEST_CASE("**a model re-uploaded with different attributes rebinds correctly**",
     }
 }
 
+TEST_CASE("**an attribute the shader reads and a model lacks reads GL's default, not the last model's buffer**",
+    "[gdk::webgl1es2_model]")
+{
+    initGL();
+
+    const auto pShader = webgl1es2_shader_program::make_alpha_cutoff();
+
+    const auto uv = pShader->tryGetActiveAttribute("a_UV");
+
+    REQUIRE(uv.has_value());
+
+    webgl1es2_model withUVs(model::usage_hint::upload_once, model_data::make_quad());
+    webgl1es2_model without(model::usage_hint::upload_once, model_data({{"a_Position",
+        attribute_data({0, 0, 0, 1, 0, 0, 0, 1, 0}, 3)}}));
+
+    glVertexAttrib4f(static_cast<GLuint>(uv->location), 5, 6, 7, 8);
+
+    withUVs.bind(*pShader);
+
+    without.bind(*pShader);
+
+    GLint enabled = 1;
+    glGetVertexAttribiv(static_cast<GLuint>(uv->location), GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+
+    REQUIRE(enabled == 0);
+
+    std::array<GLfloat, 4> current{};
+    glGetVertexAttribfv(static_cast<GLuint>(uv->location), GL_CURRENT_VERTEX_ATTRIB, current.data());
+
+    REQUIRE(current == std::array<GLfloat, 4>{0, 0, 0, 1});
+
+    without.draw();
+
+    REQUIRE(!jfc::glGetError());
+}
+
 namespace {
     struct empty_model_probe final {
         std::shared_ptr<webgl1es2_shader_program> pShader =

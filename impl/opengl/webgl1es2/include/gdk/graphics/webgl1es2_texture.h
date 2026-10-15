@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <gdk/graphics/profile.h>
 
 namespace gdk::graphics {
     namespace texture_data { struct view; }
@@ -127,7 +128,11 @@ namespace gdk::graphics {
         /// \brief gets the max texture size supported by the current graphics device 
         static GLint getMaxTextureSize();
 
+        void hold_to(std::shared_ptr<const profile> pProfile);
+
     private:
+        std::shared_ptr<const profile> m_pProfile;
+
         //! handle to the webgl1es2_texture buffer
         jfc::unique_handle<GLuint> m_Handle;
 

@@ -189,7 +189,11 @@ void webgl1es2_texture::activateAndBind(const GLint aUnit) const {
     glBindTexture(GL_TEXTURE_2D, m_Handle.get());
 }
 
+void webgl1es2_texture::hold_to(std::shared_ptr<const profile> pProfile) { m_pProfile = std::move(pProfile); }
+
 void webgl1es2_texture::update_data(const texture_data::view &imageView) {
+    if (m_pProfile) check_texture(*m_pProfile, imageView.width, imageView.height);
+
     validate_texture_size(imageView.width, imageView.height);
 
     glActiveTexture(GL_TEXTURE0);

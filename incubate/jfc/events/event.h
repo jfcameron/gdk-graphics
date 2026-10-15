@@ -4,8 +4,11 @@
 #define JFC_EVENTS_EVENT_H
 
 #include <algorithm>
+#include <cstddef>
+#include <functional>
 #include <mutex>
-#include <vector> 
+#include <utility>
+#include <vector>
 
 namespace jfc::events {
     /// \brief event class that requires the user to clean up after themselves
@@ -14,34 +17,47 @@ namespace jfc::events {
     public:
         using observer_type = std::function<void(event_parameter_types_param...)>;
 
-        /// \brief adds an observer
-        void subscribe(observer_type observer) {
-            m_Observers.push_back(std::move(observer));
+        using token_type = std::size_t;
+
+        /// \brief adds an observer, and returns the token that removes it
+        token_type subscribe(observer_type observer) {
+            std::lock_guard<std::mutex> lock(m_ObserversMutex);
+
+            const auto token = m_NextToken++;
+
+            m_Observers.emplace_back(token, std::move(observer));
+
+            return token;
         }
 
-        /// \brief removes an observer
-        void unsubscribe(const observer_type &observer) {
-            auto it = std::find_if(m_Observers.begin(), m_Observers.end(),
-                [&](const observer_type& registeredObserver) {
-                    return registeredObserver.target_type() == observer.target_type();
-                });
+        /// \brief removes an observer using a token. no effect if the observer doesnt exist
+        void unsubscribe(const token_type token) {
+            std::lock_guard<std::mutex> lock(m_ObserversMutex);
 
-            if (it != m_Observers.end()) m_Observers.erase(it); 
+            const auto it = std::find_if(m_Observers.begin(), m_Observers.end(),
+                [token](const auto &registered) { return registered.first == token; });
+
+            if (it != m_Observers.end()) m_Observers.erase(it);
         }
 
         /// \brief notify observers
         void notify(event_parameter_types_param... params) const {
-            std::lock_guard<std::mutex> lock(m_ObserversMutex);
-            for (const auto &observer : m_Observers) {
-                observer(params...);
+            std::vector<std::pair<token_type, observer_type>> observers;
+
+            {
+                std::lock_guard<std::mutex> lock(m_ObserversMutex);
+
+                observers = m_Observers;
             }
+
+            for (const auto &[token, observer] : observers) observer(params...);
         }
 
     private:
-        std::vector<observer_type> m_Observers;
+        std::vector<std::pair<token_type, observer_type>> m_Observers;
+        token_type m_NextToken = 0;
         mutable std::mutex m_ObserversMutex;
     };
 }
 
 #endif
-

@@ -4,6 +4,7 @@
 #define GDK_GFX_NULL_CONTEXT_H
 
 #include <gdk/graphics/context.h>
+#include <gdk/graphics/profile.h>
 #include <gdk/graphics/texture_data.h>
 
 #include <array>
@@ -18,11 +19,12 @@
 namespace gdk::graphics {
     class null_context final : public graphics::context {
     public:
-        [[nodiscard]] static std::shared_ptr<null_context> make();
+        [[nodiscard]] static std::shared_ptr<null_context> make(std::optional<graphics::profile> aProfile = {});
 
         [[nodiscard]] virtual scene_ptr_type make_scene() override;
         [[nodiscard]] virtual camera_ptr_type make_camera() override;
         [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera() override;
+        [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera(const intvector2_type &aSize) override;
 
         [[nodiscard]] virtual entity_ptr_type make_entity(const const_model_ptr_type pModel,
             const const_material_ptr_type pMaterial) override;
@@ -47,7 +49,6 @@ namespace gdk::graphics {
 
         [[nodiscard]] virtual texture_ptr_type make_texture() override;
 
-        /// \brief how many textures this context has been asked to create.
         [[nodiscard]] std::size_t texture_count() const;
 
         [[nodiscard]] virtual model_ptr_type make_cube_model() const override;
@@ -57,23 +58,22 @@ namespace gdk::graphics {
 
         [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const override;
 
-        [[nodiscard]] virtual size_t max_texture_size() const override;
+        [[nodiscard]] virtual graphics::limits limits() const override;
 
-        //! accepts any source at all, because nothing compiles it
         [[nodiscard]] shader_ptr_type make_shader(const std::string_view aVertexSource,
             const std::string_view aFragmentSource);
 
-        //! how many of each resource this context has handed out
         [[nodiscard]] std::size_t resources_made() const;
 
     private:
         std::size_t mTextureCount{0};
         null_context() = default;
 
+        std::shared_ptr<const graphics::profile> mProfile;
+
         std::size_t mResourcesMade{0};
     };
 
-    //! \see null_context
     class null_shader final : public shader_program {
     public:
         null_shader(std::string aVertexSource = {}, std::string aFragmentSource = {});
@@ -86,11 +86,12 @@ namespace gdk::graphics {
         std::string mFragmentSource;
     };
 
-    //! \see null_context
     class null_texture final : public texture {
     public:
         null_texture() = default;
         null_texture(const texture_data::view &aView, const wrap_mode aU, const wrap_mode aV);
+
+        void hold_to(std::shared_ptr<const profile> pProfile);
 
         virtual void update_data(const texture_data::view &aView) override;
 
@@ -100,13 +101,12 @@ namespace gdk::graphics {
         [[nodiscard]] std::size_t width() const;
         [[nodiscard]] std::size_t height() const;
 
-        //! how many times data has been handed to this texture, including at construction
         [[nodiscard]] std::size_t upload_count() const;
 
-        /// \brief the texture's content: every upload applied, a row at a time from the first
         [[nodiscard]] const texture_data::channel_data &data() const;
 
     private:
+        std::shared_ptr<const profile> mProfile;
         std::size_t mWidth{0};
         std::size_t mHeight{0};
         std::size_t mUploadCount{0};
@@ -116,33 +116,31 @@ namespace gdk::graphics {
         [[maybe_unused]] wrap_mode mWrapV{wrap_mode::repeat};
     };
 
-    //! \see null_context
     class null_model final : public model {
     public:
         null_model() = default;
         null_model(const usage_hint aUsage, const model_data &aModelData);
 
+        void hold_to(std::shared_ptr<const profile> pProfile);
+
         virtual void upload(const usage_hint &aUsage, const model_data &aModelData) override;
 
-        //! vertices in the most recent upload
         [[nodiscard]] std::size_t vertex_count() const;
 
-        //! indices in the most recent upload; zero if it was not indexed
         [[nodiscard]] std::size_t index_count() const;
 
         [[nodiscard]] std::size_t upload_count() const;
 
-        /// \brief the most recent upload, kept whole
         [[nodiscard]] const model_data &last_upload() const;
 
     private:
+        std::shared_ptr<const profile> mProfile;
         std::size_t mVertexCount{0};
         std::size_t mIndexCount{0};
         std::size_t mUploadCount{0};
         model_data mLastUpload{};
     };
 
-    //! \see null_context
     class null_material final : public material {
     public:
         explicit null_material(const_shader_ptr_type pShader = nullptr,
@@ -167,7 +165,6 @@ namespace gdk::graphics {
         [[nodiscard]] std::optional<vector4_type> vector4_at(const std::string &aName) const;
         [[nodiscard]] texture_ptr_type texture_at(const std::string &aName) const;
 
-        //! every uniform name this material has been given a value for, in a stable order
         [[nodiscard]] std::vector<std::string> uniforms() const;
 
         [[nodiscard]] render_mode mode() const;
@@ -183,7 +180,6 @@ namespace gdk::graphics {
         std::set<std::string> mNames;
     };
 
-    //! \see null_context
     class null_entity final : public entity {
     public:
         null_entity(const_model_ptr_type pModel, const_material_ptr_type pMaterial);
@@ -214,7 +210,6 @@ namespace gdk::graphics {
         std::optional<std::pair<vector3_type, floating_point_type>> mBounds;
     };
 
-    //! \see null_context
     class null_camera final : public screen_camera {
     public:
         virtual void set_perspective_projection(const floating_point_type aFieldOfView,
@@ -241,7 +236,6 @@ namespace gdk::graphics {
 
         virtual void clear_scissor() override;
 
-        //! \brief the rectangle this camera would clip to
         [[nodiscard]] std::array<float, 4> scissor() const;
 
         [[nodiscard]] const vector3_type &position() const;
@@ -250,7 +244,6 @@ namespace gdk::graphics {
         [[nodiscard]] const color &clear_color() const;
         [[nodiscard]] clear_mode mode() const;
 
-        //! vertical field of view in radians
         [[nodiscard]] floating_point_type field_of_view() const;
         [[nodiscard]] floating_point_type aspect_ratio() const;
         [[nodiscard]] floating_point_type near_clip() const;
@@ -268,13 +261,11 @@ namespace gdk::graphics {
         floating_point_type mNear{0};
         floating_point_type mFar{0};
 
-        //! x, y, width, height, normalised as the interface takes them
         std::array<float, 4> mViewport{0, 0, 1, 1};
 
         std::optional<std::array<float, 4>> mScissor;
     };
 
-    //! \see null_context
     class null_texture_camera final : public texture_camera {
     public:
         null_texture_camera();
@@ -305,7 +296,6 @@ namespace gdk::graphics {
         std::shared_ptr<texture> mpDepth;
     };
 
-    //! \see null_context
     class null_scene final : public scene {
     public:
         virtual void add(const std::shared_ptr<const screen_camera> &pCamera) override;
@@ -326,23 +316,19 @@ namespace gdk::graphics {
         virtual void set_vector4(const std::string_view aName, const color &aValue) override;
         virtual void set_integer(const std::string_view aName, int aValue) override;
 
-        //! what the scene was last told for a name, so a test can see what reached it
         [[nodiscard]] std::optional<float> float_at(const std::string &aName) const;
         [[nodiscard]] std::optional<vector3_type> vector3_at(const std::string &aName) const;
         [[nodiscard]] std::optional<vector4_type> vector4_at(const std::string &aName) const;
 
         [[nodiscard]] std::size_t entity_count() const;
 
-        /// \brief every entity in the scene, in no particular order
         [[nodiscard]] std::vector<std::shared_ptr<const entity>> entities() const;
 
         [[nodiscard]] std::size_t camera_count() const;
         [[nodiscard]] bool contains(const std::shared_ptr<const entity> &pEntity) const;
 
-        /// \brief how many times \ref draw has been called
         [[nodiscard]] std::size_t draw_count() const;
 
-        //! the frame buffer size the most recent draw was given
         [[nodiscard]] intvector2_type last_frame_buffer_size() const;
 
     private:

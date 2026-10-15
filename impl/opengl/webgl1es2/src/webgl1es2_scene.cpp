@@ -199,6 +199,7 @@ void sorted_render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
 
         pEntity->draw(pCamera->get_view_matrix(), pCamera->get_projection_matrix(),
             aViewProjection);
+        aState.count_draw();
     }
 }
 
@@ -264,6 +265,7 @@ void render_set::draw(const webgl1es2_camera *pCamera, gl_state &aState,
 
                 pEntity->draw(pCamera->get_view_matrix(), pCamera->get_projection_matrix(),
                     aViewProjection);
+                aState.count_draw();
             }
         }
     }

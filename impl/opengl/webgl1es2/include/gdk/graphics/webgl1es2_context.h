@@ -4,19 +4,20 @@
 #define GDK_GFX_WEBGL1ES2_CONTEXT_H
 
 #include <gdk/graphics/context.h>
+#include <gdk/graphics/profile.h>
 #include <gdk/graphics/webgl1es2_gl_state.h>
 
 #include <memory>
+#include <optional>
 
 #include <string_view>
 
 namespace gdk::graphics {
     class model_data;
 
-    //! brief webgl1/gles2.0 context implementation
     class webgl1es2_context final : public graphics::context {
     public: 
-        [[nodiscard]] static context_ptr_type make();
+        [[nodiscard]] static context_ptr_type make(std::optional<graphics::profile> aProfile = {});
 
         [[nodiscard]] shader_ptr_type make_shader(
             const std::string_view aVertexShaderStageSourceCodeGLSL, 
@@ -28,6 +29,7 @@ namespace gdk::graphics {
         [[nodiscard]] virtual camera_ptr_type make_camera() override;
 
         [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera() override;
+        [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera(const intvector2_type &aSize) override;
 
         [[nodiscard]] virtual entity_ptr_type make_entity(
             const const_model_ptr_type pModel, 
@@ -63,7 +65,7 @@ namespace gdk::graphics {
 
         [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const override;
 
-        [[nodiscard]] virtual size_t max_texture_size() const override;
+        [[nodiscard]] virtual graphics::limits limits() const override;
 
         [[nodiscard]] virtual model_ptr_type make_cube_model() const override;
 
@@ -73,15 +75,16 @@ namespace gdk::graphics {
 
         virtual ~webgl1es2_context() override;
 
-        /// \brief what this gl context currently has set
         [[nodiscard]] std::shared_ptr<gl_state> state() const;
 
     private:
-        webgl1es2_context();
+        webgl1es2_context(std::optional<graphics::profile> aProfile);
 
         std::shared_ptr<gl_state> m_pState;
 
-        size_t m_MaxTextureSize = 0;
+        graphics::limits m_Limits;
+
+        std::shared_ptr<const graphics::profile> m_pProfile;
     };
 }
 

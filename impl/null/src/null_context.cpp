@@ -50,7 +50,11 @@ null_texture::null_texture(const texture_data::view &aView, const wrap_mode aU, 
 , mWrapV(aV)
 {}
 
+void null_texture::hold_to(std::shared_ptr<const profile> pProfile) { mProfile = std::move(pProfile); }
+
 void null_texture::update_data(const texture_data::view &aView) {
+    if (mProfile) check_texture(*mProfile, aView.width, aView.height);
+
     mWidth = aView.width;
     mHeight = aView.height;
     mChannels = channels_of(aView.format);
@@ -86,7 +90,11 @@ null_model::null_model(const usage_hint aUsage, const model_data &aModelData) {
     upload(aUsage, aModelData);
 }
 
+void null_model::hold_to(std::shared_ptr<const profile> pProfile) { mProfile = std::move(pProfile); }
+
 void null_model::upload(const usage_hint &, const model_data &aModelData) {
+    if (mProfile) check_model(*mProfile, aModelData);
+
     mVertexCount = aModelData.vertex_count();
     mIndexCount = aModelData.indexes().size();
     mLastUpload = aModelData;
@@ -410,8 +418,12 @@ std::size_t null_scene::draw_count() const { return mDrawCount; }
 
 intvector2_type null_scene::last_frame_buffer_size() const { return mLastFrameBufferSize; }
 
-std::shared_ptr<null_context> null_context::make() {
-    return std::shared_ptr<null_context>(new null_context());
+std::shared_ptr<null_context> null_context::make(std::optional<graphics::profile> aProfile) {
+    const auto pContext = std::shared_ptr<null_context>(new null_context());
+
+    if (aProfile) pContext->mProfile = std::make_shared<const graphics::profile>(std::move(*aProfile));
+
+    return pContext;
 }
 
 scene_ptr_type null_context::make_scene() {
@@ -432,6 +444,10 @@ texture_camera_ptr_type null_context::make_texture_camera() {
     return std::make_shared<null_texture_camera>();
 }
 
+texture_camera_ptr_type null_context::make_texture_camera(const intvector2_type &) {
+    return make_texture_camera();
+}
+
 entity_ptr_type null_context::make_entity(const const_model_ptr_type pModel,
     const const_material_ptr_type pMaterial) {
     ++mResourcesMade;
@@ -442,14 +458,22 @@ entity_ptr_type null_context::make_entity(const const_model_ptr_type pModel,
 model_ptr_type null_context::make_model() {
     ++mResourcesMade;
 
-    return std::make_shared<null_model>();
+    const auto pModel = std::make_shared<null_model>();
+    pModel->hold_to(mProfile);
+
+    return pModel;
 }
 
 model_ptr_type null_context::make_model(const gdk::graphics::model::usage_hint aUsage,
     const model_data &aModelData) {
+    if (mProfile) check_model(*mProfile, aModelData);
+
     ++mResourcesMade;
 
-    return std::make_shared<null_model>(aUsage, aModelData);
+    const auto pModel = std::make_shared<null_model>(aUsage, aModelData);
+    pModel->hold_to(mProfile);
+
+    return pModel;
 }
 
 material_ptr_type null_context::make_material(const const_shader_ptr_type pShader,
@@ -471,10 +495,15 @@ material_ptr_type null_context::make_material(const const_material_ptr_type &aPr
 texture_ptr_type null_context::make_texture(const texture_data::view &aView,
     const texture::wrap_mode aWrapModeU, const texture::wrap_mode aWrapModeV,
     const texture::filter_mode) {
+    if (mProfile) check_texture(*mProfile, aView.width, aView.height);
+
     ++mResourcesMade;
     ++mTextureCount;
 
-    return std::make_shared<null_texture>(aView, aWrapModeU, aWrapModeV);
+    const auto pTexture = std::make_shared<null_texture>(aView, aWrapModeU, aWrapModeV);
+    pTexture->hold_to(mProfile);
+
+    return pTexture;
 }
 
 std::size_t null_context::texture_count() const { return mTextureCount; }
@@ -483,7 +512,10 @@ texture_ptr_type null_context::make_texture() {
     ++mResourcesMade;
     ++mTextureCount;
 
-    return std::make_shared<null_texture>();
+    const auto pTexture = std::make_shared<null_texture>();
+    pTexture->hold_to(mProfile);
+
+    return pTexture;
 }
 
 model_ptr_type null_context::make_cube_model() const {
@@ -494,8 +526,11 @@ model_ptr_type null_context::make_sphere_model() const {
     return std::make_shared<null_model>();
 }
 
-size_t null_context::max_texture_size() const {
-    return 8192;
+graphics::limits null_context::limits() const {
+    graphics::limits own;
+    own.texture_size = 8192;
+
+    return mProfile ? narrowest(own, mProfile->most) : own;
 }
 
 shader_ptr_type null_context::make_alpha_cutoff_shader() const {
@@ -508,6 +543,8 @@ shader_ptr_type null_context::make_alpha_blend_shader() const {
 
 shader_ptr_type null_context::make_shader(const std::string_view aVertexSource,
     const std::string_view aFragmentSource) {
+    if (mProfile) check_shader(*mProfile, aVertexSource, aFragmentSource);
+
     ++mResourcesMade;
 
     return std::make_shared<null_shader>(std::string(aVertexSource), std::string(aFragmentSource));

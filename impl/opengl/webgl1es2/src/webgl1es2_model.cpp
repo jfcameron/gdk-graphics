@@ -271,25 +271,28 @@ void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
 
     const auto &bindings = cached != m_BindingCache.end()
         ? cached->second
-        : [&]() -> const std::vector<bound_attribute> & {
-            std::vector<bound_attribute> resolved;
+        : [&]() -> const webgl1es2_model::bindings & {
+            webgl1es2_model::bindings resolved;
 
             for (const auto &[name, current_attribute] : m_Attributes) {
                 const auto active = aShaderProgram.tryGetActiveAttribute(name);
 
                 if (!active.has_value()) continue;
 
-                resolved.push_back({
+                resolved.fed.push_back({
                     m_VertexBufferHandles[current_attribute.buffer_handle_index].get(),
                     active->location,
                     static_cast<GLint>(current_attribute.components)});
             }
 
+            for (const auto &[name, active] : aShaderProgram.activeAttributes())
+                if (m_Attributes.find(name) == m_Attributes.end()) resolved.unfed.push_back(active.location);
+
             return m_BindingCache.emplace(aShaderProgram.handle(), std::move(resolved))
                 .first->second;
         }();
 
-    for (const auto &each : bindings) {
+    for (const auto &each : bindings.fed) {
         glBindBuffer(GL_ARRAY_BUFFER, each.buffer);
 
         glEnableVertexAttribArray(each.location);
@@ -302,6 +305,12 @@ void webgl1es2_model::bind(const webgl1es2_shader_program &aShaderProgram) const
             0,
             0
         );
+    }
+
+    for (const auto location : bindings.unfed) {
+        glDisableVertexAttribArray(static_cast<GLuint>(location));
+
+        glVertexAttrib4f(static_cast<GLuint>(location), 0, 0, 0, 1);
     }
 }
 
@@ -356,8 +365,12 @@ static void compute_bounds(const model_data &aData, vector3_type &aCentreOut,
     }
 }
 
+void webgl1es2_model::hold_to(std::shared_ptr<const profile> pProfile) { m_pProfile = std::move(pProfile); }
+
 void webgl1es2_model::upload(const usage_hint &aUsage,
     const model_data &aData) {
+    if (m_pProfile) check_model(*m_pProfile, aData);
+
     m_BindingCache.clear();
 
     compute_bounds(aData, m_BoundsCentre, m_BoundsRadius);

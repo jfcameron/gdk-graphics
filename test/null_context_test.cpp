@@ -388,7 +388,7 @@ TEST_CASE("a camera clips to its viewport until it is told to clip to something 
 TEST_CASE("a context reports the largest texture its device can make", "[null_context]") {
     const auto pContext = null_context::make();
 
-    REQUIRE(pContext->max_texture_size() > 0);
+    REQUIRE(pContext->limits().texture_size > 0);
 
-    REQUIRE(pContext->max_texture_size() >= 2048);
+    REQUIRE(pContext->limits().texture_size >= 2048);
 }

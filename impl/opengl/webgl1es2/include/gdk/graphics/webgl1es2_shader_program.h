@@ -58,6 +58,9 @@ namespace gdk::graphics {
         std::optional<active_attribute_info> tryGetActiveAttribute(
             const std::string_view aAttributeName) const;
 
+        //! every attribute the program reads
+        const active_attribute_collection_type &activeAttributes() const;
+
         //! assign a float1 uniform from a float
         /// \brief the location of an active uniform, or -1 if the program does not have one
         ///

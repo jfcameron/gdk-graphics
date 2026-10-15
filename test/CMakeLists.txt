@@ -11,6 +11,7 @@ jfc_add_tests(
         "${CMAKE_CURRENT_LIST_DIR}/material_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/model_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/null_context_test.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/profile_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/scene_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/shader_program_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test_include.h"

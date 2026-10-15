@@ -4,6 +4,7 @@
 #define GDK_GFX_CONTEXT_H
 
 #include <gdk/graphics/entity.h>
+#include <gdk/graphics/limits.h>
 #include <gdk/graphics/types.h>
 
 #include <cstddef>
@@ -30,8 +31,11 @@ namespace gdk::graphics {
             //! makes a camera 
             [[nodiscard]] virtual camera_ptr_type make_camera() = 0;
             
-            //! makes a texture_camera
+            //! makes a texture_camera with a 1024^2 texture
             [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera() = 0;
+
+            /// \brief makes a texture_camera drawing into textures aSize texels across
+            [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera(const intvector2_type &aSize) = 0;
            
             //! make an entity
             [[nodiscard]] virtual entity_ptr_type make_entity(
@@ -99,8 +103,7 @@ namespace gdk::graphics {
             /// Pair it with material::render_mode::transparent, which is what enables blending.
             [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const = 0;
 
-            /// \brief the largest square texture this context can create in texels.
-            [[nodiscard]] virtual size_t max_texture_size() const = 0;
+            [[nodiscard]] virtual graphics::limits limits() const = 0;
         //@}
 
             //! virtual destructor
