@@ -385,6 +385,7 @@ TEST_CASE("gdk::webgl1es2_material tints by _Color, white until told otherwise",
     initGL();
 
     const auto color_uniform_of = [](webgl1es2_material &aMaterial) {
+        test_gl_state().invalidate();
         aMaterial.activate(test_gl_state());
 
         const auto pProgram = aMaterial.getShaderProgram();
