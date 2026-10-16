@@ -151,10 +151,7 @@
       "cacheVariables": {
         "JFC_BUILD_TESTS": "OFF",
         "JFC_BUILD_DEMO": "ON",
-        "JFC_BUILD_DOCS": "OFF",
-        "CMAKE_CXX_FLAGS": "-sUSE_GLFW=3",
-        "CMAKE_C_FLAGS": "-sUSE_GLFW=3",
-        "CMAKE_EXE_LINKER_FLAGS": "-sUSE_GLFW=3"
+        "JFC_BUILD_DOCS": "OFF"
       }
     },
     {

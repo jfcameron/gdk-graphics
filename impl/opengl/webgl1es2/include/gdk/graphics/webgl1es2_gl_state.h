@@ -12,6 +12,7 @@
 #include <unordered_map>
 
 namespace gdk::graphics {
+    /// \brief what a context last told gl, so a call that changes nothing is skipped
     class gl_state final {
     public:
         /// \brief make aHandle the program in use if it is not already

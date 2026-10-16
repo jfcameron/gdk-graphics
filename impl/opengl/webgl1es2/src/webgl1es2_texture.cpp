@@ -77,6 +77,10 @@ static inline GLint magnification_filter_to_glint(const webgl1es2_texture::magni
     throw exception("unhandled magnification filter");
 }
 
+static inline void unpack_rows_as_packed() {
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+}
+
 static inline GLint wrap_mode_to_glint(const texture::wrap_mode a) {
     switch(a) {
         case texture::wrap_mode::clamped: return GL_CLAMP_TO_EDGE;
@@ -176,6 +180,7 @@ webgl1es2_texture::webgl1es2_texture(
 
     auto format = webGL1ES2TextureFormatToToGLint(aFormat);
 
+    unpack_rows_as_packed();
     glTexImage2D(GL_TEXTURE_2D, 
         0, 
         format,
@@ -230,6 +235,7 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView) {
 
     auto format = webGL1ES2TextureFormatToToGLint(textureFormatToWebGL1ES2TextureFormat(imageView.format));
 
+    unpack_rows_as_packed();
     glTexImage2D(GL_TEXTURE_2D, 
         0, 
         format,
@@ -257,6 +263,7 @@ void webgl1es2_texture::update_data(const texture_data::view &imageView,
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_Handle.get());
+    unpack_rows_as_packed();
     glTexSubImage2D(GL_TEXTURE_2D, 
         0, 
         static_cast<GLint>(offsetX),

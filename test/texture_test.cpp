@@ -1,13 +1,23 @@
 // © Joseph Cameron - All Rights Reserved
 
+#include <gdk/graphics/webgl1es2_gl_state.h>
+
 #include "test_include.h"
 
 #include <jfc/catch.hpp>
 #include <jfc/types.h>
 
 #include <gdk/graphics/texture_data.h>
+#include <gdk/graphics/webgl1es2_entity.h>
+#include <gdk/graphics/webgl1es2_material.h>
+#include <gdk/graphics/webgl1es2_model.h>
+#include <gdk/graphics/webgl1es2_scene.h>
+#include <gdk/graphics/webgl1es2_shader_program.h>
 #include <gdk/graphics/webgl1es2_texture.h>
+#include <gdk/graphics/webgl1es2_texture_camera.h>
 
+#include <array>
+#include <cstdint>
 #include <memory>
 #include <type_traits>
 #include <vector>
@@ -230,7 +240,6 @@ TEST_CASE("gdk::webgl1es2_texture mipmaps follow the filter", "[gdk::webgl1es2_t
             REQUIRE(!jfc::glGetError());
 
 #ifndef JFC_TARGET_PLATFORM_Emscripten
-            // desktop GL can say whether a level exists: level 1 of a 2 by 2 texture would be 1 wide
             glBindTexture(GL_TEXTURE_2D, tex.getHandle());
 
             GLint levelOneWidth = -1;
@@ -313,4 +322,127 @@ TEST_CASE("gdk::webgl1es2_texture of a size that is not a power of two", "[gdk::
 
         REQUIRE_THROWS(repeating.update_data(image.view(3, 1)));
     }
+}
+
+namespace {
+    struct texel_probe final {
+        std::shared_ptr<webgl1es2_shader_program> pShader =
+            std::make_shared<webgl1es2_shader_program>(R"V0G0N(
+            attribute highp vec3 a_Position;
+
+            void main() { gl_Position = vec4(a_Position.xy * 4.0, 0.0, 1.0); }
+            )V0G0N", R"V0G0N(
+            uniform sampler2D _Texture;
+            uniform mediump vec2 _At;
+            uniform mediump float _Grey;
+
+            void main() {
+                lowp vec4 texel = texture2D(_Texture, _At);
+                gl_FragColor = _Grey > 0.5 ? vec4(texel.a, 0.0, 0.0, 1.0) : vec4(texel.rgb, 1.0);
+            }
+            )V0G0N");
+
+        std::shared_ptr<webgl1es2_material> pMaterial = std::make_shared<webgl1es2_material>(
+            pShader, material::face_culling_mode::none, material::render_mode::opaque);
+
+        std::shared_ptr<webgl1es2_entity> pEntity =
+            std::make_shared<webgl1es2_entity>(webgl1es2_model::make_cube(), pMaterial);
+
+        std::shared_ptr<webgl1es2_texture_camera> pCamera =
+            std::make_shared<webgl1es2_texture_camera>(intvector2_type(4, 4));
+
+        webgl1es2_scene scene{std::make_shared<gl_state>()};
+
+        texel_probe() {
+            pEntity->set_transform({0, 0, -3}, quaternion_type::identity);
+            pCamera->set_perspective_projection(1.0f, 0.1f, 100.0f, 1.0f);
+            pCamera->set_transform(vector3_type::zero, quaternion_type::identity);
+
+            static_cast<void>(pCamera->get_color_texture(0));
+
+            scene.add(pEntity);
+            scene.add(pCamera);
+        }
+
+        ~texel_probe() {
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+        [[nodiscard]] std::vector<std::array<int, 3>> texels(const std::shared_ptr<webgl1es2_texture> &aTexture,
+            const int aWidth, const int aHeight, const bool aGrey) {
+            pMaterial->set_texture("_Texture", aTexture);
+            pMaterial->set_float("_Grey", aGrey ? 1.0f : 0.0f);
+
+            std::vector<std::array<int, 3>> out;
+
+            for (int y = 0; y < aHeight; ++y)
+                for (int x = 0; x < aWidth; ++x) {
+                    pMaterial->set_vector2("_At", {(static_cast<float>(x) + 0.5f) / static_cast<float>(aWidth),
+                        (static_cast<float>(y) + 0.5f) / static_cast<float>(aHeight)});
+
+                    scene.draw({4, 4});
+
+                    std::array<std::uint8_t, 4> pixel{};
+                    glReadPixels(1, 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel.data());
+
+                    out.push_back(aGrey ? std::array<int, 3>{pixel[0], 0, 0} : std::array<int, 3>{pixel[0], pixel[1], pixel[2]});
+                }
+
+            return out;
+        }
+    };
+
+    void unpack_as_gl_starts() {
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    }
+}
+
+TEST_CASE("**rows that aren't a multiple of 4 bytes are read as they are packed**", "[gdk::webgl1es2_texture]")
+{
+    initGL();
+
+    texel_probe probe;
+
+    using wrap = texture::wrap_mode;
+
+    const std::vector<texture_data::channel_type> grey{10, 20, 30, 40, 50, 60};
+    const std::vector<std::array<int, 3>> greyTexels{{10, 0, 0}, {20, 0, 0}, {30, 0, 0}, {40, 0, 0}, {50, 0, 0}, {60, 0, 0}};
+
+    const std::vector<texture_data::channel_type> rgb{
+        10, 11, 12, 20, 21, 22, 30, 31, 32,
+        40, 41, 42, 50, 51, 52, 60, 61, 62};
+    const std::vector<std::array<int, 3>> rgbTexels{{10, 11, 12}, {20, 21, 22}, {30, 31, 32}, {40, 41, 42}, {50, 51, 52}, {60, 61, 62}};
+
+    const texture_data::view greyView{3, 2, texture::format::grey, grey.data()};
+    const texture_data::view rgbView{3, 2, texture::format::rgb, rgb.data()};
+
+    SECTION("made with them")
+    {
+        unpack_as_gl_starts();
+        const auto pGrey = std::make_shared<webgl1es2_texture>(greyView, wrap::clamped, wrap::clamped);
+        REQUIRE(probe.texels(pGrey, 3, 2, true) == greyTexels);
+
+        unpack_as_gl_starts();
+        const auto pRgb = std::make_shared<webgl1es2_texture>(rgbView, wrap::clamped, wrap::clamped);
+        REQUIRE(probe.texels(pRgb, 3, 2, false) == rgbTexels);
+    }
+
+    SECTION("given them, whole or over the top")
+    {
+        const std::vector<texture_data::channel_type> blank(18, 0);
+
+        const auto pWhole = std::make_shared<webgl1es2_texture>(texture_data::view{1, 1, texture::format::grey, blank.data()},
+            wrap::clamped, wrap::clamped);
+        unpack_as_gl_starts();
+        pWhole->update_data(greyView);
+        REQUIRE(probe.texels(pWhole, 3, 2, true) == greyTexels);
+
+        const auto pOver = std::make_shared<webgl1es2_texture>(texture_data::view{3, 2, texture::format::rgb, blank.data()},
+            wrap::clamped, wrap::clamped);
+        unpack_as_gl_starts();
+        pOver->update_data(rgbView, 0, 0);
+        REQUIRE(probe.texels(pOver, 3, 2, false) == rgbTexels);
+    }
+
+    REQUIRE(!jfc::glGetError());
 }
