@@ -246,6 +246,12 @@ void null_camera::set_perspective_projection(const floating_point_type aFieldOfV
     mAspectRatio = aAspectRatio;
 }
 
+void null_camera::set_perspective_projection(const floating_point_type aFieldOfView,
+    const floating_point_type aNear, const floating_point_type aFar,
+    const floating_point_type aAspectRatio, const vector2_type &) {
+    set_perspective_projection(aFieldOfView, aNear, aFar, aAspectRatio);
+}
+
 void null_camera::set_orthographic_projection(const vector2_type &,
     const floating_point_type aNear, const floating_point_type aFar,
     const floating_point_type aAspectRatio) {
@@ -315,6 +321,9 @@ null_texture_camera::null_texture_camera()
 
 void null_texture_camera::set_perspective_projection(const floating_point_type,
     const floating_point_type, const floating_point_type, const floating_point_type) {}
+
+void null_texture_camera::set_perspective_projection(const floating_point_type,
+    const floating_point_type, const floating_point_type, const floating_point_type, const vector2_type &) {}
 
 void null_texture_camera::set_orthographic_projection(const vector2_type &,
     const floating_point_type, const floating_point_type, const floating_point_type) {}

@@ -216,6 +216,10 @@ namespace gdk::graphics {
             const floating_point_type aNear, const floating_point_type aFar,
             const floating_point_type aAspectRatio) override;
 
+        virtual void set_perspective_projection(const floating_point_type aFieldOfView,
+            const floating_point_type aNear, const floating_point_type aFar,
+            const floating_point_type aAspectRatio, const vector2_type &aShift) override;
+
         virtual void set_orthographic_projection(const vector2_type &aOrthographicSize,
             const floating_point_type aNear, const floating_point_type aFar,
             const floating_point_type aAspectRatio) override;
@@ -273,6 +277,10 @@ namespace gdk::graphics {
         virtual void set_perspective_projection(const floating_point_type aFieldOfView,
             const floating_point_type aNear, const floating_point_type aFar,
             const floating_point_type aAspectRatio) override;
+
+        virtual void set_perspective_projection(const floating_point_type aFieldOfView,
+            const floating_point_type aNear, const floating_point_type aFar,
+            const floating_point_type aAspectRatio, const vector2_type &aShift) override;
 
         virtual void set_orthographic_projection(const vector2_type &aOrthographicSize,
             const floating_point_type aNear, const floating_point_type aFar,

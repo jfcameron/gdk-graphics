@@ -23,16 +23,17 @@ namespace gdk::graphics {
     public:
         //! specify whether front- or back-facing polygons can be culled
         enum class face_culling_mode {
-            front, //!< cull front facing polygons
-            back, //!< cull back facing polygons
+            front,          //!< cull front facing polygons
+            back,           //!< cull back facing polygons
             front_and_back, //!< cull front and back facing polygons
-            none //!< do not cull any polygons
+            none            //!< do not cull any polygons
         };
 
         //! render mode decides transparency etc
         enum class render_mode {
-            opaque, //!< no transparency
-            transparent //!< transparency
+            opaque,      //!< no transparency
+            transparent, //!< transparency
+            additive     //!< added to what is behind it, scaled by its alpha: light, a glow, a beam
         };
 
         /// \brief textures can be shared among many webgl1es2_materials.

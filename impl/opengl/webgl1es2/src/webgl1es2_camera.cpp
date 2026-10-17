@@ -47,7 +47,7 @@ void webgl1es2_camera::set_transform(const gdk::graphics::matrix4x4_type &aMatri
 namespace {
     [[nodiscard]] gdk::graphics::matrix4x4_type make_gl_perspective(const float aFieldOfView,
         const float aNearClippingPlane, const float aFarClippingPlane,
-        const float aViewportAspectRatio) {
+        const float aViewportAspectRatio, const gdk::graphics::vector2_type &aShift) {
         const auto tanHalfFovy = static_cast<float>(std::tan(aFieldOfView * 0.5));
 
         gdk::graphics::matrix4x4_type matrix;
@@ -62,8 +62,8 @@ namespace {
         matrix.set(1, 2, 0.0);
         matrix.set(1, 3, 0.0);
 
-        matrix.set(2, 0, 0.0);
-        matrix.set(2, 1, 0.0);
+        matrix.set(2, 0, aShift.x);
+        matrix.set(2, 1, aShift.y);
         matrix.set(2, 2, -(aFarClippingPlane + aNearClippingPlane) / (aFarClippingPlane - aNearClippingPlane));
         matrix.set(2, 3, -1.0);
 
@@ -96,8 +96,14 @@ namespace {
 void webgl1es2_camera::set_perspective_projection(const float aFieldOfView,
     const float aNearClippingPlane, const float aFarClippingPlane,
     const float aViewportAspectRatio) {
+    set_perspective_projection(aFieldOfView, aNearClippingPlane, aFarClippingPlane, aViewportAspectRatio, {0, 0});
+}
+
+void webgl1es2_camera::set_perspective_projection(const float aFieldOfView,
+    const float aNearClippingPlane, const float aFarClippingPlane,
+    const float aViewportAspectRatio, const gdk::graphics::vector2_type &aShift) {
     m_ProjectionMatrix = make_gl_perspective(aFieldOfView, aNearClippingPlane, aFarClippingPlane,
-        aViewportAspectRatio);
+        aViewportAspectRatio, aShift);
 
     m_Orthographic = false;
 }
@@ -132,6 +138,8 @@ gdk::graphics::color webgl1es2_camera::get_clearcolor() const {
 }
 
 void webgl1es2_camera::activate_clear_mode() const {
+    if (m_ClearMode != gdk::graphics::camera::clear_mode::nothing) glDepthMask(GL_TRUE);
+
     switch(m_ClearMode) {
         case gdk::graphics::camera::clear_mode::nothing: return;
 

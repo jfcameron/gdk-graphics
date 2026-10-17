@@ -153,7 +153,8 @@ TEST_CASE("context factories", "[gdk::context]")
         const auto pShader = pContext->make_alpha_cutoff_shader();
         REQUIRE(pShader);
 
-        for (const auto render : {material::render_mode::opaque, material::render_mode::transparent}) {
+        for (const auto render : {material::render_mode::opaque, material::render_mode::transparent,
+            material::render_mode::additive}) {
             for (const auto culling : {material::face_culling_mode::none,
                 material::face_culling_mode::front, material::face_culling_mode::back,
                 material::face_culling_mode::front_and_back}) {

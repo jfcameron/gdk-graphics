@@ -187,6 +187,15 @@ TEST_CASE("a null material remembers the uniforms it was set", "[null_context][m
     REQUIRE(pMaterial->uniforms().empty());
     REQUIRE(pMaterial->mode() == material::render_mode::transparent);
 
+    SECTION("and its render mode, added included")
+    {
+        const auto pAdded = std::static_pointer_cast<null_material>(
+            pContext->make_material(pContext->make_alpha_cutoff_shader(),
+                material::render_mode::additive, material::face_culling_mode::none));
+
+        REQUIRE(pAdded->mode() == material::render_mode::additive);
+    }
+
     SECTION("a float comes back as a float")
     {
         pMaterial->set_float("_Cutoff", 0.5f);

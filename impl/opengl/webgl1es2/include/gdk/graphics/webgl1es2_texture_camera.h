@@ -29,6 +29,10 @@ namespace gdk::graphics {
             const float aNearClippingPlane, const float aFarClippingPlane,
             const float aViewportAspectRatio) override;
 
+        virtual void set_perspective_projection(const float aFieldOfView,
+            const float aNearClippingPlane, const float aFarClippingPlane,
+            const float aViewportAspectRatio, const gdk::graphics::vector2_type &aShift) override;
+
         virtual void set_orthographic_projection(const gdk::graphics::vector2_type &aOrthographicSize,
             const float aNearClippingPlane, const float aFarClippingPlane,
             const float aViewportAspectRatio) override;

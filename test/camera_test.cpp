@@ -262,3 +262,48 @@ TEST_CASE("camera value semantics", "[camera]")
         REQUIRE(!jfc::glGetError());
     }
 }
+
+TEST_CASE("the projection's window shifted off the axis: what is on the axis is drawn that far from the centre", "[camera][stereo]")
+{
+    initGL();
+
+    webgl1es2_screen_camera a;
+
+    const auto across = [&a]() {
+        const auto &m = a.get_projection_matrix();
+        const float z = -5.0f;
+        const float x = m.get(2, 0) * z + m.get(3, 0);
+        const float w = m.get(2, 3) * z + m.get(3, 3);
+
+        return x / w;
+    };
+
+    a.set_perspective_projection(1.0f, 0.1f, 100.0f, 1.5f);
+
+    REQUIRE(across() == Approx(0.0f).margin(1e-6));
+
+    a.set_perspective_projection(1.0f, 0.1f, 100.0f, 1.5f, {0.25f, 0.0f});
+
+    REQUIRE(across() == Approx(-0.25f));
+
+    SECTION("and back to symmetric when no shift is given")
+    {
+        a.set_perspective_projection(1.0f, 0.1f, 100.0f, 1.5f);
+
+        REQUIRE(across() == Approx(0.0f).margin(1e-6));
+    }
+
+    SECTION("the rest of the projection is the symmetric one's")
+    {
+        webgl1es2_screen_camera b;
+
+        b.set_perspective_projection(1.0f, 0.1f, 100.0f, 1.5f);
+
+        const auto &shifted = a.get_projection_matrix();
+        const auto &plain = b.get_projection_matrix();
+
+        for (std::size_t column = 0; column < 4; ++column)
+            for (std::size_t row = 0; row < 4; ++row)
+                if (!(column == 2 && row < 2)) REQUIRE(shifted.get(column, row) == Approx(plain.get(column, row)));
+    }
+}

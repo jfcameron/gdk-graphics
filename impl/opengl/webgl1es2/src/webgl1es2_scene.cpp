@@ -88,6 +88,7 @@ void webgl1es2_scene::remove(const std::shared_ptr<const entity> &pEntity) {
 
     m_opaque_set.remove(pEntity.get());
     m_translucent_set.remove(pEntity.get());
+    m_additive_set.remove(pEntity.get());
 }
 
 void webgl1es2_scene::add(const std::shared_ptr<const screen_camera> &pCamera) {
@@ -224,6 +225,7 @@ void webgl1es2_scene::add(const std::shared_ptr<const entity> &pEntityInterface)
     switch(pEntity->getMaterial()->get_render_mode()) {
         case material::render_mode::opaque: m_opaque_set.try_add(pEntityInterface); return;
         case material::render_mode::transparent: m_translucent_set.try_add(pEntityInterface); return;
+        case material::render_mode::additive: m_additive_set.try_add(pEntityInterface); return;
         default: break;
     }
     throw exception("unhandled material render mode");
@@ -303,6 +305,9 @@ void webgl1es2_scene::draw(const gdk::graphics::intvector2_type &aFrameBufferSiz
 
         m_translucent_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum,
             viewProjection, m_Uniforms);
+
+        m_additive_set.draw(current_texture_camera.get(), *m_pState, cameraFrustum,
+            viewProjection, m_Uniforms);
     }
 
     for (auto &current_screen_camera : live(m_screen_cameras)) {
@@ -318,7 +323,12 @@ void webgl1es2_scene::draw(const gdk::graphics::intvector2_type &aFrameBufferSiz
 
         m_translucent_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum,
             viewProjection, m_Uniforms);
+
+        m_additive_set.draw(current_screen_camera.get(), *m_pState, cameraFrustum,
+            viewProjection, m_Uniforms);
     }
+
+    glDepthMask(GL_TRUE);
 }
 
 void webgl1es2_scene::set_float(const std::string_view aName, float aValue) {

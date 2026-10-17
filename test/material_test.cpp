@@ -13,6 +13,8 @@
 #include <gdk/graphics/webgl1es2_shader_program.h>
 #include <gdk/graphics/webgl1es2_texture.h>
 
+#include <utility>
+
 #include <array>
 #include <memory>
 #include <string>
@@ -52,7 +54,8 @@ TEST_CASE("gdk::webgl1es2_material construction", "[gdk::webgl1es2_material]")
 
     SECTION("every combination of culling and render mode constructs cleanly")
     {
-        for (const auto render : {material::render_mode::opaque, material::render_mode::transparent}) {
+        for (const auto render : {material::render_mode::opaque, material::render_mode::transparent,
+            material::render_mode::additive}) {
             for (const auto culling : {material::face_culling_mode::none,
                 material::face_culling_mode::front, material::face_culling_mode::back,
                 material::face_culling_mode::front_and_back}) {
@@ -63,6 +66,65 @@ TEST_CASE("gdk::webgl1es2_material construction", "[gdk::webgl1es2_material]")
                 REQUIRE(!jfc::glGetError());
             }
         }
+    }
+}
+
+TEST_CASE("**a material's render mode decides blending and depth writing**", "[gdk::webgl1es2_material]")
+{
+    initGL();
+
+    const auto activate = [](const material::render_mode aRender) {
+        auto mat = a_material(material::face_culling_mode::none, aRender);
+
+        mat.activate(test_gl_state());
+    };
+
+    const auto blending = [] { return glIsEnabled(GL_BLEND) == GL_TRUE; };
+
+    const auto writing_depth = [] {
+        GLboolean out = GL_FALSE;
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &out);
+
+        return out == GL_TRUE;
+    };
+
+    const auto blend_function = [] {
+        GLint source = 0, destination = 0;
+        glGetIntegerv(GL_BLEND_SRC_RGB, &source);
+        glGetIntegerv(GL_BLEND_DST_RGB, &destination);
+
+        return std::pair<GLint, GLint>{source, destination};
+    };
+
+    SECTION("added: blended by its alpha onto what is there, writing no depth")
+    {
+        activate(material::render_mode::additive);
+
+        REQUIRE(blending());
+        REQUIRE(blend_function() == std::pair<GLint, GLint>{GL_SRC_ALPHA, GL_ONE});
+        REQUIRE_FALSE(writing_depth());
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("transparent after added: blended over what is there, writing depth again")
+    {
+        activate(material::render_mode::additive);
+        activate(material::render_mode::transparent);
+
+        REQUIRE(blending());
+        REQUIRE(blend_function() == std::pair<GLint, GLint>{GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA});
+        REQUIRE(writing_depth());
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("opaque after added: no blending, writing depth again")
+    {
+        activate(material::render_mode::additive);
+        activate(material::render_mode::opaque);
+
+        REQUIRE_FALSE(blending());
+        REQUIRE(writing_depth());
+        REQUIRE(!jfc::glGetError());
     }
 }
 

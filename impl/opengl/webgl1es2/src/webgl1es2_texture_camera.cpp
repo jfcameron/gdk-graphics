@@ -51,6 +51,13 @@ void webgl1es2_texture_camera::set_perspective_projection(const float aFieldOfVi
         aFarClippingPlane, aViewportAspectRatio);
 }
 
+void webgl1es2_texture_camera::set_perspective_projection(const float aFieldOfView,
+    const float aNearClippingPlane, const float aFarClippingPlane,
+    const float aViewportAspectRatio, const gdk::graphics::vector2_type &aShift) {
+    webgl1es2_camera::set_perspective_projection(aFieldOfView, aNearClippingPlane,
+        aFarClippingPlane, aViewportAspectRatio, aShift);
+}
+
 void webgl1es2_texture_camera::set_orthographic_projection(const gdk::graphics::vector2_type &aOrthographicSize,
     const float aNearClippingPlane, const float aFarClippingPlane,
     const float aViewportAspectRatio) {

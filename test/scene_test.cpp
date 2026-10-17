@@ -444,6 +444,52 @@ TEST_CASE("gdk::webgl1es2_scene draw order", "[gdk::webgl1es2_scene]")
 
         REQUIRE(!jfc::glGetError());
     }
+
+    SECTION("what is added is drawn last, after what is transparent, even nearer")
+    {
+        const auto pAdded = an_entity(a_material(material::render_mode::additive), {0, 0, -5});
+        const auto pTransparent = an_entity(pMaterial, {0, 0, -30});
+
+        scene.add(pAdded);
+        scene.add(pTransparent);
+
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        require_matches(read_mvp(), expected_mvp(*pCamera, *pAdded));
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("depth writing is on again after a frame that ended on something added, so the next clear clears it")
+    {
+        const auto pAdded = an_entity(a_material(material::render_mode::additive), {0, 0, -5});
+
+        scene.add(pAdded);
+
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        require_matches(read_mvp(), expected_mvp(*pCamera, *pAdded));
+
+        GLboolean writing = GL_FALSE;
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &writing);
+
+        REQUIRE(writing == GL_TRUE);
+        REQUIRE(!jfc::glGetError());
+    }
+
+    SECTION("something added can be taken out again")
+    {
+        const auto pAddedMaterial = a_material(material::render_mode::additive);
+        const auto pAdded = an_entity(pAddedMaterial, {0, 0, -5});
+
+        scene.add(pAdded);
+        scene.remove(pAdded);
+
+        mark(*pAddedMaterial);
+        scene.draw(FRAME_BUFFER_SIZE);
+
+        REQUIRE(nothing_was_drawn());
+        REQUIRE(!jfc::glGetError());
+    }
 }
 
 TEST_CASE("entities outside the view volume are not drawn", "[gdk::webgl1es2_scene][culling]")

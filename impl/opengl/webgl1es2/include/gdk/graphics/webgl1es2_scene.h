@@ -147,6 +147,8 @@ namespace gdk::graphics {
         render_set m_opaque_set;
 
         sorted_render_set m_translucent_set;
+
+        render_set m_additive_set;
     };
 }
 

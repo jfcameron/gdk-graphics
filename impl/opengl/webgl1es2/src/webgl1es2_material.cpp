@@ -25,6 +25,8 @@ static inline void setface_culling_mode(const material::face_culling_mode a) {
 }
 
 static inline void setRenderMode(const material::render_mode aRenderMode) {
+    glDepthMask(aRenderMode == material::render_mode::additive ? GL_FALSE : GL_TRUE);
+
     if (aRenderMode == material::render_mode::opaque) {
         glDisable(GL_BLEND);
         return;
@@ -34,6 +36,8 @@ static inline void setRenderMode(const material::render_mode aRenderMode) {
     switch(aRenderMode) {
         case material::render_mode::transparent: 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); return;
+        case material::render_mode::additive:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE); return;
         default: break;
     }
     throw exception("unhandled render mode");
