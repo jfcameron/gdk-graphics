@@ -101,6 +101,10 @@ if (EMSCRIPTEN)
     target_link_options(gdkgraphics PUBLIC "-lembind")
 endif()
 
+if (ANDROID)
+    target_link_libraries(gdkgraphics PUBLIC GLESv2 EGL)
+endif()
+
 if (JFC_BUILD_DEMO)
     add_subdirectory(demo)
 endif()

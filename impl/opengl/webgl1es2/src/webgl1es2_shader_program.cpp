@@ -197,8 +197,8 @@ static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_s
     )V0G0N");
 
     aSource.insert(0, std::string("#define ").append(gdk::graphics::build_info::target_platform).append("\n"));
-#if defined JFC_TARGET_PLATFORM_Emscripten 
-    // version must be the first line in source. version must be present for WebGL platforms
+#if GDK_GRAPHICS_GLES
+    // version must be the first line in source, and present, for WebGL and GLES 2
     aSource.insert(0, std::string("#version 100\n"));
 #else
    // remove precison prefixes (required by wasm but not needed by GLES2)
@@ -211,8 +211,8 @@ static void perform_shader_code_preprocessing_done_to_both_vertex_and_fragment_s
 //! aSource is only touched on emscripten, where webgl requires an explicit float precision
 static void perform_shader_code_preprocessing_done_to_only_fragment_stages(
     [[maybe_unused]] std::string &aSource) {
-#if defined JFC_TARGET_PLATFORM_Emscripten 
-    // sets float precision, required by webgl
+#if GDK_GRAPHICS_GLES
+    // sets float precision, required by WebGL and GLES 2
     aSource.insert(0, std::string("precision mediump float;\n"));
 #endif
 }

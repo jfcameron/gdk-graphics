@@ -36,9 +36,9 @@ namespace {
     [[nodiscard]] graphics::limits limits_of_gl() {
         graphics::limits out;
         out.texture_size = static_cast<std::size_t>(webgl1es2_texture::getMaxTextureSize());
-#ifdef JFC_TARGET_PLATFORM_Emscripten
-        // WebGL 1 takes one repeating or mipmapped only with the extension; clamped and
-        // unmipmapped it takes any size regardless, as webgl1es2_texture allows
+#if GDK_GRAPHICS_GLES
+        // WebGL 1 and GLES 2 take one repeating or mipmapped only with the extension; clamped and
+        // unmipmapped they take any size regardless, as webgl1es2_texture allows
         out.non_power_of_two_textures = [] {
             const auto *const pExtensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
 
