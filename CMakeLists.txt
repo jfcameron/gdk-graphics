@@ -51,6 +51,7 @@ add_library(gdkgraphics STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/profile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/font_texture.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/text_modeler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/null/src/null_context.cpp)
 

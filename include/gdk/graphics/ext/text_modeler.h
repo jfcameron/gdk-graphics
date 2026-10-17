@@ -6,6 +6,7 @@
 #include <gdk/graphics/context.h>
 #include <gdk/graphics/ext/batch_modeler.h>
 #include <gdk/graphics/ext/font.h>
+#include <gdk/graphics/ext/font_texture.h>
 #include <gdk/graphics/material.h>
 #include <gdk/graphics/texture_data.h>
 #include <gdk/graphics/types.h>
@@ -36,7 +37,7 @@ namespace gdk::graphics::ext {
         /// \brief upload the geometry, and the atlas texture if it has changed since last time
         void upload();
 
-        /// \brief the font atlas generation this modeler last uploaded a texture for.
+        /// \brief the font atlas generation of the texture this modeler draws from
         [[nodiscard]] size_t uploaded_atlas_generation() const;
 
         /// \brief how many glyphs in the last set_text could not be rasterised, and were drawn as
@@ -57,22 +58,32 @@ namespace gdk::graphics::ext {
             float aScale = 0.f
         );
 
+        /// \brief builds a modeler that draws from a texture of the font's atlas it shares with
+        /// others
+        ///
+        /// \param aFontTexture the font, as its atlas's texture
+        text_modeler(
+            context_ptr_type aContext,
+            std::shared_ptr<font_texture> aFontTexture,
+            material_ptr_type aMaterial = {},
+            float aScale = 0.f
+        );
+
     private:
         std::shared_ptr<font> m_pFont;
 
         context_ptr_type m_pContext;
 
-        texture_ptr_type m_pAtlasTexture;
+        std::shared_ptr<font_texture> m_pFontTexture;
+
+        //! the texture the material has
+        texture_ptr_type m_pBoundTexture;
 
         material_ptr_type m_pMaterial;
 
         batch_modeler m_BatchModeler;
 
-        size_t m_UploadedAtlasGeneration = 0;
-
         size_t m_FallbackGlyphCount = 0;
-
-        texture_data::channel_data m_Rgba;
 
         float m_Scale = 0;
 

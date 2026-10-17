@@ -142,7 +142,6 @@ TEST_CASE("gdk::graphics::ext::text_modeler uploads the atlas when new glyphs ar
     "[gdk::graphics::ext::text_modeler]") {
     auto pFont = load_a_font();
 
-    // vendored, so its absence is a broken checkout rather than a reason to skip
     REQUIRE(pFont);
 
     const auto pContext = null_context::make();
@@ -368,4 +367,75 @@ TEST_CASE("glyph coverage reaches the texture instead of being rounded off",
         if (atlas.data[i] > 0 && atlas.data[i] < 255) ++partial;
 
     REQUIRE(partial > 0);
+}
+
+TEST_CASE("text_modelers given one font_texture draw from one texture, uploaded once",
+    "[gdk::graphics::ext::text_modeler]") {
+    std::ifstream file(GDK_TEST_FONT, std::ios::binary);
+
+    REQUIRE(file);
+
+    const std::vector<texture_data::encoded_byte> data(
+        (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+    const auto pContext = null_context::make();
+
+    SECTION("each modeler given only the font keeps a texture of its own") {
+        auto pFont = std::make_shared<font>(data, 12.f, font_settings{.atlas_edge = 512, .max_atlas_edge = 2048});
+
+        text_modeler first(pContext, pFont), second(pContext, pFont);
+
+        first.set_text("abc");
+        first.upload();
+        second.set_text("abc");
+        second.upload();
+
+        REQUIRE(pContext->texture_count() == 2);
+    }
+
+    SECTION("modelers given the same font_texture share one") {
+        auto pTexture = std::make_shared<font_texture>(pContext,
+            std::make_shared<font>(data, 12.f, font_settings{.atlas_edge = 512, .max_atlas_edge = 2048}));
+
+        text_modeler first(pContext, pTexture), second(pContext, pTexture), third(pContext, pTexture);
+
+        first.set_text("abc");
+        first.upload();
+        second.set_text("defghijklmnop");
+        second.upload();
+        third.set_text("cab");
+        third.upload();
+
+        REQUIRE(pContext->texture_count() == 1);
+        REQUIRE(pTexture->uploaded_atlas_generation() == pTexture->typeface()->atlas_generation());
+        REQUIRE(first.uploaded_atlas_generation() == pTexture->uploaded_atlas_generation());
+    }
+
+    SECTION("a growth makes the shared texture again, and a modeler takes it as it uploads") {
+        auto pFont = std::make_shared<font>(data, 24.f, font_settings{.atlas_edge = 64, .max_atlas_edge = 2048});
+        auto pTexture = std::make_shared<font_texture>(pContext, pFont);
+
+        text_modeler first(pContext, pTexture), second(pContext, pTexture);
+
+        first.set_text("a");
+        first.upload();
+        second.set_text("a");
+        second.upload();
+
+        const auto beforeGrowth = pTexture->texture();
+        const auto edgeBefore = pFont->atlas_edge();
+
+        first.set_text("the quick brown fox jumps over the lazy dog 0123456789");
+        first.upload();
+
+        REQUIRE(pFont->atlas_edge() > edgeBefore);
+        REQUIRE(pTexture->texture() != beforeGrowth);
+        REQUIRE(pContext->texture_count() == 2);
+
+        second.set_text("a");
+        second.upload();
+
+        REQUIRE(pContext->texture_count() == 2);
+        REQUIRE(second.uploaded_atlas_generation() == pFont->atlas_generation());
+    }
 }

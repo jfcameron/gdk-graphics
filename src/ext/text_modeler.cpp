@@ -60,18 +60,6 @@ namespace {
 
         return REPLACEMENT_CHARACTER;
     }
-
-    void coverage_to_rgba(const texture_data::view aCoverage,
-        const size_t aX, const size_t aY, const size_t aWidth, const size_t aHeight,
-        texture_data::channel_data &aOut) {
-        aOut.assign(aWidth * aHeight * 4, 0xFF);
-
-        for (size_t row = 0; row < aHeight; ++row)
-            for (size_t column = 0; column < aWidth; ++column) {
-                aOut[(row * aWidth + column) * 4 + 3] =
-                    aCoverage.data[(aY + row) * aCoverage.width + aX + column];
-            }
-    }
 }
 
 const_model_ptr_type text_modeler::model() const { return m_BatchModeler.model(); }
@@ -169,38 +157,17 @@ void text_modeler::set_text(const std::string_view aUTF8) {
     };
 }
 
-size_t text_modeler::uploaded_atlas_generation() const { return m_UploadedAtlasGeneration; }
+size_t text_modeler::uploaded_atlas_generation() const { return m_pFontTexture->uploaded_atlas_generation(); }
 
 size_t text_modeler::fallback_glyph_count() const { return m_FallbackGlyphCount; }
 
 void text_modeler::upload() {
-    if (const auto generation = m_pFont->atlas_generation(); generation != m_UploadedAtlasGeneration) {
-        const auto coverage = m_pFont->atlas();
+    m_pFontTexture->upload();
 
-        const auto changed = m_pFont->atlas_changed_since(m_UploadedAtlasGeneration);
+    if (const auto pTexture = m_pFontTexture->texture(); pTexture != m_pBoundTexture) {
+        m_pMaterial->set_texture("_Texture", pTexture);
 
-        if (changed && m_pAtlasTexture) {
-            if (changed->width > 0 && changed->height > 0) {
-                coverage_to_rgba(coverage, changed->x, changed->y, changed->width, changed->height,
-                    m_Rgba);
-
-                m_pAtlasTexture->update_data(
-                    { changed->width, changed->height, texture::format::rgba, m_Rgba.data() },
-                    changed->x, changed->y);
-            }
-        }
-        else {
-            coverage_to_rgba(coverage, 0, 0, coverage.width, coverage.height, m_Rgba);
-
-            m_pAtlasTexture = m_pContext->make_texture(
-                { coverage.width, coverage.height, texture::format::rgba, m_Rgba.data() },
-                texture::wrap_mode::repeat, texture::wrap_mode::repeat,
-                texture::filter_mode::smooth);
-
-            m_pMaterial->set_texture("_Texture", m_pAtlasTexture);
-        }
-
-        m_UploadedAtlasGeneration = generation;
+        m_pBoundTexture = pTexture;
     }
 
     m_BatchModeler.upload();
@@ -210,8 +177,16 @@ text_modeler::text_modeler(context_ptr_type aContext,
     std::shared_ptr<font> aFont,
     material_ptr_type aMaterial,
     const float aScale)
-: m_pFont(std::move(aFont))
+: text_modeler(aContext, std::make_shared<font_texture>(aContext, std::move(aFont)), std::move(aMaterial), aScale)
+{}
+
+text_modeler::text_modeler(context_ptr_type aContext,
+    std::shared_ptr<font_texture> aFontTexture,
+    material_ptr_type aMaterial,
+    const float aScale)
+: m_pFont(aFontTexture->typeface())
 , m_pContext(aContext)
+, m_pFontTexture(std::move(aFontTexture))
 , m_pMaterial(aMaterial ? aMaterial : [&]() {
     auto pMaterial(aContext->make_material(
     aContext->make_alpha_blend_shader(),
@@ -227,4 +202,3 @@ text_modeler::text_modeler(context_ptr_type aContext,
         ? aScale 
         : 1.f / m_pFont->line_height())
 {}
-
