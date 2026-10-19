@@ -48,30 +48,10 @@ jobs:
             runner: ubuntu-latest
             tests: true
 
-          - preset: linux-gcc-demo
-            runner: ubuntu-latest
-            tests: false
-
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: install windowing and software gl
-        if: runner.os == 'Linux'
-        run: |
-            sudo apt-get update
-            sudo apt-get install -y \
-              fonts-dejavu-core \
-              fonts-noto-cjk \
-              libgl1-mesa-dri \
-              libglu1-mesa-dev \
-              libwayland-dev \
-              libxkbcommon-dev \
-              mesa-utils \
-              wayland-protocols \
-              xorg-dev \
-              xvfb
 
       - name: configure
         run: cmake --preset ${{ matrix.preset }}
@@ -79,14 +59,8 @@ jobs:
       - name: build
         run: cmake --build --preset ${{ matrix.preset }}
 
-      - name: test (linux)
-        if: matrix.tests && runner.os == 'Linux'
-        env:
-          LIBGL_ALWAYS_SOFTWARE: 1
-        run: xvfb-run -a --server-args="-screen 0 1280x1024x24" ctest --preset ${{ matrix.preset }}
-
       - name: test
-        if: matrix.tests && runner.os != 'Linux'
+        if: matrix.tests
         run: ctest --preset ${{ matrix.preset }}
 
   emscripten:
@@ -125,11 +99,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             doxygen \
-            graphviz \
-            libwayland-dev \
-            libxkbcommon-dev \
-            wayland-protocols \
-            xorg-dev 
+            graphviz
 
       - name: generate documentation
         run: cmake --preset linux-docs

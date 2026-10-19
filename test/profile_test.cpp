@@ -4,16 +4,19 @@
 
 #include <gdk/graphics/null_context.h>
 #include <gdk/graphics/profile.h>
+#include <gdk/graphics/ext/gles.h>
 
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
 #include <gdk/graphics/texture_data.h>
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 using namespace gdk;
 using namespace gdk::graphics;
+using namespace gdk::graphics::ext;
 
 namespace {
     struct pixels final {
@@ -33,18 +36,18 @@ namespace {
         return pContext->make_texture(made.view, texture::wrap_mode::repeat, texture::wrap_mode::repeat);
     }
 
-    [[nodiscard]] std::string vertex_with(const std::string &aMore) {
-        return aMore + "\nattribute vec3 a_Position;\nvoid main() { gl_Position = vec4(a_Position, 1.0); }\n";
+    [[nodiscard]] std::string vertex_with(std::string_view aMore) {
+        return std::string(aMore) + "\nattribute vec3 a_Position;\nvoid main() { gl_Position = vec4(a_Position, 1.0); }\n";
     }
 
-    [[nodiscard]] std::string fragment_with(const std::string &aMore) {
-        return "precision mediump float;\n" + aMore + "\nvoid main() { gl_FragColor = vec4(1.0); }\n";
+    [[nodiscard]] std::string fragment_with(std::string_view aMore) {
+        return "precision mediump float;\n" + std::string(aMore) + "\nvoid main() { gl_FragColor = vec4(1.0); }\n";
     }
 
-    [[nodiscard]] std::string repeated(const std::string &aDeclaration, const int aTimes) {
+    [[nodiscard]] std::string repeated(std::string_view aDeclaration, const int aTimes) {
         std::string out;
 
-        for (int i = 0; i < aTimes; ++i) out += aDeclaration + std::to_string(i) + ";\n";
+        for (int i = 0; i < aTimes; ++i) out += std::string(aDeclaration) + std::to_string(i) + ";\n";
 
         return out;
     }

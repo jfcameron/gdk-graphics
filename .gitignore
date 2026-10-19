@@ -3,5 +3,5 @@
 out/
 CMakeUserPresets.json
 
-fuzz/corpus/**/working/
-fuzz/corpus/**/*.working/
+data/fuzz/corpus/**/working/
+data/fuzz/corpus/**/*.working/

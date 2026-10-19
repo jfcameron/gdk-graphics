@@ -1,6 +1,6 @@
 # © Joseph Cameron - All Rights Reserved
 
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/jfc-cmake/jfclib.cmake")
 
@@ -8,7 +8,6 @@ project(gdkgraphics
     VERSION 0.9
     DESCRIPTION "game development kit graphics lib")
 
-option(JFC_BUILD_DEMO "Build the demo" ON)
 option(JFC_BUILD_DOCS "Build documentation" OFF)
 option(JFC_BUILD_TESTS "Build unit tests" OFF)
 
@@ -37,21 +36,13 @@ else()
     endforeach()
 endif()
 
+add_subdirectory(data)
+
 add_library(gdkgraphics STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/src/glh.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_camera.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_context.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_entity.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_material.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_model.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_scene.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_screen_camera.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_shader_program.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/webgl1es2_texture_camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/profile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/font_texture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/gles.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/text_modeler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/null/src/null_context.cpp)
 
@@ -66,16 +57,10 @@ jfc_generate_build_info()
 target_include_directories(gdkgraphics
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/impl/null/include>"
         "$<INSTALL_INTERFACE:include>"
 
         "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated_include>"
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/incubate
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/common/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/impl/opengl/webgl1es2/src/include
     )
 
 target_compile_features(gdkgraphics PUBLIC cxx_std_20)
@@ -83,32 +68,20 @@ target_compile_features(gdkgraphics PUBLIC cxx_std_20)
 target_link_libraries(gdkgraphics PUBLIC
     gdkgraphics_data
     gdkmath
-    gdktime
     jfc-smart_handles
-    gdkwindow
 )
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    find_package(OpenGL QUIET COMPONENTS EGL)
+add_library(gdkgraphics_conformance INTERFACE)
 
-    if (TARGET OpenGL::EGL)
-        target_link_libraries(gdkgraphics PUBLIC OpenGL::EGL)
+target_sources(gdkgraphics_conformance INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/conformance/context_conformance.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/conformance/profile_conformance.cpp)
 
-        target_compile_definitions(gdkgraphics PUBLIC GDK_GRAPHICS_HAS_EGL=1)
-    endif()
-endif()
+target_include_directories(gdkgraphics_conformance INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/conformance)
 
-if (EMSCRIPTEN)
-    target_link_options(gdkgraphics PUBLIC "-lembind")
-endif()
-
-if (ANDROID)
-    target_link_libraries(gdkgraphics PUBLIC GLESv2 EGL)
-endif()
-
-if (JFC_BUILD_DEMO)
-    add_subdirectory(demo)
-endif()
+target_link_libraries(gdkgraphics_conformance INTERFACE
+    gdkgraphics)
 
 if (JFC_BUILD_TESTS)
     add_subdirectory(test)

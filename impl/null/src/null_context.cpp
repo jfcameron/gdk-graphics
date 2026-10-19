@@ -1,12 +1,14 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include <gdk/graphics/null_context.h>
+#include <gdk/graphics/ext/gles.h>
 
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
 #include <gdk/graphics/texture_data.h>
 
 #include <algorithm>
+#include <string_view>
 
 using namespace gdk;
 using namespace gdk::graphics;
@@ -174,19 +176,19 @@ void null_material::set_int_vector2_array(const std::string_view aName,
     mNames.insert(std::string(aName));
 }
 
-std::optional<float> null_material::float_at(const std::string &aName) const {
+std::optional<float> null_material::float_at(std::string_view aName) const {
     const auto found = mFloats.find(aName);
 
     return found == mFloats.end() ? std::optional<float>{} : found->second;
 }
 
-std::optional<vector4_type> null_material::vector4_at(const std::string &aName) const {
+std::optional<vector4_type> null_material::vector4_at(std::string_view aName) const {
     const auto found = mVector4s.find(aName);
 
     return found == mVector4s.end() ? std::optional<vector4_type>{} : found->second;
 }
 
-texture_ptr_type null_material::texture_at(const std::string &aName) const {
+texture_ptr_type null_material::texture_at(std::string_view aName) const {
     const auto found = mTextures.find(aName);
 
     return found == mTextures.end() ? nullptr : found->second;
@@ -392,19 +394,19 @@ void null_scene::set_integer(const std::string_view aName, int aValue) {
     mIntegers[std::string(aName)] = aValue;
 }
 
-std::optional<float> null_scene::float_at(const std::string &aName) const {
+std::optional<float> null_scene::float_at(std::string_view aName) const {
     const auto found = mFloats.find(aName);
 
     return found == mFloats.end() ? std::optional<float>() : found->second;
 }
 
-std::optional<vector3_type> null_scene::vector3_at(const std::string &aName) const {
+std::optional<vector3_type> null_scene::vector3_at(std::string_view aName) const {
     const auto found = mVector3s.find(aName);
 
     return found == mVector3s.end() ? std::optional<vector3_type>() : found->second;
 }
 
-std::optional<vector4_type> null_scene::vector4_at(const std::string &aName) const {
+std::optional<vector4_type> null_scene::vector4_at(std::string_view aName) const {
     const auto found = mVector4s.find(aName);
 
     return found == mVector4s.end() ? std::optional<vector4_type>() : found->second;
@@ -554,7 +556,7 @@ shader_ptr_type null_context::make_alpha_blend_shader() const {
 
 shader_ptr_type null_context::make_shader(const std::string_view aVertexSource,
     const std::string_view aFragmentSource) {
-    if (mProfile) check_shader(*mProfile, aVertexSource, aFragmentSource);
+    if (mProfile) ext::check_shader(*mProfile, aVertexSource, aFragmentSource);
 
     ++mResourcesMade;
 

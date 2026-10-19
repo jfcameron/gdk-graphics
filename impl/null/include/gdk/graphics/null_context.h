@@ -14,6 +14,7 @@
 #include <utility>
 #include <set>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace gdk::graphics {
@@ -161,9 +162,9 @@ namespace gdk::graphics {
         virtual void set_int_vector2_array(const std::string_view aName,
             const std::vector<intvector2_type> &aValue) override;
 
-        [[nodiscard]] std::optional<float> float_at(const std::string &aName) const;
-        [[nodiscard]] std::optional<vector4_type> vector4_at(const std::string &aName) const;
-        [[nodiscard]] texture_ptr_type texture_at(const std::string &aName) const;
+        [[nodiscard]] std::optional<float> float_at(std::string_view aName) const;
+        [[nodiscard]] std::optional<vector4_type> vector4_at(std::string_view aName) const;
+        [[nodiscard]] texture_ptr_type texture_at(std::string_view aName) const;
 
         [[nodiscard]] std::vector<std::string> uniforms() const;
 
@@ -174,9 +175,9 @@ namespace gdk::graphics {
         render_mode mRenderMode;
         [[maybe_unused]] face_culling_mode mFaceCullingMode;
 
-        std::map<std::string, float> mFloats;
-        std::map<std::string, vector4_type> mVector4s;
-        std::map<std::string, texture_ptr_type> mTextures;
+        std::map<std::string, float, std::less<>> mFloats;
+        std::map<std::string, vector4_type, std::less<>> mVector4s;
+        std::map<std::string, texture_ptr_type, std::less<>> mTextures;
         std::set<std::string> mNames;
     };
 
@@ -324,9 +325,9 @@ namespace gdk::graphics {
         virtual void set_vector4(const std::string_view aName, const color &aValue) override;
         virtual void set_integer(const std::string_view aName, int aValue) override;
 
-        [[nodiscard]] std::optional<float> float_at(const std::string &aName) const;
-        [[nodiscard]] std::optional<vector3_type> vector3_at(const std::string &aName) const;
-        [[nodiscard]] std::optional<vector4_type> vector4_at(const std::string &aName) const;
+        [[nodiscard]] std::optional<float> float_at(std::string_view aName) const;
+        [[nodiscard]] std::optional<vector3_type> vector3_at(std::string_view aName) const;
+        [[nodiscard]] std::optional<vector4_type> vector4_at(std::string_view aName) const;
 
         [[nodiscard]] std::size_t entity_count() const;
 
@@ -344,10 +345,10 @@ namespace gdk::graphics {
         std::set<std::shared_ptr<const screen_camera>> mScreenCameras;
         std::set<std::shared_ptr<const texture_camera>> mTextureCameras;
 
-        std::map<std::string, float> mFloats;
+        std::map<std::string, float, std::less<>> mFloats;
         std::map<std::string, vector2_type> mVector2s;
-        std::map<std::string, vector3_type> mVector3s;
-        std::map<std::string, vector4_type> mVector4s;
+        std::map<std::string, vector3_type, std::less<>> mVector3s;
+        std::map<std::string, vector4_type, std::less<>> mVector4s;
         std::map<std::string, int> mIntegers;
 
         mutable std::size_t mDrawCount{0};

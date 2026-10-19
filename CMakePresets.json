@@ -12,11 +12,7 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "JFC_BUILD_TESTS": "ON",
-        "JFC_BUILD_DEMO": "OFF",
-        "JFC_BUILD_DOCS": "OFF",
-        "GLFW_BUILD_DOCS": "OFF",
-        "GLFW_BUILD_EXAMPLES": "OFF",
-        "GLFW_BUILD_TESTS": "OFF"
+        "JFC_BUILD_DOCS": "OFF"
       }
     },
     {
@@ -78,20 +74,6 @@
       }
     },
     {
-      "name": "linux-gcc-demo",
-      "displayName": "Linux / gcc / demos",
-      "inherits": "linux-gcc",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      },
-      "cacheVariables": {
-        "JFC_BUILD_DEMO": "ON",
-        "JFC_BUILD_TESTS": "OFF"
-      }
-    },
-    {
       "name": "linux-clang-asan",
       "displayName": "Linux / clang / asan + ubsan",
       "inherits": "linux-clang",
@@ -150,7 +132,6 @@
       "inherits": "base",
       "cacheVariables": {
         "JFC_BUILD_TESTS": "OFF",
-        "JFC_BUILD_DEMO": "ON",
         "JFC_BUILD_DOCS": "OFF"
       }
     },
@@ -160,8 +141,7 @@
       "inherits": "linux-gcc",
       "cacheVariables": {
         "JFC_BUILD_DOCS": "ON",
-        "JFC_BUILD_TESTS": "OFF",
-        "JFC_BUILD_DEMO": "OFF"
+        "JFC_BUILD_TESTS": "OFF"
       }
     }
   ],
@@ -196,15 +176,6 @@
     {
       "name": "linux-clang-ci",
       "configurePreset": "linux-clang-ci",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      }
-    },
-    {
-      "name": "linux-gcc-demo",
-      "configurePreset": "linux-gcc-demo",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
