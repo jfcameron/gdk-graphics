@@ -8,6 +8,7 @@
 #include <gdk/graphics/texture_data.h>
 
 #include <array>
+#include <functional>
 #include <map>
 #include <memory>
 #include <optional>
@@ -20,7 +21,11 @@
 namespace gdk::graphics {
     class null_context final : public graphics::context {
     public:
-        [[nodiscard]] static std::shared_ptr<null_context> make(std::optional<graphics::profile> aProfile = {});
+        using shader_check_type = std::function<void(const graphics::profile &aProfile,
+            std::string_view aVertexSource, std::string_view aFragmentSource)>;
+
+        [[nodiscard]] static std::shared_ptr<null_context> make(std::optional<graphics::profile> aProfile = {},
+            shader_check_type aShaderCheck = {});
 
         [[nodiscard]] virtual scene_ptr_type make_scene() override;
         [[nodiscard]] virtual camera_ptr_type make_camera() override;
@@ -71,6 +76,8 @@ namespace gdk::graphics {
         null_context() = default;
 
         std::shared_ptr<const graphics::profile> mProfile;
+
+        shader_check_type mShaderCheck;
 
         std::size_t mResourcesMade{0};
     };

@@ -5,7 +5,6 @@
 #include "conformance.h"
 
 #include <gdk/graphics/exception.h>
-#include <gdk/graphics/ext/gles.h>
 #include <gdk/graphics/model.h>
 #include <gdk/graphics/model_data.h>
 #include <gdk/graphics/texture.h>
@@ -16,8 +15,24 @@
 using namespace gdk::graphics;
 using gdk::graphics::conformance::implementation;
 using gdk::graphics::conformance::make_context;
+using gdk::graphics::conformance::minimum_profile;
 
 namespace {
+    [[nodiscard]] profile small_target() {
+        profile out{"small_target", {}};
+
+        out.most.texture_size = 64;
+        out.most.non_power_of_two_textures = false;
+        out.most.vertex_uniform_vectors = 128;
+        out.most.fragment_uniform_vectors = 16;
+        out.most.texture_units = 8;
+        out.most.vertex_texture_units = 0;
+        out.most.vertex_attributes = 8;
+        out.most.varying_vectors = 8;
+
+        return out;
+    }
+
     struct texels final {
         std::vector<texture_data::channel_type> rgba;
         std::size_t width, height;
@@ -37,7 +52,7 @@ namespace {
 TEST_CASE("conformance, a context's limits are within its profile", "[conformance][profile]") {
     INFO("implementation " << implementation());
 
-    const auto profile = ext::webgl1_minimum();
+    const auto profile = small_target();
     const auto has = make_context(profile)->limits();
 
     REQUIRE(has.texture_size <= profile.most.texture_size);
@@ -57,10 +72,10 @@ TEST_CASE("conformance, a context's limits are within its profile", "[conformanc
     }
 }
 
-TEST_CASE("conformance, textures past the profile are refused, and what ES 2 allows is not", "[conformance][profile]") {
+TEST_CASE("conformance, textures past the profile are refused, and what it allows is not", "[conformance][profile]") {
     INFO("implementation " << implementation());
 
-    const auto pContext = make_context(ext::webgl1_minimum());
+    const auto pContext = make_context(small_target());
 
     SECTION("the largest texture, and past it") {
         REQUIRE_NOTHROW(pContext->make_texture(texels(64, 64).view()));
@@ -86,7 +101,7 @@ TEST_CASE("conformance, textures past the profile are refused, and what ES 2 all
 TEST_CASE("conformance, a model past the profile's attributes is refused, made and uploaded", "[conformance][profile]") {
     INFO("implementation " << implementation());
 
-    auto one = ext::webgl1_minimum();
+    auto one = small_target();
 
     one.most.vertex_attributes = 1;
 
@@ -102,10 +117,10 @@ TEST_CASE("conformance, a model past the profile's attributes is refused, made a
     REQUIRE_THROWS_AS(pModel->upload(model::usage_hint::upload_once, quad), exception);
 }
 
-TEST_CASE("conformance, the built in shaders fit the WebGL 1 floor", "[conformance][profile]") {
-    INFO("implementation " << implementation());
+TEST_CASE("conformance, the built in shaders fit the implementation's own floor", "[conformance][profile]") {
+    INFO("implementation " << implementation() << ", held to " << minimum_profile().name);
 
-    const auto pContext = make_context(ext::webgl1_minimum());
+    const auto pContext = make_context(minimum_profile());
 
     REQUIRE_NOTHROW(pContext->make_alpha_cutoff_shader());
     REQUIRE_NOTHROW(pContext->make_alpha_blend_shader());

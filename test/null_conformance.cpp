@@ -12,4 +12,6 @@ namespace gdk::graphics::conformance {
     }
 
     std::string_view implementation() { return "null"; }
+
+    profile minimum_profile() { return {"null", {}}; }
 }

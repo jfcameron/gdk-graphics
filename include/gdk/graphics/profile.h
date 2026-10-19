@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <string>
+#include <string_view>
 
 namespace gdk::graphics {
     class model_data;
@@ -39,6 +40,9 @@ namespace gdk::graphics {
 
         //! \throws gdk::graphics::exception for a model with more attributes than the profile's vertex attributes
         void check_model(const profile &aProfile, const model_data &aModel);
+
+        [[nodiscard]] std::string past_limit(const profile &aProfile, std::string_view aWhat, std::size_t aHas,
+            std::string_view aLimit, std::size_t aMost);
     ///@}
 }
 

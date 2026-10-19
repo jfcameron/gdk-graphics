@@ -1,7 +1,6 @@
 // © Joseph Cameron - All Rights Reserved
 
 #include <gdk/graphics/null_context.h>
-#include <gdk/graphics/ext/gles.h>
 
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
@@ -430,10 +429,13 @@ std::size_t null_scene::draw_count() const { return mDrawCount; }
 
 intvector2_type null_scene::last_frame_buffer_size() const { return mLastFrameBufferSize; }
 
-std::shared_ptr<null_context> null_context::make(std::optional<graphics::profile> aProfile) {
+std::shared_ptr<null_context> null_context::make(std::optional<graphics::profile> aProfile,
+    shader_check_type aShaderCheck) {
     const auto pContext = std::shared_ptr<null_context>(new null_context());
 
     if (aProfile) pContext->mProfile = std::make_shared<const graphics::profile>(std::move(*aProfile));
+
+    pContext->mShaderCheck = std::move(aShaderCheck);
 
     return pContext;
 }
@@ -556,7 +558,7 @@ shader_ptr_type null_context::make_alpha_blend_shader() const {
 
 shader_ptr_type null_context::make_shader(const std::string_view aVertexSource,
     const std::string_view aFragmentSource) {
-    if (mProfile) ext::check_shader(*mProfile, aVertexSource, aFragmentSource);
+    if (mProfile && mShaderCheck) mShaderCheck(*mProfile, aVertexSource, aFragmentSource);
 
     ++mResourcesMade;
 

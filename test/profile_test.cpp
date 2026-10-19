@@ -4,21 +4,36 @@
 
 #include <gdk/graphics/null_context.h>
 #include <gdk/graphics/profile.h>
-#include <gdk/graphics/ext/gles.h>
 
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
 #include <gdk/graphics/texture_data.h>
 
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
 
 using namespace gdk;
 using namespace gdk::graphics;
-using namespace gdk::graphics::ext;
 
 namespace {
+    //! a small target's profile, written here: the interface's tests hold contexts to one without naming an API
+    [[nodiscard]] profile small_gpu() {
+        profile out{"small_gpu", {}};
+
+        out.most.texture_size = 64;
+        out.most.non_power_of_two_textures = false;
+        out.most.vertex_uniform_vectors = 128;
+        out.most.fragment_uniform_vectors = 16;
+        out.most.texture_units = 8;
+        out.most.vertex_texture_units = 0;
+        out.most.vertex_attributes = 8;
+        out.most.varying_vectors = 8;
+
+        return out;
+    }
+
     struct pixels final {
         std::vector<texture_data::channel_type> data;
         texture_data::view view;
@@ -53,22 +68,7 @@ namespace {
     }
 }
 
-TEST_CASE("**the spec profiles are the specs' guaranteed minimums**", "[profile]") {
-    const auto es2 = es2_minimum();
-
-    REQUIRE(es2.name == "es2_minimum");
-    REQUIRE(es2.most.texture_size == 64);
-    REQUIRE_FALSE(es2.most.non_power_of_two_textures);
-    REQUIRE(es2.most.vertex_uniform_vectors == 128);
-    REQUIRE(es2.most.fragment_uniform_vectors == 16);
-    REQUIRE(es2.most.texture_units == 8);
-    REQUIRE(es2.most.vertex_texture_units == 0);
-    REQUIRE(es2.most.vertex_attributes == 8);
-    REQUIRE(es2.most.varying_vectors == 8);
-
-    REQUIRE(webgl1_minimum().name == "webgl1_minimum");
-    REQUIRE(webgl1_minimum().most == es2.most);
-
+TEST_CASE("**limits are unrestricted until a profile says otherwise**", "[profile]") {
     REQUIRE(limits{}.texture_size == limits::UNRESTRICTED);
     REQUIRE(limits{}.non_power_of_two_textures);
 }
@@ -84,7 +84,7 @@ TEST_CASE("**a context made without a profile checks nothing past its own**", "[
 }
 
 TEST_CASE("**a context made with a profile says the narrower limits**", "[profile][null_context]") {
-    REQUIRE(null_context::make(webgl1_minimum())->limits() == webgl1_minimum().most);
+    REQUIRE(null_context::make(small_gpu())->limits() == small_gpu().most);
 
     profile wide{"wide", {}};
     wide.most.texture_size = 1 << 20;
@@ -93,19 +93,19 @@ TEST_CASE("**a context made with a profile says the narrower limits**", "[profil
 }
 
 TEST_CASE("**a texture is held to the profile, when made and when given new data**", "[profile][texture]") {
-    const auto pContext = null_context::make(webgl1_minimum());
+    const auto pContext = null_context::make(small_gpu());
 
     REQUIRE(texture_of(pContext, 64, 32));
 
     SECTION("**one not a power of two is refused, saying so**") {
         REQUIRE_THROWS_WITH(texture_of(pContext, 48, 32),
-            "webgl1_minimum: a texture 48 wide is not a power of two, which webgl1_minimum requires");
+            "small_gpu: a texture 48 wide is not a power of two, which small_gpu requires");
         REQUIRE_THROWS_WITH(texture_of(pContext, 32, 12), Catch::Contains("12 tall is not a power of two"));
     }
 
     SECTION("**one past the largest is refused, saying the limit**") {
         REQUIRE_THROWS_WITH(texture_of(pContext, 128, 32),
-            "webgl1_minimum: a texture 128 wide, past webgl1_minimum's largest texture of 64");
+            "small_gpu: a texture 128 wide, past small_gpu's largest texture of 64");
     }
 
     SECTION("**an empty one is a texture still to be given its data**, and is held to it then") {
@@ -130,67 +130,44 @@ TEST_CASE("**a profile is anybody's to write**", "[profile]") {
     REQUIRE_THROWS_WITH(texture_of(pContext, 32, 16), Catch::Contains("tiny_gpu's largest texture of 16"));
 }
 
-TEST_CASE("**a shader is counted from its declarations, a stage at a time**", "[profile][shader]") {
-    const auto pContext = null_context::make(webgl1_minimum());
+TEST_CASE("**a shader is checked by the check the context was given, against its profile**", "[profile][shader]") {
+    struct seen final {
+        std::string profile_name;
+        std::string vertex;
+        std::string fragment;
+    };
 
-    REQUIRE(pContext->make_shader(vertex_with(""), fragment_with("")));
+    const auto pSeen = std::make_shared<std::vector<seen>>();
 
-    SECTION("**fragment uniform vectors**, sixteen at most") {
-        REQUIRE(pContext->make_shader(vertex_with(""), fragment_with(repeated("uniform vec4 u_", 16))));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with(""), fragment_with(repeated("uniform vec4 u_", 17))),
-            "webgl1_minimum: a fragment shader's uniform vectors 17, past webgl1_minimum's fragment uniform vectors "
-            "of 16");
+    const null_context::shader_check_type check = [pSeen](const profile &aProfile, std::string_view aVertex,
+        std::string_view aFragment) {
+        pSeen->push_back({aProfile.name, std::string(aVertex), std::string(aFragment)});
+
+        if (aFragment == "too much") throw exception(aProfile.name + ": too much");
+    };
+
+    SECTION("**given both, each shader is checked as it is made**, and one refused is not made") {
+        const auto pContext = null_context::make(small_gpu(), check);
+
+        REQUIRE(pContext->make_shader("the vertex stage", "the fragment stage"));
+        REQUIRE(pSeen->size() == 1);
+        REQUIRE(pSeen->front().profile_name == "small_gpu");
+        REQUIRE(pSeen->front().vertex == "the vertex stage");
+        REQUIRE(pSeen->front().fragment == "the fragment stage");
+        REQUIRE(pContext->resources_made() == 1);
+
+        REQUIRE_THROWS_WITH(pContext->make_shader("the vertex stage", "too much"), "small_gpu: too much");
+        REQUIRE(pContext->resources_made() == 1);
     }
 
-    SECTION("**a matrix is a vector a column, and an array its size times its type**") {
-        REQUIRE(pContext->make_shader(vertex_with("uniform mat4 u_Bones[30];\nuniform mat3 u_Normal;\n"
-            "uniform highp vec4 u_A, u_B;"), fragment_with("")));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with("uniform mat4 u_Bones[31];\nuniform mat3 u_Normal;\n"
-            "uniform highp vec4 u_A, u_B;"), fragment_with("")), Catch::Contains("vertex shader's uniform vectors 129"));
+    SECTION("**given no profile, there is nothing to check against**") {
+        REQUIRE(null_context::make({}, check)->make_shader("the vertex stage", "too much"));
+        REQUIRE(pSeen->empty());
     }
 
-    SECTION("**an array sized by a #define or a const int is counted at that size**") {
-        REQUIRE(pContext->make_shader(vertex_with("#define BONES 32\nuniform mat4 u_Bones[BONES];"), fragment_with("")));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with("#define BONES 33\nuniform mat4 u_Bones[BONES];"),
-            fragment_with("")), Catch::Contains("vertex shader's uniform vectors 132"));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with("const int LIGHTS = 17;"),
-            fragment_with("const int LIGHTS = 17;\nuniform vec4 u_Lights[LIGHTS];")),
-            Catch::Contains("fragment shader's uniform vectors 17"));
-    }
-
-    SECTION("**a precision chosen by a #define is a precision**") {
-        const std::string chosen = "#ifdef GL_FRAGMENT_PRECISION_HIGH\n#define HIGHP_IF_ANY highp\n#else\n"
-            "#define HIGHP_IF_ANY mediump\n#endif\n";
-
-        REQUIRE(pContext->make_shader(vertex_with(chosen + "uniform HIGHP_IF_ANY vec4 u_Across;"), fragment_with("")));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with(""),
-            fragment_with(chosen + "uniform HIGHP_IF_ANY vec4 u_Across[17];")),
-            Catch::Contains("fragment shader's uniform vectors 17"));
-    }
-
-    SECTION("**an array whose size it cannot read is refused, rather than guessed**") {
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with("uniform vec4 u_Lights[COUNT];"), fragment_with("")),
-            Catch::Contains("u_Lights[COUNT]"));
-    }
-
-    SECTION("**what is commented out is not declared**") {
-        REQUIRE(pContext->make_shader(vertex_with(""),
-            fragment_with("// " + repeated("uniform vec4 x_", 1) + "/*\n" + repeated("uniform vec4 y_", 20) + "*/")));
-    }
-
-    SECTION("**samplers against texture units**, and none in a vertex shader") {
-        REQUIRE(pContext->make_shader(vertex_with(""), fragment_with(repeated("uniform sampler2D t_", 8))));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with(""), fragment_with(repeated("uniform sampler2D t_", 9))),
-            Catch::Contains("samplers 9, past webgl1_minimum's texture units of 8"));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with("uniform sampler2D u_Height;"), fragment_with("")),
-            Catch::Contains("vertex texture units of 0"));
-    }
-
-    SECTION("**attributes and varyings**, eight of each") {
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with(repeated("attribute vec4 a_", 8)), fragment_with("")),
-            Catch::Contains("attribute vectors 9"));
-        REQUIRE_THROWS_WITH(pContext->make_shader(vertex_with(repeated("varying vec2 v_", 9)),
-            fragment_with(repeated("varying vec2 v_", 9))), Catch::Contains("varying vectors 9"));
+    SECTION("**given no check, a profile counts nothing in a shader**") {
+        REQUIRE(null_context::make(small_gpu())->make_shader(vertex_with(repeated("uniform mat4 u_", 100)),
+            fragment_with(repeated("uniform sampler2D t_", 9))));
     }
 }
 

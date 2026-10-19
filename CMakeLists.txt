@@ -42,7 +42,6 @@ add_library(gdkgraphics STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/profile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/font_texture.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/gles.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/text_modeler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/null/src/null_context.cpp)
 

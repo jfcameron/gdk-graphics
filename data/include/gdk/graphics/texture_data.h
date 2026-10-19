@@ -30,17 +30,6 @@ namespace gdk::graphics::texture_data {
         texture_data::format format;     //!< format of the data
         const channel_type *data;   //!< ptr to the start of decoded texture data
     };
-
-    /*/// \brief provides a pointer a contiguous list of channel data representing 3D texture
-    /// metadata that contains its size, format and usage info
-    /// \warning a view does not own its data.
-    struct view3d {
-        size_t width; //!< number of texels wide
-        size_t height; //!< number of texels tall
-        size_t length; //!< number of texels long 
-        texture_data::format format; //!< format of the data
-        const channel_type *data; //!< ptr to the start of decoded texture data
-    };*/
 }
 
 #endif

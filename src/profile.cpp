@@ -5,15 +5,11 @@
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
 
-#include "profile_refusal.h"
-
 #include <algorithm>
 #include <string>
 #include <string_view>
 
 using namespace gdk::graphics;
-
-using gdk::graphics::detail::past;
 
 namespace {
     [[nodiscard]] bool is_power_of_two(const std::size_t aValue) {
@@ -50,6 +46,12 @@ void gdk::graphics::check_texture(const profile &aProfile, const std::size_t aWi
 
 void gdk::graphics::check_model(const profile &aProfile, const model_data &aModel) {
     if (const auto has = aModel.attributes().size(); has > aProfile.most.vertex_attributes)
-        throw exception(past(aProfile, "a model's attributes", has, "vertex attributes",
+        throw exception(past_limit(aProfile, "a model's attributes", has, "vertex attributes",
             aProfile.most.vertex_attributes));
+}
+
+std::string gdk::graphics::past_limit(const profile &aProfile, const std::string_view aWhat, const std::size_t aHas,
+    const std::string_view aLimit, const std::size_t aMost) {
+    return aProfile.name + ": " + std::string(aWhat) + " " + std::to_string(aHas) + ", past " + aProfile.name + "'s "
+        + std::string(aLimit) + " of " + std::to_string(aMost);
 }
