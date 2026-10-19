@@ -9,7 +9,6 @@ set(JFC_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(JFC_BUILD_BENCH OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gdk-math")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/jfc-smart_handles")
 
 include("${CMAKE_CURRENT_LIST_DIR}/stb.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cgltf.cmake")

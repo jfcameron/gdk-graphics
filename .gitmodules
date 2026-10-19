@@ -4,9 +4,6 @@
 [submodule "extern/gdk-math"]
 	path = extern/gdk-math
 	url = https://github.com/jfcameron/gdk-math.git
-[submodule "extern/jfc-smart_handles"]
-	path = extern/jfc-smart_handles
-	url = https://github.com/jfcameron/jfc-smart_handles.git
 [submodule "extern/stb"]
 	path = extern/stb
 	url = https://github.com/nothings/stb.git

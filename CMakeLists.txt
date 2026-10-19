@@ -67,7 +67,6 @@ target_compile_features(gdkgraphics PUBLIC cxx_std_20)
 target_link_libraries(gdkgraphics PUBLIC
     gdkgraphics_data
     gdkmath
-    jfc-smart_handles
 )
 
 add_library(gdkgraphics_conformance INTERFACE)
