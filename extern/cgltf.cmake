@@ -7,7 +7,8 @@ function(import_cgltf_projects)
         string(APPEND _cgltf_imp_file_contents "#define ${_arg_upper}_IMPLEMENTATION\n#include \"cgltf/${_arg}.h\"\n")
     endforeach()
 
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/cgltf_implementation.c" "${_cgltf_imp_file_contents}")
+    file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/cgltf_implementation.c"
+        CONTENT "${_cgltf_imp_file_contents}" @ONLY)
 
     foreach(_arg ${ARGV})
         file(COPY "${CMAKE_CURRENT_LIST_DIR}/cgltf/${_arg}.h"

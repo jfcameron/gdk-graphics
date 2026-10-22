@@ -6,7 +6,8 @@ function(import_stb_projects)
         string(APPEND _stb_imp_file_contents "#define ${_arg_upper}_IMPLEMENTATION\n#include \"stb/${_arg}.h\"\n")
     endforeach()
 
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/stb_implementation.c" "${_stb_imp_file_contents}")
+    file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/stb_implementation.c"
+        CONTENT "${_stb_imp_file_contents}" @ONLY)
 
     foreach(_arg ${ARGV})
         file(COPY "${CMAKE_CURRENT_LIST_DIR}/stb/${_arg}.h" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/include/stb/")
