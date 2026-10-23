@@ -20,5 +20,5 @@ Vertex data is consumed as a list of floating-point values representing vertex a
 ### Shaders
 The library does not provide a mechanism for creating user-defined shaders. Shader languages, compilation mechanisms, and available capabilities vary between graphics APIs, making a unified shader interface either restrictive or complex.
 
-Instead, user-defined shaders are created through the selected implementation library's interface. This allows users to take advantage of the capabilities and shading language of their chosen backend without requiring `gdk-graphics` to impose a common abstraction over languages such as GLSL and HLSL.
+Instead, user-defined shaders are created through the selected implementation library's interface. This allows users to take advantage of the capabilities and shading language of their chosen backend without requiring `gdk-graphics` to impose a common abstraction over languages such as GLSL and HLSL. For a concrete example of this, see the demos in [gdk-graphics_webgles](https://github.com/jfcameron/gdk-graphics_webgles), some of which compile custom shaders.
 
