@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
@@ -7,7 +7,6 @@
 #include <optional>
 
 #include <algorithm>
-#include <iostream>
 #include <stdexcept>
 #include <unordered_map>
 #include <string_view>
@@ -65,10 +64,7 @@ const attribute_data &model_data::get_attribute_data(std::string_view aAttribute
 }
 
 void model_data::overwrite(std::string_view aAttributeName, const size_t vertexOffset, const model_data &other) {
-    auto thisAttributeData = get_attribute_data(aAttributeName);
-    auto thatAttributeData = other.get_attribute_data(aAttributeName);
-
-    thisAttributeData.overwrite(vertexOffset, thatAttributeData);
+    get_attribute_data(aAttributeName).overwrite(vertexOffset, other.get_attribute_data(aAttributeName));
 }
 
 void model_data::push_back(const model_data &other) {
@@ -97,9 +93,24 @@ void model_data::push_back(const model_data &other) {
             .append(*missing)
             .append("\" and the appended data does not; appending would leave the result ragged"));
 
+    for (const auto &[name, data] : other.m_Attributes)
+        if (const auto ours = m_Attributes.find(name)->second.number_of_components_per_attribute();
+            ours != data.number_of_components_per_attribute())
+            throw exception(std::string("model_data::push_back: attribute \"").append(name).append("\" has ")
+                .append(std::to_string(ours)).append(" components here and ")
+                .append(std::to_string(data.number_of_components_per_attribute())).append(" in the appended data"));
+
     const auto offset = m_VertexCount;
 
     const bool indexedResult = indexed() || other.indexed();
+
+    if (const auto ceiling = std::size_t{std::numeric_limits<index_value_type>::max()} + 1;
+        indexedResult && m_VertexCount + other.m_VertexCount > ceiling)
+        throw exception(std::string("model_data::push_back: the result would have ")
+            .append(std::to_string(m_VertexCount + other.m_VertexCount))
+            .append(" vertices, and an index is 16 bit, so it cannot name past ")
+            .append(std::to_string(ceiling))
+            .append(". Split the geometry across models."));
 
     if (indexedResult && !indexed()) {
         m_Indexes.resize(m_VertexCount);
@@ -111,19 +122,9 @@ void model_data::push_back(const model_data &other) {
     for (const auto &[OtherAttributeName, otherAttributeData] : other.attributes())
         m_Attributes[OtherAttributeName].push_back(otherAttributeData);
 
-    m_VertexCount = m_Attributes.begin()->second.components().size() / 
-        m_Attributes.begin()->second.number_of_components_per_attribute();
+    m_VertexCount += other.m_VertexCount;
 
     if (indexedResult) {
-        const auto ceiling = std::size_t{std::numeric_limits<index_value_type>::max()} + 1;
-
-        if (m_VertexCount > ceiling)
-            throw exception(std::string("model_data::push_back: the result has ")
-                .append(std::to_string(m_VertexCount))
-                .append(" vertices, and an index is 16 bit, so it cannot name past ")
-                .append(std::to_string(ceiling))
-                .append(". Split the geometry across models."));
-
         std::vector<index_value_type> implied;
 
         if (!other.indexed()) {
@@ -147,14 +148,24 @@ model_data::model_data(attribute_collection_type &&aAttributeData,
 }
 
 model_data::model_data(attribute_collection_type &&aAttributeData) {
-    const size_t numberOfUniformsFoundInFirstEntry(aAttributeData.begin()->second.number_of_attributes_in_component_data());
-    for (const auto &[name, data] : aAttributeData) 
-        if (data.number_of_attributes_in_component_data() != numberOfUniformsFoundInFirstEntry) 
-            throw exception("the uniform data found in a vertex data's uniform collection must "
-                "have the same number of uniforms present in their component data lists");
+    std::optional<std::size_t> vertices;
 
-    m_Attributes = aAttributeData;
-    m_VertexCount = numberOfUniformsFoundInFirstEntry;
+    for (const auto &[name, data] : aAttributeData) {
+        const auto width = data.number_of_components_per_attribute();
+
+        if (!width || data.components().size() % width)
+            throw exception(std::string("model_data: attribute \"").append(name).append("\" has ")
+                .append(std::to_string(data.components().size())).append(" components, which is not a whole number of ")
+                .append(std::to_string(width)).append("-component vertices"));
+
+        if (vertices && *vertices != data.number_of_attributes_in_component_data())
+            throw exception("model_data: every attribute must describe the same number of vertices");
+
+        vertices = data.number_of_attributes_in_component_data();
+    }
+
+    m_Attributes = std::move(aAttributeData);
+    m_VertexCount = vertices.value_or(0);
 }
 
 model_data::primitive_mode model_data::get_primitive_mode() const { return m_PrimitiveMode; }
@@ -213,6 +224,10 @@ static void sort_indexed_by_triangle(
 
     if (search == attributes.end()) return;
 
+    if (search->second.number_of_components_per_attribute() != COMPONENTS_PER_3D_ATTRIBUTE)
+        throw exception(std::string("model_data: sorting by triangle needs a 3 component ")
+            .append(aPositionAttributeName));
+
     const auto &positions = search->second.components();
 
     const auto &indexes = aVertexData.indexes();
@@ -259,6 +274,10 @@ static void sort_by_triangle(
     auto m_Attributes = aVertexData.attributes();
 
     if (auto search = m_Attributes.find(aPositionAttributeName); search != m_Attributes.end()) {
+        if (search->second.number_of_components_per_attribute() != COMPONENTS_PER_3D_ATTRIBUTE)
+            throw exception(std::string("model_data: sorting by triangle needs a 3 component ")
+                .append(aPositionAttributeName));
+
         auto &position_attribute_data = search->second.components();
 
         std::vector<triangle> triangles;
@@ -372,12 +391,15 @@ void model_data::sort_by_furthest_triangle(
         aObserverWorldPositionAttributeName);
 }
 
-void model_data::transform(const std::string &aPositionAttributeName, matrix4x4_type &aTransform) {
+void model_data::transform(const std::string &aPositionAttributeName, const matrix4x4_type &aTransform) {
     auto &attributeData = get_attribute_data(aPositionAttributeName);
     if (attributeData.number_of_components_per_attribute() != COMPONENTS_PER_3D_ATTRIBUTE) 
         throw exception(std::string("model_data::transform expected 3 components per uniform: ") + aPositionAttributeName);
 
     auto &components = attributeData.components();
+
+    if (components.size() % COMPONENTS_PER_3D_ATTRIBUTE)
+        throw exception(std::string("model_data::transform: ") + aPositionAttributeName + " is not whole vertices");
 
     for (auto p = components.begin(); p != components.end(); p += COMPONENTS_PER_3D_ATTRIBUTE) {
         auto x(p + 0), y(p + 1), z(p + 2);
@@ -409,6 +431,9 @@ void model_data::transform(const std::string &a2DAttributeName,
         throw exception("model_data::transform expected 2 components per uniform");
 
     auto &components = attributeData.components();
+
+    if (components.size() % COMPONENTS_PER_2D_ATTRIBUTE)
+        throw exception(std::string("model_data::transform: ") + a2DAttributeName + " is not whole vertices");
 
     for (auto p = components.begin(); p != components.end(); p += COMPONENTS_PER_2D_ATTRIBUTE) {
         auto x(p + 0), y(p + 1);

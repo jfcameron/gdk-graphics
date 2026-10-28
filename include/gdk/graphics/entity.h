@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_ENTITY_H
-#define GDK_GFX_ENTITY_H
+#ifndef GDK_GRAPHICS_ENTITY_H
+#define GDK_GRAPHICS_ENTITY_H
 
 #include <gdk/graphics/types.h>
 
@@ -22,9 +22,14 @@ namespace gdk::graphics {
         virtual bool is_hidden() const = 0;
         
         /// \brief sets the model matrix using a vec3 position, quat rotation, vec3 scale
-        virtual void set_transform(const vector3_type &aWorldPos, 
-            const quaternion_type &aRotation, 
-            const vector3_type &aScale = vector3_type::one) = 0;
+        virtual void set_transform(const vector3_type &aWorldPos,
+            const quaternion_type &aRotation,
+            const vector3_type &aScale) = 0;
+
+        /// \brief sets the model matrix using a vec3 position and quat rotation, unscaled
+        void set_transform(const vector3_type &aWorldPos, const quaternion_type &aRotation) {
+            set_transform(aWorldPos, aRotation, vector3_type::one);
+        }
 
         /// \brief set the model matrix using a matrix
         virtual void set_transform(const matrix4x4_type& a) = 0;

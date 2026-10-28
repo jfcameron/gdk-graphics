@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_SHADER_PROGRAM_H
-#define GDK_GFX_SHADER_PROGRAM_H
+#ifndef GDK_GRAPHICS_SHADER_PROGRAM_H
+#define GDK_GRAPHICS_SHADER_PROGRAM_H
 
 namespace gdk::graphics
 {

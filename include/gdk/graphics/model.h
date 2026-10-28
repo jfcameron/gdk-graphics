@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_MODEL_H
-#define GDK_GFX_MODEL_H
+#ifndef GDK_GRAPHICS_MODEL_H
+#define GDK_GRAPHICS_MODEL_H
 
 #include <gdk/graphics/model_data.h>
 
@@ -17,9 +17,6 @@ namespace gdk::graphics {
 
         /// \brief replace vertex data held by this model
         virtual void upload(const usage_hint &, const model_data &vertexDataView) = 0;
-
-        /// \brief upload a section of vertex data
-        //virtual void upload(const usage_hint &, const model_data &vertexDataView, const size_t offset) = 0;
 
         virtual ~model() = default;
 

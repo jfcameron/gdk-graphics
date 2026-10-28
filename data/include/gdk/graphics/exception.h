@@ -1,12 +1,11 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_EXCEPTION_H
-#define GDK_GFX_EXCEPTION_H
-
-#include <gdk/graphics/data_types.h>
+#ifndef GDK_GRAPHICS_EXCEPTION_H
+#define GDK_GRAPHICS_EXCEPTION_H
 
 #include <exception>
 #include <string>
+#include <utility>
 
 namespace gdk::graphics {
     /// \brief root exception type for this project
@@ -29,4 +28,3 @@ namespace gdk::graphics {
 }
 
 #endif
-

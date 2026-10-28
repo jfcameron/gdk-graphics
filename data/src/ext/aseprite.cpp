@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <gdk/graphics/ext/aseprite.h>
 
@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <array>
 #include <charconv>
+#include <locale>
+#include <sstream>
 #include <cmath>
 #include <cctype>
 #include <cstdlib>
@@ -102,26 +104,49 @@ namespace gdk::graphics::ext {
                         case '/': out += '/'; break;
 
                         case 'u': {
-                            if (m_At + 4 > m_Text.size()) throw wrong("a short escape in the json");
+                            const auto unit = [this]() {
+                                if (m_At + 4 > m_Text.size()) throw wrong("a short escape in the json");
 
-                            unsigned code = 0;
+                                unsigned code = 0;
 
-                            const auto got = std::from_chars(m_Text.data() + m_At, m_Text.data() + m_At + 4,
-                                code, 16);
+                                const auto got = std::from_chars(m_Text.data() + m_At, m_Text.data() + m_At + 4,
+                                    code, 16);
 
-                            if (got.ec != std::errc() || got.ptr != m_Text.data() + m_At + 4)
-                                throw wrong("an escape in the json that is not four digits");
+                                if (got.ec != std::errc() || got.ptr != m_Text.data() + m_At + 4)
+                                    throw wrong("an escape in the json that is not four digits");
 
-                            m_At += 4;
+                                m_At += 4;
 
-                            // as utf-8, which is what everything downstream of this holds
+                                return code;
+                            };
+
+                            auto code = unit();
+
+                            if (code >= 0xD800 && code <= 0xDBFF && m_Text.substr(m_At, 2) == "\\u") {
+                                const auto mark = m_At;
+
+                                m_At += 2;
+
+                                if (const auto low = unit(); low >= 0xDC00 && low <= 0xDFFF)
+                                    code = 0x10000 + ((code - 0xD800) << 10) + (low - 0xDC00);
+                                else m_At = mark;
+                            }
+
+                            if (code >= 0xD800 && code <= 0xDFFF) code = 0xFFFD;
+
                             if (code < 0x80) out += static_cast<char>(code);
                             else if (code < 0x800) {
                                 out += static_cast<char>(0xc0 | (code >> 6));
                                 out += static_cast<char>(0x80 | (code & 0x3f));
                             }
-                            else {
+                            else if (code < 0x10000) {
                                 out += static_cast<char>(0xe0 | (code >> 12));
+                                out += static_cast<char>(0x80 | ((code >> 6) & 0x3f));
+                                out += static_cast<char>(0x80 | (code & 0x3f));
+                            }
+                            else {
+                                out += static_cast<char>(0xf0 | (code >> 18));
+                                out += static_cast<char>(0x80 | ((code >> 12) & 0x3f));
                                 out += static_cast<char>(0x80 | ((code >> 6) & 0x3f));
                                 out += static_cast<char>(0x80 | (code & 0x3f));
                             }
@@ -142,18 +167,22 @@ namespace gdk::graphics::ext {
             [[nodiscard]] double number() {
                 skip();
 
-                const auto piece = std::string(m_Text.substr(m_At,
-                    std::min<std::size_t>(64, m_Text.size() - m_At)));
+                const auto read = m_Text.substr(m_At).find_first_not_of("+-0123456789.eE");
+                const auto piece = std::string(m_Text.substr(m_At, read));
 
-                char *end = nullptr;
+                if (piece.empty() || piece.size() > 64) throw wrong("expected a number in the json");
 
-                const double out = std::strtod(piece.c_str(), &end);
+                std::istringstream stream(piece);
+                stream.imbue(std::locale::classic());
 
-                const auto read = static_cast<std::size_t>(end - piece.c_str());
+                double out = 0;
 
-                if (!read) throw wrong("expected a number in the json");
+                stream >> out;
 
-                m_At += read;
+                if (!stream || stream.peek() != std::char_traits<char>::eof())
+                    throw wrong("expected a number in the json");
+
+                m_At += piece.size();
 
                 if (!std::isfinite(out)) throw wrong("a number in the json that is not finite");
 

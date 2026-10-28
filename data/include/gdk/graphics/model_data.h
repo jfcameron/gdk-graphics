@@ -1,8 +1,9 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_VERTEX_DATA_H
-#define GDK_GFX_VERTEX_DATA_H
+#ifndef GDK_GRAPHICS_MODEL_DATA_H
+#define GDK_GRAPHICS_MODEL_DATA_H
 
+#include <cstddef>
 #include <gdk/graphics/string_keyed.h>
 #include <gdk/graphics/attribute_data.h>
 #include <gdk/graphics/data_types.h>
@@ -68,15 +69,14 @@ namespace gdk::graphics {
             const vector3_type &aPos,
             const quaternion_type &aRot = {},
             const vector3_type &aSca = {1, 1, 1});
-        //transform(mat4x4) ^
-        void transform(const std::string &aPositionAttributeName, matrix4x4_type &aTransform);
+        //! applies a transformation matrix to a 3 component attribute
+        void transform(const std::string &aPositionAttributeName, const matrix4x4_type &aTransform);
 
         //! applies a transformation to a 2 component attribute
         void transform(const std::string &aUVAttributeName,
             const vector2_type &aPos,
             const float aRotation = 0,
-            const vector2_type &aSca = {1});
-        //transform(mat3x3) ?
+            const vector2_type &aSca = {1, 1});
 
         //! sorts verticies from nearest to furthest based on the distance between the centroid 
         /// of the triangles they form and a given position in world space
@@ -94,7 +94,7 @@ namespace gdk::graphics {
 
         /// \brief append a different model_data to this model_data
         ///
-        /// The appended indices are offset so that they still name the appended vertices. If only
+        /// Nothing changes when it throws. The appended indices are offset so that they still name the appended vertices. If only
         /// one of the two is indexed, the other is given the indices it implies, because the
         /// result has to be one thing or the other.
         void push_back(const model_data &other);
@@ -102,16 +102,16 @@ namespace gdk::graphics {
         /// \brief overwrite a section of vertex data using another vertex data instance
         ///
         /// formats must match exactly, the incoming data cannot write past the end of this
-        void overwrite(const size_t index, const model_data &other);
+        void overwrite(const std::size_t index, const model_data &other);
 
         /// \brief overwrite a section of a single attribute in the vertex data
         ///
         /// the vertex data must contain an attribute with the given name and that attribute must have
         /// the same # of components
-        void overwrite(std::string_view aAttributeName, const size_t vertexOffset, const model_data &other);
+        void overwrite(std::string_view aAttributeName, const std::size_t vertexOffset, const model_data &other);
 
         //! get number of verticies in the data
-        size_t vertex_count() const;
+        std::size_t vertex_count() const;
 
         //! create a new instance that is a concatenation of two separate datas
         model_data operator+(const model_data &aData);
@@ -133,6 +133,7 @@ namespace gdk::graphics {
         //! default inited model_data is very useful for procedurally generated data
         model_data() = default;
 
+        //! \throws exception if an attribute is not whole vertices, or the attributes count different numbers of them
         model_data(attribute_collection_type &&aAttributeData);
 
         //! \throws exception if an index is past the end of aAttributeData. \see set_indexes
@@ -144,10 +145,8 @@ namespace gdk::graphics {
         //! creates model data for a unit sized quad with position and uv data
         static model_data make_quad();
 
-        //TODO remove the built in models (sphere etc), refactor as model_data statics here (make_sphere etc)
-
     private:
-        size_t m_VertexCount{};
+        std::size_t m_VertexCount{};
 
         std::vector<index_value_type> m_Indexes{};
         attribute_collection_type m_Attributes{};

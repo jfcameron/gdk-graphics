@@ -1,7 +1,6 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <cstddef>
-#include <fstream>
 #include <iterator>
 #include <optional>
 #include <string>
@@ -9,6 +8,10 @@
 
 #include <jfc/catch.hpp>
 
+#include <gdk/graphics/test/font_bytes.h>
+#include <gdk/graphics/test/font_collection_bytes.h>
+
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/font.h>
 
 using namespace gdk::graphics;
@@ -24,12 +27,7 @@ namespace {
     }
 
     [[nodiscard]] std::optional<std::vector<texture_data::encoded_byte>> load_a_font() {
-        std::ifstream file(GDK_TEST_FONT, std::ios::binary);
-
-        if (!file) return {};
-
-        return std::vector<texture_data::encoded_byte>(
-            std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+        return std::vector<texture_data::encoded_byte>(std::begin(GDK_TEST_FONT_BYTES), std::end(GDK_TEST_FONT_BYTES));
     }
 }
 
@@ -222,12 +220,8 @@ TEST_CASE("gdk::graphics::ext::font reports the metrics it was given",
 
 namespace {
     [[nodiscard]] std::optional<std::vector<texture_data::encoded_byte>> load_the_collection() {
-        std::ifstream file(GDK_TEST_FONT_COLLECTION, std::ios::binary);
-
-        if (!file) return {};
-
-        return std::vector<texture_data::encoded_byte>(
-            std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+        return std::vector<texture_data::encoded_byte>(std::begin(GDK_TEST_FONT_COLLECTION_BYTES),
+            std::end(GDK_TEST_FONT_COLLECTION_BYTES));
     }
 }
 
@@ -482,4 +476,165 @@ TEST_CASE("a font says which part of its atlas changed", "[gdk::graphics::ext::f
 
         REQUIRE(!subject.atlas_changed_since(before));
     }
+}
+
+namespace {
+    using font_bytes = std::vector<texture_data::encoded_byte>;
+
+    [[nodiscard]] std::size_t u16_at(const font_bytes &aFont, const std::size_t aAt) {
+        return (std::size_t{aFont[aAt]} << 8) | aFont[aAt + 1];
+    }
+
+    [[nodiscard]] std::size_t u32_at(const font_bytes &aFont, const std::size_t aAt) {
+        return (u16_at(aFont, aAt) << 16) | u16_at(aFont, aAt + 2);
+    }
+
+    void put16(font_bytes &aFont, const std::size_t aAt, const std::size_t aValue) {
+        aFont[aAt] = static_cast<texture_data::encoded_byte>(aValue >> 8);
+        aFont[aAt + 1] = static_cast<texture_data::encoded_byte>(aValue);
+    }
+
+    void put32(font_bytes &aFont, const std::size_t aAt, const std::size_t aValue) {
+        put16(aFont, aAt, aValue >> 16);
+        put16(aFont, aAt + 2, aValue & 0xFFFF);
+    }
+
+    //! where a table's directory record is
+    [[nodiscard]] std::size_t record_of(const font_bytes &aFont, const std::string &aTag) {
+        for (std::size_t i = 0; i < u16_at(aFont, 4); ++i)
+            if (std::string(aFont.begin() + 12 + i * 16, aFont.begin() + 16 + i * 16) == aTag) return 12 + i * 16;
+
+        FAIL("the test font has no " << aTag);
+
+        return 0;
+    }
+
+    [[nodiscard]] std::size_t table_at(const font_bytes &aFont, const std::string &aTag) {
+        return u32_at(aFont, record_of(aFont, aTag) + 8);
+    }
+}
+
+TEST_CASE("a font cut short anywhere is refused, never read past", "[gdk::graphics::ext::font]") {
+    const auto data = load_a_font();
+
+    REQUIRE(data);
+
+    REQUIRE_THROWS_AS(font(font_bytes{}, 16.f), exception);
+    REQUIRE_THROWS_AS(font(font_bytes(data->begin(), data->begin() + 4), 16.f), exception);
+
+    for (std::size_t length = 8; length < data->size(); length += 97) {
+        INFO("the first " << length << " bytes");
+
+        REQUIRE_THROWS_AS(font(font_bytes(data->begin(), data->begin() + static_cast<std::ptrdiff_t>(length)), 16.f),
+            exception);
+    }
+}
+
+TEST_CASE("a font whose parts point where they should not is refused", "[gdk::graphics::ext::font]") {
+    const auto data = load_a_font();
+
+    REQUIRE(data);
+
+    REQUIRE_NOTHROW(font(*data, 16.f));
+
+    SECTION("a table reaching past the end of the font") {
+        auto broken = *data;
+
+        put32(broken, record_of(broken, "glyf") + 12, broken.size());
+
+        REQUIRE_THROWS_AS(font(broken, 16.f), exception);
+    }
+
+    SECTION("a table at the start of the font, which stb_truetype takes for one it hasn't") {
+        auto broken = *data;
+
+        put32(broken, record_of(broken, "maxp") + 8, 0);
+
+        REQUIRE_THROWS_AS(font(broken, 16.f), exception);
+    }
+
+    SECTION("a character map claiming more groups than it holds") {
+        auto broken = *data;
+
+        const auto cmap = table_at(broken, "cmap");
+        const auto map = cmap + u32_at(broken, cmap + 8);
+
+        put32(broken, map + 12, 0x0FFFFFFF);
+
+        REQUIRE_THROWS_AS(font(broken, 16.f), exception);
+    }
+
+    SECTION("a composite glyph made of itself is refused; one of a glyph read from before the font is not drawn") {
+        auto broken = *data;
+
+        const auto loca = table_at(broken, "loca");
+        const auto glyf = table_at(broken, "glyf");
+        const auto longLocations = u16_at(broken, table_at(broken, "head") + 50) == 1;
+
+        const auto location = [&](const std::size_t aGlyph) {
+            return longLocations ? u32_at(broken, loca + aGlyph * 4) : u16_at(broken, loca + aGlyph * 2) * 2;
+        };
+
+        std::size_t glyph = 1;
+
+        while (location(glyph + 1) - location(glyph) < 16) ++glyph;
+
+        const auto at = glyf + location(glyph);
+
+        put16(broken, at, 0xFFFF);
+        put16(broken, at + 10, 0x0002);
+        put16(broken, at + 12, glyph);
+
+        REQUIRE_THROWS_AS(font(broken, 16.f), exception);
+
+        put16(broken, at + 12, 0x8001);
+
+        const auto *const pCodepoint = [&]() -> const char32_t * {
+            static const char32_t ANY[] = {U'A', U'B', U'a', U'b', U'0', U'1'};
+
+            return ANY;
+        }();
+
+        font subject(broken, 16.f);
+
+        for (std::size_t i = 0; i < 6; ++i) REQUIRE_NOTHROW(subject.try_get(pCodepoint[i]));
+    }
+}
+
+TEST_CASE("a font's broken kerning is left unread, and the font still reads", "[gdk::graphics::ext::font]") {
+    const auto data = load_a_font();
+
+    REQUIRE(data);
+
+    auto broken = *data;
+
+    put16(broken, table_at(broken, "kern") + 10, 0xFFFF);
+
+    font subject(broken, 16.f);
+
+    REQUIRE(subject.try_get(U'A'));
+    REQUIRE(subject.kerning(U'A', U'V') == 0.0f);
+}
+
+TEST_CASE("a glyph whose box is inside out is drawn as nothing, not rasterised", "[gdk::graphics::ext::font]") {
+    const auto data = load_a_font();
+
+    REQUIRE(data);
+
+    auto broken = *data;
+
+    const auto loca = table_at(broken, "loca");
+    const auto glyf = table_at(broken, "glyf");
+    const auto longLocations = u16_at(broken, table_at(broken, "head") + 50) == 1;
+
+    for (std::size_t glyph = 0; glyph < 4; ++glyph) {
+        const auto at = glyf + (longLocations ? u32_at(broken, loca + glyph * 4) : u16_at(broken, loca + glyph * 2) * 2);
+
+        put16(broken, at + 2, 0x7000);
+        put16(broken, at + 6, 0x0010);
+    }
+
+    font subject(broken, 16.f);
+
+    REQUIRE(subject.fallback().width == 0.0f);
 }

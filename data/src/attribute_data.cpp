@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <gdk/graphics/attribute_data.h>
 #include <gdk/graphics/exception.h>

@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_DEMO_RETARGET_H
-#define GDK_DEMO_RETARGET_H
+#ifndef GDK_GRAPHICS_EXT_ANIMATION_RETARGET_H
+#define GDK_GRAPHICS_EXT_ANIMATION_RETARGET_H
 
 #include <gdk/graphics/ext/animation/profile.h>
 #include <gdk/graphics/ext/animation/skeleton.h>
@@ -23,7 +23,10 @@ namespace gdk::graphics::animation {
     /// \brief how many bones a mapping actually places
     [[nodiscard]] std::size_t mapped_bone_count(const bone_mapping &aMapping);
 
-    /// \brief the same pose performed by the other side of the body
+    /// \brief the same pose performed by the other side of the body, mirrored across the rig's YZ plane
+    ///
+    /// Each bone takes its mirror's turn from bind, reflected, so the rest pose mirrors to itself whatever the
+    /// bones' bind frames are. \throws gdk::graphics::exception for a binding made against another skeleton
     [[nodiscard]] pose mirror_pose(const skeleton &aSkeleton, const rig_binding &aBinding,
         const pose &aPose);
 
@@ -33,4 +36,3 @@ namespace gdk::graphics::animation {
 }
 
 #endif
-

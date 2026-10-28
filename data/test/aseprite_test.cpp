@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <jfc/catch.hpp>
 
@@ -388,6 +388,18 @@ TEST_CASE("what a sheet's json escaped is read back as it was written", "[asepri
     REQUIRE(sheet.tags.size() == 2);
     REQUIRE(sheet.tags[0].name == "one\ttwo");
     REQUIRE(sheet.tag("one\ttwo"));
+
+    SECTION("a character past the first 65536 is written as a pair, and read back as one") {
+        const auto with = [](const std::string &aName) {
+            return R"({ "frames": [{ "frame": { "x": 0, "y": 0, "w": 8, "h": 8 }, "duration": 10 }],
+                "meta": { "image": ")" + aName + R"(", "size": { "w": 8, "h": 8 } } })";
+        };
+
+        REQUIRE(read(with("\\ud83d\\ude00")).image == "\xf0\x9f\x98\x80");
+
+        REQUIRE(read(with("\\ud83da")).image == "\xef\xbf\xbd" "a");
+        REQUIRE(read(with("\\ude00")).image == "\xef\xbf\xbd");
+    }
 
     SECTION("and an escape that is not one is refused") {
         const auto with = [](std::string_view aName) {

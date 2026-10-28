@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #ifndef GDK_GRAPHICS_STRING_KEYED_H
 #define GDK_GRAPHICS_STRING_KEYED_H

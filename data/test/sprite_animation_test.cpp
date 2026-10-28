@@ -1,8 +1,11 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <vector>
 
 #include <jfc/catch.hpp>
+
+#include <limits>
+#include <vector>
 
 #include <gdk/graphics/ext/sprite_animation.h>
 
@@ -285,4 +288,33 @@ TEST_CASE("a long running clock still wraps correctly", "[sprite_animation]") {
     REQUIRE(index_of(subject.at(1000.00f)) == 0);
     REQUIRE(index_of(subject.at(1000.30f)) == 1);
     REQUIRE(index_of(subject.at(1000.80f)) == 3);
+}
+
+TEST_CASE("a looping sprite animation never steps before its first frame", "[sprite_animation]") {
+    const std::vector<sprite_animation::frame> frames{{0, 0, 1, 1, 0.4f}, {1, 0, 1, 1, 0.399567f}};
+
+    const sprite_animation subject(frames, 2, 1);
+
+    for (const auto time : {7772.59f, -0.0000001f, 0.0f, 1e9f, -1e9f}) {
+        INFO("at " << time);
+
+        const auto shown = subject.at(time);
+
+        REQUIRE((shown.u == 0.0f || shown.u == 0.5f));
+    }
+}
+
+TEST_CASE("a short sprite frame after long ones keeps its turn", "[sprite_animation]") {
+    const std::vector<sprite_animation::frame> frames{{0, 0, 1, 1, 1e7f}, {1, 0, 1, 1, 0.01f}, {2, 0, 1, 1, 1.0f}};
+
+    const sprite_animation subject(frames, 3, 1);
+
+    REQUIRE(subject.frame_count() == 3);
+    REQUIRE(subject.at(1e7f + 0.005f).u == Approx(1.0f / 3.0f));
+}
+
+TEST_CASE("a sprite frame reaching past the sheet is refused, however large its numbers", "[sprite_animation]") {
+    const std::vector<sprite_animation::frame> frames{{std::numeric_limits<int>::max() - 1, 0, 10, 1, 1.0f}};
+
+    REQUIRE_THROWS(sprite_animation(frames, 16, 16));
 }

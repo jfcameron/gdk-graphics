@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #ifndef GDK_GRAPHICS_EXT_GLTF_H
 #define GDK_GRAPHICS_EXT_GLTF_H
@@ -14,7 +14,10 @@
 #include <vector>
 
 namespace gdk::graphics {
-    /// \brief one drawable piece of a glTF document 
+    /// \brief one drawable piece of a glTF document: a primitive, as one node draws it
+    ///
+    /// A mesh drawn by several nodes comes back once for each, with that node's name and transform; one no node
+    /// draws comes back once, with neither. Triangle strips and fans come back as triangle lists.
     struct gltf_mesh final {
         model_data data;
 
@@ -85,7 +88,11 @@ namespace gdk::graphics {
 
         //! every node, drawing or not
         std::vector<gltf_node> nodes;
+        //! one per skin. A root bone carries the transforms of the nodes above it, its armature's, but not their
+        //! scale: a skeleton has none
         std::vector<animation::skeleton> skeletons;
+
+        //! every animation, as it drives the first skin
         std::vector<animation::clip> animations;
     };
 
@@ -94,6 +101,12 @@ namespace gdk::graphics {
     [[nodiscard]] const gltf_attribute_names &default_gltf_attribute_names();
 
     /// \brief read a glTF document held in memory
+    ///
+    /// The document may be hostile: an accessor of the wrong type for what reads it, a count past what the reader
+    /// takes (2^24 values), an index past its vertices, points or lines where triangles are drawn, CUBICSPLINE
+    /// interpolation, an external file, all are refused. So is every document on a big endian machine: cgltf reads
+    /// in the machine's byte order, and glTF is little endian.
+    /// \throws gdk::graphics::exception
     [[nodiscard]] gltf_content read_gltf(const std::string_view aData,
         const gltf_attribute_names &aNames = default_gltf_attribute_names());
 }

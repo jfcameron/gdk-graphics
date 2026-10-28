@@ -1,8 +1,9 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_BATCH_MODELER_H
-#define GDK_BATCH_MODELER_H
+#ifndef GDK_GRAPHICS_EXT_BATCH_MODELER_H
+#define GDK_GRAPHICS_EXT_BATCH_MODELER_H
 
+#include <cstddef>
 #include <gdk/graphics/context.h>
 #include <gdk/graphics/types.h>
 #include <gdk/graphics/model_data.h>
@@ -19,7 +20,7 @@ namespace gdk::graphics {
         const_material_ptr_type material() const;
 
         //! get the number of vertices in the current buffer
-        size_t vertex_count() const;
+        std::size_t vertex_count() const;
 
         //! add model data to the batch
         void push_back(const model_data &data);

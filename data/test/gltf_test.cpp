@@ -1,17 +1,28 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include <bit>
 #include <cstdint>
 #include <cstring>
+#include <initializer_list>
 #include <string>
 #include <vector>
 
 #include <jfc/catch.hpp>
 
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/gltf.h>
 
 using namespace gdk::graphics;
 
 namespace {
+    [[nodiscard]] bool big_endian() {
+        if constexpr (std::endian::native == std::endian::little) return false;
+
+        WARN("glTF is not read on a big endian machine; what is checked here is that it is refused");
+
+        return true;
+    }
+
     void put32(std::string &aOut, const std::uint32_t aValue) {
         for (int i = 0; i < 4; ++i) aOut.push_back(static_cast<char>((aValue >> (i * 8)) & 0xff));
     }
@@ -112,6 +123,8 @@ namespace {
 
 TEST_CASE("gdk::graphics::read_gltf skins and animations", "[gdk::graphics]")
 {
+    if (big_endian()) return;
+
     const auto content = read_gltf(skinned());
 
     SECTION("a skin becomes a skeleton with parents before children")
@@ -155,15 +168,15 @@ TEST_CASE("gdk::graphics::read_gltf skins and animations", "[gdk::graphics]")
 
         const auto &bind = content.skeletons.front().bones[1].local_rotation;
 
-        REQUIRE(gdk::to_degrees(bind.angle()) == Approx(90.0f).margin(0.01));
+        REQUIRE(gdk::math::to_degrees(bind.angle()) == Approx(90.0f).margin(0.01));
 
         const auto composedFirst = bind * clip.keys.front().p.local_rotations[1];
 
-        REQUIRE(gdk::to_degrees(composedFirst.angle()) == Approx(0.0f).margin(0.01));
+        REQUIRE(gdk::math::to_degrees(composedFirst.angle()) == Approx(0.0f).margin(0.01));
 
         const auto composedLast = bind * clip.keys.back().p.local_rotations[1];
 
-        REQUIRE(gdk::to_degrees(composedLast.angle()) == Approx(90.0f).margin(0.01));
+        REQUIRE(gdk::math::to_degrees(composedLast.angle()) == Approx(90.0f).margin(0.01));
         REQUIRE(composedLast.x == Approx(0.70710678f).margin(1e-4));
         REQUIRE(composedLast.y == Approx(0.0f).margin(1e-4));
         REQUIRE(composedLast.z == Approx(0.0f).margin(1e-4));
@@ -174,6 +187,8 @@ TEST_CASE("gdk::graphics::read_gltf skins and animations", "[gdk::graphics]")
 
 TEST_CASE("gdk::graphics::read_gltf", "[gdk::graphics]")
 {
+    if (big_endian()) return;
+
     const auto document = triangle();
 
     SECTION("a primitive becomes a model_data, with attributes renamed")
@@ -208,8 +223,8 @@ TEST_CASE("gdk::graphics::read_gltf", "[gdk::graphics]")
 
     SECTION("malformed documents are rejected rather than half read")
     {
-        REQUIRE_THROWS_AS(read_gltf("not a glb at all"), std::runtime_error);
-        REQUIRE_THROWS_AS(read_gltf(document.substr(0, 20)), std::runtime_error);
+        REQUIRE_THROWS_AS(read_gltf("not a glb at all"), gdk::graphics::exception);
+        REQUIRE_THROWS_AS(read_gltf(document.substr(0, 20)), gdk::graphics::exception);
     }
 
     SECTION("a document naming an external buffer is rejected, not read from disk")
@@ -217,11 +232,13 @@ TEST_CASE("gdk::graphics::read_gltf", "[gdk::graphics]")
         const auto external = glb(R"({"asset":{"version":"2.0"},
             "buffers":[{"uri":"elsewhere.bin","byteLength":4}]})", "");
 
-        REQUIRE_THROWS_AS(read_gltf(external), std::runtime_error);
+        REQUIRE_THROWS_AS(read_gltf(external), gdk::graphics::exception);
     }
 }
 
 TEST_CASE("a glTF document's names come back with its geometry", "[gdk::graphics]") {
+    if (big_endian()) return;
+
     const auto document = [] {
         std::string bin;
 
@@ -270,6 +287,8 @@ TEST_CASE("a glTF document's names come back with its geometry", "[gdk::graphics
 }
 
 TEST_CASE("a glTF node's parent, material and placement come back with it", "[gdk::graphics]") {
+    if (big_endian()) return;
+
     const auto document = [] {
         std::string bin;
 
@@ -335,12 +354,14 @@ TEST_CASE("a glTF node's parent, material and placement come back with it", "[gd
 }
 
 TEST_CASE("a primitive's indices come back with it", "[gdk::graphics]") {
+    if (big_endian()) return;
+
     const auto indexed = [] {
         std::string bin;
 
         for (const float v : {0.f,0.f,0.f, 1.f,0.f,0.f, 1.f,1.f,0.f, 0.f,1.f,0.f}) putf(bin, v);
 
-        for (const std::uint16_t i : {0, 1, 2, 0, 2, 3}) {
+        for (const std::uint16_t i : std::initializer_list<std::uint16_t>{0, 1, 2, 0, 2, 3}) {
             bin.push_back(static_cast<char>(i & 0xff));
             bin.push_back(static_cast<char>(i >> 8));
         }
@@ -385,6 +406,8 @@ TEST_CASE("a primitive's indices come back with it", "[gdk::graphics]") {
 }
 
 TEST_CASE("a glTF document's images come back encoded", "[gdk::graphics]") {
+    if (big_endian()) return;
+
     const std::string picture = "\x89PNG\r\n\x1a\n";
 
     SECTION("**an image in the binary chunk is handed back byte for byte**")
@@ -463,7 +486,7 @@ TEST_CASE("a glTF document's images come back encoded", "[gdk::graphics]") {
 
             FAIL("expected a document naming a file to be refused");
         }
-        catch (const std::runtime_error &aException) {
+        catch (const gdk::graphics::exception &aException) {
             const std::string said = aException.what();
 
             INFO("said: " << said);
@@ -471,4 +494,248 @@ TEST_CASE("a glTF document's images come back encoded", "[gdk::graphics]") {
             REQUIRE(said.find("names a file") != std::string::npos);
         }
     }
+}
+
+namespace {
+    [[nodiscard]] std::string base64(const std::string &aBytes) {
+        static constexpr char ALPHABET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+        std::string out;
+
+        for (std::size_t i = 0; i < aBytes.size(); i += 3) {
+            std::uint32_t chunk = 0;
+
+            const auto have = std::min<std::size_t>(3, aBytes.size() - i);
+
+            for (std::size_t j = 0; j < 3; ++j)
+                chunk = (chunk << 8) | (j < have ? static_cast<unsigned char>(aBytes[i + j]) : 0u);
+
+            for (std::size_t j = 0; j < 4; ++j)
+                out.push_back(j <= have ? ALPHABET[(chunk >> (18 - 6 * j)) & 0x3F] : '=');
+        }
+
+        return out;
+    }
+
+    [[nodiscard]] std::string positions_and(const std::string &aRest, const std::string &aExtraBin = {}) {
+        std::string bin;
+
+        for (const float v : {0.f,0.f,0.f,  1.f,0.f,0.f,  0.f,1.f,0.f,  1.f,1.f,0.f}) putf(bin, v);
+
+        bin += aExtraBin;
+
+        return glb(R"({
+          "asset":{"version":"2.0"},
+          "buffers":[{"byteLength":)" + std::to_string(bin.size()) + R"(}],
+          "bufferViews":[{"buffer":0,"byteOffset":0,"byteLength":48})" + aRest, bin);
+    }
+}
+
+TEST_CASE("a glTF image carried as a data uri comes back byte for byte, however it is padded", "[gdk::graphics]") {
+    if (big_endian()) return;
+
+    for (const std::string payload : {"a", "ab", "abc", "abcd", "abcde", "abcdef"}) {
+        INFO("payload " << payload);
+
+        const auto document = glb(R"({"asset":{"version":"2.0"},
+            "images":[{"name":"inline","uri":"data:image/png;base64,)" + base64(payload) + R"("}]})", "");
+
+        const auto content = read_gltf(document);
+
+        REQUIRE(content.images.size() == 1);
+        REQUIRE(std::string(reinterpret_cast<const char *>(content.images[0].bytes.data()),
+            content.images[0].bytes.size()) == payload);
+    }
+}
+
+TEST_CASE("a glTF accessor of the wrong type for what reads it is refused, not read past", "[gdk::graphics]") {
+    if (big_endian()) return;
+
+    const auto animated = [](const std::string &aOutputType, const std::string &aInputType) {
+        std::string bin;
+
+        for (const float t : {0.f, 1.f, 0.f, 0.f}) putf(bin, t);
+        for (int i = 0; i < 8; ++i) putf(bin, 0.f);
+
+        return glb(R"({
+          "asset":{"version":"2.0"},
+          "buffers":[{"byteLength":48}],
+          "bufferViews":[{"buffer":0,"byteOffset":0,"byteLength":16},{"buffer":0,"byteOffset":16,"byteLength":32}],
+          "accessors":[
+            {"bufferView":0,"componentType":5126,"count":)" + std::string(aInputType == "SCALAR" ? "2" : "1")
+                + R"(,"type":")" + aInputType + R"("},
+            {"bufferView":1,"componentType":5126,"count":2,"type":")" + aOutputType + R"("}],
+          "nodes":[{"name":"root"}],
+          "skins":[{"joints":[0]}],
+          "animations":[{
+            "samplers":[{"input":0,"output":1}],
+            "channels":[{"sampler":0,"target":{"node":0,"path":"rotation"}}]}]
+        })", bin);
+    };
+
+    REQUIRE_NOTHROW(read_gltf(animated("VEC4", "SCALAR")));
+
+    SECTION("a rotation that is not four components") {
+        REQUIRE_THROWS_AS(read_gltf(animated("VEC3", "SCALAR")), exception);
+        REQUIRE_THROWS_AS(read_gltf(animated("VEC2", "SCALAR")), exception);
+    }
+
+    SECTION("times that are not scalars") {
+        REQUIRE_THROWS_AS(read_gltf(animated("VEC4", "VEC4")), exception);
+    }
+
+    SECTION("weights that are not four components") {
+        std::string extra;
+
+        for (int i = 0; i < 4; ++i) for (int j = 0; j < 4; ++j) { extra.push_back(0); extra.push_back(0); }
+        for (int i = 0; i < 4; ++i) putf(extra, 1.f);
+
+        const auto document = positions_and(R"(,
+            {"buffer":0,"byteOffset":48,"byteLength":32},{"buffer":0,"byteOffset":80,"byteLength":16}],
+          "accessors":[
+            {"bufferView":0,"componentType":5126,"count":4,"type":"VEC3"},
+            {"bufferView":1,"componentType":5123,"count":4,"type":"VEC4"},
+            {"bufferView":2,"componentType":5126,"count":4,"type":"SCALAR"}],
+          "nodes":[{"name":"bone"},{"name":"body","mesh":0,"skin":0}],
+          "skins":[{"joints":[0]}],
+          "meshes":[{"primitives":[{"attributes":{"POSITION":0,"JOINTS_0":1,"WEIGHTS_0":2}}]}]
+        })", extra);
+
+        REQUIRE_THROWS_AS(read_gltf(document), exception);
+    }
+}
+
+TEST_CASE("a glTF document cannot make the reader take more than it should", "[gdk::graphics]") {
+    if (big_endian()) return;
+
+    SECTION("a count far past the document's size is refused before anything is made") {
+        const auto document = glb(R"({"asset":{"version":"2.0"},
+            "accessors":[{"componentType":5126,"count":400000000,"type":"VEC3"}],
+            "meshes":[{"primitives":[{"attributes":{"POSITION":0}}]}]})", "");
+
+        REQUIRE_THROWS_AS(read_gltf(document), exception);
+    }
+
+    SECTION("a skin with no joints is refused") {
+        const auto document = glb(R"({"asset":{"version":"2.0"},"nodes":[{"name":"a"}],"skins":[{"joints":[]}]})", "");
+
+        REQUIRE_THROWS_AS(read_gltf(document), exception);
+    }
+
+    SECTION("an index past the primitive's vertices is refused") {
+        std::string extra;
+
+        for (const std::uint16_t i : std::initializer_list<std::uint16_t>{0, 1, 9}) { extra.push_back(char(i & 0xff)); extra.push_back(char(i >> 8)); }
+
+        const auto document = positions_and(R"(,{"buffer":0,"byteOffset":48,"byteLength":6}],
+          "accessors":[
+            {"bufferView":0,"componentType":5126,"count":4,"type":"VEC3"},
+            {"bufferView":1,"componentType":5123,"count":3,"type":"SCALAR"}],
+          "meshes":[{"primitives":[{"attributes":{"POSITION":0},"indices":1}]}]
+        })", extra);
+
+        REQUIRE_THROWS_AS(read_gltf(document), exception);
+    }
+}
+
+TEST_CASE("a glTF vertex is weighted to its two strongest joints", "[gdk::graphics]") {
+    if (big_endian()) return;
+
+    std::string extra;
+
+    for (const std::uint16_t j : std::initializer_list<std::uint16_t>{0, 1, 2, 3}) { extra.push_back(char(j & 0xff)); extra.push_back(char(j >> 8)); }
+    for (int padding = 0; padding < 3; ++padding) for (int i = 0; i < 8; ++i) extra.push_back(0);
+    for (const float w : {0.3f, 0.1f, 0.6f, 0.f}) putf(extra, w);
+    for (int padding = 0; padding < 3; ++padding) for (int i = 0; i < 4; ++i) putf(extra, i == 0 ? 1.f : 0.f);
+
+    const auto document = positions_and(R"(,
+        {"buffer":0,"byteOffset":48,"byteLength":32},{"buffer":0,"byteOffset":80,"byteLength":64}],
+      "accessors":[
+        {"bufferView":0,"componentType":5126,"count":4,"type":"VEC3"},
+        {"bufferView":1,"componentType":5123,"count":4,"type":"VEC4"},
+        {"bufferView":2,"componentType":5126,"count":4,"type":"VEC4"}],
+      "nodes":[{"name":"a","children":[1]},{"name":"b","children":[2]},{"name":"c","children":[3]},{"name":"d"},
+        {"name":"body","mesh":0,"skin":0}],
+      "skins":[{"joints":[0,1,2,3]}],
+      "meshes":[{"primitives":[{"attributes":{"POSITION":0,"JOINTS_0":1,"WEIGHTS_0":2}}]}]
+    })", extra);
+
+    const auto content = read_gltf(document);
+
+    REQUIRE(content.meshes.size() == 1);
+
+    const auto &weights = content.meshes[0].weights[0];
+
+    REQUIRE(weights.first == 2);
+    REQUIRE(weights.second == 0);
+    REQUIRE(weights.first_weight == Approx(0.6f / 0.9f));
+}
+
+TEST_CASE("a glTF primitive drawn as a strip or a fan comes back as a triangle list", "[gdk::graphics]") {
+    if (big_endian()) return;
+
+    const auto drawnAs = [](const int aMode) {
+        return positions_and(R"(],
+          "accessors":[{"bufferView":0,"componentType":5126,"count":4,"type":"VEC3"}],
+          "meshes":[{"primitives":[{"attributes":{"POSITION":0},"mode":)" + std::to_string(aMode) + R"(}]}]
+        })");
+    };
+
+    SECTION("a strip alternates its winding, as glTF says") {
+        const auto content = read_gltf(drawnAs(5));
+
+        REQUIRE(content.meshes[0].data.indexes() == std::vector<model_data::index_value_type>{0, 1, 2, 2, 1, 3});
+    }
+
+    SECTION("a fan turns about its first vertex") {
+        const auto content = read_gltf(drawnAs(6));
+
+        REQUIRE(content.meshes[0].data.indexes() == std::vector<model_data::index_value_type>{0, 1, 2, 0, 2, 3});
+    }
+
+    SECTION("points and lines are refused, as a model draws triangles") {
+        for (const auto mode : {0, 1, 2, 3}) REQUIRE_THROWS_AS(read_gltf(drawnAs(mode)), exception);
+    }
+}
+
+TEST_CASE("a glTF mesh drawn by several nodes comes back once for each", "[gdk::graphics]") {
+    if (big_endian()) return;
+
+    const auto document = positions_and(R"(],
+      "accessors":[{"bufferView":0,"componentType":5126,"count":4,"type":"VEC3"}],
+      "nodes":[{"name":"left","mesh":0,"translation":[-1,0,0]},{"name":"right","mesh":0,"translation":[1,0,0]}],
+      "meshes":[{"name":"crate","primitives":[{"attributes":{"POSITION":0}}]}]
+    })");
+
+    const auto content = read_gltf(document);
+
+    REQUIRE(content.meshes.size() == 2);
+    REQUIRE(content.meshes[0].node_name == "left");
+    REQUIRE(content.meshes[1].node_name == "right");
+    REQUIRE(content.meshes[0].mesh_name == "crate");
+    REQUIRE(content.meshes[0].local_transform[3] == -1.0f);
+    REQUIRE(content.meshes[1].local_transform[3] == 1.0f);
+}
+
+TEST_CASE("a glTF root bone carries the armature it hangs from", "[gdk::graphics]") {
+    if (big_endian()) return;
+
+    const auto document = glb(R"({"asset":{"version":"2.0"},
+        "nodes":[{"name":"Armature","children":[1],"translation":[0,0,5],"rotation":[0,0,0.70710678,0.70710678]},
+            {"name":"hips","translation":[1,0,0]}],
+        "skins":[{"joints":[1]}]})", "");
+
+    const auto content = read_gltf(document);
+    const auto &hips = content.skeletons.at(0).bones.at(0);
+
+    REQUIRE(hips.local_position.x == Approx(0.0f).margin(1e-5));
+    REQUIRE(hips.local_position.y == Approx(1.0f).margin(1e-5));
+    REQUIRE(hips.local_position.z == Approx(5.0f).margin(1e-5));
+    REQUIRE(hips.local_rotation.z == Approx(0.70710678f).margin(1e-5));
+}
+
+TEST_CASE("a glTF document is refused on a big endian machine, rather than misread", "[gdk::graphics]") {
+    if constexpr (std::endian::native == std::endian::little) return;
+
+    REQUIRE_THROWS_AS(read_gltf(triangle()), exception);
 }

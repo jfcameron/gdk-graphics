@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include "conformance.h"
 
@@ -14,4 +14,6 @@ namespace gdk::graphics::conformance {
     std::string_view implementation() { return "null"; }
 
     profile minimum_profile() { return {"null", {}}; }
+
+    bool checks_shaders() { return false; }
 }

@@ -1,5 +1,6 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include <gdk/graphics/constraints.h>
 #include <gdk/graphics/profile.h>
 
 #include <gdk/graphics/exception.h>
@@ -10,12 +11,6 @@
 #include <string_view>
 
 using namespace gdk::graphics;
-
-namespace {
-    [[nodiscard]] bool is_power_of_two(const std::size_t aValue) {
-        return aValue > 0 && (aValue & (aValue - 1)) == 0;
-    }
-}
 
 void gdk::graphics::check_texture(const profile &aProfile, const std::size_t aWidth, const std::size_t aHeight) {
     check_texture(aProfile, aWidth, aHeight, false);

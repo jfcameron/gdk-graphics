@@ -1,13 +1,13 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_SPRITE_ANIMATION_H
-#define GDK_SPRITE_ANIMATION_H
+#ifndef GDK_GRAPHICS_EXT_SPRITE_ANIMATION_H
+#define GDK_GRAPHICS_EXT_SPRITE_ANIMATION_H
 
 #include <gdk/graphics/data_types.h>
 
 #include <cstddef>
-#include <map>
 #include <span>
+#include <vector>
 
 namespace gdk::graphics {
     /// \brief non-interpolated 2d sprite animation
@@ -59,7 +59,7 @@ namespace gdk::graphics {
         [[nodiscard]] time_type length() const;
 
         /// \brief how many frames the animation has
-        [[nodiscard]] size_t frame_count() const;
+        [[nodiscard]] std::size_t frame_count() const;
 
         /// \brief builds an animation from frames cut out of a sprite sheet.
         ///
@@ -77,12 +77,13 @@ namespace gdk::graphics {
             play_mode aPlayMode = play_mode::loop);
 
     private:
-        /// \brief keyed by the time each frame starts. Already in normalized coordinates: the
-        /// conversion depends only on the sheet, which cannot change, so there is no reason to
-        /// repeat it on every lookup.
-        std::map<time_type, normalized_frame> m_Frames;
+        //! when each frame starts, summed in double so that a short frame after long ones keeps a start of its own
+        std::vector<double> m_Starts;
 
-        time_type mAnimationLength = 0;
+        //! already in normalized coordinates: the conversion depends only on the sheet, which cannot change
+        std::vector<normalized_frame> m_Frames;
+
+        double m_Length = 0;
 
         play_mode m_PlayMode = play_mode::loop;
     };

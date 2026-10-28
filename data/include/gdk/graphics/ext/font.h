@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #ifndef GDK_GRAPHICS_EXT_FONT_H
 #define GDK_GRAPHICS_EXT_FONT_H
@@ -19,16 +19,16 @@ namespace gdk::graphics::ext {
     /// \brief everything about a \ref font that has a default
     struct font_settings final {
         /// \brief which font of a collection (.ttc, .otc) to use
-        size_t face = 0;
+        std::size_t face = 0;
 
         //! what the constructor's pixel size measures.
         font_sizing sizing = font_sizing::ascent_to_descent;
 
         //! the atlas starts square with this edge length
-        size_t atlas_edge = 512;
+        std::size_t atlas_edge = 512;
 
         /// \brief how far the atlas may grow
-        size_t max_atlas_edge = 2048;
+        std::size_t max_atlas_edge = 2048;
     };
 
     /// \brief a truetype font
@@ -79,14 +79,14 @@ namespace gdk::graphics::ext {
 
         /// \brief a rectangle of the atlas, in texels
         struct atlas_region {
-            size_t x = 0, y = 0, width = 0, height = 0;
+            std::size_t x = 0, y = 0, width = 0, height = 0;
         };
 
         /// \brief which part of the atlas has changed since a given generation.
-        [[nodiscard]] std::optional<atlas_region> atlas_changed_since(size_t aGeneration) const;
+        [[nodiscard]] std::optional<atlas_region> atlas_changed_since(std::size_t aGeneration) const;
 
         /// \brief a number that changes whenever the atlas does.
-        [[nodiscard]] size_t atlas_generation() const;
+        [[nodiscard]] std::size_t atlas_generation() const;
 
         /// \brief baseline to baseline distance in pixels
         [[nodiscard]] float line_height() const;
@@ -111,7 +111,7 @@ namespace gdk::graphics::ext {
         );
 
         /// \brief the atlas's current edge length in texels. Changes when the atlas grows.
-        [[nodiscard]] size_t atlas_edge() const;
+        [[nodiscard]] std::size_t atlas_edge() const;
 
         ~font();
 

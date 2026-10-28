@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_DEMO_PROFILE_H
-#define GDK_DEMO_PROFILE_H
+#ifndef GDK_GRAPHICS_EXT_ANIMATION_PROFILE_H
+#define GDK_GRAPHICS_EXT_ANIMATION_PROFILE_H
 
 #include <gdk/graphics/ext/animation/skeleton.h>
 
@@ -51,10 +51,9 @@ namespace gdk::graphics::animation {
 
         [[nodiscard]] const rig_profile &profile() const { return m_Profile; }
 
-        rig_binding(rig_profile aProfile, std::vector<int> aBones, const std::size_t aBoneCount)
-        : m_Profile(std::move(aProfile))
-        , m_Bones(std::move(aBones))
-        , m_BoneCount(aBoneCount) {}
+        /// \param aBones for each of the profile's roles, the bone filling it, or -1
+        /// \throws gdk::graphics::exception where aBones is not one per role, or names a bone past aBoneCount
+        rig_binding(rig_profile aProfile, std::vector<int> aBones, const std::size_t aBoneCount);
 
     private:
         rig_profile m_Profile;

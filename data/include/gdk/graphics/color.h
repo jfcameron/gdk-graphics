@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_COLOR_H
-#define GDK_GFX_COLOR_H
+#ifndef GDK_GRAPHICS_COLOR_H
+#define GDK_GRAPHICS_COLOR_H
 
 #include <iosfwd>
 

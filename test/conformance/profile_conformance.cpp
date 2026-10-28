@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <jfc/catch.hpp>
 
@@ -13,6 +13,7 @@
 #include <vector>
 
 using namespace gdk::graphics;
+using gdk::graphics::conformance::checks_shaders;
 using gdk::graphics::conformance::implementation;
 using gdk::graphics::conformance::make_context;
 using gdk::graphics::conformance::minimum_profile;
@@ -124,4 +125,30 @@ TEST_CASE("conformance, the built in shaders fit the implementation's own floor"
 
     REQUIRE_NOTHROW(pContext->make_alpha_cutoff_shader());
     REQUIRE_NOTHROW(pContext->make_alpha_blend_shader());
+
+    SECTION("and the context hands out the same one each time") {
+        REQUIRE(pContext->make_alpha_cutoff_shader() == pContext->make_alpha_cutoff_shader());
+        REQUIRE(pContext->make_alpha_blend_shader() == pContext->make_alpha_blend_shader());
+    }
+}
+
+TEST_CASE("conformance, a built in shader past the profile is refused", "[conformance][profile]") {
+    INFO("implementation " << implementation());
+
+    auto none = minimum_profile();
+
+    none.most.vertex_uniform_vectors = 0;
+    none.most.fragment_uniform_vectors = 0;
+    none.most.texture_units = 0;
+
+    if (!checks_shaders()) {
+        WARN(implementation() << " has no shader language to check against a profile");
+
+        return;
+    }
+
+    const auto pContext = make_context(none);
+
+    REQUIRE_THROWS_AS(pContext->make_alpha_cutoff_shader(), exception);
+    REQUIRE_THROWS_AS(pContext->make_alpha_blend_shader(), exception);
 }

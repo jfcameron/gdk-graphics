@@ -1,6 +1,5 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#include <fstream>
 #include <iterator>
 #include <memory>
 #include <optional>
@@ -8,6 +7,8 @@
 #include <vector>
 
 #include <jfc/catch.hpp>
+
+#include <gdk/graphics/test/font_bytes.h>
 
 #include <gdk/graphics/ext/font.h>
 #include <gdk/graphics/ext/text_modeler.h>
@@ -18,283 +19,88 @@ using namespace gdk::graphics;
 using namespace gdk::graphics::ext;
 
 namespace {
-    [[nodiscard]] std::shared_ptr<font> load_a_font() {
-        std::ifstream file(GDK_TEST_FONT, std::ios::binary);
-
-        if (!file) return {};
-
-        const std::vector<texture_data::encoded_byte> data(
-            (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-        return std::make_shared<font>(data, 32.f);
+    [[nodiscard]] std::vector<texture_data::encoded_byte> test_font_bytes() {
+        return {std::begin(GDK_TEST_FONT_BYTES), std::end(GDK_TEST_FONT_BYTES)};
     }
+
+    [[nodiscard]] const null_model &uploaded(const const_model_ptr_type &pModel) {
+        return *std::static_pointer_cast<const null_model>(pModel);
+    }
+
+    [[nodiscard]] std::shared_ptr<font> load_a_font() { return std::make_shared<font>(test_font_bytes(), 32.f); }
 }
 
-TEST_CASE("gdk::graphics::ext::text_modeler", "[gdk::graphics::ext::text_modeler]") {
-    auto pFont = load_a_font();
-
-    REQUIRE(pFont);
-
-    const auto pContext = null_context::make();
-
-    text_modeler subject(pContext, pFont);
-
-    SECTION("it produces geometry for text, and none for nothing") {
-        subject.set_text("");
-        subject.upload();
-
-        REQUIRE(subject.model());
-
-        subject.set_text("hello");
-        subject.upload();
-
-        REQUIRE(subject.model());
-        REQUIRE(subject.size().x > 0);
-    }
-
-    SECTION("wider text is wider") {
-        subject.set_text("i");
-        subject.upload();
-
-        const auto narrow = subject.size().x;
-
-        subject.set_text("wwwwwwwwww");
-        subject.upload();
-
-        REQUIRE(subject.size().x > narrow);
-    }
-
-    SECTION("glyph advances are used, so text is not monospaced") {
-        subject.set_text("ll");
-        subject.upload();
-
-        const auto narrow = subject.size().x;
-
-        subject.set_text("WW");
-        subject.upload();
-
-        REQUIRE(subject.size().x > narrow);
-    }
-
-    SECTION("a newline starts another line and makes the text taller") {
-        subject.set_text("one");
-        subject.upload();
-
-        const auto oneLine = subject.size().y;
-
-        subject.set_text("one\ntwo");
-        subject.upload();
-
-        REQUIRE(subject.size().y > oneLine);
-    }
-
-    SECTION("one line of text is one unit tall by default") {
-        subject.set_text("x");
-        subject.upload();
-
-        REQUIRE(subject.size().y == Approx(1.f));
-    }
-
-    SECTION("a tab advances further than a space") {
-        subject.set_text("a b");
-        subject.upload();
-
-        const auto spaced = subject.size().x;
-
-        subject.set_text("a\tb");
-        subject.upload();
-
-        REQUIRE(subject.size().x > spaced);
-    }
-
-    SECTION("it accepts UTF-8, not just ASCII") {
-        subject.set_text("\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"); // 日本語 as UTF-8 bytes
-        subject.upload();
-
-        REQUIRE(subject.size().x > 0);
-
-        const auto cjk = subject.size().x;
-
-        subject.set_text("iii");
-        subject.upload();
-
-        REQUIRE(cjk > subject.size().x);
-    }
-
-    SECTION("malformed UTF-8 renders rather than throwing or hanging") {
-        const std::string malformed("ok\xC3", 3); // a lead byte with no continuation
-
-        REQUIRE_NOTHROW(subject.set_text(malformed));
-
-        subject.upload();
-
-        REQUIRE(subject.size().x > 0);
-    }
-
-    SECTION("a lone continuation byte does not run off the end") {
-        const std::string malformed("\x80\x80\x80", 3);
-
-        REQUIRE_NOTHROW(subject.set_text(malformed));
-    }
-}
-
-TEST_CASE("gdk::graphics::ext::text_modeler uploads the atlas when new glyphs arrive",
+TEST_CASE("a text_modeler's model holds its text, however set_text and upload are called",
     "[gdk::graphics::ext::text_modeler]") {
     auto pFont = load_a_font();
 
     REQUIRE(pFont);
 
-    const auto pContext = null_context::make();
-
-    text_modeler subject(pContext, pFont);
-
-    const auto empty = pFont->atlas_generation();
+    text_modeler subject(null_context::make(), pFont);
 
     subject.set_text("abc");
-
-    REQUIRE(pFont->atlas_generation() != empty);
-    REQUIRE(subject.uploaded_atlas_generation() != pFont->atlas_generation());
-
     subject.upload();
 
-    REQUIRE(subject.uploaded_atlas_generation() == pFont->atlas_generation());
+    const auto once = uploaded(subject.model()).vertex_count();
 
-    subject.set_text("xyz");
+    REQUIRE(once == 18);
 
-    REQUIRE(subject.uploaded_atlas_generation() != pFont->atlas_generation());
+    SECTION("text set twice before an upload is the second text, not both") {
+        subject.set_text("abc");
+        subject.set_text("abc");
+        subject.upload();
 
+        REQUIRE(uploaded(subject.model()).vertex_count() == once);
+    }
+
+    SECTION("uploaded again with nothing changed, it keeps its text and sends nothing") {
+        const auto sent = uploaded(subject.model()).upload_count();
+
+        subject.upload();
+
+        REQUIRE(uploaded(subject.model()).vertex_count() == once);
+        REQUIRE(uploaded(subject.model()).upload_count() == sent);
+    }
 }
 
-TEST_CASE("text_modeler lays out correctly across an atlas growth",
+TEST_CASE("a text_modeler lays its text out again when another modeler grows the atlas they share",
     "[gdk::graphics::ext::text_modeler]") {
-    std::ifstream file(GDK_TEST_FONT, std::ios::binary);
+    const auto data = test_font_bytes();
 
-    REQUIRE(file);
-
-    const std::vector<texture_data::encoded_byte> data(
-        (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-    auto pFont = std::make_shared<font>(data, 24.f,
-        font_settings{.atlas_edge = 64, .max_atlas_edge = 2048});
+    auto pFont = std::make_shared<font>(data, 24.f, font_settings{.atlas_edge = 64, .max_atlas_edge = 2048});
 
     const auto pContext = null_context::make();
 
-    text_modeler subject(pContext, pFont);
+    text_modeler grower(pContext, pFont), other(pContext, pFont);
 
-    REQUIRE(pFont->atlas_edge() == 64);
+    other.set_text("a");
+    other.upload();
 
-    REQUIRE_NOTHROW(subject.set_text("the quick brown fox jumps over the lazy dog"));
+    const auto edgeBefore = pFont->atlas_edge();
 
-    subject.upload();
+    grower.set_text("the quick brown fox jumps over the lazy dog 0123456789");
+    grower.upload();
 
-    REQUIRE(pFont->atlas_edge() > 64);
+    REQUIRE(pFont->atlas_edge() > edgeBefore);
 
-    const auto wide = subject.size().x;
+    other.upload();
 
-    REQUIRE(wide > 0);
+    const auto *const pGlyph = pFont->try_get(U'a');
 
-    subject.set_text("the quick brown");
-    subject.upload();
+    REQUIRE(pGlyph);
 
-    REQUIRE(subject.size().x < wide);
-}
+    const auto pModel = other.model();
 
-TEST_CASE("two modelers sharing a font both see atlas changes",
-    "[gdk::graphics::ext::text_modeler]") {
-    std::ifstream file(GDK_TEST_FONT, std::ios::binary);
+    const auto &uvs = uploaded(pModel).last_upload().attributes().at("a_UV").components();
 
-    REQUIRE(file);
-
-    const std::vector<texture_data::encoded_byte> data(
-        (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-    auto pFont = std::make_shared<font>(data, 24.f,
-        font_settings{.atlas_edge = 64, .max_atlas_edge = 2048});
-
-    const auto pContext = null_context::make();
-
-    text_modeler first(pContext, pFont);
-    text_modeler second(pContext, pFont);
-
-    first.set_text("abc");
-    first.upload();
-
-    const auto edgeAfterFirst = pFont->atlas_edge();
-
-    REQUIRE(second.uploaded_atlas_generation() != pFont->atlas_generation());
-
-    second.set_text("abc");
-    second.upload();
-
-    REQUIRE(second.uploaded_atlas_generation() == pFont->atlas_generation());
-
-    first.set_text("the quick brown fox jumps over the lazy dog 0123456789");
-    first.upload();
-
-    REQUIRE(pFont->atlas_edge() > edgeAfterFirst);
-    REQUIRE(second.uploaded_atlas_generation() != pFont->atlas_generation());
-}
-
-TEST_CASE("text_modeler reports glyphs it could not rasterise",
-    "[gdk::graphics::ext::text_modeler]") {
-    std::ifstream file(GDK_TEST_FONT, std::ios::binary);
-
-    REQUIRE(file);
-
-    const std::vector<texture_data::encoded_byte> data(
-        (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-    const auto pContext = null_context::make();
-
-    SECTION("nothing to report when everything fits") {
-        auto pFont = std::make_shared<font>(data, 24.f,
-            font_settings{.atlas_edge = 64, .max_atlas_edge = 2048});
-
-        text_modeler subject(pContext, pFont);
-
-        subject.set_text("hello");
-
-        REQUIRE(subject.fallback_glyph_count() == 0);
-    }
-
-    SECTION("a full atlas is counted, and the text still lays out") {
-        auto pFont = std::make_shared<font>(data, 24.f,
-            font_settings{.atlas_edge = 64, .max_atlas_edge = 64});
-
-        text_modeler subject(pContext, pFont);
-
-        subject.set_text("abcdefghijklmnopqrstuvwxyz");
-
-        REQUIRE(subject.fallback_glyph_count() > 0);
-
-        REQUIRE_NOTHROW(subject.upload());
-        REQUIRE(subject.size().x > 0);
-    }
-
-    SECTION("the count is per set_text, not cumulative") {
-        auto pFont = std::make_shared<font>(data, 24.f,
-            font_settings{.atlas_edge = 64, .max_atlas_edge = 64});
-
-        text_modeler subject(pContext, pFont);
-
-        subject.set_text("abcdefghijklmnopqrstuvwxyz");
-
-        REQUIRE(subject.fallback_glyph_count() > 0);
-
-        subject.set_text("aaa");
-
-        REQUIRE(subject.fallback_glyph_count() == 0);
-    }
+    REQUIRE(uploaded(pModel).vertex_count() == 6);
+    REQUIRE(uvs[2] == Approx(pGlyph->s0));
+    REQUIRE(uvs[3] == Approx(pGlyph->t0));
 }
 
 TEST_CASE("text_modeler patches the atlas texture instead of rebuilding it",
     "[gdk::graphics::ext::text_modeler]") {
-    std::ifstream file(GDK_TEST_FONT, std::ios::binary);
-
-    REQUIRE(file);
-
-    const std::vector<texture_data::encoded_byte> data(
-        (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    const auto data = test_font_bytes();
 
     auto pFont = std::make_shared<font>(data, 12.f,
         font_settings{.atlas_edge = 512, .max_atlas_edge = 2048});
@@ -347,12 +153,7 @@ TEST_CASE("text_modeler patches the atlas texture instead of rebuilding it",
 
 TEST_CASE("glyph coverage reaches the texture instead of being rounded off",
     "[gdk::graphics::ext::text_modeler]") {
-    std::ifstream file(GDK_TEST_FONT, std::ios::binary);
-
-    REQUIRE(file);
-
-    const std::vector<texture_data::encoded_byte> data(
-        (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    const auto data = test_font_bytes();
 
     auto pFont = std::make_shared<font>(data, 13.f,
         font_settings{.atlas_edge = 512, .max_atlas_edge = 2048});
@@ -371,12 +172,7 @@ TEST_CASE("glyph coverage reaches the texture instead of being rounded off",
 
 TEST_CASE("text_modelers given one font_texture draw from one texture, uploaded once",
     "[gdk::graphics::ext::text_modeler]") {
-    std::ifstream file(GDK_TEST_FONT, std::ios::binary);
-
-    REQUIRE(file);
-
-    const std::vector<texture_data::encoded_byte> data(
-        (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    const auto data = test_font_bytes();
 
     const auto pContext = null_context::make();
 

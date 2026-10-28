@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_DEMO_SKELETON_H
-#define GDK_DEMO_SKELETON_H
+#ifndef GDK_GRAPHICS_EXT_ANIMATION_SKELETON_H
+#define GDK_GRAPHICS_EXT_ANIMATION_SKELETON_H
 
 #include <gdk/graphics/ext/animation/animation_types.h>
 
@@ -131,4 +131,3 @@ namespace gdk::graphics::animation {
 }
 
 #endif
-

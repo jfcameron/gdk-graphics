@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_SCREEN_CAMERA_H
-#define GDK_GFX_SCREEN_CAMERA_H
+#ifndef GDK_GRAPHICS_SCREEN_CAMERA_H
+#define GDK_GRAPHICS_SCREEN_CAMERA_H
 
 #include <gdk/graphics/camera.h>
 #include <gdk/graphics/color.h>
@@ -9,11 +9,11 @@
 
 namespace gdk::graphics {
     /// \brief Position, orientation and perspective from which entity(s) are drawn
-    /// \todo cull functor
-    /// \todo project vector from viewport coord into world
     class screen_camera : public camera {
     public:
-        /// \brief sets the normalized size and position of the viewport within of the window
+        /// \brief sets the normalized size and position of the viewport within the window
+        ///
+        /// Viewports that meet share their edge exactly: a pixel is drawn by one of them, never by neither
         virtual void set_viewport(const float aX, 
             const float aY,
             const float aWidth, 

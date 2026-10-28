@@ -1,15 +1,26 @@
-# © Joseph Cameron - All Rights Reserved
+# © Joseph Cameron - MIT License
 
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 
+if (TARGET gdkgraphics)
+    return()
+endif()
+
+project(gdk-graphics
+    VERSION 1.0
+    DESCRIPTION "the gdk graphics interface: scenes, cameras, entities, models, materials and textures, a null implementation, and the data they are made from"
+    LANGUAGES C CXX)
+
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/jfc-cmake/jfclib.cmake")
 
-project(gdkgraphics
-    VERSION 0.9
-    DESCRIPTION "game development kit graphics lib")
+option(GDKGRAPHICS_BUILD_TESTS "Build unit tests" ${PROJECT_IS_TOP_LEVEL})
+option(GDKGRAPHICS_BUILD_DOCS "Build documentation" OFF)
 
-option(JFC_BUILD_DOCS "Build documentation" OFF)
-option(JFC_BUILD_TESTS "Build unit tests" OFF)
+if (GDKGRAPHICS_BUILD_DOCS AND NOT GDKGRAPHICS_BUILD_TESTS)
+    add_subdirectory(docs)
+
+    return()
+endif()
 
 add_subdirectory(extern)
 
@@ -36,56 +47,96 @@ else()
     endforeach()
 endif()
 
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 add_subdirectory(data)
 
 add_library(gdkgraphics STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/profile.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/font_texture.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ext/text_modeler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/impl/null/src/null_context.cpp)
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/profile.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/texture_patch.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/batch_modeler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/font_texture.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/text_modeler.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/ext/utf8.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/impl/null/src/null_context.cpp")
 
 add_library(gdk::graphics ALIAS gdkgraphics)
 
-set_target_properties(gdkgraphics PROPERTIES EXPORT_NAME graphics)
-
-set_target_properties(gdkgraphics PROPERTIES PREFIX "lib")
-
-jfc_generate_build_info()
+set_target_properties(gdkgraphics PROPERTIES EXPORT_NAME graphics PREFIX "lib")
 
 target_include_directories(gdkgraphics
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/impl/null/include>"
-        "$<INSTALL_INTERFACE:include>"
-
-        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated_include>"
-    )
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
 
 target_compile_features(gdkgraphics PUBLIC cxx_std_20)
 
-target_link_libraries(gdkgraphics PUBLIC
-    gdkgraphics_data
-    gdkmath
-)
+target_link_libraries(gdkgraphics PUBLIC gdkgraphics_data gdkmath)
+
+add_library(gdkgraphics_implementation INTERFACE)
+
+target_include_directories(gdkgraphics_implementation INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+
+target_link_libraries(gdkgraphics_implementation INTERFACE gdkgraphics)
 
 add_library(gdkgraphics_conformance INTERFACE)
 
 target_sources(gdkgraphics_conformance INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/test/conformance/context_conformance.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/test/conformance/profile_conformance.cpp)
+    "${CMAKE_CURRENT_SOURCE_DIR}/test/conformance/context_conformance.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test/conformance/profile_conformance.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test/conformance/text_conformance.cpp")
 
-target_include_directories(gdkgraphics_conformance INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/test/conformance)
+target_include_directories(gdkgraphics_conformance INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/test/conformance")
 
-target_link_libraries(gdkgraphics_conformance INTERFACE
-    gdkgraphics)
+jfc_embed_file(GDK_TEST_FONT_BYTES "${CMAKE_CURRENT_SOURCE_DIR}/data/assets/fonts/gdk-test-font.ttf"
+    "${PROJECT_BINARY_DIR}/test_fonts/gdk/graphics/test/font_bytes.h")
 
-if (JFC_BUILD_TESTS)
+jfc_embed_file(GDK_TEST_FONT_COLLECTION_BYTES "${CMAKE_CURRENT_SOURCE_DIR}/data/assets/fonts/gdk-test-font.ttc"
+    "${PROJECT_BINARY_DIR}/test_fonts/gdk/graphics/test/font_collection_bytes.h")
+
+target_include_directories(gdkgraphics_conformance INTERFACE "${PROJECT_BINARY_DIR}/test_fonts")
+
+target_link_libraries(gdkgraphics_conformance INTERFACE gdkgraphics)
+
+install(TARGETS gdkgraphics gdkgraphics_data
+    EXPORT gdk-graphics-targets
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+
+install(DIRECTORY
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+    "${CMAKE_CURRENT_SOURCE_DIR}/impl/null/include/"
+    "${CMAKE_CURRENT_SOURCE_DIR}/data/include/"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
+install(EXPORT gdk-graphics-targets
+    FILE gdk-graphics-targets.cmake
+    NAMESPACE gdk::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/gdk-graphics")
+
+write_basic_package_version_file(
+    "${PROJECT_BINARY_DIR}/gdk-graphics-config-version.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion)
+
+file(WRITE "${PROJECT_BINARY_DIR}/gdk-graphics-config.cmake"
+"include(CMakeFindDependencyMacro)
+find_dependency(gdk-math 1)
+include(\"\${CMAKE_CURRENT_LIST_DIR}/gdk-graphics-targets.cmake\")
+")
+
+install(FILES
+    "${PROJECT_BINARY_DIR}/gdk-graphics-config.cmake"
+    "${PROJECT_BINARY_DIR}/gdk-graphics-config-version.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/gdk-graphics")
+
+if (GDKGRAPHICS_BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
-if (JFC_BUILD_DOCS)
+if (GDKGRAPHICS_BUILD_DOCS)
     add_subdirectory(docs)
 endif()
-

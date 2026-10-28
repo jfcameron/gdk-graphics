@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <gdk/graphics/ext/font_texture.h>
 
@@ -47,7 +47,7 @@ void font_texture::upload() {
 
         m_pTexture = m_pContext->make_texture(
             { coverage.width, coverage.height, texture::format::rgba, m_Rgba.data() },
-            texture::wrap_mode::repeat, texture::wrap_mode::repeat,
+            texture::wrap_mode::clamped, texture::wrap_mode::clamped,
             texture::filter_mode::smooth);
 
         m_Rgba.clear();

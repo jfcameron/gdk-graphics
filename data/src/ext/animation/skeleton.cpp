@@ -1,19 +1,22 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include "checks.h"
+
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/animation/skeleton.h>
-
-#include <gdk/math.h>
 
 #include <algorithm>
 #include <cmath>
-#include <stdexcept>
 #include <span>
+#include <string>
 #include <string_view>
 
 using namespace gdk;
 
 namespace gdk::graphics::animation {
     std::vector<matrix4x4_type> skeleton::bind_world_transforms() const {
+        checks::parents_come_first(*this, "bind_world_transforms");
+
         std::vector<matrix4x4_type> world(bones.size());
 
         for (std::size_t i = 0; i < bones.size(); ++i) {
@@ -87,6 +90,8 @@ namespace gdk::graphics::animation {
 
         skeleton result = *this;
 
+        result.supplied_inverse_binds.clear();
+
         for (std::size_t i = 0; i < bones.size(); ++i) {
             matrix4x4_type desired;
             desired.set_to_identity();
@@ -111,6 +116,15 @@ namespace gdk::graphics::animation {
 
             result.bones[i].local_position = local.translation();
             result.bones[i].local_rotation = local.rotation();
+        }
+
+        if (supplied_inverse_binds.size() == bones.size()) {
+            const auto reoriented = result.bind_world_transforms();
+
+            result.supplied_inverse_binds.resize(bones.size());
+
+            for (std::size_t i = 0; i < bones.size(); ++i)
+                result.supplied_inverse_binds[i] = reoriented[i].inversed() * world[i] * supplied_inverse_binds[i];
         }
 
         return result;
@@ -169,7 +183,7 @@ namespace gdk::graphics::animation {
 
     pose blend(const pose &aFrom, const pose &aTo, const float aT) {
         if (aFrom.local_rotations.size() != aTo.local_rotations.size())
-            throw std::invalid_argument("blend: the poses disagree about bone count");
+            throw exception("blend: the poses disagree about bone count");
 
         pose result;
         result.local_rotations.reserve(aFrom.local_rotations.size());
@@ -184,7 +198,7 @@ namespace gdk::graphics::animation {
     bone_mask mask_for_subtree(const skeleton &aSkeleton, const std::size_t aRoot,
         const float aWeight) {
         if (aRoot >= aSkeleton.bones.size())
-            throw std::invalid_argument("mask_for_subtree: no such bone");
+            throw exception("mask_for_subtree: no such bone");
 
         bone_mask mask(aSkeleton.bones.size(), 0.0f);
         mask[aRoot] = aWeight;
@@ -202,7 +216,7 @@ namespace gdk::graphics::animation {
     pose blend(const pose &aFrom, const pose &aTo, const bone_mask &aMask) {
         if (aFrom.local_rotations.size() != aTo.local_rotations.size()
             || aMask.size() != aFrom.local_rotations.size())
-            throw std::invalid_argument("blend: the poses and the mask disagree about bone count");
+            throw exception("blend: the poses and the mask disagree about bone count");
 
         pose result;
         result.local_rotations.reserve(aFrom.local_rotations.size());
@@ -216,7 +230,7 @@ namespace gdk::graphics::animation {
 
     pose difference(const pose &aBase, const pose &aTarget) {
         if (aBase.local_rotations.size() != aTarget.local_rotations.size())
-            throw std::invalid_argument("difference: the poses disagree about bone count");
+            throw exception("difference: the poses disagree about bone count");
 
         pose result;
         result.local_rotations.reserve(aBase.local_rotations.size());
@@ -231,7 +245,7 @@ namespace gdk::graphics::animation {
     pose add(const pose &aBase, const pose &aDelta, const bone_mask &aMask) {
         if (aBase.local_rotations.size() != aDelta.local_rotations.size()
             || aMask.size() != aBase.local_rotations.size())
-            throw std::invalid_argument("add: the poses and the mask disagree about bone count");
+            throw exception("add: the poses and the mask disagree about bone count");
 
         pose result;
         result.local_rotations.reserve(aBase.local_rotations.size());
@@ -247,8 +261,29 @@ namespace gdk::graphics::animation {
         return add(aBase, aDelta, bone_mask(aBase.local_rotations.size(), aWeight));
     }
 
+    namespace {
+        //! how far a looping clip's time is from its last key to its first, the next cycle's, where it is after the
+        //! last key or before the first
+        [[nodiscard]] float across_the_wrap(const clip &aClip, const float aWrapped) {
+            const auto &first = aClip.keys.front();
+            const auto &last = aClip.keys.back();
+
+            const auto span = first.time + aClip.duration - last.time;
+            const auto time = aWrapped < first.time ? aWrapped + aClip.duration : aWrapped;
+
+            return span > 0 ? (time - last.time) / span : 0.0f;
+        }
+
+        void check_loop(const clip &aClip, const char *aWho) {
+            if (aClip.keys.empty()) throw exception(std::string(aWho) + ": the clip has no keys");
+
+            if (aClip.loops && !(aClip.duration > 0))
+                throw exception(std::string(aWho) + ": a looping clip needs a duration more than nothing");
+        }
+    }
+
     pose sample(const clip &aClip, const float aTime) {
-        if (aClip.keys.empty()) throw std::invalid_argument("sample: the clip has no keys");
+        check_loop(aClip, "sample");
 
         if (!aClip.loops) {
             if (aTime <= aClip.keys.front().time) return aClip.keys.front().p;
@@ -258,6 +293,9 @@ namespace gdk::graphics::animation {
         const float wrapped = aClip.loops
             ? std::fmod(std::fmod(aTime, aClip.duration) + aClip.duration, aClip.duration)
             : aTime;
+
+        if (wrapped < aClip.keys.front().time)
+            return blend(aClip.keys.back().p, aClip.keys.front().p, across_the_wrap(aClip, wrapped));
 
         for (std::size_t i = 0; i + 1 < aClip.keys.size(); ++i) {
             const auto &a = aClip.keys[i];
@@ -270,16 +308,11 @@ namespace gdk::graphics::animation {
             }
         }
 
-        const auto &last = aClip.keys.back();
-        const float span = aClip.duration - last.time;
-
-        return blend(last.p, aClip.keys.front().p,
-            span > 0 ? (wrapped - last.time) / span : 0.0f);
+        return blend(aClip.keys.back().p, aClip.keys.front().p, across_the_wrap(aClip, wrapped));
     }
 
     vector3_type sample_root_position(const clip &aClip, const float aTime) {
-        if (aClip.keys.empty())
-            throw std::invalid_argument("sample_root_position: the clip has no keys");
+        check_loop(aClip, "sample_root_position");
 
         if (!aClip.loops) {
             if (aTime <= aClip.keys.front().time) return aClip.keys.front().root_position;
@@ -289,6 +322,12 @@ namespace gdk::graphics::animation {
         const float wrapped = aClip.loops
             ? std::fmod(std::fmod(aTime, aClip.duration) + aClip.duration, aClip.duration)
             : aTime;
+
+        if (wrapped < aClip.keys.front().time) {
+            const auto from = aClip.keys.back().root_position - aClip.root_motion_per_cycle;
+
+            return from + (aClip.keys.front().root_position - from) * across_the_wrap(aClip, wrapped);
+        }
 
         for (std::size_t i = 0; i + 1 < aClip.keys.size(); ++i) {
             const auto &a = aClip.keys[i];
@@ -303,14 +342,14 @@ namespace gdk::graphics::animation {
         }
 
         const auto &last = aClip.keys.back();
-        const float span = aClip.duration - last.time;
-        const float u = span > 0 ? (wrapped - last.time) / span : 0.0f;
         const auto end = aClip.keys.front().root_position + aClip.root_motion_per_cycle;
 
-        return last.root_position + (end - last.root_position) * u;
+        return last.root_position + (end - last.root_position) * across_the_wrap(aClip, wrapped);
     }
 
     vector3_type root_delta(const clip &aClip, const float aFrom, const float aTo) {
+        check_loop(aClip, "root_delta");
+
         if (!aClip.loops)
             return sample_root_position(aClip, aTo) - sample_root_position(aClip, aFrom);
 
@@ -322,6 +361,9 @@ namespace gdk::graphics::animation {
 
     std::vector<matrix4x4_type> pose_world_transforms(const skeleton &aSkeleton,
         const pose &aPose) {
+        checks::parents_come_first(aSkeleton, "pose_world_transforms");
+        checks::pose_fits(aSkeleton, aPose, "pose_world_transforms");
+
         std::vector<matrix4x4_type> world(aSkeleton.bones.size());
 
         for (std::size_t i = 0; i < aSkeleton.bones.size(); ++i) {
@@ -341,7 +383,7 @@ namespace gdk::graphics::animation {
     matrix4x4_type socket_transform(std::span<const matrix4x4_type> aWorld,
         const socket &aSocket) {
         if (aSocket.bone >= aWorld.size())
-            throw std::invalid_argument("socket_transform: no such bone");
+            throw exception("socket_transform: no such bone");
 
         return aWorld[aSocket.bone] * aSocket.offset;
     }
@@ -349,11 +391,13 @@ namespace gdk::graphics::animation {
     quaternion_type bone_world_rotation(const skeleton &aSkeleton, const pose &aPose,
         const std::size_t aBone) {
         if (aPose.local_rotations.size() != aSkeleton.bones.size())
-            throw std::invalid_argument(
+            throw exception(
                 "bone_world_rotation: the pose does not match the skeleton");
 
         if (aBone >= aSkeleton.bones.size())
-            throw std::invalid_argument("bone_world_rotation: no such bone");
+            throw exception("bone_world_rotation: no such bone");
+
+        checks::parents_come_first(aSkeleton, "bone_world_rotation");
 
         std::vector<std::size_t> chain;
 
@@ -371,6 +415,9 @@ namespace gdk::graphics::animation {
 
     std::vector<matrix4x4_type> skinning_palette(const skeleton &aSkeleton,
         const pose &aPose, std::span<const matrix4x4_type> aInverseBind) {
+        if (aInverseBind.size() != aSkeleton.bones.size())
+            throw exception("skinning_palette: there must be one inverse bind per bone");
+
         auto palette = pose_world_transforms(aSkeleton, aPose);
 
         for (std::size_t i = 0; i < palette.size(); ++i) palette[i] = palette[i] * aInverseBind[i];

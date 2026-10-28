@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_DEMO_SKINNING_H
-#define GDK_DEMO_SKINNING_H
+#ifndef GDK_GRAPHICS_EXT_ANIMATION_SKINNING_H
+#define GDK_GRAPHICS_EXT_ANIMATION_SKINNING_H
 
 #include <gdk/graphics/ext/animation/skeleton.h>
 

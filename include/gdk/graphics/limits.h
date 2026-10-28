@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_LIMITS_H
-#define GDK_GFX_LIMITS_H
+#ifndef GDK_GRAPHICS_LIMITS_H
+#define GDK_GRAPHICS_LIMITS_H
 
 #include <cstddef>
 #include <limits>

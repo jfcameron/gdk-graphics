@@ -1,12 +1,10 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/animation/ik.h>
-
-#include <gdk/math.h>
 
 #include <algorithm>
 #include <cmath>
-#include <stdexcept>
 
 using namespace gdk;
 
@@ -48,10 +46,10 @@ namespace gdk::graphics::animation {
     pose with_bone_oriented(const skeleton &aSkeleton, const pose &aPose, const std::size_t aBone,
         const quaternion_type &aWorldRotation) {
         if (aBone >= aSkeleton.bones.size())
-            throw std::invalid_argument("with_bone_oriented: no such bone");
+            throw exception("with_bone_oriented: no such bone");
 
         if (aPose.local_rotations.size() != aSkeleton.bones.size())
-            throw std::invalid_argument("with_bone_oriented: the pose does not match the skeleton");
+            throw exception("with_bone_oriented: the pose does not match the skeleton");
 
         const auto parent = aSkeleton.bones[aBone].parent;
 
@@ -77,10 +75,10 @@ namespace gdk::graphics::animation {
     foot_arc measure_foot_arc(const skeleton &aSkeleton, const clip &aClip,
         const std::size_t aFoot) {
         if (aClip.keys.empty())
-            throw std::invalid_argument("measure_foot_arc: the clip has no keys");
+            throw exception("measure_foot_arc: the clip has no keys");
 
         if (aFoot >= aSkeleton.bones.size())
-            throw std::invalid_argument("measure_foot_arc: no such bone");
+            throw exception("measure_foot_arc: no such bone");
 
         auto height = [&](const pose &aPose) {
             return pose_world_transforms(aSkeleton, aPose)[aFoot].translation().y;
@@ -114,7 +112,7 @@ namespace gdk::graphics::animation {
 
         for (const auto foot : aFeet) {
             if (foot >= aWorld.size())
-                throw std::invalid_argument("pelvis_lift: no such bone");
+                throw exception("pelvis_lift: no such bone");
 
             const auto placed = (aCharacterRotation * aWorld[foot].translation())
                 + aCharacterPosition;
@@ -138,20 +136,20 @@ namespace gdk::graphics::animation {
     pose with_limb_reaching(const skeleton &aSkeleton, const pose &aPose, const std::size_t aUpper,
         const vector3_type &aTarget, const vector3_type &aPoleDirection) {
         if (aPose.local_rotations.size() != aSkeleton.bones.size())
-            throw std::invalid_argument("with_limb_reaching: the pose does not match the skeleton");
+            throw exception("with_limb_reaching: the pose does not match the skeleton");
 
         if (aUpper >= aSkeleton.bones.size())
-            throw std::invalid_argument("with_limb_reaching: no such bone");
+            throw exception("with_limb_reaching: no such bone");
 
         const auto middle = first_child_of(aSkeleton, aUpper);
 
         if (middle == aSkeleton.bones.size())
-            throw std::invalid_argument("with_limb_reaching: that bone has no child to bend at");
+            throw exception("with_limb_reaching: that bone has no child to bend at");
 
         const auto tip = first_child_of(aSkeleton, middle);
 
         if (tip == aSkeleton.bones.size())
-            throw std::invalid_argument("with_limb_reaching: that limb has no tip");
+            throw exception("with_limb_reaching: that limb has no tip");
 
         auto result = aPose;
 

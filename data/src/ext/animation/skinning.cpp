@@ -1,8 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/animation/skinning.h>
-
-#include <gdk/math.h>
 
 #include <algorithm>
 #include <cmath>
@@ -13,7 +12,20 @@ namespace gdk::graphics::animation {
     void skin(std::span<const vector3_type> aBindPositions,
         std::span<const vertex_weights> aWeights,
         std::span<const matrix4x4_type> aPalette, model_data &aTarget) {
-        auto &components = aTarget.get_attribute_data("a_Position").components();
+        if (aWeights.size() != aBindPositions.size())
+            throw exception("skin: there must be one set of weights per position");
+
+        auto &positions = aTarget.get_attribute_data("a_Position");
+
+        if (positions.number_of_components_per_attribute() != 3
+            || positions.components().size() < aBindPositions.size() * 3)
+            throw exception("skin: the model's a_Position is not 3 components for each position");
+
+        for (const auto &w : aWeights)
+            if (w.first >= aPalette.size() || w.second >= aPalette.size())
+                throw exception("skin: a vertex is weighted to a bone the palette has not");
+
+        auto &components = positions.components();
 
         for (std::size_t v = 0; v < aBindPositions.size(); ++v) {
             const auto &w = aWeights[v];
@@ -57,8 +69,8 @@ namespace gdk::graphics::animation {
                 {4, 5, 1, 0}, {5, 6, 2, 1}, {6, 7, 3, 2}, {7, 4, 0, 3}};
 
             for (const auto &face : faces) {
-                const int order[6] = {face[0], face[1], face[2], face[0], face[2], face[3]};
-                const float uv[6][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 0}, {1, 1}, {0, 1}};
+                const int order[6] = {face[0], face[2], face[1], face[0], face[3], face[2]};
+                const float uv[6][2] = {{0, 0}, {1, 1}, {1, 0}, {0, 0}, {0, 1}, {1, 1}};
 
                 for (int i = 0; i < 6; ++i) {
                     const auto &v = corner[order[i]];

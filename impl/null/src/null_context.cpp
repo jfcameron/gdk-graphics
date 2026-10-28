@@ -1,6 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <gdk/graphics/null_context.h>
+#include <gdk/graphics/texture_patch.h>
 
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
@@ -46,9 +47,20 @@ null_texture::null_texture(const texture_data::view &aView, const wrap_mode aU, 
 , mHeight(aView.height)
 , mUploadCount(1)
 , mChannels(channels_of(aView.format))
+, mFormat(aView.format)
 , mData(copy_of(aView))
 , mWrapU(aU)
 , mWrapV(aV)
+{}
+
+null_texture::null_texture(const std::size_t aWidth, const std::size_t aHeight)
+: mWidth(aWidth)
+, mHeight(aHeight)
+, mChannels(channels_of(format::rgba))
+, mFormat(format::rgba)
+, mData(aWidth * aHeight * mChannels)
+, mWrapU(wrap_mode::clamped)
+, mWrapV(wrap_mode::clamped)
 {}
 
 void null_texture::hold_to(std::shared_ptr<const profile> pProfile) { mProfile = std::move(pProfile); }
@@ -60,18 +72,19 @@ void null_texture::update_data(const texture_data::view &aView) {
     mWidth = aView.width;
     mHeight = aView.height;
     mChannels = channels_of(aView.format);
+    mFormat = aView.format;
     mData = copy_of(aView);
 
     ++mUploadCount;
 }
 
-void null_texture::update_data(const texture_data::view &aView, const size_t aOffsetX,
-    const size_t aOffsetY) {
-    if (aView.data && channels_of(aView.format) == mChannels
-        && mData.size() == mWidth * mHeight * mChannels) {
-        for (std::size_t row = 0; row < aView.height && aOffsetY + row < mHeight; ++row)
-            for (std::size_t column = 0; column < aView.width && aOffsetX + column < mWidth;
-                ++column)
+void null_texture::update_data(const texture_data::view &aView, const std::size_t aOffsetX,
+    const std::size_t aOffsetY) {
+    check_patch(aView, aOffsetX, aOffsetY, mWidth, mHeight, mFormat);
+
+    if (aView.data && mData.size() == mWidth * mHeight * mChannels) {
+        for (std::size_t row = 0; row < aView.height; ++row)
+            for (std::size_t column = 0; column < aView.width; ++column)
                 for (std::size_t channel = 0; channel < mChannels; ++channel)
                     mData[((aOffsetY + row) * mWidth + aOffsetX + column) * mChannels + channel]
                         = aView.data[(row * aView.width + column) * mChannels + channel];
@@ -121,6 +134,13 @@ null_material::null_material(const_shader_ptr_type pShader, const render_mode aR
 
 void null_material::set_texture(const std::string_view aName, texture_ptr_type aValue) {
     const std::string name(aName);
+
+    if (!aValue) {
+        mTextures.erase(name);
+        mNames.erase(name);
+
+        return;
+    }
 
     mTextures[name] = std::move(aValue);
     mNames.insert(name);
@@ -315,9 +335,9 @@ floating_point_type null_camera::near_clip() const { return mNear; }
 
 floating_point_type null_camera::far_clip() const { return mFar; }
 
-null_texture_camera::null_texture_camera()
-: mpColor(std::make_shared<null_texture>())
-, mpDepth(std::make_shared<null_texture>())
+null_texture_camera::null_texture_camera(const intvector2_type &aSize)
+: mpColor(std::make_shared<null_texture>(static_cast<std::size_t>(aSize.x), static_cast<std::size_t>(aSize.y)))
+, mpDepth(std::make_shared<null_texture>(static_cast<std::size_t>(aSize.x), static_cast<std::size_t>(aSize.y)))
 {}
 
 void null_texture_camera::set_perspective_projection(const floating_point_type,
@@ -337,31 +357,53 @@ void null_texture_camera::set_clear_color(const color &) {}
 
 void null_texture_camera::set_clear_mode(const clear_mode) {}
 
-const std::shared_ptr<texture> null_texture_camera::get_color_texture(const size_t) const {
-    return mpColor;
+texture_ptr_type null_texture_camera::color_texture() const { return mpColor; }
+
+texture_ptr_type null_texture_camera::depth_texture() const { return mpDepth; }
+
+namespace {
+    template<typename held_type>
+    void hold(std::vector<std::weak_ptr<const held_type>> &aHeld, const std::shared_ptr<const held_type> &pAdded) {
+        if (!pAdded) return;
+
+        std::erase_if(aHeld, [](const auto &a) { return a.expired(); });
+
+        if (std::none_of(aHeld.begin(), aHeld.end(), [&](const auto &a) { return a.lock() == pAdded; }))
+            aHeld.push_back(pAdded);
+    }
+
+    template<typename held_type>
+    void let_go(std::vector<std::weak_ptr<const held_type>> &aHeld, const std::shared_ptr<const held_type> &pRemoved) {
+        std::erase_if(aHeld, [&](const auto &a) {
+            const auto pLocked = a.lock();
+
+            return !pLocked || pLocked == pRemoved;
+        });
+    }
+
+    template<typename held_type>
+    [[nodiscard]] std::vector<std::shared_ptr<const held_type>> alive(std::vector<std::weak_ptr<const held_type>> &aHeld) {
+        std::erase_if(aHeld, [](const auto &a) { return a.expired(); });
+
+        std::vector<std::shared_ptr<const held_type>> out;
+
+        for (const auto &each : aHeld) if (auto pLocked = each.lock()) out.push_back(std::move(pLocked));
+
+        return out;
+    }
 }
 
-const std::shared_ptr<texture> null_texture_camera::get_depth_texture() const { return mpDepth; }
+void null_scene::add(const std::shared_ptr<const screen_camera> &pCamera) { hold(mScreenCameras, pCamera); }
 
-void null_scene::add(const std::shared_ptr<const screen_camera> &pCamera) {
-    mScreenCameras.insert(pCamera);
-}
+void null_scene::remove(const std::shared_ptr<const screen_camera> &pCamera) { let_go(mScreenCameras, pCamera); }
 
-void null_scene::remove(const std::shared_ptr<const screen_camera> &pCamera) {
-    mScreenCameras.erase(pCamera);
-}
+void null_scene::add(const std::shared_ptr<const texture_camera> &pCamera) { hold(mTextureCameras, pCamera); }
 
-void null_scene::add(const std::shared_ptr<const texture_camera> &pCamera) {
-    mTextureCameras.insert(pCamera);
-}
+void null_scene::remove(const std::shared_ptr<const texture_camera> &pCamera) { let_go(mTextureCameras, pCamera); }
 
-void null_scene::remove(const std::shared_ptr<const texture_camera> &pCamera) {
-    mTextureCameras.erase(pCamera);
-}
+void null_scene::add(const std::shared_ptr<const entity> &pEntity) { hold(mEntities, pEntity); }
 
-void null_scene::add(const std::shared_ptr<const entity> &pEntity) { mEntities.insert(pEntity); }
-
-void null_scene::remove(const std::shared_ptr<const entity> &pEntity) { mEntities.erase(pEntity); }
+void null_scene::remove(const std::shared_ptr<const entity> &pEntity) { let_go(mEntities, pEntity); }
 
 void null_scene::draw(const intvector2_type &aFrameBufferSize) const {
     mLastFrameBufferSize = aFrameBufferSize;
@@ -411,18 +453,18 @@ std::optional<vector4_type> null_scene::vector4_at(std::string_view aName) const
     return found == mVector4s.end() ? std::optional<vector4_type>() : found->second;
 }
 
-std::size_t null_scene::entity_count() const { return mEntities.size(); }
+std::size_t null_scene::entity_count() const { return alive(mEntities).size(); }
 
-std::vector<std::shared_ptr<const entity>> null_scene::entities() const {
-    return {mEntities.begin(), mEntities.end()};
-}
+std::vector<std::shared_ptr<const entity>> null_scene::entities() const { return alive(mEntities); }
 
 std::size_t null_scene::camera_count() const {
-    return mScreenCameras.size() + mTextureCameras.size();
+    return alive(mScreenCameras).size() + alive(mTextureCameras).size();
 }
 
 bool null_scene::contains(const std::shared_ptr<const entity> &pEntity) const {
-    return mEntities.count(pEntity) > 0;
+    const auto held = alive(mEntities);
+
+    return std::find(held.begin(), held.end(), pEntity) != held.end();
 }
 
 std::size_t null_scene::draw_count() const { return mDrawCount; }
@@ -446,20 +488,24 @@ scene_ptr_type null_context::make_scene() {
     return std::make_shared<null_scene>();
 }
 
-camera_ptr_type null_context::make_camera() {
+screen_camera_ptr_type null_context::make_camera() {
     ++mResourcesMade;
 
     return std::make_shared<null_camera>();
 }
 
 texture_camera_ptr_type null_context::make_texture_camera() {
-    ++mResourcesMade;
-
-    return std::make_shared<null_texture_camera>();
+    return make_texture_camera({1024, 1024});
 }
 
-texture_camera_ptr_type null_context::make_texture_camera(const intvector2_type &) {
-    return make_texture_camera();
+texture_camera_ptr_type null_context::make_texture_camera(const intvector2_type &aSize) {
+    if (aSize.x <= 0 || aSize.y <= 0) throw exception("null_context::make_texture_camera: a size must be positive");
+
+    if (mProfile) check_texture(*mProfile, static_cast<std::size_t>(aSize.x), static_cast<std::size_t>(aSize.y), true);
+
+    ++mResourcesMade;
+
+    return std::make_shared<null_texture_camera>(aSize);
 }
 
 entity_ptr_type null_context::make_entity(const const_model_ptr_type pModel,
@@ -498,12 +544,13 @@ material_ptr_type null_context::make_material(const const_shader_ptr_type pShade
 }
 
 material_ptr_type null_context::make_material(const const_material_ptr_type &aPrototype) {
-    if (!aPrototype) throw exception("null_context::make_material: no prototype to copy");
+    const auto pPrototype = std::dynamic_pointer_cast<const null_material>(aPrototype);
+
+    if (!pPrototype) throw exception("null_context::make_material: the prototype is not a null_material");
 
     ++mResourcesMade;
 
-    return std::make_shared<null_material>(
-        *std::static_pointer_cast<const null_material>(aPrototype));
+    return std::make_shared<null_material>(*pPrototype);
 }
 
 texture_ptr_type null_context::make_texture(const texture_data::view &aView,
@@ -534,12 +581,15 @@ texture_ptr_type null_context::make_texture() {
 }
 
 model_ptr_type null_context::make_cube_model() const {
-    return std::make_shared<null_model>();
+    ++mResourcesMade;
+
+    const auto pModel = std::make_shared<null_model>();
+    pModel->hold_to(mProfile);
+
+    return pModel;
 }
 
-model_ptr_type null_context::make_sphere_model() const {
-    return std::make_shared<null_model>();
-}
+model_ptr_type null_context::make_sphere_model() const { return make_cube_model(); }
 
 graphics::limits null_context::limits() const {
     graphics::limits own;
@@ -549,11 +599,15 @@ graphics::limits null_context::limits() const {
 }
 
 shader_ptr_type null_context::make_alpha_cutoff_shader() const {
-    return std::make_shared<null_shader>();
+    if (!mpAlphaCutoff) mpAlphaCutoff = std::make_shared<null_shader>();
+
+    return mpAlphaCutoff;
 }
 
 shader_ptr_type null_context::make_alpha_blend_shader() const {
-    return std::make_shared<null_shader>();
+    if (!mpAlphaBlend) mpAlphaBlend = std::make_shared<null_shader>();
+
+    return mpAlphaBlend;
 }
 
 shader_ptr_type null_context::make_shader(const std::string_view aVertexSource,

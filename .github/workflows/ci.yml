@@ -1,4 +1,4 @@
-# © Joseph Cameron - All Rights Reserved
+# © Joseph Cameron - MIT License
 
 name: ci
 
@@ -8,48 +8,197 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
-    name: ${{ matrix.preset }} (${{ matrix.runner }})
+  linux:
+    name: linux ${{ matrix.name }}
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         include:
-          - preset: linux-gcc
-            runner: ubuntu-latest
-            tests: true
+          - { name: gcc 11,         runner: ubuntu-22.04, preset: linux-gcc,   packages: g++-11,   cxx: g++-11 }
+          - { name: gcc 12,         runner: ubuntu-24.04, preset: linux-gcc,   packages: g++-12,   cxx: g++-12 }
+          - { name: gcc 13,         runner: ubuntu-24.04, preset: linux-gcc,   packages: g++-13,   cxx: g++-13 }
+          - { name: gcc 14,         runner: ubuntu-24.04, preset: linux-gcc,   packages: g++-14,   cxx: g++-14 }
+          - { name: clang 14,       runner: ubuntu-22.04, preset: linux-clang, packages: clang-14, cxx: clang++-14 }
+          - { name: clang 15,       runner: ubuntu-22.04, preset: linux-clang, packages: clang-15, cxx: clang++-15 }
+          - { name: clang 16,       runner: ubuntu-24.04, preset: linux-clang, packages: clang-16, cxx: clang++-16 }
+          - { name: clang 17,       runner: ubuntu-24.04, preset: linux-clang, packages: clang-17, cxx: clang++-17 }
+          - { name: clang 18,       runner: ubuntu-24.04, preset: linux-clang, packages: clang-18, cxx: clang++-18 }
+          - { name: clang latest,   runner: ubuntu-24.04, preset: linux-clang, llvm: latest }
+          - { name: clang libc++,   runner: ubuntu-24.04, preset: linux-clang-libcxx, packages: clang-18 libc++-18-dev libc++abi-18-dev, cxx: clang++-18 }
 
-          - preset: linux-clang
-            runner: ubuntu-latest
-            tests: true
+          - { name: gcc warnings are errors,   runner: ubuntu-24.04, preset: linux-gcc-ci }
+          - { name: clang warnings are errors, runner: ubuntu-24.04, preset: linux-clang-ci }
+          - { name: clang asan ubsan,          runner: ubuntu-24.04, preset: linux-clang-asan-ubsan }
 
-          - preset: linux-gcc
-            runner: ubuntu-24.04-arm
-            tests: true
+          - { name: gcc x86,        runner: ubuntu-24.04,     preset: linux-gcc-x86,   packages: g++-multilib }
+          - { name: clang x86,      runner: ubuntu-24.04,     preset: linux-clang-x86, packages: g++-multilib }
+          - { name: gcc arm64,      runner: ubuntu-24.04-arm, preset: linux-gcc }
+          - { name: clang arm64,    runner: ubuntu-24.04-arm, preset: linux-clang }
 
-          - preset: macos-clang
-            runner: macos-latest
-            tests: true
-
-          - preset: windows-msvc
-            runner: windows-latest
-            tests: true
-
-          - preset: linux-clang-asan
-            runner: ubuntu-latest
-            tests: true
-
-          - preset: linux-gcc-ci
-            runner: ubuntu-latest
-            tests: true
-
-          - preset: linux-clang-ci
-            runner: ubuntu-latest
-            tests: true
+          - { name: gcc armv7,      runner: ubuntu-24.04, preset: linux-armv7,   packages: g++-arm-linux-gnueabihf qemu-user }
+          - { name: gcc riscv64,    runner: ubuntu-24.04, preset: linux-riscv64, packages: g++-riscv64-linux-gnu qemu-user }
+          - { name: gcc ppc64le,    runner: ubuntu-24.04, preset: linux-ppc64le, packages: g++-powerpc64le-linux-gnu qemu-user }
+          - { name: gcc s390x,      runner: ubuntu-24.04, preset: linux-s390x,   packages: g++-s390x-linux-gnu qemu-user }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install
+        run: sudo apt-get update && sudo apt-get install -y ninja-build ${{ matrix.packages }}
+
+      - name: install the latest clang
+        if: matrix.llvm == 'latest'
+        run: |
+          wget -q https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh
+          echo "CXX_COMPILER=$(ls /usr/bin/clang++-[0-9]* | sort -V | tail -1)" >> "$GITHUB_ENV"
+
+      - name: configure
+        run: |
+          compiler="${CXX_COMPILER:-${{ matrix.cxx }}}"
+          cmake --preset ${{ matrix.preset }} ${compiler:+"-DCMAKE_CXX_COMPILER=$compiler"}
+
+      - name: build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: test
+        run: ctest --preset ${{ matrix.preset }}
+
+  linux-containers:
+    name: linux ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: gcc latest,  image: 'gcc:latest',    install: 'apt-get update && apt-get install -y git cmake ninja-build' }
+          - { name: musl alpine, image: 'alpine:latest', install: 'apk add --no-cache git g++ cmake samurai' }
+
+    steps:
+      - name: install
+        run: ${{ matrix.install }}
+
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: configure
+        run: cmake --preset linux-gcc
+
+      - name: build
+        run: cmake --build --preset linux-gcc
+
+      - name: test
+        run: ctest --preset linux-gcc
+
+  macos:
+    name: macos ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: apple clang arm64,  runner: macos-15 }
+          - { name: apple clang x86_64, runner: macos-15-intel }
+          - { name: apple clang older,  runner: macos-14 }
+          - { name: gcc arm64,          runner: macos-15, gcc: true }
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: use Homebrew's gcc
+        if: matrix.gcc
+        run: |
+          brew install gcc
+          echo "CXX=$(ls "$(brew --prefix gcc)"/bin/g++-[0-9]* | sort -V | tail -1)" >> "$GITHUB_ENV"
+
+      - name: configure
+        run: cmake --preset macos-clang
+
+      - name: build
+        run: cmake --build --preset macos-clang
+
+      - name: test
+        run: ctest --preset macos-clang
+
+  ios:
+    name: ios arm64 (compile only)
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install ninja
+        run: brew install ninja
+
+      - name: configure
+        run: cmake --preset ios
+
+      - name: build
+        run: cmake --build --preset ios
+
+  ios-simulator:
+    name: ios simulator arm64 (tests)
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install ninja
+        run: brew install ninja
+
+      - name: configure
+        run: cmake --preset ios-simulator
+
+      - name: build
+        run: cmake --build --preset ios-simulator
+
+      - name: boot a simulator
+        run: |
+          udid=$(xcrun simctl list devices available --json | python3 -c 'import json, sys; print(next(d["udid"] for runtime, devices in json.load(sys.stdin)["devices"].items() if "iOS" in runtime for d in devices if d["name"].startswith("iPhone")))')
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
+
+      - name: test
+        run: ctest --test-dir out/build/ios-simulator --output-on-failure
+
+  windows:
+    name: windows ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: msvc x64 (2022),            runner: windows-2022,  preset: windows-msvc }
+          - { name: msvc x64,                   runner: windows-2025,  preset: windows-msvc }
+          - { name: msvc warnings are errors,   runner: windows-2025,  preset: windows-msvc-ci }
+          - { name: msvc x86,                   runner: windows-2025,  preset: windows-msvc-x86 }
+          - { name: msvc arm64,                 runner: windows-11-arm, preset: windows-msvc-arm64 }
+          - { name: clang-cl x64,               runner: windows-2025,  preset: windows-clang-cl }
+
+    steps:
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -60,46 +209,256 @@ jobs:
         run: cmake --build --preset ${{ matrix.preset }}
 
       - name: test
-        if: matrix.tests
         run: ctest --preset ${{ matrix.preset }}
 
-  emscripten:
-    name: emscripten (wasm)
-    runs-on: ubuntu-latest
+  mingw:
+    name: windows mingw ${{ matrix.name }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: msys2 {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: gcc x64,   msystem: UCRT64,  cc: gcc,   cxx: g++ }
+          - { name: clang x64, msystem: CLANG64, cc: clang, cxx: clang++ }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          pacboy: toolchain:p cmake:p ninja:p
+
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
 
-      - uses: mymindstorm/setup-emsdk@v14
+      - name: configure
+        run: cmake --preset windows-mingw -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+
+      - name: build
+        run: cmake --build --preset windows-mingw
+
+      - name: test
+        run: ctest --preset windows-mingw
+
+  android:
+    name: android ${{ matrix.preset }} (compile only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [android-arm64, android-armv7, android-x86_64, android-x86]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: configure
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          cmake --preset ${{ matrix.preset }}
+
+      - name: build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+  android-emulator:
+    name: android x86_64 (tests on an emulator)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: let the emulator use kvm
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: configure
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME"
+          cmake --preset android-x86_64
+
+      - name: build
+        run: cmake --build --preset android-x86_64
+
+      - name: test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          script: ctest --test-dir out/build/android-x86_64 --output-on-failure
+
+  emscripten:
+    name: ${{ matrix.preset }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [emscripten, emscripten-wasm64]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - uses: emscripten-core/setup-emsdk@v16
         with:
           version: latest
 
-      - name: report the toolchain
-        run: emcc --version
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
 
       - name: configure
-        run: emcmake cmake --preset emscripten
+        run: emcmake cmake --preset ${{ matrix.preset }} "-DCMAKE_CROSSCOMPILING_EMULATOR=$(command -v node)"
 
       - name: build
-        run: cmake --build --preset emscripten
+        run: cmake --build --preset ${{ matrix.preset }}
 
-  docs:
-    name: docs (doxygen)
+      - name: test
+        run: ctest --preset ${{ matrix.preset }}
+
+  freebsd:
+    name: freebsd clang
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
 
-      - name: install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            doxygen \
-            graphviz
+      - uses: vmactions/freebsd-vm@v1
+        with:
+          prepare: pkg install -y cmake ninja
+          run: |
+            cmake --preset freebsd-clang
+            cmake --build --preset freebsd-clang
+            ctest --preset freebsd-clang
 
-      - name: generate documentation
+  standards:
+    name: headers standalone (${{ matrix.compiler }}, ${{ matrix.std }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+        std: [c++20, c++23, c++2c]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: generate gdk/math/config.h
+        run: cmake -S . -B build -DGDKGRAPHICS_BUILD_TESTS=OFF
+
+      - name: every header compiles alone, warnings are errors
+        run: |
+          for root in include impl/null/include data/include; do
+            for header in $(cd "$root" && find gdk -name '*.h' | sort); do
+              source="$(echo "$header" | tr '/.' '__')_alone.cpp"
+              printf '#include <%s>\nint main(){}\n' "$header" > "$source"
+              ${{ matrix.compiler }} -std=${{ matrix.std }} -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wdeprecated -Werror \
+                  -Iinclude -Iimpl/null/include -Idata/include -Iextern/gdk-math/include -Iextern/gdk-math/impl/std \
+                  -Ibuild/extern/gdk-math/generated_include -c "$source" -o /dev/null
+            done
+          done
+
+  fuzz:
+    name: fuzz ${{ matrix.format }} (libFuzzer, 2 minutes)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        format: [aseprite, bvh, font, gltf, png]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install
+        run: sudo apt-get update && sudo apt-get install -y ninja-build clang-18
+
+      - name: configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang-18 -DCMAKE_CXX_COMPILER=clang++-18 -DJFC_BUILD_FUZZERS=ON
+
+      - name: build
+        run: cmake --build build --target gdk-graphics_fuzz_${{ matrix.format }}_fuzz
+
+      - name: fuzz
+        run: |
+          mkdir -p scratch artifacts
+          ASAN_OPTIONS=alloc_dealloc_mismatch=0 build/data/fuzz/gdk-graphics_fuzz_${{ matrix.format }}_fuzz \
+            -max_total_time=120 -rss_limit_mb=2048 -max_len=65536 -artifact_prefix=artifacts/ \
+            scratch data/fuzz/corpus/${{ matrix.format }}
+
+      - name: keep what it found
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-${{ matrix.format }}
+          path: artifacts
+
+  documentation:
+    name: doxygen
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: install doxygen, graphviz and ninja
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz ninja-build
+
+      - name: generate
         run: cmake --preset linux-docs
+
+      - name: upload for github pages
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: out/build/linux-docs/docs
+
+  pages:
+    name: publish to github pages
+    needs: documentation
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5

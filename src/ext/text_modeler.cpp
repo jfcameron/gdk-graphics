@@ -1,6 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <gdk/graphics/ext/text_modeler.h>
+#include <gdk/graphics/ext/utf8.h>
 #include <gdk/graphics/model_data.h>
 #include <gdk/graphics/texture_data.h>
 
@@ -12,66 +13,26 @@ using namespace gdk::graphics::ext;
 
 namespace {
     constexpr int SPACES_PER_TAB = 4;
-    constexpr char32_t REPLACEMENT_CHARACTER = 0xFFFD;
-
-    [[nodiscard]] char32_t decode_utf8(const std::string_view aText, size_t &aIndex) {
-        const auto remaining = aText.size() - aIndex;
-
-        const auto first = static_cast<unsigned char>(aText[aIndex]);
-
-        const auto continuation = [&](const size_t aOffset) {
-            return (static_cast<unsigned char>(aText[aIndex + aOffset]) & 0xC0) == 0x80;
-        };
-
-        if (first < 0x80) {
-            aIndex += 1;
-
-            return first;
-        }
-        else if ((first & 0xE0) == 0xC0 && remaining >= 2 && continuation(1)) {
-            const char32_t value = ((first & 0x1Fu) << 6)
-                | (static_cast<unsigned char>(aText[aIndex + 1]) & 0x3Fu);
-
-            aIndex += 2;
-
-            return value < 0x80 ? REPLACEMENT_CHARACTER : value; 
-        }
-        else if ((first & 0xF0) == 0xE0 && remaining >= 3 && continuation(1) && continuation(2)) {
-            const char32_t value = ((first & 0x0Fu) << 12)
-                | ((static_cast<unsigned char>(aText[aIndex + 1]) & 0x3Fu) << 6)
-                | (static_cast<unsigned char>(aText[aIndex + 2]) & 0x3Fu);
-
-            aIndex += 3;
-
-            return value < 0x800 ? REPLACEMENT_CHARACTER : value;
-        }
-        else if ((first & 0xF8) == 0xF0 && remaining >= 4 && continuation(1) && continuation(2) && continuation(3)) {
-            const char32_t value = ((first & 0x07u) << 18)
-                | ((static_cast<unsigned char>(aText[aIndex + 1]) & 0x3Fu) << 12)
-                | ((static_cast<unsigned char>(aText[aIndex + 2]) & 0x3Fu) << 6)
-                | (static_cast<unsigned char>(aText[aIndex + 3]) & 0x3Fu);
-
-            aIndex += 4;
-
-            return (value < 0x10000 || value > 0x10FFFF) ? REPLACEMENT_CHARACTER : value;
-        }
-
-        aIndex += 1;
-
-        return REPLACEMENT_CHARACTER;
-    }
 }
 
-const_model_ptr_type text_modeler::model() const { return m_BatchModeler.model(); }
+const_model_ptr_type text_modeler::model() const { return m_pModel; }
 
-const_material_ptr_type text_modeler::material() const { return m_BatchModeler.material(); }
+const_material_ptr_type text_modeler::material() const { return m_pMaterial; }
 
 vector2_type text_modeler::size() const { return m_Size; }
 
 void text_modeler::set_text(const std::string_view aUTF8) {
+    m_Text.assign(aUTF8);
+
+    lay_out();
+}
+
+void text_modeler::lay_out() {
+    const std::string_view text(m_Text);
+
     std::vector<char32_t> codepoints;
 
-    for (size_t i = 0; i < aUTF8.size();) codepoints.push_back(decode_utf8(aUTF8, i));
+    for (size_t i = 0; i < text.size();) codepoints.push_back(decode_utf8(text, i));
 
     m_FallbackGlyphCount = 0;
 
@@ -80,6 +41,10 @@ void text_modeler::set_text(const std::string_view aUTF8) {
 
         if (!m_pFont->try_get(codepoint == U'\t' ? U' ' : codepoint)) ++m_FallbackGlyphCount;
     }
+
+    m_LaidOutAtlasGeneration = m_pFont->atlas_generation();
+
+    m_Layout = model_data();
 
     float penX(0), penY(0), widest(0);
 
@@ -141,7 +106,7 @@ void text_modeler::set_text(const std::string_view aUTF8) {
                 }, 2 }}
             });
 
-            m_BatchModeler.push_back(data);
+            m_Layout += data;
         }
 
         penX += glyph.advance;
@@ -155,6 +120,8 @@ void text_modeler::set_text(const std::string_view aUTF8) {
         widest * m_Scale,
         (penY == 0 ? m_pFont->line_height() : m_pFont->line_height() - penY) * m_Scale
     };
+
+    m_LayoutSent = false;
 }
 
 size_t text_modeler::uploaded_atlas_generation() const { return m_pFontTexture->uploaded_atlas_generation(); }
@@ -162,6 +129,9 @@ size_t text_modeler::uploaded_atlas_generation() const { return m_pFontTexture->
 size_t text_modeler::fallback_glyph_count() const { return m_FallbackGlyphCount; }
 
 void text_modeler::upload() {
+    if (m_pFont->atlas_generation() != m_LaidOutAtlasGeneration
+        && !m_pFont->atlas_changed_since(m_LaidOutAtlasGeneration)) lay_out();
+
     m_pFontTexture->upload();
 
     if (const auto pTexture = m_pFontTexture->texture(); pTexture != m_pBoundTexture) {
@@ -170,7 +140,11 @@ void text_modeler::upload() {
         m_pBoundTexture = pTexture;
     }
 
-    m_BatchModeler.upload();
+    if (!m_LayoutSent) {
+        m_pModel->upload(model::usage_hint::dynamic, m_Layout);
+
+        m_LayoutSent = true;
+    }
 }
 
 text_modeler::text_modeler(context_ptr_type aContext,
@@ -185,7 +159,6 @@ text_modeler::text_modeler(context_ptr_type aContext,
     material_ptr_type aMaterial,
     const float aScale)
 : m_pFont(aFontTexture->typeface())
-, m_pContext(aContext)
 , m_pFontTexture(std::move(aFontTexture))
 , m_pMaterial(aMaterial ? aMaterial : [&]() {
     auto pMaterial(aContext->make_material(
@@ -197,8 +170,6 @@ text_modeler::text_modeler(context_ptr_type aContext,
 
     return pMaterial;
 }())
-, m_BatchModeler(aContext, m_pMaterial)
-, m_Scale(aScale > 0 
-        ? aScale 
-        : 1.f / m_pFont->line_height())
+, m_pModel(aContext->make_model())
+, m_Scale(aScale > 0 ? aScale : m_pFont->line_height() > 0 ? 1.f / m_pFont->line_height() : 1.f)
 {}

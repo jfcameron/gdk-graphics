@@ -1,5 +1,6 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/animation/profile.h>
 
 #include <algorithm>
@@ -24,6 +25,18 @@ namespace gdk::graphics::animation {
             if (r.name == aName) return &r;
 
         return nullptr;
+    }
+
+    rig_binding::rig_binding(rig_profile aProfile, std::vector<int> aBones, const std::size_t aBoneCount)
+    : m_Profile(std::move(aProfile))
+    , m_Bones(std::move(aBones))
+    , m_BoneCount(aBoneCount) {
+        if (m_Bones.size() != m_Profile.roles.size())
+            throw exception("rig_binding: there must be one bone, or -1, for each of the profile's roles");
+
+        for (const auto bone : m_Bones)
+            if (bone < -1 || (bone >= 0 && static_cast<std::size_t>(bone) >= m_BoneCount))
+                throw exception("rig_binding: a role names a bone the skeleton does not have");
     }
 
     int rig_binding::bone_for(std::string_view aRole) const {

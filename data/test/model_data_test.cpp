@@ -1,7 +1,8 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <jfc/catch.hpp>
 
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/model_data.h>
 
 using namespace gdk::graphics;
@@ -283,5 +284,63 @@ TEST_CASE("appending models that describe different attributes",
 
         REQUIRE(empty.attributes().size() == 2);
         REQUIRE(empty.vertex_count() == 3);
+    }
+}
+
+TEST_CASE("model_data overwrite writes into the model it is called on", "[model_data]") {
+    auto subject = model_data::make_quad();
+
+    model_data patch({{"a_UV", attribute_data({7.f, 7.f}, 2)}});
+
+    subject.overwrite("a_UV", 1, patch);
+
+    REQUIRE(subject.get_attribute_data("a_UV").components()[2] == 7.f);
+    REQUIRE(subject.get_attribute_data("a_UV").components()[3] == 7.f);
+}
+
+TEST_CASE("model_data refuses attributes that are not whole vertices, and takes none at all", "[model_data]") {
+    REQUIRE(model_data(model_data::attribute_collection_type{}).vertex_count() == 0);
+
+    REQUIRE_THROWS_AS(model_data({{"a_Position", attribute_data({0.f, 0.f, 0.f, 0.f}, 3)}}), exception);
+    REQUIRE_THROWS_AS(model_data({{"a_Position", attribute_data({0.f, 0.f, 0.f}, 0)}}), exception);
+}
+
+TEST_CASE("model_data checks component counts before reading by them", "[model_data]") {
+    SECTION("sorting by triangle needs 3 component positions") {
+        model_data flat({{"a_Position", attribute_data({0.f, 0.f, 1.f, 0.f, 0.f, 1.f}, 2)}}, {0, 1, 2});
+
+        REQUIRE_THROWS_AS(flat.sort_by_nearest_triangle({0, 0, 0}, matrix4x4_type::identity), exception);
+    }
+
+    SECTION("a transform of positions made ragged afterwards is refused") {
+        auto quad = model_data::make_quad();
+
+        quad.get_attribute_data("a_Position").components().push_back(1.f);
+
+        REQUIRE_THROWS_AS(quad.transform("a_Position", vector3_type{1, 0, 0}), exception);
+    }
+}
+
+TEST_CASE("model_data push_back changes nothing when it refuses", "[model_data]") {
+    std::vector<float> positions(3 * 65535, 0.f);
+    std::vector<model_data::index_value_type> indexes{0, 1, 2};
+
+    model_data large({{"a_Position", attribute_data(positions, 3)}}, std::move(indexes));
+
+    const model_data more({{"a_Position", attribute_data({0.f, 0.f, 0.f, 0.f, 0.f, 0.f}, 3)}});
+
+    REQUIRE_THROWS_AS(large.push_back(more), exception);
+
+    REQUIRE(large.vertex_count() == 65535);
+    REQUIRE(large.get_attribute_data("a_Position").components().size() == 3 * 65535);
+    REQUIRE(large.indexes().size() == 3);
+
+    SECTION("an attribute of another width is refused, also before anything changes") {
+        model_data quad = model_data::make_quad();
+        const model_data wide({{"a_Position", attribute_data({0.f, 0.f, 0.f, 0.f}, 4)},
+            {"a_UV", attribute_data({0.f, 0.f}, 2)}});
+
+        REQUIRE_THROWS_AS(quad.push_back(wide), exception);
+        REQUIRE(quad.vertex_count() == 6);
     }
 }

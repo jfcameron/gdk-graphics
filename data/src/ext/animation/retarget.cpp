@@ -1,17 +1,19 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include "checks.h"
+
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/animation/retarget.h>
 
-#include <gdk/math.h>
-
 #include <algorithm>
-#include <stdexcept>
 
 using namespace gdk;
 
 namespace gdk::graphics::animation {
     namespace {
         [[nodiscard]] std::vector<quaternion_type> bind_world_rotations(const skeleton &aSkeleton) {
+            checks::parents_come_first(aSkeleton, "retarget");
+
             std::vector<quaternion_type> world(aSkeleton.bones.size());
 
             for (std::size_t i = 0; i < aSkeleton.bones.size(); ++i)
@@ -25,6 +27,9 @@ namespace gdk::graphics::animation {
 
         [[nodiscard]] std::vector<quaternion_type> pose_world_rotations(const skeleton &aSkeleton,
             const pose &aPose) {
+            checks::parents_come_first(aSkeleton, "retarget");
+            checks::pose_fits(aSkeleton, aPose, "retarget");
+
             std::vector<quaternion_type> world(aSkeleton.bones.size());
 
             for (std::size_t i = 0; i < aSkeleton.bones.size(); ++i) {
@@ -43,10 +48,10 @@ namespace gdk::graphics::animation {
     pose retarget(const skeleton &aSource, const pose &aSourcePose, const skeleton &aTarget,
         const bone_mapping &aMapping) {
         if (aSourcePose.local_rotations.size() != aSource.bones.size())
-            throw std::invalid_argument("retarget: the pose does not belong to the source skeleton");
+            throw exception("retarget: the pose does not belong to the source skeleton");
 
         if (aMapping.size() != aTarget.bones.size())
-            throw std::invalid_argument("retarget: the mapping does not match the target skeleton");
+            throw exception("retarget: the mapping does not match the target skeleton");
 
         const auto sourceBind = bind_world_rotations(aSource);
         const auto sourceWorld = pose_world_rotations(aSource, aSourcePose);
@@ -74,7 +79,7 @@ namespace gdk::graphics::animation {
             const auto s = static_cast<std::size_t>(source);
 
             if (s >= aSource.bones.size())
-                throw std::invalid_argument("retarget: the mapping names a bone the source lacks");
+                throw exception("retarget: the mapping names a bone the source lacks");
 
             const auto delta = sourceWorld[s] * sourceBind[s].inverse_unit();
             const auto wanted = delta * targetBind[i];
@@ -118,7 +123,10 @@ namespace gdk::graphics::animation {
 
     pose mirror_pose(const skeleton &aSkeleton, const rig_binding &aBinding, const pose &aPose) {
         if (aPose.local_rotations.size() != aSkeleton.bones.size())
-            throw std::invalid_argument("mirror_pose: the pose does not match the skeleton");
+            throw exception("mirror_pose: the pose does not match the skeleton");
+
+        if (aBinding.bone_count() != aSkeleton.bones.size())
+            throw exception("mirror_pose: the binding was made for another skeleton");
 
         std::vector<std::size_t> source(aSkeleton.bones.size());
 
@@ -136,6 +144,7 @@ namespace gdk::graphics::animation {
         }
 
         const auto world = pose_world_rotations(aSkeleton, aPose);
+        const auto bind = bind_world_rotations(aSkeleton);
 
         auto result = pose::rest(aSkeleton);
 
@@ -148,7 +157,9 @@ namespace gdk::graphics::animation {
                 ? quaternion_type::identity
                 : mirrored[static_cast<std::size_t>(parent)];
 
-            mirrored[i] = reflected(world[source[i]]);
+            const auto turned = world[source[i]] * bind[source[i]].inverse_unit();
+
+            mirrored[i] = reflected(turned) * bind[i];
 
             result.local_rotations[i] = aSkeleton.bones[i].local_rotation.inverse_unit()
                 * parentWorld.inverse_unit() * mirrored[i];

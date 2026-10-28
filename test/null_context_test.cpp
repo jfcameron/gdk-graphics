@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #include <jfc/catch.hpp>
 
@@ -77,8 +77,10 @@ TEST_CASE("a null scene remembers what is in it", "[null_context][scene]")
 
     SECTION("cameras are counted apart from entities")
     {
+        const auto pTarget = pContext->make_texture_camera();
+
         pScene->add(pCamera);
-        pScene->add(pContext->make_texture_camera());
+        pScene->add(pTarget);
 
         REQUIRE(pScene->camera_count() == 2);
         REQUIRE(pScene->entity_count() == 0);
@@ -321,7 +323,9 @@ TEST_CASE("a null texture remembers its size", "[null_context][texture]")
 
     SECTION("a partial update does not")
     {
-        pTexture->update_data(view, 1, 1);
+        const std::vector<texture_data::channel_type> corner(2 * 2 * 4, 0);
+
+        pTexture->update_data({.width = 2, .height = 2, .format = texture::format::rgba, .data = corner.data()}, 1, 1);
 
         REQUIRE(pTexture->width() == 4);
         REQUIRE(pTexture->upload_count() == 2);

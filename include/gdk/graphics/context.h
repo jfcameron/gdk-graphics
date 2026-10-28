@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_CONTEXT_H
-#define GDK_GFX_CONTEXT_H
+#ifndef GDK_GRAPHICS_CONTEXT_H
+#define GDK_GRAPHICS_CONTEXT_H
 
 #include <gdk/graphics/entity.h>
 #include <gdk/graphics/limits.h>
@@ -28,10 +28,10 @@ namespace gdk::graphics {
             //! makes a scene
             [[nodiscard]] virtual scene_ptr_type make_scene() = 0;
 
-            //! makes a camera 
-            [[nodiscard]] virtual camera_ptr_type make_camera() = 0;
+            //! makes a camera that draws to the screen
+            [[nodiscard]] virtual screen_camera_ptr_type make_camera() = 0;
             
-            //! makes a texture_camera with a 1024^2 texture
+            //! makes a texture_camera drawing into textures 1024 texels square
             [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera() = 0;
 
             /// \brief makes a texture_camera drawing into textures aSize texels across
@@ -54,21 +54,45 @@ namespace gdk::graphics {
             //! make a material.
             [[nodiscard]] virtual material_ptr_type make_material(
                 const const_shader_ptr_type pShader,
-                const material::render_mode aRenderMode = material::render_mode::opaque,
-                const material::face_culling_mode aFaceCullingMode = material::face_culling_mode::none
+                const material::render_mode aRenderMode,
+                const material::face_culling_mode aFaceCullingMode
             ) = 0;
+
+            //! make a material that culls no faces
+            [[nodiscard]] material_ptr_type make_material(const const_shader_ptr_type pShader,
+                const material::render_mode aRenderMode) {
+                return make_material(pShader, aRenderMode, material::face_culling_mode::none);
+            }
+
+            //! make an opaque material that culls no faces
+            [[nodiscard]] material_ptr_type make_material(const const_shader_ptr_type pShader) {
+                return make_material(pShader, material::render_mode::opaque, material::face_culling_mode::none);
+            }
 
             /// \brief make a material that starts as a copy of another
             [[nodiscard]] virtual material_ptr_type make_material(
                 const const_material_ptr_type &aPrototype) = 0;
 
-            //! make a texture 
+            //! make a texture
             [[nodiscard]] virtual texture_ptr_type make_texture(
                 const texture_data::view &aTextureDataView,
-                const texture::wrap_mode aWrapModeU = texture::wrap_mode::repeat,
-                const texture::wrap_mode aWrapModeV = texture::wrap_mode::repeat,
-                const texture::filter_mode aFilterMode = texture::filter_mode::sharp
+                const texture::wrap_mode aWrapModeU,
+                const texture::wrap_mode aWrapModeV,
+                const texture::filter_mode aFilterMode
             ) = 0;
+
+            //! make a sharp texture
+            [[nodiscard]] texture_ptr_type make_texture(const texture_data::view &aTextureDataView,
+                const texture::wrap_mode aWrapModeU, const texture::wrap_mode aWrapModeV) {
+                return make_texture(aTextureDataView, aWrapModeU, aWrapModeV, texture::filter_mode::sharp);
+            }
+
+            //! make a sharp texture that repeats
+            [[nodiscard]] texture_ptr_type make_texture(const texture_data::view &aTextureDataView) {
+                return make_texture(aTextureDataView, texture::wrap_mode::repeat, texture::wrap_mode::repeat,
+                    texture::filter_mode::sharp);
+            }
+
             //! make an empty texture 
             [[nodiscard]] virtual texture_ptr_type make_texture() = 0;
         ///@}
@@ -107,10 +131,10 @@ namespace gdk::graphics {
             /// Pair it with material::render_mode::transparent, which is what enables blending.
             [[nodiscard]] virtual shader_ptr_type make_alpha_blend_shader() const = 0;
 
-            /// \brief Anything an implementation offers beyond these, shader source for one, say,
-            /// is reached by casting to its context: webgl1es2_context::make_shader takes GLSL ES
-            /// 1.0, which means nothing to another implementation, so it is not here.
-
+            /// \brief the limits of the device, narrowed to the context's profile when it was given one
+            ///
+            /// What an implementation offers beyond this interface, shaders made from source in its own language
+            /// say, is on its own context type, which its `make` returns.
             [[nodiscard]] virtual graphics::limits limits() const = 0;
         //@}
 

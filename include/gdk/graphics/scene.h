@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_SCENE_H
-#define GDK_GFX_SCENE_H
+#ifndef GDK_GRAPHICS_SCENE_H
+#define GDK_GRAPHICS_SCENE_H
 
 #include <gdk/graphics/color.h>
 #include <gdk/graphics/types.h>
@@ -17,25 +17,24 @@ namespace gdk::graphics {
     /// \brief a 3d environment within which cameras draw entities
     class scene {
     public:
-        //! add a screen camera to the scene
+        /// \name What the scene holds
+        /// @{
+        ///
+        /// **The scene holds its cameras and entities weakly**: one its owner lets go of leaves the scene with it,
+        /// so remove is only needed to take something out while keeping it. Adding what the scene already holds
+        /// does nothing the second time.
+        ///
+        /// Texture cameras draw before screen cameras, and cameras of a kind draw in the order they were added.
+        ///
         virtual void add(const std::shared_ptr<const screen_camera> &pCamera) = 0;
-        //! remove a screen camera from the scene
         virtual void remove(const std::shared_ptr<const screen_camera> &pCamera) = 0;
 
-        //! add a texture camera to the scene
         virtual void add(const std::shared_ptr<const texture_camera> &pCamera) = 0;
-        //! remove a texture camera from the scene
         virtual void remove(const std::shared_ptr<const texture_camera> &pCamera) = 0;
-        
-        /// \brief add an entity to the scene
-        ///
-        /// Adding the same entity twice does nothing the second time.
+
         virtual void add(const std::shared_ptr<const entity> &pEntity) = 0;
-        /// \brief remove an entity from the scene
-        ///
-        /// note this is only necessary if you want to remove an entity from the scene while
-        /// keeping the instance alive. the scene only weakly owns the entities inside of it
         virtual void remove(const std::shared_ptr<const entity> &pEntity) = 0;
+        /// @}
 
         //! draws the scene
         virtual void draw(const gdk::graphics::intvector2_type &aFrameBufferSize) const = 0;

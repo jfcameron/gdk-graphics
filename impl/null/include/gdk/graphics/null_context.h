@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_NULL_CONTEXT_H
-#define GDK_GFX_NULL_CONTEXT_H
+#ifndef GDK_GRAPHICS_NULL_CONTEXT_H
+#define GDK_GRAPHICS_NULL_CONTEXT_H
 
 #include <gdk/graphics/context.h>
 #include <gdk/graphics/profile.h>
@@ -12,10 +12,10 @@
 #include <map>
 #include <memory>
 #include <optional>
-#include <utility>
 #include <set>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 namespace gdk::graphics {
@@ -27,8 +27,11 @@ namespace gdk::graphics {
         [[nodiscard]] static std::shared_ptr<null_context> make(std::optional<graphics::profile> aProfile = {},
             shader_check_type aShaderCheck = {});
 
+        using graphics::context::make_material;
+        using graphics::context::make_texture;
+
         [[nodiscard]] virtual scene_ptr_type make_scene() override;
-        [[nodiscard]] virtual camera_ptr_type make_camera() override;
+        [[nodiscard]] virtual screen_camera_ptr_type make_camera() override;
         [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera() override;
         [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera(const intvector2_type &aSize) override;
 
@@ -51,7 +54,7 @@ namespace gdk::graphics {
             const texture_data::view &aTextureDataView,
             const texture::wrap_mode aWrapModeU,
             const texture::wrap_mode aWrapModeV,
-            const texture::filter_mode aFilterMode = texture::filter_mode::sharp) override;
+            const texture::filter_mode aFilterMode) override;
 
         [[nodiscard]] virtual texture_ptr_type make_texture() override;
 
@@ -72,14 +75,18 @@ namespace gdk::graphics {
         [[nodiscard]] std::size_t resources_made() const;
 
     private:
-        std::size_t mTextureCount{0};
         null_context() = default;
 
         std::shared_ptr<const graphics::profile> mProfile;
 
         shader_check_type mShaderCheck;
 
-        std::size_t mResourcesMade{0};
+        std::size_t mTextureCount{0};
+
+        mutable std::size_t mResourcesMade{0};
+
+        mutable shader_ptr_type mpAlphaCutoff;
+        mutable shader_ptr_type mpAlphaBlend;
     };
 
     class null_shader final : public shader_program {
@@ -98,13 +105,14 @@ namespace gdk::graphics {
     public:
         null_texture() = default;
         null_texture(const texture_data::view &aView, const wrap_mode aU, const wrap_mode aV);
+        null_texture(std::size_t aWidth, std::size_t aHeight);
 
         void hold_to(std::shared_ptr<const profile> pProfile);
 
         virtual void update_data(const texture_data::view &aView) override;
 
-        virtual void update_data(const texture_data::view &aView, const size_t aOffsetX,
-            const size_t aOffsetY) override;
+        virtual void update_data(const texture_data::view &aView, const std::size_t aOffsetX,
+            const std::size_t aOffsetY) override;
 
         [[nodiscard]] std::size_t width() const;
         [[nodiscard]] std::size_t height() const;
@@ -119,6 +127,7 @@ namespace gdk::graphics {
         std::size_t mHeight{0};
         std::size_t mUploadCount{0};
         std::size_t mChannels{0};
+        std::optional<format> mFormat;
         texture_data::channel_data mData;
         wrap_mode mWrapU{wrap_mode::repeat};
         wrap_mode mWrapV{wrap_mode::repeat};
@@ -190,6 +199,8 @@ namespace gdk::graphics {
 
     class null_entity final : public entity {
     public:
+        using entity::set_transform;
+
         null_entity(const_model_ptr_type pModel, const_material_ptr_type pMaterial);
 
         virtual void hide() override;
@@ -280,7 +291,7 @@ namespace gdk::graphics {
 
     class null_texture_camera final : public texture_camera {
     public:
-        null_texture_camera();
+        explicit null_texture_camera(const intvector2_type &aSize = {1024, 1024});
 
         virtual void set_perspective_projection(const floating_point_type aFieldOfView,
             const floating_point_type aNear, const floating_point_type aFar,
@@ -302,14 +313,13 @@ namespace gdk::graphics {
         virtual void set_clear_color(const color &aColor) override;
         virtual void set_clear_mode(const clear_mode aClearMode) override;
 
-        [[nodiscard]] virtual const std::shared_ptr<texture> get_color_texture(
-            const size_t i = 0) const override;
+        [[nodiscard]] virtual texture_ptr_type color_texture() const override;
 
-        [[nodiscard]] virtual const std::shared_ptr<texture> get_depth_texture() const override;
+        [[nodiscard]] virtual texture_ptr_type depth_texture() const override;
 
     private:
-        std::shared_ptr<texture> mpColor;
-        std::shared_ptr<texture> mpDepth;
+        texture_ptr_type mpColor;
+        texture_ptr_type mpDepth;
     };
 
     class null_scene final : public scene {
@@ -348,15 +358,15 @@ namespace gdk::graphics {
         [[nodiscard]] intvector2_type last_frame_buffer_size() const;
 
     private:
-        std::set<std::shared_ptr<const entity>> mEntities;
-        std::set<std::shared_ptr<const screen_camera>> mScreenCameras;
-        std::set<std::shared_ptr<const texture_camera>> mTextureCameras;
+        mutable std::vector<std::weak_ptr<const entity>> mEntities;
+        mutable std::vector<std::weak_ptr<const screen_camera>> mScreenCameras;
+        mutable std::vector<std::weak_ptr<const texture_camera>> mTextureCameras;
 
         std::map<std::string, float, std::less<>> mFloats;
-        std::map<std::string, vector2_type> mVector2s;
+        std::map<std::string, vector2_type, std::less<>> mVector2s;
         std::map<std::string, vector3_type, std::less<>> mVector3s;
         std::map<std::string, vector4_type, std::less<>> mVector4s;
-        std::map<std::string, int> mIntegers;
+        std::map<std::string, int, std::less<>> mIntegers;
 
         mutable std::size_t mDrawCount{0};
         mutable intvector2_type mLastFrameBufferSize{0, 0};

@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_MATERIAL_H
-#define GDK_GFX_MATERIAL_H
+#ifndef GDK_GRAPHICS_MATERIAL_H
+#define GDK_GRAPHICS_MATERIAL_H
 
 #include <gdk/graphics/types.h>
 
@@ -18,7 +18,6 @@ namespace gdk::graphics {
     /// This includes expected effects, such as texture colors, lightning, 
     /// but can also include unexpected effects, like vertex displacements, transformations.
     /// Material is really pipeline state and persistent uniform values
-    //TODO: instead of explicitly naming set_TYPE, do overloads: set_uniform(name, TYPE)
     class material {
     public:
         //! specify whether front- or back-facing polygons can be culled
@@ -36,11 +35,10 @@ namespace gdk::graphics {
             additive     //!< added to what is behind it, scaled by its alpha: light, a glow, a beam
         };
 
-        /// \brief textures can be shared among many webgl1es2_materials.
+        /// \brief textures can be shared among many materials.
         using texture_ptr_type = std::shared_ptr<gdk::graphics::texture>;
 
-        /// \brief assigns a texture to the material.
-        /// \note note that this is passed by pointer, not value
+        /// \brief assigns a texture to the material, which shares it; a null texture unsets the name
         virtual void set_texture(const std::string_view aName, texture_ptr_type aTexturePointer) = 0;
 
         /// \brief assigns a float to the material.

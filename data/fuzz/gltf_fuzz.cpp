@@ -1,5 +1,6 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
+#include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/gltf.h>
 
 #include <cstddef>
@@ -29,7 +30,7 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t *aData, const std::size
 
         sink = seen;
     }
-    catch (const std::exception &) {}
+    catch (const gdk::graphics::exception &) {}
 
     return 0;
 }

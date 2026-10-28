@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_TEXTURE_H
-#define GDK_GFX_TEXTURE_H
+#ifndef GDK_GRAPHICS_TEXTURE_H
+#define GDK_GRAPHICS_TEXTURE_H
 
 #include <gdk/graphics/texture_data.h>
 #include <gdk/graphics/types.h>
@@ -32,10 +32,10 @@ namespace gdk::graphics {
         //! replace the texture data with new data
         virtual void update_data(const texture_data::view &) = 0;
 
-        //! update a section of texture data
-        /// \warning formats must match
-        /// \warning new data must be kept within bounds of the existing data
-        virtual void update_data(const texture_data::view &, const size_t offsetX, const size_t offsetY) = 0;
+        /// \brief update a section of texture data
+        /// \throws gdk::graphics::exception the section is in another format than the texture, or not wholly
+        /// within it
+        virtual void update_data(const texture_data::view &, const std::size_t offsetX, const std::size_t offsetY) = 0;
 
         //! trivial destructor
         virtual ~texture() = default;

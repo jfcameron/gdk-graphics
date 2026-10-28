@@ -1,12 +1,14 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_CAMERA_H
-#define GDK_GFX_CAMERA_H
+#ifndef GDK_GRAPHICS_CAMERA_H
+#define GDK_GRAPHICS_CAMERA_H
 
 #include <gdk/graphics/color.h>
 #include <gdk/graphics/types.h>
 
 namespace gdk::graphics {
+    /// \brief a point of view a scene is drawn from. A camera starts at the origin looking down -Z, clearing colour
+    /// and depth, its clear colour opaque black
     class camera {
     public:
         /// \brief controls which buffers in the active frame buffer object to clear
@@ -39,11 +41,6 @@ namespace gdk::graphics {
         virtual void set_orthographic_projection(const gdk::graphics::vector2_type &aOrthographicSize,
             const floating_point_type aNearClippingPlane, const floating_point_type aFarClippingPlane,
             const floating_point_type aViewportAspectRatio) = 0;
-        //virtual void set_projection(gdk::graphics::matrix_type &&aMatrix) = 0;
-
-        /// \brief checks whether a point in world space is within the camera's frustum 
-        //[[nodiscard]] virtual void is_within_frustum(const gdk::graphics::vector3_type &aOtherWorldPosition) = 0;
-        //[[nodiscard]] virtual void is_within_frustum(const gdk::graphics::matrix_type &aOtherWorldTransform) = 0;
 
         /// \brief sets the camera's world and view matrix 
         virtual void set_transform(const gdk::graphics::matrix4x4_type &aMatrix) = 0;

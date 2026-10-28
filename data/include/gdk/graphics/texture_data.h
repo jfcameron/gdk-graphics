@@ -1,7 +1,7 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
-#ifndef GDK_GFX_TEXTURE_DATA_H
-#define GDK_GFX_TEXTURE_DATA_H
+#ifndef GDK_GRAPHICS_TEXTURE_DATA_H
+#define GDK_GRAPHICS_TEXTURE_DATA_H
 
 #include <cstddef>
 #include <vector>
@@ -25,8 +25,8 @@ namespace gdk::graphics::texture_data {
     /// metadata that contains its size, format and usage info
     /// \warning a view does not own its data.
     struct view {
-        size_t width;               //!< number of texels wide
-        size_t height;              //!< number of texels tall
+        std::size_t width;               //!< number of texels wide
+        std::size_t height;              //!< number of texels tall
         texture_data::format format;     //!< format of the data
         const channel_type *data;   //!< ptr to the start of decoded texture data
     };

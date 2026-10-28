@@ -1,4 +1,6 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
+
+#include "font_check.h"
 
 #include <gdk/graphics/exception.h>
 #include <gdk/graphics/ext/font.h>
@@ -7,6 +9,8 @@
 #include <stb/stb_truetype.h>
 
 #include <algorithm>
+#include <cstddef>
+#include <limits>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -24,6 +28,8 @@ struct font::impl {
     std::vector<texture_data::encoded_byte> m_FontData;
 
     stbtt_fontinfo m_Info{};
+
+    font_check::checked m_Checked;
 
     float m_Scale = 0;
 
@@ -72,22 +78,15 @@ struct font::impl {
         if (aSettings.atlas_edge == 0)
             throw exception(std::string(TAG).append("atlas edge must be positive"));
 
-        const auto faces = stbtt_GetNumberOfFonts(m_FontData.data());
+        if (m_FontData.size() > static_cast<std::size_t>(std::numeric_limits<int>::max()))
+            throw exception(std::string(TAG).append("the font is too large to read"));
 
-        if (faces <= 0)
-            throw exception(std::string(TAG).append("data does not begin a truetype font"));
+        m_Checked = font_check::check(m_FontData, aSettings.face);
 
-        if (aSettings.face >= static_cast<size_t>(faces)) throw exception(std::string(TAG)
-            .append("face ").append(std::to_string(aSettings.face))
-            .append(" was asked for, and the data holds ").append(std::to_string(faces)));
-
-        const auto offset = stbtt_GetFontOffsetForIndex(m_FontData.data(),
-            static_cast<int>(aSettings.face));
-
-        if (offset < 0) throw exception(std::string(TAG).append("data does not begin a truetype font"));
-
-        if (!stbtt_InitFont(&m_Info, m_FontData.data(), offset))
+        if (!stbtt_InitFont(&m_Info, m_FontData.data(), static_cast<int>(m_Checked.start)))
             throw exception(std::string(TAG).append("truetype data could not be parsed"));
+
+        bound_to_checked();
 
         m_Scale = aSettings.sizing == font_sizing::em
             ? stbtt_ScaleForMappingEmToPixels(&m_Info, aPixelSize)
@@ -104,6 +103,40 @@ struct font::impl {
         reset_packing();
 
         ensure_fallback();
+    }
+
+    void bound_to_checked() {
+        if (!m_Checked.kern) m_Info.kern = 0;
+        if (!m_Checked.gpos) m_Info.gpos = 0;
+
+        if (!m_Checked.cff) return;
+
+        const auto *const pTable = m_FontData.data() + m_Checked.cff->offset;
+        const auto length = static_cast<std::ptrdiff_t>(m_Checked.cff->length);
+
+        m_Info.cff.size = static_cast<int>(length);
+
+        for (auto *pBuffer : {&m_Info.charstrings, &m_Info.gsubrs, &m_Info.subrs, &m_Info.fontdicts, &m_Info.fdselect}) {
+            if (!pBuffer->data) continue;
+
+            const auto at = pBuffer->data - pTable;
+
+            if (at < 0 || at > length) throw exception(std::string(TAG).append("the font's CFF points outside itself"));
+
+            pBuffer->size = static_cast<int>(std::min<std::ptrdiff_t>(pBuffer->size, length - at));
+        }
+    }
+
+    [[nodiscard]] int glyph_of(const char32_t aCodepoint) const {
+        if (aCodepoint == 0xFFFF) return 0;
+
+        const auto glyph = stbtt_FindGlyphIndex(&m_Info, static_cast<int>(aCodepoint));
+
+        if (glyph <= 0 || static_cast<std::size_t>(glyph) >= m_Checked.glyphs) return 0;
+
+        const auto index = static_cast<std::size_t>(glyph);
+
+        return index < m_Checked.undrawable.size() && m_Checked.undrawable[index] ? 0 : glyph;
     }
 
     void reset_packing() {
@@ -180,7 +213,7 @@ struct font::impl {
     bool pack(const char32_t aCodepoint) {
         placed placement;
 
-        if (!pack_index(stbtt_FindGlyphIndex(&m_Info, static_cast<int>(aCodepoint)), placement))
+        if (!pack_index(glyph_of(aCodepoint), placement))
             return false;
 
         m_Glyphs.emplace(aCodepoint, placement);
@@ -200,8 +233,17 @@ struct font::impl {
 
         int width(0), height(0), xoff(0), yoff(0);
 
-        unsigned char *pBitmap = stbtt_GetGlyphBitmap(&m_Info, m_Scale, m_Scale, index,
-            &width, &height, &xoff, &yoff);
+        int x0(0), y0(0), x1(0), y1(0);
+
+        stbtt_GetGlyphBitmapBox(&m_Info, index, m_Scale, m_Scale, &x0, &y0, &x1, &y1);
+
+        if (static_cast<std::size_t>(std::max(0, x1 - x0)) + PADDING * 2 > m_MaxAtlasEdge
+            || static_cast<std::size_t>(std::max(0, y1 - y0)) + PADDING * 2 > m_MaxAtlasEdge)
+            return false;
+
+        unsigned char *pBitmap = x1 > x0 && y1 > y0
+            ? stbtt_GetGlyphBitmap(&m_Info, m_Scale, m_Scale, index, &width, &height, &xoff, &yoff)
+            : nullptr;
 
         if (pBitmap && width > 0 && height > 0) {
             stbrp_rect rect{};
@@ -297,8 +339,8 @@ std::optional<font::atlas_region> font::atlas_changed_since(const size_t aGenera
 void font::clear() { m_pImpl->clear(); }
 
 float font::kerning(const char32_t aLeft, const char32_t aRight) const {
-    return static_cast<float>(stbtt_GetCodepointKernAdvance(&m_pImpl->m_Info,
-        static_cast<int>(aLeft), static_cast<int>(aRight))) * m_pImpl->m_Scale;
+    return static_cast<float>(stbtt_GetGlyphKernAdvance(&m_pImpl->m_Info,
+        m_pImpl->glyph_of(aLeft), m_pImpl->glyph_of(aRight))) * m_pImpl->m_Scale;
 }
 
 texture_data::view font::atlas() const {

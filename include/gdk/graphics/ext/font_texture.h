@@ -1,4 +1,4 @@
-// © Joseph Cameron - All Rights Reserved
+// © Joseph Cameron - MIT License
 
 #ifndef GDK_GRAPHICS_EXT_FONT_TEXTURE_H
 #define GDK_GRAPHICS_EXT_FONT_TEXTURE_H
@@ -24,7 +24,7 @@ namespace gdk::graphics::ext {
         [[nodiscard]] texture_ptr_type texture() const;
 
         /// \brief the atlas generation the texture holds
-        [[nodiscard]] size_t uploaded_atlas_generation() const;
+        [[nodiscard]] std::size_t uploaded_atlas_generation() const;
 
         /// \brief the font whose atlas this is
         [[nodiscard]] const std::shared_ptr<font> &typeface() const;
@@ -35,7 +35,7 @@ namespace gdk::graphics::ext {
         context_ptr_type m_pContext;
         std::shared_ptr<font> m_pFont;
         texture_ptr_type m_pTexture;
-        size_t m_UploadedAtlasGeneration = 0;
+        std::size_t m_UploadedAtlasGeneration = 0;
         texture_data::channel_data m_Rgba;
     };
 }
