@@ -65,3 +65,10 @@ TEST_CASE("make_from_png refuses what it should not decode", "[png]") {
         REQUIRE_THROWS_AS(make_from_png(cut), exception);
     }
 }
+
+TEST_CASE("make_from_png refuses a file stb_image gives no reason for", "[.][png_first_refusal]") {
+    auto reservedDeflateBlock = SMALL;
+    reservedDeflateBlock[43] = 0x96;
+
+    REQUIRE_THROWS_WITH(make_from_png(reservedDeflateBlock), "make_from_png: failed to decode: no reason given");
+}
