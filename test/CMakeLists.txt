@@ -40,6 +40,9 @@ set_property(TARGET ${JFC_TEST_TARGET} PROPERTY CXX_EXTENSIONS OFF)
 
 target_include_directories(${JFC_TEST_TARGET} PRIVATE "${PROJECT_BINARY_DIR}/test_fonts")
 
+# alone in its process: stb_image keeps its last reason, which would hide a missing one
+add_test(NAME gdk-graphics_png_first_refusal COMMAND ${JFC_TEST_TARGET} "[png_first_refusal]")
+
 if (NOT CMAKE_CROSSCOMPILING)
     add_test(NAME gdk-graphics_install_and_consume
         COMMAND "${CMAKE_COMMAND}"

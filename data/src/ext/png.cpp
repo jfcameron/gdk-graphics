@@ -46,6 +46,13 @@ namespace {
             at += HEADER + length + CRC;
         }
     }
+
+    //! stb_image refuses some damaged files without setting a reason, a deflate block of the reserved type among them
+    [[nodiscard]] std::string failure_reason() {
+        const char *const pReason = stbi_failure_reason();
+
+        return pReason ? pReason : "no reason given";
+    }
 }
 
 std::pair<view, std::shared_ptr<channel_data>> gdk::graphics::ext::make_from_png(
@@ -65,7 +72,7 @@ std::pair<view, std::shared_ptr<channel_data>> gdk::graphics::ext::make_from_png
     int width = 0, height = 0, given = 0;
 
     if (!stbi_info_from_memory(pBytes, length, &width, &height, &given))
-        throw exception(std::string("make_from_png: not a png: ") + stbi_failure_reason());
+        throw exception("make_from_png: not a png: " + failure_reason());
 
     if (static_cast<std::size_t>(width) > MOST_PNG_EDGE || static_cast<std::size_t>(height) > MOST_PNG_EDGE)
         throw exception("make_from_png: a png " + std::to_string(width) + " by " + std::to_string(height)
@@ -74,7 +81,7 @@ std::pair<view, std::shared_ptr<channel_data>> gdk::graphics::ext::make_from_png
     const std::unique_ptr<stbi_uc, void (*)(void *)> decoded(
         stbi_load_from_memory(pBytes, length, &width, &height, &given, channels), stbi_image_free);
 
-    if (!decoded) throw exception(std::string("make_from_png: failed to decode: ") + stbi_failure_reason());
+    if (!decoded) throw exception("make_from_png: failed to decode: " + failure_reason());
 
     const auto size = static_cast<std::size_t>(width) * static_cast<std::size_t>(height)
         * static_cast<std::size_t>(channels);
