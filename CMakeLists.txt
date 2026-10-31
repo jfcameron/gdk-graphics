@@ -16,10 +16,20 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/jfc-cmake/jfclib.cmake")
 option(GDKGRAPHICS_BUILD_TESTS "Build unit tests" ${PROJECT_IS_TOP_LEVEL})
 option(GDKGRAPHICS_BUILD_DOCS "Build documentation" OFF)
 
-if (GDKGRAPHICS_BUILD_DOCS AND NOT GDKGRAPHICS_BUILD_TESTS)
-    add_subdirectory(docs)
+if (GDKGRAPHICS_BUILD_DOCS)
+    jfc_generate_documentation_doxygen(
+        README_PATH      README.md
+        OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/docs
 
-    return()
+        INCLUDE_DIRECTORIES
+            include/
+            impl/null/include/
+            data/include/
+    )
+
+    if (NOT GDKGRAPHICS_BUILD_TESTS)
+        return()
+    endif()
 endif()
 
 add_subdirectory(extern)
@@ -135,8 +145,4 @@ install(FILES
 
 if (GDKGRAPHICS_BUILD_TESTS)
     add_subdirectory(test)
-endif()
-
-if (GDKGRAPHICS_BUILD_DOCS)
-    add_subdirectory(docs)
 endif()
