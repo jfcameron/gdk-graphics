@@ -38,9 +38,9 @@ namespace gdk::graphics::animation {
             std::size_t at = 0;
 
             [[nodiscard]] std::string_view next() {
-                const auto space = [](const char c) {
-                    return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f'
-                        || c == '\v';
+                const auto space = [](const char aCharacter) {
+                    return aCharacter == ' ' || aCharacter == '\t' || aCharacter == '\r' || aCharacter == '\n' || aCharacter == '\f'
+                        || aCharacter == '\v';
                 };
 
                 while (at < text.size() && space(text[at])) ++at;

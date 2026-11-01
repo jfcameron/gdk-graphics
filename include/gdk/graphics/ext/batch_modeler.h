@@ -23,7 +23,7 @@ namespace gdk::graphics {
         std::size_t vertex_count() const;
 
         //! add model data to the batch
-        void push_back(const model_data &data);
+        void push_back(const model_data &aData);
 
         //! upload the batch data to the model and clear the batch
         void upload();

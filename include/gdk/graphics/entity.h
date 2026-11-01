@@ -32,12 +32,11 @@ namespace gdk::graphics {
         }
 
         /// \brief set the model matrix using a matrix
-        virtual void set_transform(const matrix4x4_type& a) = 0;
+        virtual void set_transform(const matrix4x4_type& aTransform) = 0;
 
         /// \brief the bounding sphere of the model, used for culling
         virtual void set_bounds(const vector3_type &aCentre, floating_point_type aRadius) = 0;
 
-        //! dtor
         virtual ~entity() = default;
     };
 }

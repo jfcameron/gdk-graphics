@@ -221,11 +221,11 @@ struct font::impl {
         return true;
     }
 
-    bool pack_index(const int index, placed &aOut) {
+    bool pack_index(const int aIndex, placed &aOut) {
 
         int advance(0), leftSideBearing(0);
 
-        stbtt_GetGlyphHMetrics(&m_Info, index, &advance, &leftSideBearing);
+        stbtt_GetGlyphHMetrics(&m_Info, aIndex, &advance, &leftSideBearing);
 
         font::glyph glyph;
 
@@ -235,14 +235,14 @@ struct font::impl {
 
         int x0(0), y0(0), x1(0), y1(0);
 
-        stbtt_GetGlyphBitmapBox(&m_Info, index, m_Scale, m_Scale, &x0, &y0, &x1, &y1);
+        stbtt_GetGlyphBitmapBox(&m_Info, aIndex, m_Scale, m_Scale, &x0, &y0, &x1, &y1);
 
         if (static_cast<std::size_t>(std::max(0, x1 - x0)) + PADDING * 2 > m_MaxAtlasEdge
             || static_cast<std::size_t>(std::max(0, y1 - y0)) + PADDING * 2 > m_MaxAtlasEdge)
             return false;
 
         unsigned char *pBitmap = x1 > x0 && y1 > y0
-            ? stbtt_GetGlyphBitmap(&m_Info, m_Scale, m_Scale, index, &width, &height, &xoff, &yoff)
+            ? stbtt_GetGlyphBitmap(&m_Info, m_Scale, m_Scale, aIndex, &width, &height, &xoff, &yoff)
             : nullptr;
 
         if (pBitmap && width > 0 && height > 0) {

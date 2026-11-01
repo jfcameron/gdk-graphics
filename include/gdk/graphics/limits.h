@@ -46,18 +46,18 @@ namespace gdk::graphics {
     };
 
     //! **the least of two limits each**: what fits both
-    [[nodiscard]] constexpr limits narrowest(const limits &aA, const limits &aB) {
+    [[nodiscard]] constexpr limits narrowest(const limits &aLeft, const limits &aRight) {
         const auto least = [](const std::size_t aX, const std::size_t aY) { return aX < aY ? aX : aY; };
 
         limits out;
-        out.texture_size = least(aA.texture_size, aB.texture_size);
-        out.non_power_of_two_textures = aA.non_power_of_two_textures && aB.non_power_of_two_textures;
-        out.vertex_uniform_vectors = least(aA.vertex_uniform_vectors, aB.vertex_uniform_vectors);
-        out.fragment_uniform_vectors = least(aA.fragment_uniform_vectors, aB.fragment_uniform_vectors);
-        out.texture_units = least(aA.texture_units, aB.texture_units);
-        out.vertex_texture_units = least(aA.vertex_texture_units, aB.vertex_texture_units);
-        out.vertex_attributes = least(aA.vertex_attributes, aB.vertex_attributes);
-        out.varying_vectors = least(aA.varying_vectors, aB.varying_vectors);
+        out.texture_size = least(aLeft.texture_size, aRight.texture_size);
+        out.non_power_of_two_textures = aLeft.non_power_of_two_textures && aRight.non_power_of_two_textures;
+        out.vertex_uniform_vectors = least(aLeft.vertex_uniform_vectors, aRight.vertex_uniform_vectors);
+        out.fragment_uniform_vectors = least(aLeft.fragment_uniform_vectors, aRight.fragment_uniform_vectors);
+        out.texture_units = least(aLeft.texture_units, aRight.texture_units);
+        out.vertex_texture_units = least(aLeft.vertex_texture_units, aRight.vertex_texture_units);
+        out.vertex_attributes = least(aLeft.vertex_attributes, aRight.vertex_attributes);
+        out.varying_vectors = least(aLeft.varying_vectors, aRight.varying_vectors);
 
         return out;
     }

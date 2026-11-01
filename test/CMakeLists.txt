@@ -5,6 +5,7 @@ jfc_add_tests(
 
     TEST_SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/convention_test.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/exception_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/null_conformance.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/null_context_test.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/profile_test.cpp"

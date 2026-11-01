@@ -16,7 +16,7 @@ namespace gdk::graphics {
         };
 
         /// \brief replace vertex data held by this model
-        virtual void upload(const usage_hint &, const model_data &vertexDataView) = 0;
+        virtual void upload(const usage_hint &, const model_data &aVertexDataView) = 0;
 
         virtual ~model() = default;
 

@@ -25,7 +25,6 @@ namespace gdk::graphics {
         /// \name factory methods
         ///@{
         //
-            //! makes a scene
             [[nodiscard]] virtual scene_ptr_type make_scene() = 0;
 
             //! makes a camera that draws to the screen
@@ -37,21 +36,18 @@ namespace gdk::graphics {
             /// \brief makes a texture_camera drawing into textures aSize texels across
             [[nodiscard]] virtual texture_camera_ptr_type make_texture_camera(const intvector2_type &aSize) = 0;
            
-            //! make an entity
             [[nodiscard]] virtual entity_ptr_type make_entity(
                 const const_model_ptr_type pModel, 
                 const const_material_ptr_type pMaterial 
             ) = 0;
             
-            //! make a model
             [[nodiscard]] virtual model_ptr_type make_model(
                 const gdk::graphics::model::usage_hint,
-                const model_data &vertexData
+                const model_data &aVertexData
             ) = 0;
             //! make an empty model
             [[nodiscard]] virtual model_ptr_type make_model() = 0;
 
-            //! make a material.
             [[nodiscard]] virtual material_ptr_type make_material(
                 const const_shader_ptr_type pShader,
                 const material::render_mode aRenderMode,
@@ -73,7 +69,6 @@ namespace gdk::graphics {
             [[nodiscard]] virtual material_ptr_type make_material(
                 const const_material_ptr_type &aPrototype) = 0;
 
-            //! make a texture
             [[nodiscard]] virtual texture_ptr_type make_texture(
                 const texture_data::view &aTextureDataView,
                 const texture::wrap_mode aWrapModeU,

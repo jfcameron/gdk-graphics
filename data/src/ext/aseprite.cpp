@@ -349,8 +349,8 @@ namespace gdk::graphics::ext {
 
     const aseprite_tag *aseprite_sheet::tag(const std::string_view aName) const {
         const auto found = std::find_if(tags.begin(), tags.end(),
-            [aName](const aseprite_tag &each) { 
-                return each.name == aName; 
+            [aName](const aseprite_tag &aEach) { 
+                return aEach.name == aName; 
             });
 
         return found == tags.end() ? nullptr : &*found;
@@ -358,7 +358,7 @@ namespace gdk::graphics::ext {
 
     const aseprite_slice *aseprite_sheet::slice(const std::string_view aName) const {
         const auto found = std::find_if(slices.begin(), slices.end(),
-            [aName](const aseprite_slice &each) { return each.name == aName; });
+            [aName](const aseprite_slice &aEach) { return aEach.name == aName; });
 
         return found == slices.end() ? nullptr : &*found;
     }

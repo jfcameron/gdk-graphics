@@ -30,36 +30,36 @@ attribute_data::attribute_data(std::initializer_list<component_type> aComponents
 , m_Components(aComponents)
 {}
 
-void attribute_data::push_back(const attribute_data &rhs) {
+void attribute_data::push_back(const attribute_data &aRhs) {
     if (!m_NumberOfComponentsPerAttribute)
-        m_NumberOfComponentsPerAttribute = rhs.m_NumberOfComponentsPerAttribute;
+        m_NumberOfComponentsPerAttribute = aRhs.m_NumberOfComponentsPerAttribute;
 
-    else if (rhs.m_NumberOfComponentsPerAttribute
-        && m_NumberOfComponentsPerAttribute != rhs.m_NumberOfComponentsPerAttribute)
+    else if (aRhs.m_NumberOfComponentsPerAttribute
+        && m_NumberOfComponentsPerAttribute != aRhs.m_NumberOfComponentsPerAttribute)
         throw exception(std::string("attribute_data::push_back: cannot append an attribute of ")
-            .append(std::to_string(rhs.m_NumberOfComponentsPerAttribute))
+            .append(std::to_string(aRhs.m_NumberOfComponentsPerAttribute))
             .append(" components per attribute to one of ")
             .append(std::to_string(m_NumberOfComponentsPerAttribute))
             .append("; the result would not describe either"));
 
-    m_Components.insert(m_Components.end(), rhs.m_Components.begin(), rhs.m_Components.end());
+    m_Components.insert(m_Components.end(), aRhs.m_Components.begin(), aRhs.m_Components.end());
 }
 
-attribute_data &attribute_data::operator+=(const attribute_data &rhs) {
-    push_back(rhs);
+attribute_data &attribute_data::operator+=(const attribute_data &aRhs) {
+    push_back(aRhs);
     return *this;
 }
 
-void attribute_data::overwrite(size_t vertexOffset, const attribute_data &other) {
-    if (number_of_components_per_attribute() != other.number_of_components_per_attribute()) 
+void attribute_data::overwrite(size_t aVertexOffset, const attribute_data &aOther) {
+    if (number_of_components_per_attribute() != aOther.number_of_components_per_attribute()) 
         throw exception("number of components per attribute must match on order to overwrite component data");
 
-    const size_t componentOffset(vertexOffset * number_of_components_per_attribute());
+    const size_t componentOffset(aVertexOffset * number_of_components_per_attribute());
     
-    if (componentOffset + other.components().size() > components().size())
+    if (componentOffset + aOther.components().size() > components().size())
         throw exception("new attrib data would write past the end of current attribute data");
 
-    std::copy(other.components().begin(), other.components().begin() + other.components().size(),
+    std::copy(aOther.components().begin(), aOther.components().begin() + aOther.components().size(),
         components().begin() + componentOffset);
 }
 

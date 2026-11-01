@@ -29,19 +29,19 @@ namespace gdk::graphics {
         //! nonconst access to the list of components in this attribute
         std::vector<component_type> &components();
 
-        void push_back(const attribute_data &rhs);
+        void push_back(const attribute_data &aRhs);
 
-        attribute_data &operator+=(const attribute_data &rhs);
+        attribute_data &operator+=(const attribute_data &aRhs);
 
-        void overwrite(std::size_t vertexOffset, const attribute_data &other);
+        void overwrite(std::size_t aVertexOffset, const attribute_data &aOther);
 
         //! support move semantics
-        attribute_data &operator=(attribute_data &&a) = default;
+        attribute_data &operator=(attribute_data &&aOther) = default;
         //! support move semantics
         attribute_data(attribute_data &&) = default;
 
         //! support copy semantics
-        attribute_data &operator=(const attribute_data &a) = default;
+        attribute_data &operator=(const attribute_data &aOther) = default;
         //! support copy semantics
         attribute_data(const attribute_data &) = default;
 

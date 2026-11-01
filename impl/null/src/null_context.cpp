@@ -366,16 +366,16 @@ namespace {
     void hold(std::vector<std::weak_ptr<const held_type>> &aHeld, const std::shared_ptr<const held_type> &pAdded) {
         if (!pAdded) return;
 
-        std::erase_if(aHeld, [](const auto &a) { return a.expired(); });
+        std::erase_if(aHeld, [](const auto &aWeak) { return aWeak.expired(); });
 
-        if (std::none_of(aHeld.begin(), aHeld.end(), [&](const auto &a) { return a.lock() == pAdded; }))
+        if (std::none_of(aHeld.begin(), aHeld.end(), [&](const auto &aWeak) { return aWeak.lock() == pAdded; }))
             aHeld.push_back(pAdded);
     }
 
     template<typename held_type>
     void let_go(std::vector<std::weak_ptr<const held_type>> &aHeld, const std::shared_ptr<const held_type> &pRemoved) {
-        std::erase_if(aHeld, [&](const auto &a) {
-            const auto pLocked = a.lock();
+        std::erase_if(aHeld, [&](const auto &aWeak) {
+            const auto pLocked = aWeak.lock();
 
             return !pLocked || pLocked == pRemoved;
         });
@@ -383,7 +383,7 @@ namespace {
 
     template<typename held_type>
     [[nodiscard]] std::vector<std::shared_ptr<const held_type>> alive(std::vector<std::weak_ptr<const held_type>> &aHeld) {
-        std::erase_if(aHeld, [](const auto &a) { return a.expired(); });
+        std::erase_if(aHeld, [](const auto &aWeak) { return aWeak.expired(); });
 
         std::vector<std::shared_ptr<const held_type>> out;
 

@@ -35,7 +35,7 @@ namespace gdk::graphics {
         /// \brief update a section of texture data
         /// \throws gdk::graphics::exception the section is in another format than the texture, or not wholly
         /// within it
-        virtual void update_data(const texture_data::view &, const std::size_t offsetX, const std::size_t offsetY) = 0;
+        virtual void update_data(const texture_data::view &, const std::size_t aOffsetX, const std::size_t aOffsetY) = 0;
 
         //! trivial destructor
         virtual ~texture() = default;

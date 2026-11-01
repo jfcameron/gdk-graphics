@@ -48,10 +48,10 @@ attribute_data &model_data::get_attribute_data(std::string_view aAttributeName) 
     return result->second;
 }
 
-void model_data::overwrite(const size_t index, const model_data &otherVertexData) {
-    for (const auto &[otherAttributeName, otherAttributeData] : otherVertexData.attributes()) {
+void model_data::overwrite(const size_t aIndex, const model_data &aOtherVertexData) {
+    for (const auto &[otherAttributeName, otherAttributeData] : aOtherVertexData.attributes()) {
         auto &thisAttributeData = get_attribute_data(otherAttributeName);
-        thisAttributeData.overwrite(index, otherAttributeData);
+        thisAttributeData.overwrite(aIndex, otherAttributeData);
     }
 }
 
@@ -63,15 +63,15 @@ const attribute_data &model_data::get_attribute_data(std::string_view aAttribute
     return result->second;
 }
 
-void model_data::overwrite(std::string_view aAttributeName, const size_t vertexOffset, const model_data &other) {
-    get_attribute_data(aAttributeName).overwrite(vertexOffset, other.get_attribute_data(aAttributeName));
+void model_data::overwrite(std::string_view aAttributeName, const size_t aVertexOffset, const model_data &aOther) {
+    get_attribute_data(aAttributeName).overwrite(aVertexOffset, aOther.get_attribute_data(aAttributeName));
 }
 
-void model_data::push_back(const model_data &other) {
-    if (other.m_Attributes.empty()) return;
+void model_data::push_back(const model_data &aOther) {
+    if (aOther.m_Attributes.empty()) return;
 
     if (m_Attributes.empty()) {   
-        (*this) = other;
+        (*this) = aOther;
         return; 
     }
     
@@ -83,17 +83,17 @@ void model_data::push_back(const model_data &other) {
         return {};
     };
 
-    if (const auto missing = describes_the_same_attributes_as(m_Attributes, other.m_Attributes))
+    if (const auto missing = describes_the_same_attributes_as(m_Attributes, aOther.m_Attributes))
         throw exception(std::string("model_data::push_back: the appended data has attribute \"")
             .append(*missing)
             .append("\" and this data does not; appending would leave the result ragged"));
 
-    if (const auto missing = describes_the_same_attributes_as(other.m_Attributes, m_Attributes))
+    if (const auto missing = describes_the_same_attributes_as(aOther.m_Attributes, m_Attributes))
         throw exception(std::string("model_data::push_back: this data has attribute \"")
             .append(*missing)
             .append("\" and the appended data does not; appending would leave the result ragged"));
 
-    for (const auto &[name, data] : other.m_Attributes)
+    for (const auto &[name, data] : aOther.m_Attributes)
         if (const auto ours = m_Attributes.find(name)->second.number_of_components_per_attribute();
             ours != data.number_of_components_per_attribute())
             throw exception(std::string("model_data::push_back: attribute \"").append(name).append("\" has ")
@@ -102,12 +102,12 @@ void model_data::push_back(const model_data &other) {
 
     const auto offset = m_VertexCount;
 
-    const bool indexedResult = indexed() || other.indexed();
+    const bool indexedResult = indexed() || aOther.indexed();
 
     if (const auto ceiling = std::size_t{std::numeric_limits<index_value_type>::max()} + 1;
-        indexedResult && m_VertexCount + other.m_VertexCount > ceiling)
+        indexedResult && m_VertexCount + aOther.m_VertexCount > ceiling)
         throw exception(std::string("model_data::push_back: the result would have ")
-            .append(std::to_string(m_VertexCount + other.m_VertexCount))
+            .append(std::to_string(m_VertexCount + aOther.m_VertexCount))
             .append(" vertices, and an index is 16 bit, so it cannot name past ")
             .append(std::to_string(ceiling))
             .append(". Split the geometry across models."));
@@ -119,22 +119,22 @@ void model_data::push_back(const model_data &other) {
             m_Indexes[i] = static_cast<index_value_type>(i);
     }
 
-    for (const auto &[OtherAttributeName, otherAttributeData] : other.attributes())
+    for (const auto &[OtherAttributeName, otherAttributeData] : aOther.attributes())
         m_Attributes[OtherAttributeName].push_back(otherAttributeData);
 
-    m_VertexCount += other.m_VertexCount;
+    m_VertexCount += aOther.m_VertexCount;
 
     if (indexedResult) {
         std::vector<index_value_type> implied;
 
-        if (!other.indexed()) {
-            implied.resize(other.m_VertexCount);
+        if (!aOther.indexed()) {
+            implied.resize(aOther.m_VertexCount);
 
-            for (size_t i = 0; i < other.m_VertexCount; ++i)
+            for (size_t i = 0; i < aOther.m_VertexCount; ++i)
                 implied[i] = static_cast<index_value_type>(i);
         }
 
-        const std::vector<index_value_type> &appended = other.indexed() ? other.m_Indexes : implied;
+        const std::vector<index_value_type> &appended = aOther.indexed() ? aOther.m_Indexes : implied;
 
         for (const auto index : appended)
             m_Indexes.push_back(static_cast<index_value_type>(index + offset));
@@ -170,8 +170,8 @@ model_data::model_data(attribute_collection_type &&aAttributeData) {
 
 model_data::primitive_mode model_data::get_primitive_mode() const { return m_PrimitiveMode; }
 
-model_data &model_data::operator+=(const model_data &other) { 
-    push_back(other); 
+model_data &model_data::operator+=(const model_data &aOther) { 
+    push_back(aOther); 
 
     return *this;
 }
@@ -350,10 +350,10 @@ void model_data::sort_by_nearest_triangle(
     vector3_type observerLocalPostion = localObserver.translation(); 
 
     sort_by_triangle(
-        [&observerLocalPostion](triangle a, triangle b) {
+        [&observerLocalPostion](triangle aLeft, triangle aRight) {
             const auto cameraPos = observerLocalPostion;
-            const auto entityPosA = a.centroid;
-            const auto entityPosB = b.centroid;
+            const auto entityPosA = aLeft.centroid;
+            const auto entityPosB = aRight.centroid;
 
             const auto aDist = cameraPos.distance_from(entityPosA);
             const auto bDist = cameraPos.distance_from(entityPosB);
@@ -377,10 +377,10 @@ void model_data::sort_by_furthest_triangle(
     vector3_type observerLocalPostion = localObserver.translation();
 
     sort_by_triangle(
-        [&observerLocalPostion](triangle a, triangle b) {
+        [&observerLocalPostion](triangle aLeft, triangle aRight) {
             const auto cameraPos = observerLocalPostion;
-            const auto entityPosA = a.centroid;
-            const auto entityPosB = b.centroid;
+            const auto entityPosA = aLeft.centroid;
+            const auto entityPosB = aRight.centroid;
 
             const auto aDist = cameraPos.distance_from(entityPosA);
             const auto bDist = cameraPos.distance_from(entityPosB);

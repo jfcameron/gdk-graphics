@@ -31,7 +31,6 @@ namespace gdk::graphics {
             triangles
         };
 
-        //! get the primitive mode
         primitive_mode get_primitive_mode() const;
 
         /// \brief the order the vertices are drawn in, empty if they are drawn in storage order
@@ -97,18 +96,18 @@ namespace gdk::graphics {
         /// Nothing changes when it throws. The appended indices are offset so that they still name the appended vertices. If only
         /// one of the two is indexed, the other is given the indices it implies, because the
         /// result has to be one thing or the other.
-        void push_back(const model_data &other);
+        void push_back(const model_data &aOther);
 
         /// \brief overwrite a section of vertex data using another vertex data instance
         ///
         /// formats must match exactly, the incoming data cannot write past the end of this
-        void overwrite(const std::size_t index, const model_data &other);
+        void overwrite(const std::size_t aIndex, const model_data &aOther);
 
         /// \brief overwrite a section of a single attribute in the vertex data
         ///
         /// the vertex data must contain an attribute with the given name and that attribute must have
         /// the same # of components
-        void overwrite(std::string_view aAttributeName, const std::size_t vertexOffset, const model_data &other);
+        void overwrite(std::string_view aAttributeName, const std::size_t aVertexOffset, const model_data &aOther);
 
         //! get number of verticies in the data
         std::size_t vertex_count() const;
@@ -118,17 +117,17 @@ namespace gdk::graphics {
 
         //! append a copy of different model_data to this model_data
         /// \warning must be same format
-        model_data &operator+=(const model_data &other);
+        model_data &operator+=(const model_data &aOther);
 
         //! support move semantics
-        model_data &operator=(model_data &&other) = default;
+        model_data &operator=(model_data &&aOther) = default;
         //! support move semantics
         model_data(model_data &&) = default;
 
         //! support copy semantics
         model_data(const model_data &) = default;
         //! support copy semantics
-        model_data &operator=(const model_data &other) = default;
+        model_data &operator=(const model_data &aOther) = default;
 
         //! default inited model_data is very useful for procedurally generated data
         model_data() = default;

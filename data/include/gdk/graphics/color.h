@@ -19,18 +19,13 @@ namespace gdk::graphics {
         /// \warning does not clamp values within the normalized range
         void operator+=(const color &aOther);
         
-        /// \brief equality semantics
         [[nodiscard]] constexpr bool operator==(const color &aOther) const = default;
 
-        /// \brief copy semantics
         color(const color &) = default;
-        /// \brief copy semantics
-        color& operator=(const color &acolor) = default;
+        color& operator=(const color &aColor) = default;
         
-        /// \brief move semantics
         color(color &&) = default;
-        /// \brief move semantics
-        color& operator=(color &&acolor) = default;
+        color& operator=(color &&aColor) = default;
 
         /// \brief constructs a color as opaque black
         color() = default;
@@ -67,7 +62,7 @@ static const color cornflower_blue;
     ///@}
     };
         
-    std::ostream &operator<<(std::ostream &stream, const color &acolor);
+    std::ostream &operator<<(std::ostream &aStream, const color &aColor);
 
     inline const color color::black{0.0f, 0.0f, 0.0f, 1.0f};
     inline const color color::white{1.0f, 1.0f, 1.0f, 1.0f};

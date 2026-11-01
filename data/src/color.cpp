@@ -22,10 +22,10 @@ void color::operator+=(const color &aOther) {
     a += aOther.a;
 }
 
-std::ostream &gdk::graphics::operator<<(std::ostream &s, const color &a) {
+std::ostream &gdk::graphics::operator<<(std::ostream &aStream, const color &aValue) {
     std::stringstream ss;
-    ss << "{r:" << a.r << ", g:" << a.g << ", b:" << a.b << ", a:" << a.a << "}";
-    s << ss.str();
-    return s; 
+    ss << "{r:" << aValue.r << ", g:" << aValue.g << ", b:" << aValue.b << ", a:" << aValue.a << "}";
+    aStream << ss.str();
+    return aStream; 
 }
 

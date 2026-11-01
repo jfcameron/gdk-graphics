@@ -187,8 +187,8 @@ namespace gdk::graphics {
             for (std::size_t i = 0; i < count; ++i) order[i] = i;
 
             std::stable_sort(order.begin(), order.end(),
-                [&](const std::size_t a, const std::size_t b) {
-                    return depth_of(aSkin.joints[a]) < depth_of(aSkin.joints[b]);
+                [&](const std::size_t aLeft, const std::size_t aRight) {
+                    return depth_of(aSkin.joints[aLeft]) < depth_of(aSkin.joints[aRight]);
                 });
 
             converted_skin out;
@@ -285,7 +285,7 @@ namespace gdk::graphics {
                 std::array<std::size_t, 4> slots{0, 1, 2, 3};
 
                 std::stable_sort(slots.begin(), slots.end(),
-                    [&](const std::size_t a, const std::size_t b) { return weight(a) > weight(b); });
+                    [&](const std::size_t aLeft, const std::size_t aRight) { return weight(aLeft) > weight(aRight); });
 
                 const auto bone_of = [&](const std::size_t aSlot) {
                     const auto index = static_cast<std::size_t>(indices[aSlot]);
@@ -423,12 +423,12 @@ namespace gdk::graphics {
                     const auto at = find(samples, cursor, times[k]);
 
                     if (rotates) {
-                        const auto quaternion = [&](const std::size_t index) {
+                        const auto quaternion = [&](const std::size_t aIndex) {
                             animation::quaternion_type value;
-                            value.x = samples.output[index * 4 + 0];
-                            value.y = samples.output[index * 4 + 1];
-                            value.z = samples.output[index * 4 + 2];
-                            value.w = samples.output[index * 4 + 3];
+                            value.x = samples.output[aIndex * 4 + 0];
+                            value.y = samples.output[aIndex * 4 + 1];
+                            value.z = samples.output[aIndex * 4 + 2];
+                            value.w = samples.output[aIndex * 4 + 3];
 
                             return value;
                         };
@@ -438,9 +438,9 @@ namespace gdk::graphics {
                             * (above.rotation * slerp(quaternion(at.from), quaternion(at.to), at.u));
                     }
                     else {
-                        const auto position = [&](const std::size_t index) {
-                            return animation::vector3_type(samples.output[index * 3 + 0],
-                                samples.output[index * 3 + 1], samples.output[index * 3 + 2]);
+                        const auto position = [&](const std::size_t aIndex) {
+                            return animation::vector3_type(samples.output[aIndex * 3 + 0],
+                                samples.output[aIndex * 3 + 1], samples.output[aIndex * 3 + 2]);
                         };
 
                         const auto a = position(at.from);

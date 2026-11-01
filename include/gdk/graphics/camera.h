@@ -47,7 +47,7 @@ namespace gdk::graphics {
         virtual void set_transform(const gdk::graphics::vector3_type &aWorldPos, const gdk::graphics::quaternion_type &aRotation) = 0;
 
         /// \brief sets the clear color, used to fill color buffer after it is cleared.
-        virtual void set_clear_color(const gdk::graphics::color &acolor) = 0;
+        virtual void set_clear_color(const gdk::graphics::color &aColor) = 0;
 
         /// \brief clear mode decides which buffers to clear. see enum
         virtual void set_clear_mode(const clear_mode aClearMode) = 0;

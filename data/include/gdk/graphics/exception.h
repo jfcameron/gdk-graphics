@@ -4,26 +4,28 @@
 #define GDK_GRAPHICS_EXCEPTION_H
 
 #include <exception>
+#include <memory>
 #include <string>
-#include <utility>
 
 namespace gdk::graphics {
     /// \brief root exception type for this project
     class exception : public std::exception {
-        std::string mWhat = "gdk::graphics::exception";
+        std::shared_ptr<const std::string> mpWhat;
 
     public:
-        virtual const char *what() const noexcept override {
-            return mWhat.c_str();
-        }
-
-        exception() = default;
-
-        exception(std::string aWhat)
-        : mWhat(std::move(aWhat))
+        exception()
+        : exception("gdk::graphics::exception")
         {}
 
-        virtual ~exception() override = default;
+        exception(const std::string &aWhat)
+        : mpWhat(std::make_shared<const std::string>(aWhat))
+        {}
+
+        exception(const exception &aOther) noexcept = default;
+
+        exception &operator=(const exception &aOther) noexcept = default;
+
+        const char *what() const noexcept override { return mpWhat->c_str(); }
     };
 }
 
