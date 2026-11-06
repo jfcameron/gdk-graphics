@@ -94,6 +94,8 @@ namespace gdk::graphics {
 
         //! every animation, as it drives the first skin
         std::vector<animation::clip> animations;
+        //! each animation's name, in step with animations; empty for one with none
+        std::vector<std::string> animation_names;
     };
 
     using gltf_attribute_names = std::unordered_map<std::string, std::string>;

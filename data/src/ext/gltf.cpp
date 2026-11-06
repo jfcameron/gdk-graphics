@@ -618,9 +618,11 @@ namespace gdk::graphics {
             remaps.push_back(std::move(converted.remap));
         }
 
-        for (cgltf_size a = 0; a < document->animations_count && document->skins_count; ++a)
+        for (cgltf_size a = 0; a < document->animations_count && document->skins_count; ++a) {
             content.animations.push_back(convert(document->animations[a], document->skins[0],
                 remaps[0], content.skeletons[0]));
+            content.animation_names.push_back(document->animations[a].name ? document->animations[a].name : "");
+        }
 
         for (cgltf_size n = 0; n < document->nodes_count; ++n) {
             const auto &node = document->nodes[n];

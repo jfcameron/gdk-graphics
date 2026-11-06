@@ -115,6 +115,7 @@ namespace {
           "skins":[{"joints":[1,0]}],
           "meshes":[{"primitives":[{"attributes":{"POSITION":0,"JOINTS_0":1,"WEIGHTS_0":2}}]}],
           "animations":[{
+            "name":"wave",
             "samplers":[{"input":3,"output":4,"interpolation":"LINEAR"}],
             "channels":[{"sampler":0,"target":{"node":1,"path":"rotation"}}]}]
         })", bin);
@@ -156,9 +157,10 @@ TEST_CASE("gdk::graphics::read_gltf skins and animations", "[gdk::graphics]")
         REQUIRE(mesh.weights[1].first == 0);
     }
 
-    SECTION("an animation becomes a clip of whole poses")
+    SECTION("an animation becomes a clip of whole poses, its name beside it")
     {
         REQUIRE(content.animations.size() == 1);
+        REQUIRE(content.animation_names == std::vector<std::string>{"wave"});
 
         const auto &clip = content.animations.front();
 
@@ -574,6 +576,7 @@ TEST_CASE("a glTF accessor of the wrong type for what reads it is refused, not r
     };
 
     REQUIRE_NOTHROW(read_gltf(animated("VEC4", "SCALAR")));
+    REQUIRE(read_gltf(animated("VEC4", "SCALAR")).animation_names == std::vector<std::string>{""});
 
     SECTION("a rotation that is not four components") {
         REQUIRE_THROWS_AS(read_gltf(animated("VEC3", "SCALAR")), exception);
