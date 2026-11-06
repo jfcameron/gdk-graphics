@@ -16,6 +16,8 @@
 #include <gdk/graphics/texture_camera.h>
 #include <gdk/graphics/texture_data.h>
 
+#include <array>
+#include <span>
 #include <vector>
 
 using namespace gdk::graphics;
@@ -142,6 +144,11 @@ TEST_CASE("conformance, what is made is filled in again", "[conformance]") {
         pMaterial->set_integer2("_Integer2", 1, 2);
         pMaterial->set_integer3("_Integer3", 1, 2, 3);
         pMaterial->set_integer4("_Integer4", 1, 2, 3, 4);
+
+        const std::array<vector4_type, 3> rows{vector4_type{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}};
+        pMaterial->set_vector4_array("_Vector4s", rows);
+        pMaterial->set_vector4_array("_Vector4s", std::span<const vector4_type>(rows).first(1));
+        pMaterial->set_vector4_array("_Empty", {});
     }
 }
 
@@ -309,6 +316,7 @@ TEST_CASE("conformance, a material is copied only from one of the context's own"
         void set_integer3(std::string_view, int, int, int) override {}
         void set_integer4(std::string_view, int, int, int, int) override {}
         void set_int_vector2_array(std::string_view, const std::vector<intvector2_type> &) override {}
+        void set_vector4_array(std::string_view, std::span<const vector4_type>) override {}
     };
 
     const auto pContext = make_context();

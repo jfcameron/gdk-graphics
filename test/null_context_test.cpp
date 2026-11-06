@@ -220,6 +220,28 @@ TEST_CASE("a null material remembers the uniforms it was set", "[null_context][m
         REQUIRE(stored.value().w == Approx(0.75f));
     }
 
+    SECTION("a vec4 array comes back as a copy of what was given, the latest whole")
+    {
+        std::vector<vector4_type> rows{{1, 2, 3, 4}, {5, 6, 7, 8}};
+
+        pMaterial->set_vector4_array("_Bones", rows);
+        rows[0].x = 9;
+
+        const auto stored = pMaterial->vector4_array_at("_Bones");
+
+        REQUIRE(stored.has_value());
+        REQUIRE(stored->size() == 2);
+        REQUIRE(stored->at(0).x == 1);
+        REQUIRE(stored->at(1).w == 8);
+
+        pMaterial->set_vector4_array("_Bones", std::span<const vector4_type>(rows).first(1));
+
+        REQUIRE(pMaterial->vector4_array_at("_Bones")->size() == 1);
+        REQUIRE(pMaterial->vector4_array_at("_Bones")->at(0).x == 9);
+        REQUIRE_FALSE(pMaterial->vector4_array_at("_NotSet").has_value());
+        REQUIRE(pMaterial->uniforms() == std::vector<std::string>{"_Bones"});
+    }
+
     SECTION("a texture comes back as the same object")
     {
         const auto pTexture = pContext->make_texture();

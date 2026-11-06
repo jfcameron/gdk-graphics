@@ -195,6 +195,13 @@ void null_material::set_int_vector2_array(const std::string_view aName,
     mNames.insert(std::string(aName));
 }
 
+void null_material::set_vector4_array(const std::string_view aName, const std::span<const vector4_type> aValue) {
+    const std::string name(aName);
+
+    mVector4Arrays[name].assign(aValue.begin(), aValue.end());
+    mNames.insert(name);
+}
+
 std::optional<float> null_material::float_at(std::string_view aName) const {
     const auto found = mFloats.find(aName);
 
@@ -205,6 +212,12 @@ std::optional<vector4_type> null_material::vector4_at(std::string_view aName) co
     const auto found = mVector4s.find(aName);
 
     return found == mVector4s.end() ? std::optional<vector4_type>{} : found->second;
+}
+
+std::optional<std::vector<vector4_type>> null_material::vector4_array_at(std::string_view aName) const {
+    const auto found = mVector4Arrays.find(aName);
+
+    return found == mVector4Arrays.end() ? std::optional<std::vector<vector4_type>>{} : found->second;
 }
 
 texture_ptr_type null_material::texture_at(std::string_view aName) const {

@@ -13,6 +13,7 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <span>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -177,9 +178,11 @@ namespace gdk::graphics {
 
         virtual void set_int_vector2_array(const std::string_view aName,
             const std::vector<intvector2_type> &aValue) override;
+        virtual void set_vector4_array(const std::string_view aName, std::span<const vector4_type> aValue) override;
 
         [[nodiscard]] std::optional<float> float_at(std::string_view aName) const;
         [[nodiscard]] std::optional<vector4_type> vector4_at(std::string_view aName) const;
+        [[nodiscard]] std::optional<std::vector<vector4_type>> vector4_array_at(std::string_view aName) const;
         [[nodiscard]] texture_ptr_type texture_at(std::string_view aName) const;
 
         [[nodiscard]] std::vector<std::string> uniforms() const;
@@ -193,6 +196,7 @@ namespace gdk::graphics {
 
         std::map<std::string, float, std::less<>> mFloats;
         std::map<std::string, vector4_type, std::less<>> mVector4s;
+        std::map<std::string, std::vector<vector4_type>, std::less<>> mVector4Arrays;
         std::map<std::string, texture_ptr_type, std::less<>> mTextures;
         std::set<std::string> mNames;
     };

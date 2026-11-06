@@ -6,6 +6,7 @@
 #include <gdk/graphics/types.h>
 
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -70,6 +71,10 @@ namespace gdk::graphics {
 
         /// \brief assigns an array of integer vector2s to the material
         virtual void set_int_vector2_array(const std::string_view aName, const std::vector<intvector2_type> &aValue) = 0;
+
+        /// \brief assigns a uniform declared as an array of vec4, from its first element; values past the array's
+        /// end are ignored, and the material keeps its own copy
+        virtual void set_vector4_array(const std::string_view aName, std::span<const vector4_type> aValue) = 0;
 
         virtual ~material() = default;
     };
